@@ -1,0 +1,13 @@
+{
+    "compiler-explorer.url": "https://godbolt.org", // url of the compiler explorer you want to use.
+    "compiler-explorer.compiler": "armgtrunk", // Compiler code - See help below.
+    "compiler-explorer.options": "-std=c++20 -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard -O2", // Compiler options
+    "compiler-explorer.debug": true, // true indicates that the extension will print debug to its output channel.
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.arguments": [
+        "-log=verbose",
+        "-pretty",
+        "--background-index",
+        "--query-driver=*clang++.exe", //for cross compile usage
+    ],
+}
