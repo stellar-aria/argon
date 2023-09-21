@@ -8,6 +8,28 @@
         "-log=verbose",
         "-pretty",
         "--background-index",
-        "--query-driver=*clang++.exe", //for cross compile usage
+        "--query-driver=*LLVMEmbeddedToolchainForArm*", //for cross compile usage
     ],
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "googletest.failed",
+                "settings": {
+                    "foreground": "#f00"
+                }
+            },
+            {
+                "scope": "googletest.passed",
+                "settings": {
+                    "foreground": "#0f0"
+                }
+            },
+            {
+                "scope": "googletest.run",
+                "settings": {
+                    "foreground": "#0f0"
+                }
+            }
+        ]
+    },
 }

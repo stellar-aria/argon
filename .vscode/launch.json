@@ -1,0 +1,55 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${workspaceRoot}/build/argon",
+      "MIMode": "gdb",
+      "miDebuggerPath": "arm-none-eabi-gdb",
+      "miDebuggerServerAddress": "localhost:1234",
+      "useExtendedRemote": true,
+      "targetArchitecture": "arm",
+      "customLaunchSetupCommands": [
+//        {"text": "-gdb-set mi-async on"},
+        {"text": "-target-select extended-remote localhost:1234"},        
+        {"text": "cd ${workspaceRoot}"},
+        {"text": "-file-exec-and-symbols build/argon"},
+        {"text": "-target-download"},
+      ],
+      "stopAtEntry": true,
+    },
+    {
+      "name": "Debug LLDB",
+      "type": "cppdbg",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${workspaceRoot}/build/argon",
+      "MIMode": "lldb",
+      "miDebuggerPath": "lldb",
+      "useExtendedRemote": true,
+      "targetArchitecture": "arm",
+      "customLaunchSetupCommands": [
+        {"text": "-exec gdb-remote localhost:1234"},
+        {"text": "-exec target create ${workspaceFolder}/build/argon"},
+      ],
+      "stopAtEntry": true,
+    },
+    {
+      "name": "LLDB Attach Debug",
+      "type": "lldb",
+      "request": "custom",
+      "targetCreateCommands": [
+        "target create ${workspaceFolder}/build/argon"
+      ],
+      "processCreateCommands": [
+        "gdb-remote localhost:1234"
+      ],
+    }
+  ]
+}

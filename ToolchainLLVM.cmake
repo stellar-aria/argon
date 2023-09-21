@@ -7,7 +7,7 @@ else()
   set(TOOLCHAIN_EXT "" )
 endif(WIN32)
 
-cmake_path(SET ARM_TOOLCHAIN_ROOT LLVMEmbeddedToolchainForArm/)
+cmake_path(SET ARM_TOOLCHAIN_ROOT toolchain/LLVMEmbeddedToolchainForArm/)
 cmake_path(ABSOLUTE_PATH ARM_TOOLCHAIN_ROOT)
 
 set(ARCH_COMBO armv7a_hard_neon)
@@ -45,7 +45,7 @@ set(ARCH_FLAGS
   -mfpu=neon
   -mfloat-abi=hard
   -marm
-#  -mthumb-interwork
+#  -mthumb
   -mlittle-endian
 )
 add_compile_options(${ARCH_FLAGS})
@@ -53,6 +53,14 @@ add_link_options(${ARCH_FLAGS})
 
 add_compile_options(
   -fmessage-length=0
+  -fno-exceptions
+  -fno-rtti
+)
+
+add_link_options(
+  -lcrt0-semihost
+  -lsemihost
+  -T picolibcpp.ld
 )
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
