@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "arm_neon.hpp"
+#include "neon.hpp"
 
 #ifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
