@@ -82,18 +82,17 @@
 #include <iostream>
 
 int main(void) {
-  printf("Hello World!");
-  // using namespace argon;
-  // std::array<uint8_t, 64> array;
-  // std::iota(array.begin(), array.end(), 0);
+  using namespace argon;
+  std::array<uint8_t, 64> array;
+  std::iota(array.begin(), array.end(), 0);
 
-  // for (auto *it = array.begin(); it < array.end(); it += Neon64<uint8_t>::lanes) {
-  //   Neon64<uint8_t> vec = Neon64<uint8_t>::Load(it);
-  //   vec += 1;
-  //   for (size_t i = 0; i < decltype(vec)::lanes; ++i) {
-  //     std::cout << vec[i] << std::endl;
-  //   }
-  // }
+  for (auto *it = array.begin(); it < array.end(); it += Neon64<uint8_t>::lanes) {
+    Neon64<uint8_t> vec = Neon64<uint8_t>::Load(it);
+    vec += 1;
+    for (size_t i = 0; i < decltype(vec)::lanes; ++i) {
+      std::cout << vec[i] << std::endl;
+    }
+  }
   
   while (true) { 
     ; 
