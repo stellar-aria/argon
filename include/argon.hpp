@@ -4,7 +4,9 @@
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <type_traits>
+#include <span>
 #include "neon.hpp"
 #include "neon/helpers.hpp"
 
@@ -71,6 +73,26 @@ template <> struct NextLarger<uint16_t> {using type = uint32_t; };
 template <> struct NextLarger<int32_t> {using type = int64_t; };
 template <> struct NextLarger<uint32_t> {using type = uint64_t; };
 
+template <typename T> struct Result;
+template <> struct Result<int8x8_t> {using type = uint8x8_t; };
+template <> struct Result<uint8x8_t> {using type = uint8x8_t; };
+template <> struct Result<int16x4_t> {using type = uint16x4_t; };
+template <> struct Result<uint16x4_t> {using type = uint16x4_t; };
+template <> struct Result<int32x2_t> {using type = uint32x2_t; };
+template <> struct Result<uint32x2_t> {using type = uint32x2_t; };
+template <> struct Result<int8x16_t> {using type = uint8x16_t; };
+template <> struct Result<uint8x16_t> {using type = uint8x16_t; };
+template <> struct Result<int16x8_t> {using type = uint16x8_t; };
+template <> struct Result<uint16x8_t> {using type = uint16x8_t; };
+template <> struct Result<int32x4_t> {using type = uint32x4_t; };
+template <> struct Result<uint32x4_t> {using type = uint32x4_t; };
+template <> struct Result<int64x1_t> {using type = uint64x1_t; };
+template <> struct Result<uint64x1_t> {using type = uint64x1_t; };
+template <> struct Result<int64x2_t> {using type = uint64x2_t; };
+template <> struct Result<uint64x2_t> {using type = uint64x2_t; };
+template <> struct Result<float32x2_t> {using type = uint32x2_t; };
+template <> struct Result<float32x4_t> {using type = uint32x4_t; };
+
 // clang-format on
 
 template <typename T>
@@ -90,6 +112,7 @@ class Lane;
 template <typename vector_type>
 class Common {
   using base_type = neon::NonVec<vector_type>::type;
+  using result_type = Result<vector_type>::type;
 
  public:
   using T = Common<vector_type>;
@@ -97,29 +120,34 @@ class Common {
 
   constexpr Common() : vec_{0} {};
   constexpr Common(vector_type vector) : vec_(vector){};
-  constexpr Common(base_type base) : vec_(LoadCopy(base)){};
-  constexpr Common(base_type const* base_ptr) : vec_(Load(base_ptr)){};
+  ace Common(base_type base) : vec_(LoadCopy(base)){};
+  ace Common(base_type const* base_ptr) : vec_(Load(base_ptr)){};
+  ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){
+	static_assert(slice.size() == lanes);
+  };
+  ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {
+    assert(value_list.size() == lanes);
+  };
+
+
+
+  ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
 
   ace T operator+(T b) const { return Add(b); }
   ace T operator-(T b) const { return Subtract(b); }
   ace T operator*(T b) const { return Multiply(b); }
   ace T operator/(T b) const { return Divide(b); }
 
-  ace T operator+=(T b) {
-    vec_ = Add(b);
-    return vec_;
-  }
+  ace T operator+=(T b) { return vec_ = Add(b); }
+  ace T operator-=(T b) { return vec_ = Subtract(b); }
+  ace T operator*=(T b) { return vec_ = Multiply(b); }
+  ace T operator/=(T b) { return vec_ = Divide(b); }
 
-  ace T operator-=(T b) {
-    vec_ = Subtract(b);
-    return vec_;
-  }
-
-  ace T operator==(T b) const { return Equal(b); }
-  ace T operator<(T b) const { return LessThan(b); }
-  ace T operator>(T b) const { return GreaterThan(b); }
-  ace T operator<=(T b) const { return LessThanOrEqual(b); }
-  ace T operator>=(T b) const { return GreaterThanOrEqual(b); }
+  ace Common<result_type> operator==(T b) const { return Equal(b); }
+  ace Common<result_type> operator<(T b) const { return LessThan(b); }
+  ace Common<result_type> operator>(T b) const { return GreaterThan(b); }
+  ace Common<result_type> operator<=(T b) const { return LessThanOrEqual(b); }
+  ace Common<result_type> operator>=(T b) const { return GreaterThanOrEqual(b); }
 
   ace T operator++() const { return Add(1); }
   ace T operator--() const { return Subtract(1); }
@@ -134,7 +162,7 @@ class Common {
   ace T operator>>(const int i) const { return ShiftRight(i); }
   ace T operator<<(const int i) const { return ShiftLeft(i); }
 
-  ace operator vector_type() const { return vec_; }
+  [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
   ace std::array<base_type, lanes> as_array() {
     std::array<base_type, lanes> out{0};
@@ -176,6 +204,16 @@ class Common {
 
   ace T SubtractAbsAdd(T b, T c) const { return neon::subtract_abs_add(vec_, b, c); }
 
+  ace T Divide(T b) const requires std::floating_point<base_type> {
+#ifdef __aarch64__
+	return neon::divide(vec_, b);
+#else
+	return this->map2(b, [](base_type lane1, base_type lane2) {
+		return lane1 / lane2;
+	});
+#endif
+	}
+
   ace T Max(T b) const { return neon::max(vec_, b); }
 
   ace T Min(T b) const { return neon::min(vec_, b); }
@@ -186,15 +224,15 @@ class Common {
 
   ace T MinPairwise(T b) const { return neon::min_pairwise(vec_, b); }
 
-  ace T Equal(T b) const { return neon::equal(vec_, b); }
+  ace Common<result_type> Equal(T b) const { return neon::equal(vec_, b); }
 
-  ace T GreaterThanOrEqual(T b) const { return neon::greater_than_or_equal(vec_, b); }
+  ace Common<result_type> GreaterThanOrEqual(T b) const { return neon::greater_than_or_equal(vec_, b); }
 
-  ace T LessThanOrEqual(T b) const { return neon::less_than_or_equal(vec_, b); }
+  ace Common<result_type> LessThanOrEqual(T b) const { return neon::less_than_or_equal(vec_, b); }
 
-  ace T GreaterThan(T b) const { return neon::greater_than(vec_, b); }
+  ace Common<result_type> GreaterThan(T b) const { return neon::greater_than(vec_, b); }
 
-  ace T LessThan(T b) const { return neon::less_than(vec_, b); }
+  ace Common<result_type> LessThan(T b) const { return neon::less_than(vec_, b); }
 
   ace T AndTestNonzero(T b) const { return neon::and_test_nonzero(vec_, b); }
 
@@ -337,6 +375,105 @@ class Common {
 
   ace uint8x8x2_t Transpose(T b) const { return neon::transpose(vec_, b); }
 
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<base_type(base_type)>>
+  ace T map(FuncType body) const {
+	T out;
+    for (int i = 0; i < lanes; ++i) {
+      out[i] = body(vec_[i]);
+    }
+	return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<base_type(base_type, base_type)>>
+  ace T map2(T other, FuncType body) const {
+	T out;
+    for (int i = 0; i < lanes; ++i) {
+      out[i] = body(vec_[i], other.vec_[i]);
+    }
+	return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<void(base_type&)>>
+  ace void each(FuncType body) {
+    for (int i = 0; i < lanes; ++i) {
+      body(vec_[i]);
+    }
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<void(base_type&, int)>>
+  ace void each_lane(FuncType body) {
+    for (int i = 0; i < lanes; ++i) {
+      body(vec_[i], i);
+    }
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<void()>>
+  ace void if_(FuncType true_branch) {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
+        true_branch();
+      }
+    }
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<void()>>
+  ace void if_else(FuncType true_branch, FuncType false_branch) {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
+        true_branch();
+      } else {
+        false_branch();
+      }
+    }
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<void(int)>>
+  ace void if_lane(FuncType true_branch) {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
+        true_branch(i);
+      }
+    }
+  }
+
+  template <typename FuncType1, typename FuncType2>
+    requires std::convertible_to<FuncType1, std::function<void(int)>> &&
+             std::convertible_to<FuncType2, std::function<void(int)>>
+  ace void if_else_lane(FuncType1 true_branch, FuncType2 false_branch) {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
+        true_branch(i);
+      } else {
+        false_branch(i);
+      }
+    }
+  }
+
+  ace bool any() {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  ace bool all() {
+    for (int i = 0; i < lanes; ++i) {
+      if (vec_[i] == 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
  protected:
   vector_type vec_;
 };
@@ -353,6 +490,12 @@ class Lane {
   ace operator neon::NonVec<vector_type>::type() { return neon::get(vec_, lane_); }
 
   ace Common<vector_type> operator=(base_type b) { return neon::set(vec_, lane_, b); }
+  ace Common<vector_type> operator=(T t) { return neon::set(vec_, lane_, neon::get(t.vec_, t.lane_)); }
+
+  ace Common<vector_type> operator+=(base_type b) { return neon::set(vec_, lane_, neon::get(vec_, lane_) + b); }
+  ace Common<vector_type> operator-=(base_type b) { return neon::set(vec_, lane_, neon::get(vec_, lane_) - b); }
+  ace Common<vector_type> operator*=(base_type b) { return neon::set(vec_, lane_, neon::get(vec_, lane_) * b); }
+  ace Common<vector_type> operator/=(base_type b) { return neon::set(vec_, lane_, neon::get(vec_, lane_) / b); }
 
  private:
   vector_type vec_;

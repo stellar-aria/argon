@@ -1388,11 +1388,11 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce uint32x4_t multiply(uint32x4_t a, uint32_t b) { return vmulq_n_u32(a, b); }
 [[gnu::always_inline]] nce float32x2_t add(float32x2_t a, float32x2_t b) { return vadd_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t multiply(float32x2_t a, float32x2_t b) { return vmul_f32(a, b); }
-[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t c) { 
+[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t c) {
 #ifdef __ARM_FEATURE_FMA
     return vfma_f32(a, b, c);
 #else
-    return vmla_f32(a, b, c); 
+    return vmla_f32(a, b, c);
 #endif
 }
 [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
@@ -1449,11 +1449,11 @@ template <int n>[[gnu::always_inline]] nce float32x2_t extract(float32x2_t a, fl
 [[gnu::always_inline]] nce float32x2_t negate(float32x2_t a) { return vneg_f32(a); }
 [[gnu::always_inline]] nce float32x4_t add(float32x4_t a, float32x4_t b) { return vaddq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32x4_t b) { return vmulq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x4_t c) { 
+[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x4_t c) {
 #ifdef __ARM_FEATURE_FMA
     return vfmaq_f32(a, b, c);
 #else
-    return vmlaq_f32(a, b, c); 
+    return vmlaq_f32(a, b, c);
 #endif
 }
 [[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32x4_t c) { return vmlsq_f32(a, b, c); }
@@ -2331,6 +2331,13 @@ template <int lane>[[gnu::always_inline]] nce void store4(poly16_t *ptr, poly16x
 [[gnu::always_inline]] nce poly16x8_t add(poly16x8_t a, poly16x8_t b) { return vaddq_p16(a, b); }
 [[gnu::always_inline]] nce poly64x2_t add(poly64x2_t a, poly64x2_t b) { return vaddq_p64(a, b); }
 // [[gnu::always_inline]] nce poly128_t add(poly128_t a, poly128_t b) { return vaddq_p128(a, b); }
+#endif
+
+#ifdef __aarch64__
+[[gnu::always_inline]] nce float32x2_t divide(float32x2_t a, float32x2_t b) { return vdiv_f32(a, b); }
+[[gnu::always_inline]] nce float32x4_t divide(float32x4_t a, float32x4_t b) { return vdivq_f32(a, b); }
+[[gnu::always_inline]] nce float64x1_t divide(float64x1_t a, float64x1_t b) { return vdiv_f64(a, b); }
+[[gnu::always_inline]] nce float64x2_t divide(float64x2_t a, float64x2_t b) { return vdivq_f64(a, b); }
 #endif
 // clang-format on
 
