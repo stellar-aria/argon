@@ -9,6 +9,7 @@
 #include <span>
 #include "neon.hpp"
 #include "neon/helpers.hpp"
+#include <cassert>
 
 #ifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
@@ -52,26 +53,13 @@ template <> struct Vec64<float> {using type = float32x2_t; };
 template <> struct Vec128<float>  {using type = float32x4_t; };
 
 template <typename T> struct NextLarger;
-template <> struct NextLarger<int8x8_t> {using type = int16_t; };
-template <> struct NextLarger<uint8x8_t> {using type = uint16_t; };
-template <> struct NextLarger<int16x4_t> {using type = int32_t; };
-template <> struct NextLarger<uint16x4_t> {using type = uint32_t; };
-template <> struct NextLarger<int32x2_t> {using type = int64_t; };
-template <> struct NextLarger<uint32x2_t> {using type = uint64_t; };
-
-template <> struct NextLarger<int8x16_t> {using type = int16_t; };
-template <> struct NextLarger<uint8x16_t> {using type = uint16_t; };
-template <> struct NextLarger<int16x8_t> {using type = int32_t; };
-template <> struct NextLarger<uint16x8_t> {using type = uint32_t; };
-template <> struct NextLarger<int32x4_t> {using type = int64_t; };
-template <> struct NextLarger<uint32x4_t> {using type = uint64_t; };
-
 template <> struct NextLarger<int8_t> {using type = int16_t; };
 template <> struct NextLarger<uint8_t> {using type = uint16_t; };
 template <> struct NextLarger<int16_t> {using type = int32_t; };
 template <> struct NextLarger<uint16_t> {using type = uint32_t; };
 template <> struct NextLarger<int32_t> {using type = int64_t; };
 template <> struct NextLarger<uint32_t> {using type = uint64_t; };
+template <> struct NextLarger<float32_t> {using type = double; };
 
 template <typename T> struct Result;
 template <> struct Result<int8x8_t> {using type = uint8x8_t; };
@@ -128,8 +116,6 @@ class Common {
   ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {
     assert(value_list.size() == lanes);
   };
-
-
 
   ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
 
@@ -375,6 +361,8 @@ class Common {
 
   ace uint8x8x2_t Transpose(T b) const { return neon::transpose(vec_, b); }
 
+  ace static int size() { return lanes; }
+
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<base_type(base_type)>>
   ace T map(FuncType body) const {
@@ -507,21 +495,24 @@ class Lane {
 template <typename base>
 class Neon128;
 
-template <typename base>
-class Neon64 : public impl::Common<typename impl::Vec64<base>::type> {
-  using T = impl::Common<typename impl::Vec64<base>::type>;
-  using next_larger_type = impl::NextLarger<base>::type;
+template <typename base_type>
+class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
+  using T = impl::Common<typename impl::Vec64<base_type>::type>;
+  using next_larger_type = impl::NextLarger<base_type>::type;
 
  public:
-  using vector_type = impl::Vec64<base>::type;
-  using T::T;
+  using vector_type = impl::Vec64<base_type>::type;
 
   static_assert(neon::is_doubleword_v<vector_type>);
 
   static constexpr size_t bytes = 8;
-  static constexpr size_t lanes = bytes / sizeof(base);
+  static constexpr size_t lanes = bytes / sizeof(base_type);
 
-  ace Neon64(T&& in) : T(in){};
+  constexpr Neon64() : T(){};
+  constexpr Neon64(vector_type vector) : T(vector){};
+  constexpr Neon64(base_type base) : T(base){};
+  constexpr Neon64(base_type const* base_ptr) : T(base_ptr){};
+  constexpr Neon64(T&& in) : T(in){};
 
   ace Neon128<next_larger_type> AddLong(T b) const { return neon::add_long(this->vec_, b); }
   ace Neon128<next_larger_type> MultiplyLong(T b) const { return neon::multiply_long(this->vec_, b); }
