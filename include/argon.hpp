@@ -111,10 +111,10 @@ class Common {
   ace Common(base_type base) : vec_(LoadCopy(base)){};
   ace Common(base_type const* base_ptr) : vec_(Load(base_ptr)){};
   ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){
-	static_assert(slice.size() == lanes);
+	  static_assert(slice.size() == lanes);
   };
   ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {
-    assert(value_list.size() == lanes);
+    static_assert(value_list.size() == lanes);
   };
 
   ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
