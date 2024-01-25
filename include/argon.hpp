@@ -111,11 +111,9 @@ class Common {
   ace Common(base_type base) : vec_(LoadCopy(base)){};
   ace Common(base_type const* base_ptr) : vec_(Load(base_ptr)){};
   ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){
-	  static_assert(slice.size() == lanes);
+    static_assert(slice.size() == lanes);
   };
-  ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {
-    static_assert(value_list.size() == lanes);
-  };
+  ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {};
 
   ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
 
@@ -192,13 +190,13 @@ class Common {
 
   ace T Divide(T b) const requires std::floating_point<base_type> {
 #ifdef __aarch64__
-	return neon::divide(vec_, b);
+    return neon::divide(vec_, b);
 #else
-	return this->map2(b, [](base_type lane1, base_type lane2) {
-		return lane1 / lane2;
-	});
+    return this->map2(b, [](base_type lane1, base_type lane2) {
+        return lane1 / lane2;
+    });
 #endif
-	}
+    }
 
   ace T Max(T b) const { return neon::max(vec_, b); }
 
@@ -366,21 +364,21 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<base_type(base_type)>>
   ace T map(FuncType body) const {
-	T out;
+    T out;
     for (int i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i]);
     }
-	return out;
+    return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<base_type(base_type, base_type)>>
   ace T map2(T other, FuncType body) const {
-	T out;
+    T out;
     for (int i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i], other.vec_[i]);
     }
-	return out;
+    return out;
   }
 
   template <typename FuncType>
