@@ -117,6 +117,8 @@ class Common {
 
   ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
 
+  ace T operator-() const { return Negate(); }
+
   ace T operator+(T b) const { return Add(b); }
   ace T operator-(T b) const { return Subtract(b); }
   ace T operator*(T b) const { return Multiply(b); }
@@ -163,6 +165,8 @@ class Common {
   ace T ShiftRight(const int i) const { return neon::shift_right(vec_, i); }
 
   ace T ShiftLeft(const int i) const { return neon::shift_left(vec_, i); }
+
+  ace T Negate() const { return neon::negate(vec_); }
 
   ace T Add(T b) const { return neon::add(vec_, b); }
 
@@ -511,6 +515,7 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
   constexpr Neon64(base_type base) : T(base){};
   constexpr Neon64(base_type const* base_ptr) : T(base_ptr){};
   constexpr Neon64(T&& in) : T(in){};
+  constexpr Neon64(std::initializer_list<base_type> value_list) : T(value_list) {};
 
   ace Neon128<next_larger_type> AddLong(T b) const { return neon::add_long(this->vec_, b); }
   ace Neon128<next_larger_type> MultiplyLong(T b) const { return neon::multiply_long(this->vec_, b); }
@@ -538,6 +543,7 @@ class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   constexpr Neon128(base_type base) : T(base){};
   constexpr Neon128(base_type const* base_ptr) : T(base_ptr){};
   constexpr Neon128(T&& in) : T(in){};
+  constexpr Neon128(std::initializer_list<base_type> value_list) : T(value_list) {};
 
   static_assert(neon::is_quadword_v<vector_type>);
 
