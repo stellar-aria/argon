@@ -178,9 +178,11 @@ class Common {
 
   ace T Multiply(T b) const { return neon::multiply(vec_, b); }
 
-  ace T MultiplyAdd(T b, T c) const { return neon::multiply_add(vec_, b, b); }
+  /** a + (b * c) */
+  ace T MultiplyAdd(T b, T c) const { return neon::multiply_add(vec_, b, c); }
 
-  ace T MultiplySubtract(T b, T c) const { return neon::multiply_subtract(vec_, b, b); }
+  /** a - (b * c) */
+  ace T MultiplySubtract(T b, T c) const { return neon::multiply_subtract(vec_, b, c); }
 
   ace T Subtract(T b) const { return neon::subtract(vec_, b); }
 
@@ -327,7 +329,7 @@ class Common {
 
   ace T ClearBitwise(T b) const { return neon::clear_bitwise(vec_, b); }
 
-  ace T SelectBitwise(T b, T c) const { return neon::select_bitwise(vec_, b, b); }
+  ace T SelectBitwise(T b, T c) const { return neon::select_bitwise(vec_, b, c); }
 
   template <int lane>
   ace T DuplicateElement() const {
