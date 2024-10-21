@@ -59,7 +59,7 @@ template <> struct NextLarger<int16_t> {using type = int32_t; };
 template <> struct NextLarger<uint16_t> {using type = uint32_t; };
 template <> struct NextLarger<int32_t> {using type = int64_t; };
 template <> struct NextLarger<uint32_t> {using type = uint64_t; };
-template <> struct NextLarger<float32_t> {using type = double; };
+template <> struct NextLarger<float> {using type = double; };
 
 template <typename T> struct Result;
 template <> struct Result<int8x8_t> {using type = uint8x8_t; };
@@ -275,14 +275,14 @@ class Common {
   }
 
   ace static T Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
-  ace static T Load_2(base_type const* ptr) { return neon::load2<vector_type>(ptr); }
-  ace static T Load_3(base_type const* ptr) { return neon::load3<vector_type>(ptr); }
-  ace static T Load_4(base_type const* ptr) { return neon::load4<vector_type>(ptr); }
+  ace static T Load2(base_type const* ptr) { return neon::load2<vector_type>(ptr); }
+  ace static T Load3(base_type const* ptr) { return neon::load3<vector_type>(ptr); }
+  ace static T Load4(base_type const* ptr) { return neon::load4<vector_type>(ptr); }
 
-  ace void Store(base_type* ptr) { neon::store1<vector_type>(ptr, vec_); }
-  ace void Store2(base_type* ptr) { neon::store2<vector_type>(ptr, vec_); }
-  ace void Store3(base_type* ptr) { neon::store3<vector_type>(ptr, vec_); }
-  ace void Store4(base_type* ptr) { neon::store4<vector_type>(ptr, vec_); }
+  ace void Store(base_type* ptr) { neon::store1(ptr, vec_); }
+  ace void Store2(base_type* ptr) { neon::store2(ptr, vec_); }
+  ace void Store3(base_type* ptr) { neon::store3(ptr, vec_); }
+  ace void Store4(base_type* ptr) { neon::store4(ptr, vec_); }
 
   template <int lane>
   ace void StoreLane(base_type* ptr) {
@@ -567,22 +567,62 @@ ace NeonType reinterpret(V in) {
 }
 
 template <neon::is_vector_type V>
-ace V operator+(typename neon::NonVec<V>::type a, impl::Common<V> b) {
-  return b.Add(b);
+ace impl::Common<V> operator+(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+  return b.Add(a);
 }
 
 template <neon::is_vector_type V>
-ace V operator-(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+ace impl::Common<V> operator-(typename neon::NonVec<V>::type a, impl::Common<V> b) {
   return impl::Common<V>{a}.Subtract(b);
 }
 
 template <neon::is_vector_type V>
-ace V operator*(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+ace impl::Common<V> operator*(typename neon::NonVec<V>::type a, impl::Common<V> b) {
   return b.Multiply(a);
 }
 
 template <neon::is_vector_type V>
-ace V operator/(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+ace impl::Common<V> operator/(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+  return impl::Common<V>{a}.Divide(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator+(impl::Common<V> a, typename neon::NonVec<V>::type b) {
+  return a.Add(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator-(impl::Common<V> a, typename neon::NonVec<V>::type b) {
+  return a.Subtract(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator*(impl::Common<V> a, typename neon::NonVec<V>::type b) {
+  return a.Multiply(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator/(impl::Common<V> a, typename neon::NonVec<V>::type b) {
+  return a.Divide(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator+(V a, impl::Common<V> b) {
+  return impl::Common<V>{a}.Add(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator-(V a, impl::Common<V> b) {
+  return impl::Common<V>{a}.Subtract(b);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator*(V a, impl::Common<V> b) {
+  return impl::Common<V>{a}.Multiply(a);
+}
+
+template <neon::is_vector_type V>
+ace impl::Common<V> operator/(V a, impl::Common<V> b) {
   return impl::Common<V>{a}.Divide(b);
 }
 

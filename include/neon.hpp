@@ -180,76 +180,76 @@ template <typename T> nce T load1_x4(poly8_t const *ptr);
 template <typename T> nce T load1_x4(poly16_t const *ptr);
 template <typename T> nce T load1_x4(int64_t const *ptr);
 template <typename T> nce T load1_x4(uint64_t const *ptr);
-template <typename T> nce T store1(int8_t *ptr, int8x8_t val);
-template <typename T> nce T store1(int8_t *ptr, int8x16_t val);
-template <typename T> nce T store1(int16_t *ptr, int16x4_t val);
-template <typename T> nce T store1(int16_t *ptr, int16x8_t val);
-template <typename T> nce T store1(int32_t *ptr, int32x2_t val);
-template <typename T> nce T store1(int32_t *ptr, int32x4_t val);
-template <typename T> nce T store1(int64_t *ptr, int64x1_t val);
-template <typename T> nce T store1(int64_t *ptr, int64x2_t val);
-template <typename T> nce T store1(uint8_t *ptr, uint8x8_t val);
-template <typename T> nce T store1(uint8_t *ptr, uint8x16_t val);
-template <typename T> nce T store1(uint16_t *ptr, uint16x4_t val);
-template <typename T> nce T store1(uint16_t *ptr, uint16x8_t val);
-template <typename T> nce T store1(uint32_t *ptr, uint32x2_t val);
-template <typename T> nce T store1(uint32_t *ptr, uint32x4_t val);
-template <typename T> nce T store1(uint64_t *ptr, uint64x1_t val);
-template <typename T> nce T store1(uint64_t *ptr, uint64x2_t val);
-template <typename T> nce T store1(float32_t *ptr, float32x2_t val);
-template <typename T> nce T store1(float32_t *ptr, float32x4_t val);
-template <typename T> nce T store1(poly8_t *ptr, poly8x8_t val);
-template <typename T> nce T store1(poly8_t *ptr, poly8x16_t val);
-template <typename T> nce T store1(poly16_t *ptr, poly16x4_t val);
-template <typename T> nce T store1(poly16_t *ptr, poly16x8_t val);
-template <typename T> nce T store2(int8_t *ptr, int8x8x2_t val);
-template <typename T> nce T store2(int16_t *ptr, int16x4x2_t val);
-template <typename T> nce T store2(int16_t *ptr, int16x8x2_t val);
-template <typename T> nce T store2(int32_t *ptr, int32x2x2_t val);
-template <typename T> nce T store2(int32_t *ptr, int32x4x2_t val);
-template <typename T> nce T store2(uint8_t *ptr, uint8x8x2_t val);
-template <typename T> nce T store2(uint16_t *ptr, uint16x4x2_t val);
-template <typename T> nce T store2(uint16_t *ptr, uint16x8x2_t val);
-template <typename T> nce T store2(uint32_t *ptr, uint32x2x2_t val);
-template <typename T> nce T store2(uint32_t *ptr, uint32x4x2_t val);
-template <typename T> nce T store2(float32_t *ptr, float32x2x2_t val);
-template <typename T> nce T store2(float32_t *ptr, float32x4x2_t val);
-template <typename T> nce T store2(poly8_t *ptr, poly8x8x2_t val);
-template <typename T> nce T store2(poly16_t *ptr, poly16x4x2_t val);
-template <typename T> nce T store2(poly16_t *ptr, poly16x8x2_t val);
-template <typename T> nce T store3(int8_t *ptr, int8x8x3_t val);
-template <typename T> nce T store3(int8_t *ptr, int8x16x3_t val);
-template <typename T> nce T store3(int16_t *ptr, int16x4x3_t val);
-template <typename T> nce T store3(int16_t *ptr, int16x8x3_t val);
-template <typename T> nce T store3(int32_t *ptr, int32x2x3_t val);
-template <typename T> nce T store3(int32_t *ptr, int32x4x3_t val);
-template <typename T> nce T store3(uint8_t *ptr, uint8x8x3_t val);
-template <typename T> nce T store3(uint8_t *ptr, uint8x16x3_t val);
-template <typename T> nce T store3(uint16_t *ptr, uint16x4x3_t val);
-template <typename T> nce T store3(uint16_t *ptr, uint16x8x3_t val);
-template <typename T> nce T store3(uint32_t *ptr, uint32x2x3_t val);
-template <typename T> nce T store3(uint32_t *ptr, uint32x4x3_t val);
-template <typename T> nce T store3(float32_t *ptr, float32x2x3_t val);
-template <typename T> nce T store3(float32_t *ptr, float32x4x3_t val);
-template <typename T> nce T store3(poly8_t *ptr, poly8x8x3_t val);
-template <typename T> nce T store3(poly8_t *ptr, poly8x16x3_t val);
-template <typename T> nce T store3(poly16_t *ptr, poly16x4x3_t val);
-template <typename T> nce T store3(poly16_t *ptr, poly16x8x3_t val);
-template <typename T> nce T store4(int8_t *ptr, int8x8x4_t val);
-template <typename T> nce T store4(int16_t *ptr, int16x4x4_t val);
-template <typename T> nce T store4(int16_t *ptr, int16x8x4_t val);
-template <typename T> nce T store4(int32_t *ptr, int32x2x4_t val);
-template <typename T> nce T store4(int32_t *ptr, int32x4x4_t val);
-template <typename T> nce T store4(uint8_t *ptr, uint8x8x4_t val);
-template <typename T> nce T store4(uint16_t *ptr, uint16x4x4_t val);
-template <typename T> nce T store4(uint16_t *ptr, uint16x8x4_t val);
-template <typename T> nce T store4(uint32_t *ptr, uint32x2x4_t val);
-template <typename T> nce T store4(uint32_t *ptr, uint32x4x4_t val);
-template <typename T> nce T store4(float32_t *ptr, float32x2x4_t val);
-template <typename T> nce T store4(float32_t *ptr, float32x4x4_t val);
-template <typename T> nce T store4(poly8_t *ptr, poly8x8x4_t val);
-template <typename T> nce T store4(poly16_t *ptr, poly16x4x4_t val);
-template <typename T> nce T store4(poly16_t *ptr, poly16x8x4_t val);
+nce void store1(int8_t *ptr, int8x8_t val);
+nce void store1(int8_t *ptr, int8x16_t val);
+nce void store1(int16_t *ptr, int16x4_t val);
+nce void store1(int16_t *ptr, int16x8_t val);
+nce void store1(int32_t *ptr, int32x2_t val);
+nce void store1(int32_t *ptr, int32x4_t val);
+nce void store1(int64_t *ptr, int64x1_t val);
+nce void store1(int64_t *ptr, int64x2_t val);
+nce void store1(uint8_t *ptr, uint8x8_t val);
+nce void store1(uint8_t *ptr, uint8x16_t val);
+nce void store1(uint16_t *ptr, uint16x4_t val);
+nce void store1(uint16_t *ptr, uint16x8_t val);
+nce void store1(uint32_t *ptr, uint32x2_t val);
+nce void store1(uint32_t *ptr, uint32x4_t val);
+nce void store1(uint64_t *ptr, uint64x1_t val);
+nce void store1(uint64_t *ptr, uint64x2_t val);
+nce void store1(float32_t *ptr, float32x2_t val);
+nce void store1(float32_t *ptr, float32x4_t val);
+nce void store1(poly8_t *ptr, poly8x8_t val);
+nce void store1(poly8_t *ptr, poly8x16_t val);
+nce void store1(poly16_t *ptr, poly16x4_t val);
+nce void store1(poly16_t *ptr, poly16x8_t val);
+nce void store2(int8_t *ptr, int8x8x2_t val);
+nce void store2(int16_t *ptr, int16x4x2_t val);
+nce void store2(int16_t *ptr, int16x8x2_t val);
+nce void store2(int32_t *ptr, int32x2x2_t val);
+nce void store2(int32_t *ptr, int32x4x2_t val);
+nce void store2(uint8_t *ptr, uint8x8x2_t val);
+nce void store2(uint16_t *ptr, uint16x4x2_t val);
+nce void store2(uint16_t *ptr, uint16x8x2_t val);
+nce void store2(uint32_t *ptr, uint32x2x2_t val);
+nce void store2(uint32_t *ptr, uint32x4x2_t val);
+nce void store2(float32_t *ptr, float32x2x2_t val);
+nce void store2(float32_t *ptr, float32x4x2_t val);
+nce void store2(poly8_t *ptr, poly8x8x2_t val);
+nce void store2(poly16_t *ptr, poly16x4x2_t val);
+nce void store2(poly16_t *ptr, poly16x8x2_t val);
+nce void store3(int8_t *ptr, int8x8x3_t val);
+nce void store3(int8_t *ptr, int8x16x3_t val);
+nce void store3(int16_t *ptr, int16x4x3_t val);
+nce void store3(int16_t *ptr, int16x8x3_t val);
+nce void store3(int32_t *ptr, int32x2x3_t val);
+nce void store3(int32_t *ptr, int32x4x3_t val);
+nce void store3(uint8_t *ptr, uint8x8x3_t val);
+nce void store3(uint8_t *ptr, uint8x16x3_t val);
+nce void store3(uint16_t *ptr, uint16x4x3_t val);
+nce void store3(uint16_t *ptr, uint16x8x3_t val);
+nce void store3(uint32_t *ptr, uint32x2x3_t val);
+nce void store3(uint32_t *ptr, uint32x4x3_t val);
+nce void store3(float32_t *ptr, float32x2x3_t val);
+nce void store3(float32_t *ptr, float32x4x3_t val);
+nce void store3(poly8_t *ptr, poly8x8x3_t val);
+nce void store3(poly8_t *ptr, poly8x16x3_t val);
+nce void store3(poly16_t *ptr, poly16x4x3_t val);
+nce void store3(poly16_t *ptr, poly16x8x3_t val);
+nce void store4(int8_t *ptr, int8x8x4_t val);
+nce void store4(int16_t *ptr, int16x4x4_t val);
+nce void store4(int16_t *ptr, int16x8x4_t val);
+nce void store4(int32_t *ptr, int32x2x4_t val);
+nce void store4(int32_t *ptr, int32x4x4_t val);
+nce void store4(uint8_t *ptr, uint8x8x4_t val);
+nce void store4(uint16_t *ptr, uint16x4x4_t val);
+nce void store4(uint16_t *ptr, uint16x8x4_t val);
+nce void store4(uint32_t *ptr, uint32x2x4_t val);
+nce void store4(uint32_t *ptr, uint32x4x4_t val);
+nce void store4(float32_t *ptr, float32x2x4_t val);
+nce void store4(float32_t *ptr, float32x4x4_t val);
+nce void store4(poly8_t *ptr, poly8x8x4_t val);
+nce void store4(poly16_t *ptr, poly16x4x4_t val);
+nce void store4(poly16_t *ptr, poly16x8x4_t val);
 [[gnu::always_inline]] nce uint8x8_t add(uint8x8_t a, uint8x8_t b) { return vadd_u8(a, b); }
 [[gnu::always_inline]] nce uint16x8_t add_long(uint8x8_t a, uint8x8_t b) { return vaddl_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t add_halve(uint8x8_t a, uint8x8_t b) { return vhadd_u8(a, b); }
@@ -2095,28 +2095,28 @@ template <> [[gnu::always_inline]] inline uint64x1x4_t load1_x4(uint64_t const *
 template <> [[gnu::always_inline]] inline int64x2x4_t load1_x4(int64_t const *ptr) { return vld1q_s64_x4(ptr); }
 template <> [[gnu::always_inline]] inline uint64x2x4_t load1_x4(uint64_t const *ptr) { return vld1q_u64_x4(ptr); }
 #endif
-template <> [[gnu::always_inline]] inline void store1(int8_t *ptr, int8x8_t val) { return vst1_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int8_t *ptr, int8x16_t val) { return vst1q_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int16_t *ptr, int16x4_t val) { return vst1_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int16_t *ptr, int16x8_t val) { return vst1q_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int32_t *ptr, int32x2_t val) { return vst1_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int32_t *ptr, int32x4_t val) { return vst1q_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int64_t *ptr, int64x1_t val) { return vst1_s64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(int64_t *ptr, int64x2_t val) { return vst1q_s64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint8_t *ptr, uint8x8_t val) { return vst1_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint8_t *ptr, uint8x16_t val) { return vst1q_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint16_t *ptr, uint16x4_t val) { return vst1_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint16_t *ptr, uint16x8_t val) { return vst1q_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint32_t *ptr, uint32x2_t val) { return vst1_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint32_t *ptr, uint32x4_t val) { return vst1q_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint64_t *ptr, uint64x1_t val) { return vst1_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(uint64_t *ptr, uint64x2_t val) { return vst1q_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(float32_t *ptr, float32x2_t val) { return vst1_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(float32_t *ptr, float32x4_t val) { return vst1q_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(poly8_t *ptr, poly8x8_t val) { return vst1_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(poly8_t *ptr, poly8x16_t val) { return vst1q_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(poly16_t *ptr, poly16x4_t val) { return vst1_p16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(poly16_t *ptr, poly16x8_t val) { return vst1q_p16(ptr, val); }
+[[gnu::always_inline]] inline void store1(int8_t *ptr, int8x8_t val) { return vst1_s8(ptr, val); }
+[[gnu::always_inline]] inline void store1(int8_t *ptr, int8x16_t val) { return vst1q_s8(ptr, val); }
+[[gnu::always_inline]] inline void store1(int16_t *ptr, int16x4_t val) { return vst1_s16(ptr, val); }
+[[gnu::always_inline]] inline void store1(int16_t *ptr, int16x8_t val) { return vst1q_s16(ptr, val); }
+[[gnu::always_inline]] inline void store1(int32_t *ptr, int32x2_t val) { return vst1_s32(ptr, val); }
+[[gnu::always_inline]] inline void store1(int32_t *ptr, int32x4_t val) { return vst1q_s32(ptr, val); }
+[[gnu::always_inline]] inline void store1(int64_t *ptr, int64x1_t val) { return vst1_s64(ptr, val); }
+[[gnu::always_inline]] inline void store1(int64_t *ptr, int64x2_t val) { return vst1q_s64(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint8_t *ptr, uint8x8_t val) { return vst1_u8(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint8_t *ptr, uint8x16_t val) { return vst1q_u8(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint16_t *ptr, uint16x4_t val) { return vst1_u16(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint16_t *ptr, uint16x8_t val) { return vst1q_u16(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint32_t *ptr, uint32x2_t val) { return vst1_u32(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint32_t *ptr, uint32x4_t val) { return vst1q_u32(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint64_t *ptr, uint64x1_t val) { return vst1_u64(ptr, val); }
+[[gnu::always_inline]] inline void store1(uint64_t *ptr, uint64x2_t val) { return vst1q_u64(ptr, val); }
+[[gnu::always_inline]] inline void store1(float32_t *ptr, float32x2_t val) { return vst1_f32(ptr, val); }
+[[gnu::always_inline]] inline void store1(float32_t *ptr, float32x4_t val) { return vst1q_f32(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly8_t *ptr, poly8x8_t val) { return vst1_p8(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly8_t *ptr, poly8x16_t val) { return vst1q_p8(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly16_t *ptr, poly16x4_t val) { return vst1_p16(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly16_t *ptr, poly16x8_t val) { return vst1q_p16(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store1(int8_t *ptr, int8x8_t val) { return vst1_lane_s8(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1(int8_t *ptr, int8x16_t val) { return vst1q_lane_s8(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1(int16_t *ptr, int16x4_t val) { return vst1_lane_s16(ptr, val, lane); }
@@ -2139,64 +2139,64 @@ template <int lane>[[gnu::always_inline]] nce void store1(poly8_t *ptr, poly8x8_
 template <int lane>[[gnu::always_inline]] nce void store1(poly8_t *ptr, poly8x16_t val) { return vst1q_lane_p8(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1(poly16_t *ptr, poly16x4_t val) { return vst1_lane_p16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1(poly16_t *ptr, poly16x8_t val) { return vst1q_lane_p16(ptr, val, lane); }
-template <> [[gnu::always_inline]] inline void store2(int8_t *ptr, int8x8x2_t val) { return vst2_s8(ptr, val); }
+[[gnu::always_inline]] inline void store2(int8_t *ptr, int8x8x2_t val) { return vst2_s8(ptr, val); }
 [[gnu::always_inline]] inline void store2(int8_t *ptr, int8x16x2_t val) { return vst2q_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(int16_t *ptr, int16x4x2_t val) { return vst2_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(int16_t *ptr, int16x8x2_t val) { return vst2q_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(int32_t *ptr, int32x2x2_t val) { return vst2_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(int32_t *ptr, int32x4x2_t val) { return vst2q_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint8_t *ptr, uint8x8x2_t val) { return vst2_u8(ptr, val); }
+[[gnu::always_inline]] inline void store2(int16_t *ptr, int16x4x2_t val) { return vst2_s16(ptr, val); }
+[[gnu::always_inline]] inline void store2(int16_t *ptr, int16x8x2_t val) { return vst2q_s16(ptr, val); }
+[[gnu::always_inline]] inline void store2(int32_t *ptr, int32x2x2_t val) { return vst2_s32(ptr, val); }
+[[gnu::always_inline]] inline void store2(int32_t *ptr, int32x4x2_t val) { return vst2q_s32(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint8_t *ptr, uint8x8x2_t val) { return vst2_u8(ptr, val); }
 [[gnu::always_inline]] inline void store2(uint8_t *ptr, uint8x16x2_t val) { return vst2q_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint16_t *ptr, uint16x4x2_t val) { return vst2_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint16_t *ptr, uint16x8x2_t val) { return vst2q_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint32_t *ptr, uint32x2x2_t val) { return vst2_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint32_t *ptr, uint32x4x2_t val) { return vst2q_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(float32_t *ptr, float32x2x2_t val) { return vst2_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(float32_t *ptr, float32x4x2_t val) { return vst2q_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(poly8_t *ptr, poly8x8x2_t val) { return vst2_p8(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint16_t *ptr, uint16x4x2_t val) { return vst2_u16(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint16_t *ptr, uint16x8x2_t val) { return vst2q_u16(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint32_t *ptr, uint32x2x2_t val) { return vst2_u32(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint32_t *ptr, uint32x4x2_t val) { return vst2q_u32(ptr, val); }
+[[gnu::always_inline]] inline void store2(float32_t *ptr, float32x2x2_t val) { return vst2_f32(ptr, val); }
+[[gnu::always_inline]] inline void store2(float32_t *ptr, float32x4x2_t val) { return vst2q_f32(ptr, val); }
+[[gnu::always_inline]] inline void store2(poly8_t *ptr, poly8x8x2_t val) { return vst2_p8(ptr, val); }
 [[gnu::always_inline]] inline void store2(poly8_t *ptr, poly8x16x2_t val) { return vst2q_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(poly16_t *ptr, poly16x4x2_t val) { return vst2_p16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(poly16_t *ptr, poly16x8x2_t val) { return vst2q_p16(ptr, val); }
+[[gnu::always_inline]] inline void store2(poly16_t *ptr, poly16x4x2_t val) { return vst2_p16(ptr, val); }
+[[gnu::always_inline]] inline void store2(poly16_t *ptr, poly16x8x2_t val) { return vst2q_p16(ptr, val); }
 [[gnu::always_inline]] inline void store2(int64_t *ptr, int64x1x2_t val) { return vst2_s64(ptr, val); }
 [[gnu::always_inline]] inline void store2(uint64_t *ptr, uint64x1x2_t val) { return vst2_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int8_t *ptr, int8x8x3_t val) { return vst3_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int8_t *ptr, int8x16x3_t val) { return vst3q_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int16_t *ptr, int16x4x3_t val) { return vst3_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int16_t *ptr, int16x8x3_t val) { return vst3q_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int32_t *ptr, int32x2x3_t val) { return vst3_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int32_t *ptr, int32x4x3_t val) { return vst3q_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint8_t *ptr, uint8x8x3_t val) { return vst3_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint8_t *ptr, uint8x16x3_t val) { return vst3q_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint16_t *ptr, uint16x4x3_t val) { return vst3_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint16_t *ptr, uint16x8x3_t val) { return vst3q_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint32_t *ptr, uint32x2x3_t val) { return vst3_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint32_t *ptr, uint32x4x3_t val) { return vst3q_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float32_t *ptr, float32x2x3_t val) { return vst3_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float32_t *ptr, float32x4x3_t val) { return vst3q_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(poly8_t *ptr, poly8x8x3_t val) { return vst3_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(poly8_t *ptr, poly8x16x3_t val) { return vst3q_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(poly16_t *ptr, poly16x4x3_t val) { return vst3_p16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(poly16_t *ptr, poly16x8x3_t val) { return vst3q_p16(ptr, val); }
+[[gnu::always_inline]] inline void store3(int8_t *ptr, int8x8x3_t val) { return vst3_s8(ptr, val); }
+[[gnu::always_inline]] inline void store3(int8_t *ptr, int8x16x3_t val) { return vst3q_s8(ptr, val); }
+[[gnu::always_inline]] inline void store3(int16_t *ptr, int16x4x3_t val) { return vst3_s16(ptr, val); }
+[[gnu::always_inline]] inline void store3(int16_t *ptr, int16x8x3_t val) { return vst3q_s16(ptr, val); }
+[[gnu::always_inline]] inline void store3(int32_t *ptr, int32x2x3_t val) { return vst3_s32(ptr, val); }
+[[gnu::always_inline]] inline void store3(int32_t *ptr, int32x4x3_t val) { return vst3q_s32(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint8_t *ptr, uint8x8x3_t val) { return vst3_u8(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint8_t *ptr, uint8x16x3_t val) { return vst3q_u8(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint16_t *ptr, uint16x4x3_t val) { return vst3_u16(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint16_t *ptr, uint16x8x3_t val) { return vst3q_u16(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint32_t *ptr, uint32x2x3_t val) { return vst3_u32(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint32_t *ptr, uint32x4x3_t val) { return vst3q_u32(ptr, val); }
+[[gnu::always_inline]] inline void store3(float32_t *ptr, float32x2x3_t val) { return vst3_f32(ptr, val); }
+[[gnu::always_inline]] inline void store3(float32_t *ptr, float32x4x3_t val) { return vst3q_f32(ptr, val); }
+[[gnu::always_inline]] inline void store3(poly8_t *ptr, poly8x8x3_t val) { return vst3_p8(ptr, val); }
+[[gnu::always_inline]] inline void store3(poly8_t *ptr, poly8x16x3_t val) { return vst3q_p8(ptr, val); }
+[[gnu::always_inline]] inline void store3(poly16_t *ptr, poly16x4x3_t val) { return vst3_p16(ptr, val); }
+[[gnu::always_inline]] inline void store3(poly16_t *ptr, poly16x8x3_t val) { return vst3q_p16(ptr, val); }
 [[gnu::always_inline]] inline void store3(int64_t *ptr, int64x1x3_t val) { return vst3_s64(ptr, val); }
 [[gnu::always_inline]] inline void store3(uint64_t *ptr, uint64x1x3_t val) { return vst3_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int8_t *ptr, int8x8x4_t val) { return vst4_s8(ptr, val); }
+[[gnu::always_inline]] inline void store4(int8_t *ptr, int8x8x4_t val) { return vst4_s8(ptr, val); }
 [[gnu::always_inline]] inline void store4(int8_t *ptr, int8x16x4_t val) { return vst4q_s8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int16_t *ptr, int16x4x4_t val) { return vst4_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int16_t *ptr, int16x8x4_t val) { return vst4q_s16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int32_t *ptr, int32x2x4_t val) { return vst4_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int32_t *ptr, int32x4x4_t val) { return vst4q_s32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint8_t *ptr, uint8x8x4_t val) { return vst4_u8(ptr, val); }
+[[gnu::always_inline]] inline void store4(int16_t *ptr, int16x4x4_t val) { return vst4_s16(ptr, val); }
+[[gnu::always_inline]] inline void store4(int16_t *ptr, int16x8x4_t val) { return vst4q_s16(ptr, val); }
+[[gnu::always_inline]] inline void store4(int32_t *ptr, int32x2x4_t val) { return vst4_s32(ptr, val); }
+[[gnu::always_inline]] inline void store4(int32_t *ptr, int32x4x4_t val) { return vst4q_s32(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint8_t *ptr, uint8x8x4_t val) { return vst4_u8(ptr, val); }
 [[gnu::always_inline]] inline void store4(uint8_t *ptr, uint8x16x4_t val) { return vst4q_u8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint16_t *ptr, uint16x4x4_t val) { return vst4_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint16_t *ptr, uint16x8x4_t val) { return vst4q_u16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint32_t *ptr, uint32x2x4_t val) { return vst4_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint32_t *ptr, uint32x4x4_t val) { return vst4q_u32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float32_t *ptr, float32x2x4_t val) { return vst4_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float32_t *ptr, float32x4x4_t val) { return vst4q_f32(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(poly8_t *ptr, poly8x8x4_t val) { return vst4_p8(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint16_t *ptr, uint16x4x4_t val) { return vst4_u16(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint16_t *ptr, uint16x8x4_t val) { return vst4q_u16(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint32_t *ptr, uint32x2x4_t val) { return vst4_u32(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint32_t *ptr, uint32x4x4_t val) { return vst4q_u32(ptr, val); }
+[[gnu::always_inline]] inline void store4(float32_t *ptr, float32x2x4_t val) { return vst4_f32(ptr, val); }
+[[gnu::always_inline]] inline void store4(float32_t *ptr, float32x4x4_t val) { return vst4q_f32(ptr, val); }
+[[gnu::always_inline]] inline void store4(poly8_t *ptr, poly8x8x4_t val) { return vst4_p8(ptr, val); }
 [[gnu::always_inline]] inline void store4(poly8_t *ptr, poly8x16x4_t val) { return vst4q_p8(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(poly16_t *ptr, poly16x4x4_t val) { return vst4_p16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(poly16_t *ptr, poly16x8x4_t val) { return vst4q_p16(ptr, val); }
+[[gnu::always_inline]] inline void store4(poly16_t *ptr, poly16x4x4_t val) { return vst4_p16(ptr, val); }
+[[gnu::always_inline]] inline void store4(poly16_t *ptr, poly16x8x4_t val) { return vst4q_p16(ptr, val); }
 [[gnu::always_inline]] inline void store4(int64_t *ptr, int64x1x4_t val) { return vst4_s64(ptr, val); }
 [[gnu::always_inline]] inline void store4(uint64_t *ptr, uint64x1x4_t val) { return vst4_u64(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store2(int8_t *ptr, int8x8x2_t val) { return vst2_lane_s8(ptr, val, lane); }
