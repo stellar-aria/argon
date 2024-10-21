@@ -1,4 +1,3 @@
-
 #pragma once
 #include <arm_neon.h>
 #include <array>
@@ -8,8 +7,6 @@
 #include <functional>
 #include <type_traits>
 #include <span>
-
-
 #pragma once
 #include <arm_neon.h>
 #ifdef __clang__
@@ -1406,7 +1403,13 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
     return vmla_f32(a, b, c);
 #endif
 }
-[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) {
+#ifdef __ARM_FEATURE_FMA
+    return vfms_f32(a, b, c);
+#else
+    return vmls_f32(a, b, c);
+#endif
+}
 [[gnu::always_inline]] nce float32x2_t subtract(float32x2_t a, float32x2_t b) { return vsub_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t subtract_abs(float32x2_t a, float32x2_t b) { return vabd_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t abs(float32x2_t a) { return vabs_f32(a); }
@@ -2348,11 +2351,8 @@ template <int lane>[[gnu::always_inline]] nce void store4(poly16_t *ptr, poly16x
 
 }  // namespace neon
 #undef nce
-
-
 #pragma once
 #include <arm_neon.h>
-
 
 
 #ifdef __clang__
@@ -4504,9 +4504,9 @@ class Common {
 
   ace T Multiply(T b) const { return neon::multiply(vec_, b); }
 
-  ace T MultiplyAdd(T b, T c) const { return neon::multiply_add(vec_, b, b); }
+  ace T MultiplyAdd(T b, T c) const { return neon::multiply_add(vec_, b, c); }
 
-  ace T MultiplySubtract(T b, T c) const { return neon::multiply_subtract(vec_, b, b); }
+  ace T MultiplySubtract(T b, T c) const { return neon::multiply_subtract(vec_, b, c); }
 
   ace T Subtract(T b) const { return neon::subtract(vec_, b); }
 
@@ -4653,7 +4653,7 @@ class Common {
 
   ace T ClearBitwise(T b) const { return neon::clear_bitwise(vec_, b); }
 
-  ace T SelectBitwise(T b, T c) const { return neon::select_bitwise(vec_, b, b); }
+  ace T SelectBitwise(T b, T c) const { return neon::select_bitwise(vec_, b, c); }
 
   template <int lane>
   ace T DuplicateElement() const {
