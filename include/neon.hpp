@@ -1395,7 +1395,13 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
     return vmla_f32(a, b, c);
 #endif
 }
-[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) {
+#ifdef __ARM_FEATURE_FMA
+    return vfms_f32(a, b, c);
+#else
+    return vmls_f32(a, b, c);
+#endif
+}
 [[gnu::always_inline]] nce float32x2_t subtract(float32x2_t a, float32x2_t b) { return vsub_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t subtract_abs(float32x2_t a, float32x2_t b) { return vabd_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t abs(float32x2_t a) { return vabs_f32(a); }
