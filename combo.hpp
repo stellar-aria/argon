@@ -4439,7 +4439,13 @@ class Common {
   ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){
     static_assert(slice.size() == lanes);
   };
-  ace Common(std::initializer_list<base_type> value_list) : vec_(Load(value_list.begin())) {};
+  ace Common(std::initializer_list<base_type> value_list) : vec_() {
+    size_t i = 0;
+    #pragma GCC unroll 16
+    for (base_type val : value_list) {
+      Set(i++, val);
+    }
+  };
 
   ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
 
@@ -4486,7 +4492,7 @@ class Common {
 
   ace base_type Get(const int i) const { return neon::get<vector_type>(vec_, i); }
 
-  ace base_type Set(const int i, base_type b) const { return neon::set(vec_, i, b); }
+  ace T Set(const int i, base_type b) const { return neon::set(vec_, i, b); }
 
   ace T ShiftRight(const int i) const { return neon::shift_right(vec_, i); }
 
