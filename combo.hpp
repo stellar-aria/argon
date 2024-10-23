@@ -4408,6 +4408,64 @@ template <> struct Result<uint64x2_t> {using type = uint64x2_t; };
 template <> struct Result<float32x2_t> {using type = uint32x2_t; };
 template <> struct Result<float32x4_t> {using type = uint32x4_t; };
 
+template <typename T, size_t size> struct MultiVec;
+template <> struct MultiVec<int8x8_t, 2> {using type = int8x8x2_t; };
+template <> struct MultiVec<uint8x8_t, 2> {using type = uint8x8x2_t; };
+template <> struct MultiVec<int16x4_t, 2> {using type = int16x4x2_t; };
+template <> struct MultiVec<uint16x4_t, 2> {using type = uint16x4x2_t; };
+template <> struct MultiVec<int32x2_t, 2> {using type = int32x2x2_t; };
+template <> struct MultiVec<uint32x2_t, 2> {using type = uint32x2x2_t; };
+template <> struct MultiVec<int8x16_t, 2> {using type = int8x16x2_t; };
+template <> struct MultiVec<uint8x16_t, 2> {using type = uint8x16x2_t; };
+template <> struct MultiVec<int16x8_t, 2> {using type = int16x8x2_t; };
+template <> struct MultiVec<uint16x8_t, 2> {using type = uint16x8x2_t; };
+template <> struct MultiVec<int32x4_t, 2> {using type = int32x4x2_t; };
+template <> struct MultiVec<uint32x4_t, 2> {using type = uint32x4x2_t; };
+template <> struct MultiVec<int64x1_t, 2> {using type = int64x1x2_t; };
+template <> struct MultiVec<uint64x1_t, 2> {using type = uint64x1x2_t; };
+template <> struct MultiVec<int64x2_t, 2> {using type = int64x2x2_t; };
+template <> struct MultiVec<uint64x2_t, 2> {using type = uint64x2x2_t; };
+template <> struct MultiVec<float32x2_t, 2> {using type = float32x2x2_t; };
+template <> struct MultiVec<float32x4_t, 2> {using type = float32x4x2_t; };
+
+template <> struct MultiVec<int8x8_t, 3> {using type = int8x8x3_t; };
+template <> struct MultiVec<uint8x8_t, 3> {using type = uint8x8x3_t; };
+template <> struct MultiVec<int16x4_t, 3> {using type = int16x4x3_t; };
+template <> struct MultiVec<uint16x4_t, 3> {using type = uint16x4x3_t; };
+template <> struct MultiVec<int32x2_t, 3> {using type = int32x2x3_t; };
+template <> struct MultiVec<uint32x2_t, 3> {using type = uint32x2x3_t; };
+template <> struct MultiVec<int8x16_t, 3> {using type = int8x16x3_t; };
+template <> struct MultiVec<uint8x16_t, 3> {using type = uint8x16x3_t; };
+template <> struct MultiVec<int16x8_t, 3> {using type = int16x8x3_t; };
+template <> struct MultiVec<uint16x8_t, 3> {using type = uint16x8x3_t; };
+template <> struct MultiVec<int32x4_t, 3> {using type = int32x4x3_t; };
+template <> struct MultiVec<uint32x4_t, 3> {using type = uint32x4x3_t; };
+template <> struct MultiVec<int64x1_t, 3> {using type = int64x1x3_t; };
+template <> struct MultiVec<uint64x1_t, 3> {using type = uint64x1x3_t; };
+template <> struct MultiVec<int64x2_t, 3> {using type = int64x2x3_t; };
+template <> struct MultiVec<uint64x2_t, 3> {using type = uint64x2x3_t; };
+template <> struct MultiVec<float32x2_t, 3> {using type = float32x2x3_t; };
+template <> struct MultiVec<float32x4_t, 3> {using type = float32x4x3_t; };
+
+template <> struct MultiVec<int8x8_t, 4> {using type = int8x8x4_t; };
+template <> struct MultiVec<uint8x8_t, 4> {using type = uint8x8x4_t; };
+template <> struct MultiVec<int16x4_t, 4> {using type = int16x4x4_t; };
+template <> struct MultiVec<uint16x4_t, 4> {using type = uint16x4x4_t; };
+template <> struct MultiVec<int32x2_t, 4> {using type = int32x2x4_t; };
+template <> struct MultiVec<uint32x2_t, 4> {using type = uint32x2x4_t; };
+template <> struct MultiVec<int8x16_t, 4> {using type = int8x16x4_t; };
+template <> struct MultiVec<uint8x16_t, 4> {using type = uint8x16x4_t; };
+template <> struct MultiVec<int16x8_t, 4> {using type = int16x8x4_t; };
+template <> struct MultiVec<uint16x8_t, 4> {using type = uint16x8x4_t; };
+template <> struct MultiVec<int32x4_t, 4> {using type = int32x4x4_t; };
+template <> struct MultiVec<uint32x4_t, 4> {using type = uint32x4x4_t; };
+template <> struct MultiVec<int64x1_t, 4> {using type = int64x1x4_t; };
+template <> struct MultiVec<uint64x1_t, 4> {using type = uint64x1x4_t; };
+template <> struct MultiVec<int64x2_t, 4> {using type = int64x2x4_t; };
+template <> struct MultiVec<uint64x2_t, 4> {using type = uint64x2x4_t; };
+template <> struct MultiVec<float32x2_t, 4> {using type = float32x2x4_t; };
+template <> struct MultiVec<float32x4_t, 4> {using type = float32x4x4_t; };
+
 
 template <typename T>
 concept arithmetic = std::is_arithmetic_v<T>;
@@ -4607,14 +4665,14 @@ class Common {
   }
 
   ace static T Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
-  ace static T Load2(base_type const* ptr) { return neon::load2<vector_type>(ptr); }
-  ace static T Load3(base_type const* ptr) { return neon::load3<vector_type>(ptr); }
-  ace static T Load4(base_type const* ptr) { return neon::load4<vector_type>(ptr); }
+  ace static std::array<T, 2> Load2(base_type const* ptr) { return *(std::array<T, 2>*)(neon::load2<typename MultiVec<vector_type,2>::type>(ptr).val); }
+  ace static std::array<T, 3> Load3(base_type const* ptr) { return *(std::array<T, 3>*)(neon::load3<typename MultiVec<vector_type,3>::type>(ptr).val); }
+  ace static std::array<T, 4> Load4(base_type const* ptr) { return *(std::array<T, 4>*)(neon::load4<typename MultiVec<vector_type,4>::type>(ptr).val); }
 
   ace void Store(base_type* ptr) { neon::store1(ptr, vec_); }
-  ace void Store2(base_type* ptr) { neon::store2(ptr, vec_); }
-  ace void Store3(base_type* ptr) { neon::store3(ptr, vec_); }
-  ace void Store4(base_type* ptr) { neon::store4(ptr, vec_); }
+  ace static void Store2(std::array<T, 2> multi_vec, base_type* ptr) { neon::store2(ptr, *(typename MultiVec<vector_type, 2>::type*)multi_vec.data()); }
+  ace static void Store3(std::array<T, 3> multi_vec, base_type* ptr) { neon::store3(ptr, *(typename MultiVec<vector_type, 3>::type*)multi_vec.data()); }
+  ace static void Store4(std::array<T, 4> multi_vec, base_type* ptr) { neon::store4(ptr, *(typename MultiVec<vector_type, 4>::type*)multi_vec.data()); }
 
   template <int lane>
   ace void StoreLane(base_type* ptr) {
@@ -4622,18 +4680,18 @@ class Common {
   }
 
   template <int lane>
-  ace void StoreLane2(base_type* ptr) {
-    neon::store2<lane>(ptr, vec_);
+  ace static void StoreLane2(std::array<T, 2> multi_vec, base_type* ptr) {
+    neon::store2<lane>(ptr, *(typename MultiVec<vector_type, 2>::type*)multi_vec.data());
   }
 
   template <int lane>
-  ace void StoreLane3(base_type* ptr) {
-    neon::store3<lane>(ptr, vec_);
+  ace static void StoreLane3(std::array<T, 3> multi_vec, base_type* ptr) {
+    neon::store3<lane>(ptr, *(typename MultiVec<vector_type, 3>::type*)multi_vec.data());
   }
 
   template <int lane>
-  ace void StoreLane4(base_type* ptr) {
-    neon::store4<lane>(ptr, vec_);
+  ace static void StoreLane4(std::array<T, 4> multi_vec, base_type* ptr) {
+    neon::store4<lane>(ptr, *(typename MultiVec<vector_type, 4>::type*)multi_vec.data());
   }
 
   ace static T LoadCopy(base_type b) { return neon::duplicate_element<vector_type>(b); }
