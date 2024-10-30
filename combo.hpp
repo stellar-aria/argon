@@ -23,6 +23,12 @@ template <typename T> nce T convert(int32x2_t a);
 template <typename T> nce T convert(int32x4_t a);
 template <typename T> nce T convert(uint32x2_t a);
 template <typename T> nce T convert(uint32x4_t a);
+template <typename T> nce T convert(float32x2_t a, int n);
+template <typename T> nce T convert(float32x4_t a, int n);
+template <typename T> nce T convert(int32x2_t a, int n);
+template <typename T> nce T convert(int32x4_t a, int n);
+template <typename T> nce T convert(uint32x2_t a, int n);
+template <typename T> nce T convert(uint32x4_t a, int n);
 template <typename T> nce T reinterpret(int8x8_t a);
 template <typename T> nce T reinterpret(int16x4_t a);
 template <typename T> nce T reinterpret(int32x2_t a);
@@ -188,76 +194,76 @@ template <typename T> nce T load1_x4(poly8_t const *ptr);
 template <typename T> nce T load1_x4(poly16_t const *ptr);
 template <typename T> nce T load1_x4(int64_t const *ptr);
 template <typename T> nce T load1_x4(uint64_t const *ptr);
-nce void store1(int8_t *ptr, int8x8_t val);
-nce void store1(int8_t *ptr, int8x16_t val);
-nce void store1(int16_t *ptr, int16x4_t val);
-nce void store1(int16_t *ptr, int16x8_t val);
-nce void store1(int32_t *ptr, int32x2_t val);
-nce void store1(int32_t *ptr, int32x4_t val);
-nce void store1(int64_t *ptr, int64x1_t val);
-nce void store1(int64_t *ptr, int64x2_t val);
-nce void store1(uint8_t *ptr, uint8x8_t val);
-nce void store1(uint8_t *ptr, uint8x16_t val);
-nce void store1(uint16_t *ptr, uint16x4_t val);
-nce void store1(uint16_t *ptr, uint16x8_t val);
-nce void store1(uint32_t *ptr, uint32x2_t val);
-nce void store1(uint32_t *ptr, uint32x4_t val);
-nce void store1(uint64_t *ptr, uint64x1_t val);
-nce void store1(uint64_t *ptr, uint64x2_t val);
-nce void store1(float32_t *ptr, float32x2_t val);
-nce void store1(float32_t *ptr, float32x4_t val);
-nce void store1(poly8_t *ptr, poly8x8_t val);
-nce void store1(poly8_t *ptr, poly8x16_t val);
-nce void store1(poly16_t *ptr, poly16x4_t val);
-nce void store1(poly16_t *ptr, poly16x8_t val);
-nce void store2(int8_t *ptr, int8x8x2_t val);
-nce void store2(int16_t *ptr, int16x4x2_t val);
-nce void store2(int16_t *ptr, int16x8x2_t val);
-nce void store2(int32_t *ptr, int32x2x2_t val);
-nce void store2(int32_t *ptr, int32x4x2_t val);
-nce void store2(uint8_t *ptr, uint8x8x2_t val);
-nce void store2(uint16_t *ptr, uint16x4x2_t val);
-nce void store2(uint16_t *ptr, uint16x8x2_t val);
-nce void store2(uint32_t *ptr, uint32x2x2_t val);
-nce void store2(uint32_t *ptr, uint32x4x2_t val);
-nce void store2(float32_t *ptr, float32x2x2_t val);
-nce void store2(float32_t *ptr, float32x4x2_t val);
-nce void store2(poly8_t *ptr, poly8x8x2_t val);
-nce void store2(poly16_t *ptr, poly16x4x2_t val);
-nce void store2(poly16_t *ptr, poly16x8x2_t val);
-nce void store3(int8_t *ptr, int8x8x3_t val);
-nce void store3(int8_t *ptr, int8x16x3_t val);
-nce void store3(int16_t *ptr, int16x4x3_t val);
-nce void store3(int16_t *ptr, int16x8x3_t val);
-nce void store3(int32_t *ptr, int32x2x3_t val);
-nce void store3(int32_t *ptr, int32x4x3_t val);
-nce void store3(uint8_t *ptr, uint8x8x3_t val);
-nce void store3(uint8_t *ptr, uint8x16x3_t val);
-nce void store3(uint16_t *ptr, uint16x4x3_t val);
-nce void store3(uint16_t *ptr, uint16x8x3_t val);
-nce void store3(uint32_t *ptr, uint32x2x3_t val);
-nce void store3(uint32_t *ptr, uint32x4x3_t val);
-nce void store3(float32_t *ptr, float32x2x3_t val);
-nce void store3(float32_t *ptr, float32x4x3_t val);
-nce void store3(poly8_t *ptr, poly8x8x3_t val);
-nce void store3(poly8_t *ptr, poly8x16x3_t val);
-nce void store3(poly16_t *ptr, poly16x4x3_t val);
-nce void store3(poly16_t *ptr, poly16x8x3_t val);
-nce void store4(int8_t *ptr, int8x8x4_t val);
-nce void store4(int16_t *ptr, int16x4x4_t val);
-nce void store4(int16_t *ptr, int16x8x4_t val);
-nce void store4(int32_t *ptr, int32x2x4_t val);
-nce void store4(int32_t *ptr, int32x4x4_t val);
-nce void store4(uint8_t *ptr, uint8x8x4_t val);
-nce void store4(uint16_t *ptr, uint16x4x4_t val);
-nce void store4(uint16_t *ptr, uint16x8x4_t val);
-nce void store4(uint32_t *ptr, uint32x2x4_t val);
-nce void store4(uint32_t *ptr, uint32x4x4_t val);
-nce void store4(float32_t *ptr, float32x2x4_t val);
-nce void store4(float32_t *ptr, float32x4x4_t val);
-nce void store4(poly8_t *ptr, poly8x8x4_t val);
-nce void store4(poly16_t *ptr, poly16x4x4_t val);
-nce void store4(poly16_t *ptr, poly16x8x4_t val);
+inline void store1(int8_t *ptr, int8x8_t val);
+inline void store1(int8_t *ptr, int8x16_t val);
+inline void store1(int16_t *ptr, int16x4_t val);
+inline void store1(int16_t *ptr, int16x8_t val);
+inline void store1(int32_t *ptr, int32x2_t val);
+inline void store1(int32_t *ptr, int32x4_t val);
+inline void store1(int64_t *ptr, int64x1_t val);
+inline void store1(int64_t *ptr, int64x2_t val);
+inline void store1(uint8_t *ptr, uint8x8_t val);
+inline void store1(uint8_t *ptr, uint8x16_t val);
+inline void store1(uint16_t *ptr, uint16x4_t val);
+inline void store1(uint16_t *ptr, uint16x8_t val);
+inline void store1(uint32_t *ptr, uint32x2_t val);
+inline void store1(uint32_t *ptr, uint32x4_t val);
+inline void store1(uint64_t *ptr, uint64x1_t val);
+inline void store1(uint64_t *ptr, uint64x2_t val);
+inline void store1(float32_t *ptr, float32x2_t val);
+inline void store1(float32_t *ptr, float32x4_t val);
+inline void store1(poly8_t *ptr, poly8x8_t val);
+inline void store1(poly8_t *ptr, poly8x16_t val);
+inline void store1(poly16_t *ptr, poly16x4_t val);
+inline void store1(poly16_t *ptr, poly16x8_t val);
+inline void store2(int8_t *ptr, int8x8x2_t val);
+inline void store2(int16_t *ptr, int16x4x2_t val);
+inline void store2(int16_t *ptr, int16x8x2_t val);
+inline void store2(int32_t *ptr, int32x2x2_t val);
+inline void store2(int32_t *ptr, int32x4x2_t val);
+inline void store2(uint8_t *ptr, uint8x8x2_t val);
+inline void store2(uint16_t *ptr, uint16x4x2_t val);
+inline void store2(uint16_t *ptr, uint16x8x2_t val);
+inline void store2(uint32_t *ptr, uint32x2x2_t val);
+inline void store2(uint32_t *ptr, uint32x4x2_t val);
+inline void store2(float32_t *ptr, float32x2x2_t val);
+inline void store2(float32_t *ptr, float32x4x2_t val);
+inline void store2(poly8_t *ptr, poly8x8x2_t val);
+inline void store2(poly16_t *ptr, poly16x4x2_t val);
+inline void store2(poly16_t *ptr, poly16x8x2_t val);
+inline void store3(int8_t *ptr, int8x8x3_t val);
+inline void store3(int8_t *ptr, int8x16x3_t val);
+inline void store3(int16_t *ptr, int16x4x3_t val);
+inline void store3(int16_t *ptr, int16x8x3_t val);
+inline void store3(int32_t *ptr, int32x2x3_t val);
+inline void store3(int32_t *ptr, int32x4x3_t val);
+inline void store3(uint8_t *ptr, uint8x8x3_t val);
+inline void store3(uint8_t *ptr, uint8x16x3_t val);
+inline void store3(uint16_t *ptr, uint16x4x3_t val);
+inline void store3(uint16_t *ptr, uint16x8x3_t val);
+inline void store3(uint32_t *ptr, uint32x2x3_t val);
+inline void store3(uint32_t *ptr, uint32x4x3_t val);
+inline void store3(float32_t *ptr, float32x2x3_t val);
+inline void store3(float32_t *ptr, float32x4x3_t val);
+inline void store3(poly8_t *ptr, poly8x8x3_t val);
+inline void store3(poly8_t *ptr, poly8x16x3_t val);
+inline void store3(poly16_t *ptr, poly16x4x3_t val);
+inline void store3(poly16_t *ptr, poly16x8x3_t val);
+inline void store4(int8_t *ptr, int8x8x4_t val);
+inline void store4(int16_t *ptr, int16x4x4_t val);
+inline void store4(int16_t *ptr, int16x8x4_t val);
+inline void store4(int32_t *ptr, int32x2x4_t val);
+inline void store4(int32_t *ptr, int32x4x4_t val);
+inline void store4(uint8_t *ptr, uint8x8x4_t val);
+inline void store4(uint16_t *ptr, uint16x4x4_t val);
+inline void store4(uint16_t *ptr, uint16x8x4_t val);
+inline void store4(uint32_t *ptr, uint32x2x4_t val);
+inline void store4(uint32_t *ptr, uint32x4x4_t val);
+inline void store4(float32_t *ptr, float32x2x4_t val);
+inline void store4(float32_t *ptr, float32x4x4_t val);
+inline void store4(poly8_t *ptr, poly8x8x4_t val);
+inline void store4(poly16_t *ptr, poly16x4x4_t val);
+inline void store4(poly16_t *ptr, poly16x8x4_t val);
 [[gnu::always_inline]] nce uint8x8_t add(uint8x8_t a, uint8x8_t b) { return vadd_u8(a, b); }
 [[gnu::always_inline]] nce uint16x8_t add_long(uint8x8_t a, uint8x8_t b) { return vaddl_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t add_halve(uint8x8_t a, uint8x8_t b) { return vhadd_u8(a, b); }
@@ -609,11 +615,11 @@ template <> [[gnu::always_inline]] nce poly16x4_t reinterpret(uint16x4_t a) { re
 template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(uint16x4_t a) { return vreinterpret_u64_u16(a); }
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(uint16x4_t a) { return vreinterpret_s64_u16(a); }
 [[gnu::always_inline]] nce uint32x4_t move_long(uint16x4_t a) { return vmovl_u16(a); }
-template <int lane>[[gnu::always_inline]] nce uint16x4_t multiply_add(uint16x4_t a, uint16x4_t b, uint16x4_t v) { return vmla_lane_u16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x4_t multiply_subtract(uint16x4_t a, uint16x4_t b, uint16x4_t v) { return vmls_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x4_t multiply_add(uint16x4_t a, uint16x4_t b, uint16x4_t v) { return vmla_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x4_t multiply_subtract(uint16x4_t a, uint16x4_t b, uint16x4_t v) { return vmls_lane_u16(a, b, v, lane); }
 [[gnu::always_inline]] nce uint16x4_t multiply_add(uint16x4_t a, uint16x4_t b, uint16_t c) { return vmla_n_u16(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce uint16x4_t multiply(uint16x4_t a, uint16x4_t v) { return vmul_lane_u16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_long(uint16x4_t a, uint16x4_t v) { return vmull_lane_u16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x4_t multiply(uint16x4_t a, uint16x4_t v) { return vmul_lane_u16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply_long(uint16x4_t a, uint16x4_t v) { return vmull_lane_u16(a, v, lane); }
 [[gnu::always_inline]] nce uint16x4_t multiply_subtract(uint16x4_t a, uint16x4_t b, uint16_t c) { return vmls_n_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x4_t not_bitwise(uint16x4_t a) { return vmvn_u16(a); }
 [[gnu::always_inline]] nce uint16x4_t and_bitwise(uint16x4_t a, uint16x4_t b) { return vand_u16(a, b); }
@@ -681,9 +687,9 @@ template <int n>[[gnu::always_inline]] nce uint16x8_t shift_right_round(uint16x8
 template <int n>[[gnu::always_inline]] nce uint16x8_t shift_right_accumulate(uint16x8_t a, uint16x8_t b) { return vsraq_n_u16(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint16x8_t shift_right_accumulate_round(uint16x8_t a, uint16x8_t b) { return vrsraq_n_u16(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_narrow(uint16x8_t a) { return vshrn_n_u16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint8x8_t qshrn(uint16x8_t a) { return vqshrn_n_u16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_saturate_narrow(uint16x8_t a) { return vqrshrn_n_u16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_round_saturate_narrow(uint16x8_t a) { return vrshrn_n_u16(a, n); }
+template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_saturate_narrow(uint16x8_t a) { return vqshrn_n_u16(a, n); }
+template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_round_saturate_narrow(uint16x8_t a) { return vqrshrn_n_u16(a, n); }
+template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_round_narrow(uint16x8_t a) { return vrshrn_n_u16(a, n); }
 template <int n>[[gnu::always_inline]] nce uint16x8_t shift_right_insert(uint16x8_t a, uint16x8_t b) { return vsriq_n_u16(a, b, n); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(uint16x8_t a) { return vreinterpretq_s8_u16(a); }
 template <> [[gnu::always_inline]] nce int16x8_t reinterpret(uint16x8_t a) { return vreinterpretq_s16_u16(a); }
@@ -697,11 +703,11 @@ template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(uint16x8_t a) { re
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(uint16x8_t a) { return vreinterpretq_s64_u16(a); }
 [[gnu::always_inline]] nce uint8x8_t move_narrow(uint16x8_t a) { return vmovn_u16(a); }
 [[gnu::always_inline]] nce uint8x8_t move_saturate_narrow(uint16x8_t a) { return vqmovn_u16(a); }
-template <int lane>[[gnu::always_inline]] nce uint16x8_t multiply_add(uint16x8_t a, uint16x8_t b, uint16x4_t v) { return vmlaq_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x8_t multiply_add(uint16x8_t a, uint16x8_t b, uint16x4_t v) { return vmlaq_lane_u16(a, b, v, lane); }
 [[gnu::always_inline]] nce uint16x8_t shift_left(uint16x8_t a, int16x8_t b) { return vshlq_u16(a, b); }
 template <int n>[[gnu::always_inline]] nce uint16x8_t shift_left(uint16x8_t a) { return vshlq_n_u16(a, n); }
-template <int lane>[[gnu::always_inline]] nce uint16x8_t multiply(uint16x8_t a, uint16x4_t v) { return vmulq_lane_u16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x8_t multiply_subtract(uint16x8_t a, uint16x8_t b, uint16x4_t v) { return vmlsq_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x8_t multiply(uint16x8_t a, uint16x4_t v) { return vmulq_lane_u16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint16x8_t multiply_subtract(uint16x8_t a, uint16x8_t b, uint16x4_t v) { return vmlsq_lane_u16(a, b, v, lane); }
 [[gnu::always_inline]] nce uint16x8_t multiply_add(uint16x8_t a, uint16x8_t b, uint16_t c) { return vmlaq_n_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t multiply_subtract(uint16x8_t a, uint16x8_t b, uint16_t c) { return vmlsq_n_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t not_bitwise(uint16x8_t a) { return vmvnq_u16(a); }
@@ -740,9 +746,9 @@ template <int n>[[gnu::always_inline]] nce uint16x8_t extract(uint16x8_t a, uint
 [[gnu::always_inline]] nce int16x4_t multiply_double_round_saturate_high(int16x4_t a, int16x4_t b) { return vqrdmulh_s16(a, b); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_saturate_long(int16x4_t a, int16x4_t b) { return vqdmull_s16(a, b); }
 [[gnu::always_inline]] nce int32x4_t multiply_long(int16x4_t a, int16x4_t b) { return vmull_s16(a, b); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_double_saturate_long(int16x4_t a, int16x4_t v) { return vqdmull_lane_s16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x4_t multiply_double_saturate_high(int16x4_t a, int16x4_t v) { return vqdmulh_lane_s16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x4_t multiply_double_round_saturate_high(int16x4_t a, int16x4_t v) { return vqrdmulh_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_saturate_long(int16x4_t a, int16x4_t v) { return vqdmull_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_double_saturate_high(int16x4_t a, int16x4_t v) { return vqdmulh_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_double_round_saturate_high(int16x4_t a, int16x4_t v) { return vqrdmulh_lane_s16(a, v, lane); }
 [[gnu::always_inline]] nce int16x4_t subtract(int16x4_t a, int16x4_t b) { return vsub_s16(a, b); }
 [[gnu::always_inline]] nce int32x4_t subtract_long(int16x4_t a, int16x4_t b) { return vsubl_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t subtract_high(int16x4_t a, int16x4_t b) { return vhsub_s16(a, b); }
@@ -792,11 +798,11 @@ template <> [[gnu::always_inline]] nce poly16x4_t reinterpret(int16x4_t a) { ret
 template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(int16x4_t a) { return vreinterpret_u64_s16(a); }
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(int16x4_t a) { return vreinterpret_s64_s16(a); }
 [[gnu::always_inline]] nce int32x4_t move_long(int16x4_t a) { return vmovl_s16(a); }
-template <int lane>[[gnu::always_inline]] nce int16x4_t multiply_add(int16x4_t a, int16x4_t b, int16x4_t v) { return vmla_lane_s16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x4_t multiply_subtract(int16x4_t a, int16x4_t b, int16x4_t v) { return vmls_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_add(int16x4_t a, int16x4_t b, int16x4_t v) { return vmla_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_subtract(int16x4_t a, int16x4_t b, int16x4_t v) { return vmls_lane_s16(a, b, v, lane); }
 [[gnu::always_inline]] nce int16x4_t multiply_add(int16x4_t a, int16x4_t b, int16_t c) { return vmla_n_s16(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int16x4_t multiply(int16x4_t a, int16x4_t v) { return vmul_lane_s16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_long(int16x4_t a, int16x4_t v) { return vmull_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x4_t multiply(int16x4_t a, int16x4_t v) { return vmul_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_long(int16x4_t a, int16x4_t v) { return vmull_lane_s16(a, v, lane); }
 [[gnu::always_inline]] nce int16x4_t multiply_subtract(int16x4_t a, int16x4_t b, int16_t c) { return vmls_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int16x4_t negate(int16x4_t a) { return vneg_s16(a); }
 [[gnu::always_inline]] nce int16x4_t negate_saturate(int16x4_t a) { return vqneg_s16(a); }
@@ -825,8 +831,8 @@ template <int n>[[gnu::always_inline]] nce int16x4_t extract(int16x4_t a, int16x
 [[gnu::always_inline]] nce int16x8_t multiply_subtract_long(int16x8_t a, int8x8_t b, int8x8_t c) { return vmlsl_s8(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t subtract(int16x8_t a, int8x8_t b) { return vsubw_s8(a, b); }
 [[gnu::always_inline]] nce int16x8_t subtract_abs_add(int16x8_t a, int8x8_t b, int8x8_t c) { return vabal_s8(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t multiply_double_saturate_high(int16x8_t a, int16x4_t v) { return vqdmulhq_lane_s16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t multiply_double_round_saturate_high(int16x8_t a, int16x4_t v) { return vqrdmulhq_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_double_saturate_high(int16x8_t a, int16x4_t v) { return vqdmulhq_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_double_round_saturate_high(int16x8_t a, int16x4_t v) { return vqrdmulhq_lane_s16(a, v, lane); }
 [[gnu::always_inline]] nce int16x8_t add(int16x8_t a, int16x8_t b) { return vaddq_s16(a, b); }
 [[gnu::always_inline]] nce int16x8_t add_halve(int16x8_t a, int16x8_t b) { return vhaddq_s16(a, b); }
 [[gnu::always_inline]] nce int16x8_t add_halve_round(int16x8_t a, int16x8_t b) { return vrhaddq_s16(a, b); }
@@ -872,11 +878,11 @@ template <int n>[[gnu::always_inline]] nce int16x8_t shift_right_round(int16x8_t
 template <int n>[[gnu::always_inline]] nce int16x8_t shift_right_accumulate(int16x8_t a, int16x8_t b) { return vsraq_n_s16(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int16x8_t shift_right_accumulate_round(int16x8_t a, int16x8_t b) { return vrsraq_n_s16(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_narrow(int16x8_t a) { return vshrn_n_s16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint8x8_t qshrun(int16x8_t a) { return vqshrun_n_s16(a, n); }
-template <int n>[[gnu::always_inline]] nce int8x8_t qshrn(int16x8_t a) { return vqshrn_n_s16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_unsigned_saturate_narrow(int16x8_t a) { return vqrshrun_n_s16(a, n); }
-template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_saturate_narrow(int16x8_t a) { return vqrshrn_n_s16(a, n); }
-template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_round_saturate_narrow(int16x8_t a) { return vrshrn_n_s16(a, n); }
+template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_saturate_narrow_unsigned(int16x8_t a) { return vqshrun_n_s16(a, n); }
+template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_saturate_narrow(int16x8_t a) { return vqshrn_n_s16(a, n); }
+template <int n>[[gnu::always_inline]] nce uint8x8_t shift_right_round_saturate_narrow_unsigned(int16x8_t a) { return vqrshrun_n_s16(a, n); }
+template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_round_saturate_narrow(int16x8_t a) { return vqrshrn_n_s16(a, n); }
+template <int n>[[gnu::always_inline]] nce int8x8_t shift_right_round_narrow(int16x8_t a) { return vrshrn_n_s16(a, n); }
 template <int n>[[gnu::always_inline]] nce int16x8_t shift_right_insert(int16x8_t a, int16x8_t b) { return vsriq_n_s16(a, b, n); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(int16x8_t a) { return vreinterpretq_s8_s16(a); }
 template <> [[gnu::always_inline]] nce int32x4_t reinterpret(int16x8_t a) { return vreinterpretq_s32_s16(a); }
@@ -891,9 +897,9 @@ template <> [[gnu::always_inline]] nce int64x2_t reinterpret(int16x8_t a) { retu
 [[gnu::always_inline]] nce int8x8_t move_narrow(int16x8_t a) { return vmovn_s16(a); }
 [[gnu::always_inline]] nce int8x8_t move_saturate_narrow(int16x8_t a) { return vqmovn_s16(a); }
 [[gnu::always_inline]] nce uint8x8_t move_unsigned_saturate_narrow(int16x8_t a) { return vqmovun_s16(a); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t multiply(int16x8_t a, int16x4_t v) { return vmulq_lane_s16(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t multiply_add(int16x8_t a, int16x8_t b, int16x4_t v) { return vmlaq_lane_s16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t multiply_subtract(int16x8_t a, int16x8_t b, int16x4_t v) { return vmlsq_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x8_t multiply(int16x8_t a, int16x4_t v) { return vmulq_lane_s16(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_add(int16x8_t a, int16x8_t b, int16x4_t v) { return vmlaq_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_subtract(int16x8_t a, int16x8_t b, int16x4_t v) { return vmlsq_lane_s16(a, b, v, lane); }
 [[gnu::always_inline]] nce int16x8_t multiply_add(int16x8_t a, int16x8_t b, int16_t c) { return vmlaq_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t multiply_subtract(int16x8_t a, int16x8_t b, int16_t c) { return vmlsq_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t negate(int16x8_t a) { return vnegq_s16(a); }
@@ -928,9 +934,9 @@ template <int n>[[gnu::always_inline]] nce int16x8_t extract(int16x8_t a, int16x
 [[gnu::always_inline]] nce int32x2_t multiply_double_round_saturate_high(int32x2_t a, int32x2_t b) { return vqrdmulh_s32(a, b); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_saturate_long(int32x2_t a, int32x2_t b) { return vqdmull_s32(a, b); }
 [[gnu::always_inline]] nce int64x2_t multiply_long(int32x2_t a, int32x2_t b) { return vmull_s32(a, b); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_double_saturate_long(int32x2_t a, int32x2_t v) { return vqdmull_lane_s32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x2_t multiply_double_saturate_high(int32x2_t a, int32x2_t v) { return vqdmulh_lane_s32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x2_t multiply_double_round_saturate_high(int32x2_t a, int32x2_t v) { return vqrdmulh_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_double_saturate_long(int32x2_t a, int32x2_t v) { return vqdmull_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_double_saturate_high(int32x2_t a, int32x2_t v) { return vqdmulh_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_double_round_saturate_high(int32x2_t a, int32x2_t v) { return vqrdmulh_lane_s32(a, v, lane); }
 [[gnu::always_inline]] nce int32x2_t subtract(int32x2_t a, int32x2_t b) { return vsub_s32(a, b); }
 [[gnu::always_inline]] nce int64x2_t subtract_long(int32x2_t a, int32x2_t b) { return vsubl_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t subtract_high(int32x2_t a, int32x2_t b) { return vhsub_s32(a, b); }
@@ -971,7 +977,7 @@ template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_accumulate(int3
 template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_accumulate_round(int32x2_t a, int32x2_t b) { return vrsra_n_s32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_insert(int32x2_t a, int32x2_t b) { return vsri_n_s32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x2_t convert(int32x2_t a) { return vcvt_f32_s32(a); }
-template <int n>[[gnu::always_inline]] nce float32x2_t convert(int32x2_t a) { return vcvt_n_f32_s32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(int32x2_t a, int n) { return vcvt_n_f32_s32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(int32x2_t a) { return vreinterpret_s8_s32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(int32x2_t a) { return vreinterpret_s16_s32(a); }
 template <> [[gnu::always_inline]] nce float32x2_t reinterpret(int32x2_t a) { return vreinterpret_f32_s32(a); }
@@ -983,11 +989,11 @@ template <> [[gnu::always_inline]] nce poly16x4_t reinterpret(int32x2_t a) { ret
 template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(int32x2_t a) { return vreinterpret_u64_s32(a); }
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(int32x2_t a) { return vreinterpret_s64_s32(a); }
 [[gnu::always_inline]] nce int64x2_t move_long(int32x2_t a) { return vmovl_s32(a); }
-template <int lane>[[gnu::always_inline]] nce int32x2_t multiply_add(int32x2_t a, int32x2_t b, int32x2_t v) { return vmla_lane_s32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x2_t multiply_subtract(int32x2_t a, int32x2_t b, int32x2_t v) { return vmls_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_add(int32x2_t a, int32x2_t b, int32x2_t v) { return vmla_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_subtract(int32x2_t a, int32x2_t b, int32x2_t v) { return vmls_lane_s32(a, b, v, lane); }
 [[gnu::always_inline]] nce int32x2_t multiply_add(int32x2_t a, int32x2_t b, int32_t c) { return vmla_n_s32(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int32x2_t multiply(int32x2_t a, int32x2_t v) { return vmul_lane_s32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_long(int32x2_t a, int32x2_t v) { return vmull_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x2_t multiply(int32x2_t a, int32x2_t v) { return vmul_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_long(int32x2_t a, int32x2_t v) { return vmull_lane_s32(a, v, lane); }
 [[gnu::always_inline]] nce int32x2_t multiply_subtract(int32x2_t a, int32x2_t b, int32_t c) { return vmls_n_s32(a, b, c); }
 [[gnu::always_inline]] nce int32x2_t negate(int32x2_t a) { return vneg_s32(a); }
 [[gnu::always_inline]] nce int32x2_t negate_saturate(int32x2_t a) { return vqneg_s32(a); }
@@ -1015,14 +1021,14 @@ template <int n>[[gnu::always_inline]] nce int32x2_t extract(int32x2_t a, int32x
 [[gnu::always_inline]] nce int32x4_t multiply_subtract_long(int32x4_t a, int16x4_t b, int16x4_t c) { return vmlsl_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long(int32x4_t a, int16x4_t b, int16x4_t c) { return vqdmlal_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16x4_t c) { return vqdmlsl_s16(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlal_lane_s16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlsl_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlal_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlsl_lane_s16(a, b, v, lane); }
 [[gnu::always_inline]] nce int32x4_t subtract_abs_add(int32x4_t a, int16x4_t b, int16x4_t c) { return vabal_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long(int32x4_t a, int16x4_t b, int16_t c) { return vqdmlal_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16_t c) { return vqdmlsl_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t subtract(int32x4_t a, int16x4_t b) { return vsubw_s16(a, b); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_double_saturate_high(int32x4_t a, int32x2_t v) { return vqdmulhq_lane_s32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_double_round_saturate_high(int32x4_t a, int32x2_t v) { return vqrdmulhq_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_saturate_high(int32x4_t a, int32x2_t v) { return vqdmulhq_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_round_saturate_high(int32x4_t a, int32x2_t v) { return vqrdmulhq_lane_s32(a, v, lane); }
 [[gnu::always_inline]] nce int32x4_t add(int32x4_t a, int32x4_t b) { return vaddq_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t add_halve(int32x4_t a, int32x4_t b) { return vhaddq_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t add_halve_round(int32x4_t a, int32x4_t b) { return vrhaddq_s32(a, b); }
@@ -1068,14 +1074,14 @@ template <int n>[[gnu::always_inline]] nce int32x4_t shift_right_round(int32x4_t
 template <int n>[[gnu::always_inline]] nce int32x4_t shift_right_accumulate(int32x4_t a, int32x4_t b) { return vsraq_n_s32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int32x4_t shift_right_accumulate_round(int32x4_t a, int32x4_t b) { return vrsraq_n_s32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_narrow(int32x4_t a) { return vshrn_n_s32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x4_t qshrun(int32x4_t a) { return vqshrun_n_s32(a, n); }
-template <int n>[[gnu::always_inline]] nce int16x4_t qshrn(int32x4_t a) { return vqshrn_n_s32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_unsigned_saturate_narrow(int32x4_t a) { return vqrshrun_n_s32(a, n); }
-template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_saturate_narrow(int32x4_t a) { return vqrshrn_n_s32(a, n); }
-template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_round_saturate_narrow(int32x4_t a) { return vrshrn_n_s32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_saturate_narrow_unsigned(int32x4_t a) { return vqshrun_n_s32(a, n); }
+template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_saturate_narrow(int32x4_t a) { return vqshrn_n_s32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_saturate_narrow_unsigned(int32x4_t a) { return vqrshrun_n_s32(a, n); }
+template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_round_saturate_narrow(int32x4_t a) { return vqrshrn_n_s32(a, n); }
+template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_round_narrow(int32x4_t a) { return vrshrn_n_s32(a, n); }
 template <int n>[[gnu::always_inline]] nce int32x4_t shift_right_insert(int32x4_t a, int32x4_t b) { return vsriq_n_s32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x4_t convert(int32x4_t a) { return vcvtq_f32_s32(a); }
-template <int n>[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a) { return vcvtq_n_f32_s32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(int32x4_t a, int n) { return vcvtq_n_f32_s32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(int32x4_t a) { return vreinterpretq_s8_s32(a); }
 template <> [[gnu::always_inline]] nce int16x8_t reinterpret(int32x4_t a) { return vreinterpretq_s16_s32(a); }
 template <> [[gnu::always_inline]] nce float32x4_t reinterpret(int32x4_t a) { return vreinterpretq_f32_s32(a); }
@@ -1089,13 +1095,13 @@ template <> [[gnu::always_inline]] nce int64x2_t reinterpret(int32x4_t a) { retu
 [[gnu::always_inline]] nce int16x4_t move_narrow(int32x4_t a) { return vmovn_s32(a); }
 [[gnu::always_inline]] nce int16x4_t move_saturate_narrow(int32x4_t a) { return vqmovn_s32(a); }
 [[gnu::always_inline]] nce uint16x4_t move_unsigned_saturate_narrow(int32x4_t a) { return vqmovun_s32(a); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_add_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vmlal_lane_s16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_subtract_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vmlsl_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_add_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vmlal_lane_s16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_subtract_long(int32x4_t a, int16x4_t b, int16x4_t v) { return vmlsl_lane_s16(a, b, v, lane); }
 [[gnu::always_inline]] nce int32x4_t multiply_add_long(int32x4_t a, int16x4_t b, int16_t c) { return vmlal_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_subtract_long(int32x4_t a, int16x4_t b, int16_t c) { return vmlsl_n_s16(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply(int32x4_t a, int32x2_t v) { return vmulq_lane_s32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_add(int32x4_t a, int32x4_t b, int32x2_t v) { return vmlaq_lane_s32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_subtract(int32x4_t a, int32x4_t b, int32x2_t v) { return vmlsq_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply(int32x4_t a, int32x2_t v) { return vmulq_lane_s32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_add(int32x4_t a, int32x4_t b, int32x2_t v) { return vmlaq_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_subtract(int32x4_t a, int32x4_t b, int32x2_t v) { return vmlsq_lane_s32(a, b, v, lane); }
 [[gnu::always_inline]] nce int32x4_t multiply_add(int32x4_t a, int32x4_t b, int32_t c) { return vmlaq_n_s32(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_subtract(int32x4_t a, int32x4_t b, int32_t c) { return vmlsq_n_s32(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t negate(int32x4_t a) { return vnegq_s32(a); }
@@ -1179,9 +1185,9 @@ template <int n>[[gnu::always_inline]] nce uint64x2_t shift_right_round(uint64x2
 template <int n>[[gnu::always_inline]] nce uint64x2_t shift_right_accumulate(uint64x2_t a, uint64x2_t b) { return vsraq_n_u64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint64x2_t shift_right_accumulate_round(uint64x2_t a, uint64x2_t b) { return vrsraq_n_u64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_narrow(uint64x2_t a) { return vshrn_n_u64(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t qshrn(uint64x2_t a) { return vqshrn_n_u64(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_saturate_narrow(uint64x2_t a) { return vqrshrn_n_u64(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_round_saturate_narrow(uint64x2_t a) { return vrshrn_n_u64(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_saturate_narrow(uint64x2_t a) { return vqshrn_n_u64(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_round_saturate_narrow(uint64x2_t a) { return vqrshrn_n_u64(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_round_narrow(uint64x2_t a) { return vrshrn_n_u64(a, n); }
 template <int n>[[gnu::always_inline]] nce uint64x2_t shift_right_insert(uint64x2_t a, uint64x2_t b) { return vsriq_n_u64(a, b, n); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(uint64x2_t a) { return vreinterpretq_s8_u64(a); }
 template <> [[gnu::always_inline]] nce int16x8_t reinterpret(uint64x2_t a) { return vreinterpretq_s16_u64(a); }
@@ -1195,7 +1201,7 @@ template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(uint64x2_t a) { re
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(uint64x2_t a) { return vreinterpretq_s64_u64(a); }
 [[gnu::always_inline]] nce uint32x2_t move_narrow(uint64x2_t a) { return vmovn_u64(a); }
 [[gnu::always_inline]] nce uint32x2_t move_saturate_narrow(uint64x2_t a) { return vqmovn_u64(a); }
-template <int lane>[[gnu::always_inline]] nce uint64x2_t multiply_add_long(uint64x2_t a, uint32x2_t b, uint32x2_t v) { return vmlal_lane_u32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint64x2_t multiply_add_long(uint64x2_t a, uint32x2_t b, uint32x2_t v) { return vmlal_lane_u32(a, b, v, lane); }
 [[gnu::always_inline]] nce uint64x2_t add_pairwise_accumulate_long(uint64x2_t a, uint32x4_t b) { return vpadalq_u32(a, b); }
 [[gnu::always_inline]] nce uint64x2_t shift_left(uint64x2_t a, int64x2_t b) { return vshlq_u64(a, b); }
 template <int n>[[gnu::always_inline]] nce uint64x2_t shift_left(uint64x2_t a) { return vshlq_n_u64(a, n); }
@@ -1258,7 +1264,7 @@ template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_accumulate(uin
 template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_accumulate_round(uint32x2_t a, uint32x2_t b) { return vrsra_n_u32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_insert(uint32x2_t a, uint32x2_t b) { return vsri_n_u32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x2_t convert(uint32x2_t a) { return vcvt_f32_u32(a); }
-template <int n>[[gnu::always_inline]] nce float32x2_t convert(uint32x2_t a) { return vcvt_n_f32_u32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(uint32x2_t a, int n) { return vcvt_n_f32_u32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(uint32x2_t a) { return vreinterpret_s8_u32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(uint32x2_t a) { return vreinterpret_s16_u32(a); }
 template <> [[gnu::always_inline]] nce int32x2_t reinterpret(uint32x2_t a) { return vreinterpret_s32_u32(a); }
@@ -1270,11 +1276,11 @@ template <> [[gnu::always_inline]] nce poly16x4_t reinterpret(uint32x2_t a) { re
 template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(uint32x2_t a) { return vreinterpret_u64_u32(a); }
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(uint32x2_t a) { return vreinterpret_s64_u32(a); }
 [[gnu::always_inline]] nce uint64x2_t move_long(uint32x2_t a) { return vmovl_u32(a); }
-template <int lane>[[gnu::always_inline]] nce uint32x2_t multiply_add(uint32x2_t a, uint32x2_t b, uint32x2_t v) { return vmla_lane_u32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x2_t multiply_subtract(uint32x2_t a, uint32x2_t b, uint32x2_t v) { return vmls_lane_u32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x2_t multiply_add(uint32x2_t a, uint32x2_t b, uint32x2_t v) { return vmla_lane_u32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x2_t multiply_subtract(uint32x2_t a, uint32x2_t b, uint32x2_t v) { return vmls_lane_u32(a, b, v, lane); }
 [[gnu::always_inline]] nce uint32x2_t multiply_add(uint32x2_t a, uint32x2_t b, uint32_t c) { return vmla_n_u32(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce uint32x2_t multiply(uint32x2_t a, uint32x2_t v) { return vmul_lane_u32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint64x2_t multiply_long(uint32x2_t a, uint32x2_t v) { return vmull_lane_u32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x2_t multiply(uint32x2_t a, uint32x2_t v) { return vmul_lane_u32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint64x2_t multiply_long(uint32x2_t a, uint32x2_t v) { return vmull_lane_u32(a, v, lane); }
 [[gnu::always_inline]] nce uint32x2_t multiply_subtract(uint32x2_t a, uint32x2_t b, uint32_t c) { return vmls_n_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x2_t not_bitwise(uint32x2_t a) { return vmvn_u32(a); }
 [[gnu::always_inline]] nce uint32x2_t and_bitwise(uint32x2_t a, uint32x2_t b) { return vand_u32(a, b); }
@@ -1345,12 +1351,12 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t shift_right_round(uint32x4
 template <int n>[[gnu::always_inline]] nce uint32x4_t shift_right_accumulate(uint32x4_t a, uint32x4_t b) { return vsraq_n_u32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint32x4_t shift_right_accumulate_round(uint32x4_t a, uint32x4_t b) { return vrsraq_n_u32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_narrow(uint32x4_t a) { return vshrn_n_u32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x4_t qshrn(uint32x4_t a) { return vqshrn_n_u32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_saturate_narrow(uint32x4_t a) { return vqrshrn_n_u32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_saturate_narrow(uint32x4_t a) { return vrshrn_n_u32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_saturate_narrow(uint32x4_t a) { return vqshrn_n_u32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_saturate_narrow(uint32x4_t a) { return vqrshrn_n_u32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_narrow(uint32x4_t a) { return vrshrn_n_u32(a, n); }
 template <int n>[[gnu::always_inline]] nce uint32x4_t shift_right_insert(uint32x4_t a, uint32x4_t b) { return vsriq_n_u32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a) { return vcvtq_f32_u32(a); }
-template <int n>[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a) { return vcvtq_n_f32_u32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(uint32x4_t a, int n) { return vcvtq_n_f32_u32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(uint32x4_t a) { return vreinterpretq_s8_u32(a); }
 template <> [[gnu::always_inline]] nce int16x8_t reinterpret(uint32x4_t a) { return vreinterpretq_s16_u32(a); }
 template <> [[gnu::always_inline]] nce int32x4_t reinterpret(uint32x4_t a) { return vreinterpretq_s32_u32(a); }
@@ -1363,13 +1369,13 @@ template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(uint32x4_t a) { re
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(uint32x4_t a) { return vreinterpretq_s64_u32(a); }
 [[gnu::always_inline]] nce uint16x4_t move_narrow(uint32x4_t a) { return vmovn_u32(a); }
 [[gnu::always_inline]] nce uint16x4_t move_saturate_narrow(uint32x4_t a) { return vqmovn_u32(a); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_add_long(uint32x4_t a, uint16x4_t b, uint16x4_t v) { return vmlal_lane_u16(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_subtract_long(uint32x4_t a, uint16x4_t b, uint16x4_t v) { return vmlsl_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply_add_long(uint32x4_t a, uint16x4_t b, uint16x4_t v) { return vmlal_lane_u16(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply_subtract_long(uint32x4_t a, uint16x4_t b, uint16x4_t v) { return vmlsl_lane_u16(a, b, v, lane); }
 [[gnu::always_inline]] nce uint32x4_t multiply_add_long(uint32x4_t a, uint16x4_t b, uint16_t c) { return vmlal_n_u16(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t multiply_subtract_long(uint32x4_t a, uint16x4_t b, uint16_t c) { return vmlsl_n_u16(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply(uint32x4_t a, uint32x2_t v) { return vmulq_lane_u32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_add(uint32x4_t a, uint32x4_t b, uint32x2_t v) { return vmlaq_lane_u32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_subtract(uint32x4_t a, uint32x4_t b, uint32x2_t v) { return vmlsq_lane_u32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply(uint32x4_t a, uint32x2_t v) { return vmulq_lane_u32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply_add(uint32x4_t a, uint32x4_t b, uint32x2_t v) { return vmlaq_lane_u32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce uint32x4_t multiply_subtract(uint32x4_t a, uint32x4_t b, uint32x2_t v) { return vmlsq_lane_u32(a, b, v, lane); }
 [[gnu::always_inline]] nce uint32x4_t multiply_add(uint32x4_t a, uint32x4_t b, uint32_t c) { return vmlaq_n_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t multiply_subtract(uint32x4_t a, uint32x4_t b, uint32_t c) { return vmlsq_n_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t not_bitwise(uint32x4_t a) { return vmvnq_u32(a); }
@@ -1433,8 +1439,8 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce uint32x2_t absolute_less_than(float32x2_t a, float32x2_t b) { return vcalt_f32(a, b); }
 template <> [[gnu::always_inline]] nce int32x2_t convert(float32x2_t a) { return vcvt_s32_f32(a); }
 template <> [[gnu::always_inline]] nce uint32x2_t convert(float32x2_t a) { return vcvt_u32_f32(a); }
-template <int n>[[gnu::always_inline]] nce int32x2_t convert(float32x2_t a) { return vcvt_n_s32_f32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t convert(float32x2_t a) { return vcvt_n_u32_f32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce int32x2_t convert_n(float32x2_t a) { return vcvt_n_s32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce uint32x2_t convert_n(float32x2_t a) { return vcvt_n_u32_f32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(float32x2_t a) { return vreinterpret_s8_f32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(float32x2_t a) { return vreinterpret_s16_f32(a); }
 template <> [[gnu::always_inline]] nce int32x2_t reinterpret(float32x2_t a) { return vreinterpret_s32_f32(a); }
@@ -1445,10 +1451,10 @@ template <> [[gnu::always_inline]] nce poly8x8_t reinterpret(float32x2_t a) { re
 template <> [[gnu::always_inline]] nce poly16x4_t reinterpret(float32x2_t a) { return vreinterpret_p16_f32(a); }
 template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(float32x2_t a) { return vreinterpret_u64_f32(a); }
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(float32x2_t a) { return vreinterpret_s64_f32(a); }
-template <int lane>[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t v) { return vmla_lane_f32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t v) { return vmls_lane_f32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t v) { return vmla_lane_f32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t v) { return vmls_lane_f32(a, b, v, lane); }
 [[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32_t c) { return vmla_n_f32(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce float32x2_t multiply(float32x2_t a, float32x2_t v) { return vmul_lane_f32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x2_t multiply(float32x2_t a, float32x2_t v) { return vmul_lane_f32(a, v, lane); }
 [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32_t c) { return vmls_n_f32(a, b, c); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t duplicate_element(float32x2_t vec) { return vdup_lane_f32(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t duplicate_element(float32x2_t vec) { return vdupq_lane_f32(vec, lane); }
@@ -1491,8 +1497,8 @@ template <int n>[[gnu::always_inline]] nce float32x2_t extract(float32x2_t a, fl
 [[gnu::always_inline]] nce uint32x4_t absolute_less_than(float32x4_t a, float32x4_t b) { return vcaltq_f32(a, b); }
 template <> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_s32_f32(a); }
 template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_u32_f32(a); }
-template <int n>[[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_n_s32_f32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_n_u32_f32(a, n); }
+template <int fracbits> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_n_s32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_n_u32_f32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x16_t reinterpret(float32x4_t a) { return vreinterpretq_s8_f32(a); }
 template <> [[gnu::always_inline]] nce int16x8_t reinterpret(float32x4_t a) { return vreinterpretq_s16_f32(a); }
 template <> [[gnu::always_inline]] nce int32x4_t reinterpret(float32x4_t a) { return vreinterpretq_s32_f32(a); }
@@ -1503,9 +1509,9 @@ template <> [[gnu::always_inline]] nce poly8x16_t reinterpret(float32x4_t a) { r
 template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(float32x4_t a) { return vreinterpretq_p16_f32(a); }
 template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(float32x4_t a) { return vreinterpretq_u64_f32(a); }
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(float32x4_t a) { return vreinterpretq_s64_f32(a); }
-template <int lane>[[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32x2_t v) { return vmulq_lane_f32(a, v, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlaq_lane_f32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlsq_lane_f32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32x2_t v) { return vmulq_lane_f32(a, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlaq_lane_f32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlsq_lane_f32(a, b, v, lane); }
 [[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32_t c) { return vmlaq_n_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32_t c) { return vmlsq_n_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32_t b) { return vmulq_n_f32(a, b); }
@@ -1591,8 +1597,8 @@ template <int n>[[gnu::always_inline]] nce poly16x4_t extract(poly16x4_t a, poly
 [[gnu::always_inline]] nce int64x2_t multiply_subtract_long(int64x2_t a, int32x2_t b, int32x2_t c) { return vmlsl_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_add_saturate_long(int64x2_t a, int32x2_t b, int32x2_t c) { return vqdmlal_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_subtract_saturate_long(int64x2_t a, int32x2_t b, int32x2_t c) { return vqdmlsl_s32(a, b, c); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_double_add_saturate_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vqdmlal_lane_s32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_double_subtract_saturate_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vqdmlsl_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_double_add_saturate_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vqdmlal_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_double_subtract_saturate_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vqdmlsl_lane_s32(a, b, v, lane); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_add_saturate_long(int64x2_t a, int32x2_t b, int32_t c) { return vqdmlal_n_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_subtract_saturate_long(int64x2_t a, int32x2_t b, int32_t c) { return vqdmlsl_n_s32(a, b, c); }
 [[gnu::always_inline]] nce poly8x16_t multiply(poly8x16_t a, poly8x16_t b) { return vmulq_p8(a, b); }
@@ -1635,11 +1641,11 @@ template <int n>[[gnu::always_inline]] nce int64x2_t shift_right_accumulate(int6
 template <int n>[[gnu::always_inline]] nce int64x1_t shift_right_accumulate_round(int64x1_t a, int64x1_t b) { return vrsra_n_s64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int64x2_t shift_right_accumulate_round(int64x2_t a, int64x2_t b) { return vrsraq_n_s64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_narrow(int64x2_t a) { return vshrn_n_s64(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t qshrun(int64x2_t a) { return vqshrun_n_s64(a, n); }
-template <int n>[[gnu::always_inline]] nce int32x2_t qshrn(int64x2_t a) { return vqshrn_n_s64(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_unsigned_saturate_narrow(int64x2_t a) { return vqrshrun_n_s64(a, n); }
-template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_saturate_narrow(int64x2_t a) { return vqrshrn_n_s64(a, n); }
-template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_round_saturate_narrow(int64x2_t a) { return vrshrn_n_s64(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_saturate_narrow_unsigned(int64x2_t a) { return vqshrun_n_s64(a, n); }
+template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_saturate_narrow(int64x2_t a) { return vqshrn_n_s64(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_round_saturate_narrow_unsigned(int64x2_t a) { return vqrshrun_n_s64(a, n); }
+template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_round_saturate_narrow(int64x2_t a) { return vqrshrn_n_s64(a, n); }
+template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_round_narrow(int64x2_t a) { return vrshrn_n_s64(a, n); }
 template <int n>[[gnu::always_inline]] nce int64x1_t shift_right_insert(int64x1_t a, int64x1_t b) { return vsri_n_s64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int64x2_t shift_right_insert(int64x2_t a, int64x2_t b) { return vsriq_n_s64(a, b, n); }
 template <int n>[[gnu::always_inline]] nce poly8x16_t shift_right_insert(poly8x16_t a, poly8x16_t b) { return vsriq_n_p8(a, b, n); }
@@ -1687,8 +1693,8 @@ template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(int64x2_t a) { ret
 [[gnu::always_inline]] nce int32x2_t move_narrow(int64x2_t a) { return vmovn_s64(a); }
 [[gnu::always_inline]] nce int32x2_t move_saturate_narrow(int64x2_t a) { return vqmovn_s64(a); }
 [[gnu::always_inline]] nce uint32x2_t move_unsigned_saturate_narrow(int64x2_t a) { return vqmovun_s64(a); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_add_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vmlal_lane_s32(a, b, v, lane); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_subtract_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vmlsl_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_add_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vmlal_lane_s32(a, b, v, lane); }
+template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_subtract_long(int64x2_t a, int32x2_t b, int32x2_t v) { return vmlsl_lane_s32(a, b, v, lane); }
 [[gnu::always_inline]] nce int64x2_t multiply_add_long(int64x2_t a, int32x2_t b, int32_t c) { return vmlal_n_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t multiply_subtract_long(int64x2_t a, int32x2_t b, int32_t c) { return vmlsl_n_s32(a, b, c); }
 [[gnu::always_inline]] nce poly8x16_t not_bitwise(poly8x16_t a) { return vmvnq_p8(a); }
@@ -4335,6 +4341,1046 @@ nce auto shift_left(uint8x8_t vec, const int i) {
   }
 }
 
+nce auto shift_right(int64x2_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    case 16:
+      return shift_right<16>(vec);
+    case 17:
+      return shift_right<17>(vec);
+    case 18:
+      return shift_right<18>(vec);
+    case 19:
+      return shift_right<19>(vec);
+    case 20:
+      return shift_right<20>(vec);
+    case 21:
+      return shift_right<21>(vec);
+    case 22:
+      return shift_right<22>(vec);
+    case 23:
+      return shift_right<23>(vec);
+    case 24:
+      return shift_right<24>(vec);
+    case 25:
+      return shift_right<25>(vec);
+    case 26:
+      return shift_right<26>(vec);
+    case 27:
+      return shift_right<27>(vec);
+    case 28:
+      return shift_right<28>(vec);
+    case 29:
+      return shift_right<29>(vec);
+    case 30:
+      return shift_right<30>(vec);
+    case 31:
+      return shift_right<31>(vec);
+    case 32:
+      return shift_right<32>(vec);
+    case 33:
+      return shift_right<33>(vec);
+    case 34:
+      return shift_right<34>(vec);
+    case 35:
+      return shift_right<35>(vec);
+    case 36:
+      return shift_right<36>(vec);
+    case 37:
+      return shift_right<37>(vec);
+    case 38:
+      return shift_right<38>(vec);
+    case 39:
+      return shift_right<39>(vec);
+    case 40:
+      return shift_right<40>(vec);
+    case 41:
+      return shift_right<41>(vec);
+    case 42:
+      return shift_right<42>(vec);
+    case 43:
+      return shift_right<43>(vec);
+    case 44:
+      return shift_right<44>(vec);
+    case 45:
+      return shift_right<45>(vec);
+    case 46:
+      return shift_right<46>(vec);
+    case 47:
+      return shift_right<47>(vec);
+    case 48:
+      return shift_right<48>(vec);
+    case 49:
+      return shift_right<49>(vec);
+    case 50:
+      return shift_right<50>(vec);
+    case 51:
+      return shift_right<51>(vec);
+    case 52:
+      return shift_right<52>(vec);
+    case 53:
+      return shift_right<53>(vec);
+    case 54:
+      return shift_right<54>(vec);
+    case 55:
+      return shift_right<55>(vec);
+    case 56:
+      return shift_right<56>(vec);
+    case 57:
+      return shift_right<57>(vec);
+    case 58:
+      return shift_right<58>(vec);
+    case 59:
+      return shift_right<59>(vec);
+    case 60:
+      return shift_right<60>(vec);
+    case 61:
+      return shift_right<61>(vec);
+    case 62:
+      return shift_right<62>(vec);
+    case 63:
+      return shift_right<63>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int64x1_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    case 16:
+      return shift_right<16>(vec);
+    case 17:
+      return shift_right<17>(vec);
+    case 18:
+      return shift_right<18>(vec);
+    case 19:
+      return shift_right<19>(vec);
+    case 20:
+      return shift_right<20>(vec);
+    case 21:
+      return shift_right<21>(vec);
+    case 22:
+      return shift_right<22>(vec);
+    case 23:
+      return shift_right<23>(vec);
+    case 24:
+      return shift_right<24>(vec);
+    case 25:
+      return shift_right<25>(vec);
+    case 26:
+      return shift_right<26>(vec);
+    case 27:
+      return shift_right<27>(vec);
+    case 28:
+      return shift_right<28>(vec);
+    case 29:
+      return shift_right<29>(vec);
+    case 30:
+      return shift_right<30>(vec);
+    case 31:
+      return shift_right<31>(vec);
+    case 32:
+      return shift_right<32>(vec);
+    case 33:
+      return shift_right<33>(vec);
+    case 34:
+      return shift_right<34>(vec);
+    case 35:
+      return shift_right<35>(vec);
+    case 36:
+      return shift_right<36>(vec);
+    case 37:
+      return shift_right<37>(vec);
+    case 38:
+      return shift_right<38>(vec);
+    case 39:
+      return shift_right<39>(vec);
+    case 40:
+      return shift_right<40>(vec);
+    case 41:
+      return shift_right<41>(vec);
+    case 42:
+      return shift_right<42>(vec);
+    case 43:
+      return shift_right<43>(vec);
+    case 44:
+      return shift_right<44>(vec);
+    case 45:
+      return shift_right<45>(vec);
+    case 46:
+      return shift_right<46>(vec);
+    case 47:
+      return shift_right<47>(vec);
+    case 48:
+      return shift_right<48>(vec);
+    case 49:
+      return shift_right<49>(vec);
+    case 50:
+      return shift_right<50>(vec);
+    case 51:
+      return shift_right<51>(vec);
+    case 52:
+      return shift_right<52>(vec);
+    case 53:
+      return shift_right<53>(vec);
+    case 54:
+      return shift_right<54>(vec);
+    case 55:
+      return shift_right<55>(vec);
+    case 56:
+      return shift_right<56>(vec);
+    case 57:
+      return shift_right<57>(vec);
+    case 58:
+      return shift_right<58>(vec);
+    case 59:
+      return shift_right<59>(vec);
+    case 60:
+      return shift_right<60>(vec);
+    case 61:
+      return shift_right<61>(vec);
+    case 62:
+      return shift_right<62>(vec);
+    case 63:
+      return shift_right<63>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int32x4_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    case 16:
+      return shift_right<16>(vec);
+    case 17:
+      return shift_right<17>(vec);
+    case 18:
+      return shift_right<18>(vec);
+    case 19:
+      return shift_right<19>(vec);
+    case 20:
+      return shift_right<20>(vec);
+    case 21:
+      return shift_right<21>(vec);
+    case 22:
+      return shift_right<22>(vec);
+    case 23:
+      return shift_right<23>(vec);
+    case 24:
+      return shift_right<24>(vec);
+    case 25:
+      return shift_right<25>(vec);
+    case 26:
+      return shift_right<26>(vec);
+    case 27:
+      return shift_right<27>(vec);
+    case 28:
+      return shift_right<28>(vec);
+    case 29:
+      return shift_right<29>(vec);
+    case 30:
+      return shift_right<30>(vec);
+    case 31:
+      return shift_right<31>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int32x2_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    case 16:
+      return shift_right<16>(vec);
+    case 17:
+      return shift_right<17>(vec);
+    case 18:
+      return shift_right<18>(vec);
+    case 19:
+      return shift_right<19>(vec);
+    case 20:
+      return shift_right<20>(vec);
+    case 21:
+      return shift_right<21>(vec);
+    case 22:
+      return shift_right<22>(vec);
+    case 23:
+      return shift_right<23>(vec);
+    case 24:
+      return shift_right<24>(vec);
+    case 25:
+      return shift_right<25>(vec);
+    case 26:
+      return shift_right<26>(vec);
+    case 27:
+      return shift_right<27>(vec);
+    case 28:
+      return shift_right<28>(vec);
+    case 29:
+      return shift_right<29>(vec);
+    case 30:
+      return shift_right<30>(vec);
+    case 31:
+      return shift_right<31>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int16x8_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int16x4_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    case 8:
+      return shift_right<8>(vec);
+    case 9:
+      return shift_right<9>(vec);
+    case 10:
+      return shift_right<10>(vec);
+    case 11:
+      return shift_right<11>(vec);
+    case 12:
+      return shift_right<12>(vec);
+    case 13:
+      return shift_right<13>(vec);
+    case 14:
+      return shift_right<14>(vec);
+    case 15:
+      return shift_right<15>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int8x16_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_right(int8x8_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_right<1>(vec);
+    case 2:
+      return shift_right<2>(vec);
+    case 3:
+      return shift_right<3>(vec);
+    case 4:
+      return shift_right<4>(vec);
+    case 5:
+      return shift_right<5>(vec);
+    case 6:
+      return shift_right<6>(vec);
+    case 7:
+      return shift_right<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int64x2_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    case 16:
+      return shift_left<16>(vec);
+    case 17:
+      return shift_left<17>(vec);
+    case 18:
+      return shift_left<18>(vec);
+    case 19:
+      return shift_left<19>(vec);
+    case 20:
+      return shift_left<20>(vec);
+    case 21:
+      return shift_left<21>(vec);
+    case 22:
+      return shift_left<22>(vec);
+    case 23:
+      return shift_left<23>(vec);
+    case 24:
+      return shift_left<24>(vec);
+    case 25:
+      return shift_left<25>(vec);
+    case 26:
+      return shift_left<26>(vec);
+    case 27:
+      return shift_left<27>(vec);
+    case 28:
+      return shift_left<28>(vec);
+    case 29:
+      return shift_left<29>(vec);
+    case 30:
+      return shift_left<30>(vec);
+    case 31:
+      return shift_left<31>(vec);
+    case 32:
+      return shift_left<32>(vec);
+    case 33:
+      return shift_left<33>(vec);
+    case 34:
+      return shift_left<34>(vec);
+    case 35:
+      return shift_left<35>(vec);
+    case 36:
+      return shift_left<36>(vec);
+    case 37:
+      return shift_left<37>(vec);
+    case 38:
+      return shift_left<38>(vec);
+    case 39:
+      return shift_left<39>(vec);
+    case 40:
+      return shift_left<40>(vec);
+    case 41:
+      return shift_left<41>(vec);
+    case 42:
+      return shift_left<42>(vec);
+    case 43:
+      return shift_left<43>(vec);
+    case 44:
+      return shift_left<44>(vec);
+    case 45:
+      return shift_left<45>(vec);
+    case 46:
+      return shift_left<46>(vec);
+    case 47:
+      return shift_left<47>(vec);
+    case 48:
+      return shift_left<48>(vec);
+    case 49:
+      return shift_left<49>(vec);
+    case 50:
+      return shift_left<50>(vec);
+    case 51:
+      return shift_left<51>(vec);
+    case 52:
+      return shift_left<52>(vec);
+    case 53:
+      return shift_left<53>(vec);
+    case 54:
+      return shift_left<54>(vec);
+    case 55:
+      return shift_left<55>(vec);
+    case 56:
+      return shift_left<56>(vec);
+    case 57:
+      return shift_left<57>(vec);
+    case 58:
+      return shift_left<58>(vec);
+    case 59:
+      return shift_left<59>(vec);
+    case 60:
+      return shift_left<60>(vec);
+    case 61:
+      return shift_left<61>(vec);
+    case 62:
+      return shift_left<62>(vec);
+    case 63:
+      return shift_left<63>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int64x1_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    case 16:
+      return shift_left<16>(vec);
+    case 17:
+      return shift_left<17>(vec);
+    case 18:
+      return shift_left<18>(vec);
+    case 19:
+      return shift_left<19>(vec);
+    case 20:
+      return shift_left<20>(vec);
+    case 21:
+      return shift_left<21>(vec);
+    case 22:
+      return shift_left<22>(vec);
+    case 23:
+      return shift_left<23>(vec);
+    case 24:
+      return shift_left<24>(vec);
+    case 25:
+      return shift_left<25>(vec);
+    case 26:
+      return shift_left<26>(vec);
+    case 27:
+      return shift_left<27>(vec);
+    case 28:
+      return shift_left<28>(vec);
+    case 29:
+      return shift_left<29>(vec);
+    case 30:
+      return shift_left<30>(vec);
+    case 31:
+      return shift_left<31>(vec);
+    case 32:
+      return shift_left<32>(vec);
+    case 33:
+      return shift_left<33>(vec);
+    case 34:
+      return shift_left<34>(vec);
+    case 35:
+      return shift_left<35>(vec);
+    case 36:
+      return shift_left<36>(vec);
+    case 37:
+      return shift_left<37>(vec);
+    case 38:
+      return shift_left<38>(vec);
+    case 39:
+      return shift_left<39>(vec);
+    case 40:
+      return shift_left<40>(vec);
+    case 41:
+      return shift_left<41>(vec);
+    case 42:
+      return shift_left<42>(vec);
+    case 43:
+      return shift_left<43>(vec);
+    case 44:
+      return shift_left<44>(vec);
+    case 45:
+      return shift_left<45>(vec);
+    case 46:
+      return shift_left<46>(vec);
+    case 47:
+      return shift_left<47>(vec);
+    case 48:
+      return shift_left<48>(vec);
+    case 49:
+      return shift_left<49>(vec);
+    case 50:
+      return shift_left<50>(vec);
+    case 51:
+      return shift_left<51>(vec);
+    case 52:
+      return shift_left<52>(vec);
+    case 53:
+      return shift_left<53>(vec);
+    case 54:
+      return shift_left<54>(vec);
+    case 55:
+      return shift_left<55>(vec);
+    case 56:
+      return shift_left<56>(vec);
+    case 57:
+      return shift_left<57>(vec);
+    case 58:
+      return shift_left<58>(vec);
+    case 59:
+      return shift_left<59>(vec);
+    case 60:
+      return shift_left<60>(vec);
+    case 61:
+      return shift_left<61>(vec);
+    case 62:
+      return shift_left<62>(vec);
+    case 63:
+      return shift_left<63>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int32x4_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    case 16:
+      return shift_left<16>(vec);
+    case 17:
+      return shift_left<17>(vec);
+    case 18:
+      return shift_left<18>(vec);
+    case 19:
+      return shift_left<19>(vec);
+    case 20:
+      return shift_left<20>(vec);
+    case 21:
+      return shift_left<21>(vec);
+    case 22:
+      return shift_left<22>(vec);
+    case 23:
+      return shift_left<23>(vec);
+    case 24:
+      return shift_left<24>(vec);
+    case 25:
+      return shift_left<25>(vec);
+    case 26:
+      return shift_left<26>(vec);
+    case 27:
+      return shift_left<27>(vec);
+    case 28:
+      return shift_left<28>(vec);
+    case 29:
+      return shift_left<29>(vec);
+    case 30:
+      return shift_left<30>(vec);
+    case 31:
+      return shift_left<31>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int32x2_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    case 16:
+      return shift_left<16>(vec);
+    case 17:
+      return shift_left<17>(vec);
+    case 18:
+      return shift_left<18>(vec);
+    case 19:
+      return shift_left<19>(vec);
+    case 20:
+      return shift_left<20>(vec);
+    case 21:
+      return shift_left<21>(vec);
+    case 22:
+      return shift_left<22>(vec);
+    case 23:
+      return shift_left<23>(vec);
+    case 24:
+      return shift_left<24>(vec);
+    case 25:
+      return shift_left<25>(vec);
+    case 26:
+      return shift_left<26>(vec);
+    case 27:
+      return shift_left<27>(vec);
+    case 28:
+      return shift_left<28>(vec);
+    case 29:
+      return shift_left<29>(vec);
+    case 30:
+      return shift_left<30>(vec);
+    case 31:
+      return shift_left<31>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int16x8_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int16x4_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    case 8:
+      return shift_left<8>(vec);
+    case 9:
+      return shift_left<9>(vec);
+    case 10:
+      return shift_left<10>(vec);
+    case 11:
+      return shift_left<11>(vec);
+    case 12:
+      return shift_left<12>(vec);
+    case 13:
+      return shift_left<13>(vec);
+    case 14:
+      return shift_left<14>(vec);
+    case 15:
+      return shift_left<15>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int8x16_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+nce auto shift_left(int8x8_t vec, const int i) {
+  switch (i) {
+    case 1:
+      return shift_left<1>(vec);
+    case 2:
+      return shift_left<2>(vec);
+    case 3:
+      return shift_left<3>(vec);
+    case 4:
+      return shift_left<4>(vec);
+    case 5:
+      return shift_left<5>(vec);
+    case 6:
+      return shift_left<6>(vec);
+    case 7:
+      return shift_left<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
 }  // namespace neon
 #undef nce
 #include <cassert>
@@ -4387,6 +5433,15 @@ template <> struct NextLarger<uint16_t> {using type = uint32_t; };
 template <> struct NextLarger<int32_t> {using type = int64_t; };
 template <> struct NextLarger<uint32_t> {using type = uint64_t; };
 template <> struct NextLarger<float> {using type = double; };
+
+template <typename T> struct NextSmaller;
+template <> struct NextSmaller<int16_t> {using type = int8_t; };
+template <> struct NextSmaller<uint16_t> {using type = uint8_t; };
+template <> struct NextSmaller<int32_t> {using type = int16_t; };
+template <> struct NextSmaller<uint32_t> {using type = uint16_t; };
+template <> struct NextSmaller<int64_t> {using type = int32_t; };
+template <> struct NextSmaller<uint64_t> {using type = uint32_t; };
+template <> struct NextSmaller<double> {using type = float; };
 
 template <typename T> struct Result;
 template <> struct Result<int8x8_t> {using type = uint8x8_t; };
@@ -4494,9 +5549,7 @@ class Common {
   constexpr Common(vector_type vector) : vec_(vector){};
   ace Common(base_type base) : vec_(LoadCopy(base)){};
   ace Common(base_type const* base_ptr) : vec_(Load(base_ptr)){};
-  ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){
-    static_assert(slice.size() == lanes);
-  };
+  ace Common(std::span<base_type> slice) : vec_(Load(slice.data())){};
   ace Common(std::initializer_list<base_type> value_list) : vec_() {
     size_t i = 0;
     #pragma GCC unroll 16
@@ -4729,8 +5782,6 @@ class Common {
     return neon::duplicate_element(vec_, lane);
   }
 
-  ace uint8x16_t Combine(T high) const { return neon::combine(vec_, high); }
-
   template <int lane>
   ace uint8_t Get() const {
     return neon::get(vec_, lane);
@@ -4854,6 +5905,11 @@ class Common {
     return true;
   }
 
+  template<std::size_t Index>
+  std::tuple_element_t<Index, T> get() {
+    return Lane{vec_, Index};
+  }
+
  protected:
   vector_type vec_;
 };
@@ -4906,9 +5962,25 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
   constexpr Neon64(base_type const* base_ptr) : T(base_ptr){};
   constexpr Neon64(T&& in) : T(in){};
   constexpr Neon64(std::initializer_list<base_type> value_list) : T(value_list) {};
+  constexpr Neon64(std::span<base_type> slice) : T(slice) {};
+
+  ace static Neon64<base_type> Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
+  ace static Neon64<base_type> LoadCopy(base_type b) { return neon::duplicate_element<vector_type>(b); }
+  ace static Neon64<base_type> Move(base_type b) { return neon::move<vector_type>(b); }
+
+  ace static std::array<Neon64<base_type>, 2> Load2(base_type const* ptr) { return *(std::array<Neon64<base_type>, 2>*)(neon::load2<typename impl::MultiVec<vector_type,2>::type>(ptr).val); }
+  ace static std::array<Neon64<base_type>, 3> Load3(base_type const* ptr) { return *(std::array<Neon64<base_type>, 3>*)(neon::load3<typename impl::MultiVec<vector_type,3>::type>(ptr).val); }
+  ace static std::array<Neon64<base_type>, 4> Load4(base_type const* ptr) { return *(std::array<Neon64<base_type>, 4>*)(neon::load4<typename impl::MultiVec<vector_type,4>::type>(ptr).val); }
 
   ace Neon128<next_larger_type> AddLong(T b) const { return neon::add_long(this->vec_, b); }
   ace Neon128<next_larger_type> MultiplyLong(T b) const { return neon::multiply_long(this->vec_, b); }
+
+  template <size_t n=32>
+  ace Neon64<base_type> MultiplyShiftRight(T b) {
+    Neon128<next_larger_type> intermediate = this->MultiplyLong(b);
+    return intermediate.template ShiftRightNarrow<n>();
+  }
+
   ace Neon128<next_larger_type> SubtractLong(T b) const { return neon::subtract_long(this->vec_, b); }
   ace Neon128<next_larger_type> MoveLong() const { return neon::move_long(this->vec_); }
 
@@ -4920,11 +5992,24 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
   ace T TableLookupExtension2(uint8x8x2_t b, T idx) const { return neon::table_lookup_extension2(this->vec_, b, idx); }
   ace T TableLookupExtension3(uint8x8x3_t b, T idx) const { return neon::table_lookup_extension3(this->vec_, b, idx); }
   ace T TableLookupExtension4(uint8x8x4_t b, T idx) const { return neon::table_lookup_extension4(this->vec_, b, idx); }
+
+  template <typename U>
+  ace Neon64<U> Convert(int n) {
+    return neon::convert<typename impl::Vec64<U>::type>(this->vec_, n);
+  }
+
+  template <typename U>
+  ace Neon64<U> Convert() {
+    return neon::convert<typename impl::Vec64<U>::type>(this->vec_);
+  }
+
+  ace Neon128<base_type> Combine(Neon64<base_type> high) const { return neon::combine(this->vec_, high); }
 };
 
 template <typename base_type>
 class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   using T = impl::Common<typename impl::Vec128<base_type>::type>;
+  using next_smaller_type = impl::NextSmaller<base_type>::type;
 
  public:
   using vector_type = impl::Vec128<base_type>::type;
@@ -4934,14 +6019,48 @@ class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   constexpr Neon128(base_type const* base_ptr) : T(base_ptr){};
   constexpr Neon128(T&& in) : T(in){};
   constexpr Neon128(std::initializer_list<base_type> value_list) : T(value_list) {};
+  constexpr Neon128(std::span<base_type> slice) : T(slice) {};
+  constexpr Neon128(Neon64<base_type> a, Neon64<base_type> b) : T(neon::combine(a, b)) {};
+
+  ace static Neon128<base_type> Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
+  ace static Neon128<base_type> LoadCopy(base_type b) { return neon::duplicate_element<vector_type>(b); }
+  ace static Neon128<base_type> Move(base_type b) { return neon::move<vector_type>(b); }
+
+  ace static std::array<Neon128<base_type>, 2> Load2(base_type const* ptr) { return *(std::array<Neon128<base_type>, 2>*)(neon::load2<typename impl::MultiVec<vector_type,2>::type>(ptr).val); }
+  ace static std::array<Neon128<base_type>, 3> Load3(base_type const* ptr) { return *(std::array<Neon128<base_type>, 3>*)(neon::load3<typename impl::MultiVec<vector_type,3>::type>(ptr).val); }
+  ace static std::array<Neon128<base_type>, 4> Load4(base_type const* ptr) { return *(std::array<Neon128<base_type>, 4>*)(neon::load4<typename impl::MultiVec<vector_type,4>::type>(ptr).val); }
+
+  ace Neon128<base_type> MultiplyAddLong(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) const { return neon::multiply_add_long(this->vec_, b, c); }
+
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> MultiplyAddLongShiftRightRounded(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) {
+    Neon128<base_type> intermediate = this->MultiplyAddLong(b, c);
+    return intermediate.template ShiftRightNarrowRounded<n>();
+  }
+
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
+
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> ShiftRightNarrowRounded() { return neon::shift_right_round_narrow<n>(this->vec_); }
 
   static_assert(neon::is_quadword_v<vector_type>);
 
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(base_type);
 
-  ace Neon64<vector_type> GetHigh() { return vget_high_u8(this->vec_); }
-  ace Neon64<vector_type> GetLow() { return vget_low_u8(this->vec_); }
+  ace Neon64<base_type> GetHigh() { return neon::get_high(this->vec_); }
+  ace Neon64<base_type> GetLow() { return neon::get_low(this->vec_); }
+
+  template <typename U>
+  ace Neon128<U> Convert(int n) {
+    return neon::convert<typename impl::Vec128<U>::type>(this->vec_, n);
+  }
+
+  template <typename U>
+  ace Neon128<U> Convert() {
+    return neon::convert<typename impl::Vec128<U>::type>(this->vec_);
+  }
 };
 
 template <typename NeonType, neon::is_vector_type V>
@@ -5018,3 +6137,39 @@ ace impl::Common<V> operator/(V a, impl::Common<V> b) {
 
 }  // namespace argon
 #undef ace
+
+
+namespace std {
+  template<typename T>
+  struct tuple_size<argon::impl::Common<T>> {
+    static constexpr size_t value = argon::impl::Common<T>::lanes;
+  };
+
+  template<typename T>
+  struct tuple_size<argon::Neon128<T>> {
+    static constexpr size_t value = argon::Neon128<T>::lanes;
+  };
+
+  template<typename T>
+  struct tuple_size<argon::Neon64<T>> {
+    static constexpr size_t value = argon::Neon64<T>::lanes;
+  };
+
+  template<size_t Index, typename T>
+  struct tuple_element<Index, argon::impl::Common<T>> {
+    static_assert(Index < argon::impl::Common<T>::lanes);
+    using type = argon::impl::Common<T>::lane_type;
+  };
+
+  template<size_t Index, typename T>
+  struct tuple_element<Index, argon::Neon128<T>> {
+    static_assert(Index < argon::Neon128<T>::lanes);
+    using type = argon::impl::Lane<typename argon::Neon128<T>::vector_type>;
+  };
+
+  template<size_t Index, typename T>
+  struct tuple_element<Index, argon::Neon64<T>> {
+    static_assert(Index < argon::Neon64<T>::lanes);
+    using type = argon::impl::Lane<typename argon::Neon64<T>::vector_type>;
+  };
+}
