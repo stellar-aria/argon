@@ -61,6 +61,15 @@ template <> struct NextLarger<int32_t> {using type = int64_t; };
 template <> struct NextLarger<uint32_t> {using type = uint64_t; };
 template <> struct NextLarger<float> {using type = double; };
 
+template <typename T> struct NextSmaller;
+template <> struct NextSmaller<int16_t> {using type = int8_t; };
+template <> struct NextSmaller<uint16_t> {using type = uint8_t; };
+template <> struct NextSmaller<int32_t> {using type = int16_t; };
+template <> struct NextSmaller<uint32_t> {using type = uint16_t; };
+template <> struct NextSmaller<int64_t> {using type = int32_t; };
+template <> struct NextSmaller<uint64_t> {using type = uint32_t; };
+template <> struct NextSmaller<double> {using type = float; };
+
 template <typename T> struct Result;
 template <> struct Result<int8x8_t> {using type = uint8x8_t; };
 template <> struct Result<uint8x8_t> {using type = uint8x8_t; };
@@ -595,10 +604,13 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
 
   ace Neon128<next_larger_type> AddLong(T b) const { return neon::add_long(this->vec_, b); }
   ace Neon128<next_larger_type> MultiplyLong(T b) const { return neon::multiply_long(this->vec_, b); }
-  // ace Neon64<base_type> MultiplyRightShift(T b, const int n = 32) {
-  //   auto intermediate = this->MultiplyLong(b); // Neon128<next_larger_type>
-  //   intermediate.
-  // }
+
+  template <size_t n=32>
+  ace Neon64<base_type> MultiplyShiftRight(T b) {
+    Neon128<next_larger_type> intermediate = this->MultiplyLong(b);
+    return intermediate.template ShiftRightNarrow<n>();
+  }
+
   ace Neon128<next_larger_type> SubtractLong(T b) const { return neon::subtract_long(this->vec_, b); }
   ace Neon128<next_larger_type> MoveLong() const { return neon::move_long(this->vec_); }
 
@@ -627,6 +639,7 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
 template <typename base_type>
 class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   using T = impl::Common<typename impl::Vec128<base_type>::type>;
+  using next_smaller_type = impl::NextSmaller<base_type>::type;
 
  public:
   using vector_type = impl::Vec128<base_type>::type;
@@ -647,7 +660,21 @@ class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   ace static std::array<Neon128<base_type>, 3> Load3(base_type const* ptr) { return *(std::array<Neon128<base_type>, 3>*)(neon::load3<typename impl::MultiVec<vector_type,3>::type>(ptr).val); }
   ace static std::array<Neon128<base_type>, 4> Load4(base_type const* ptr) { return *(std::array<Neon128<base_type>, 4>*)(neon::load4<typename impl::MultiVec<vector_type,4>::type>(ptr).val); }
 
-  //ace static Neon64<base_type> ShiftRightNarrow(const int n) { return neon::shift_right_narrow(this->vec, n); }
+  ace Neon128<base_type> MultiplyAddLong(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) const { return neon::multiply_add_long(this->vec_, b, c); }
+
+  /** Multiplies two doublewords, adds to a quadword, rounds, and then shifts the result right, narrowing
+   * a_q += b_d * c_d */
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> MultiplyAddLongShiftRightRounded(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) {
+    Neon128<base_type> intermediate = this->MultiplyAddLong(b, c);
+    return intermediate.template ShiftRightNarrowRounded<n>();
+  }
+
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
+
+  template <size_t n=32>
+  ace Neon64<next_smaller_type> ShiftRightNarrowRounded() { return neon::shift_right_round_narrow<n>(this->vec_); }
 
   static_assert(neon::is_quadword_v<vector_type>);
 
