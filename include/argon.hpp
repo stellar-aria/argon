@@ -52,6 +52,32 @@ template <> struct Vec128<uint64_t>  {using type = uint64x2_t; };
 template <> struct Vec64<float> {using type = float32x2_t; };
 template <> struct Vec128<float>  {using type = float32x4_t; };
 
+template <typename T>
+constexpr bool has_smaller_v = 
+    std::is_same_v<T, uint16_t> || 
+    std::is_same_v<T, uint32_t> ||
+    std::is_same_v<T, uint64_t> || 
+    std::is_same_v<T, int16_t> ||
+    std::is_same_v<T, int32_t> || 
+    std::is_same_v<T, int64_t> || 
+    std::is_same_v<T, double>;
+
+template <typename T>
+constexpr bool has_larger_v = 
+    std::is_same_v<T, uint8_t> || 
+    std::is_same_v<T, uint16_t> || 
+    std::is_same_v<T, uint32_t> ||
+    std::is_same_v<T, int8_t> || 
+    std::is_same_v<T, int16_t> ||
+    std::is_same_v<T, int32_t> || 
+    std::is_same_v<T, float>;
+
+template <typename T>
+concept has_smaller = has_smaller_v<T>;
+
+template <typename T>
+concept has_larger = has_larger_v<T>;
+
 template <typename T> struct NextLarger;
 template <> struct NextLarger<int8_t> {using type = int16_t; };
 template <> struct NextLarger<uint8_t> {using type = uint16_t; };
@@ -148,18 +174,12 @@ template <> struct MultiVec<uint64x2_t, 4> {using type = uint64x2x4_t; };
 template <> struct MultiVec<float32x2_t, 4> {using type = float32x2x4_t; };
 template <> struct MultiVec<float32x4_t, 4> {using type = float32x4x4_t; };
 
+template <typename T> struct Neon;
+
 // clang-format on
 
 template <typename T>
 concept arithmetic = std::is_arithmetic_v<T>;
-
-template <typename vector_type>
-class FloatCommon {
-  using base_type = neon::NonVec<vector_type>::type;
-
- public:
-  using T = FloatCommon<vector_type>;
-};
 
 template <typename vector_type>
 class Lane;
@@ -168,9 +188,10 @@ template <typename vector_type>
 class Common {
   using base_type = neon::NonVec<vector_type>::type;
   using result_type = Result<vector_type>::type;
+  using neon_result_type = Neon<result_type>::type;
 
  public:
-  using T = Common<vector_type>;
+  using neon_type = Neon<vector_type>::type;
   static constexpr size_t lanes = (neon::is_quadword_v<vector_type> ? 16 : 8) / sizeof(base_type);
 
   constexpr Common() : vec_{0} {};
@@ -186,38 +207,38 @@ class Common {
     }
   };
 
-  ace T operator=(base_type b) { return vec_ = LoadCopy(b); }
+  ace neon_type operator=(base_type b) { return vec_ = LoadCopy(b); }
 
-  ace T operator-() const { return Negate(); }
+  ace neon_type operator-() const { return Negate(); }
 
-  ace T operator+(T b) const { return Add(b); }
-  ace T operator-(T b) const { return Subtract(b); }
-  ace T operator*(T b) const { return Multiply(b); }
-  ace T operator/(T b) const { return Divide(b); }
+  ace neon_type operator+(neon_type b) const { return Add(b); }
+  ace neon_type operator-(neon_type b) const { return Subtract(b); }
+  ace neon_type operator*(neon_type b) const { return Multiply(b); }
+  ace neon_type operator/(neon_type b) const { return Divide(b); }
 
-  ace T operator+=(T b) { return vec_ = Add(b); }
-  ace T operator-=(T b) { return vec_ = Subtract(b); }
-  ace T operator*=(T b) { return vec_ = Multiply(b); }
-  ace T operator/=(T b) { return vec_ = Divide(b); }
+  ace neon_type operator+=(neon_type b) { return vec_ = Add(b); }
+  ace neon_type operator-=(neon_type b) { return vec_ = Subtract(b); }
+  ace neon_type operator*=(neon_type b) { return vec_ = Multiply(b); }
+  ace neon_type operator/=(neon_type b) { return vec_ = Divide(b); }
 
-  ace Common<result_type> operator==(T b) const { return Equal(b); }
-  ace Common<result_type> operator<(T b) const { return LessThan(b); }
-  ace Common<result_type> operator>(T b) const { return GreaterThan(b); }
-  ace Common<result_type> operator<=(T b) const { return LessThanOrEqual(b); }
-  ace Common<result_type> operator>=(T b) const { return GreaterThanOrEqual(b); }
+  ace neon_result_type operator==(neon_type b) const { return Equal(b); }
+  ace neon_result_type operator<(neon_type b) const { return LessThan(b); }
+  ace neon_result_type operator>(neon_type b) const { return GreaterThan(b); }
+  ace neon_result_type operator<=(neon_type b) const { return LessThanOrEqual(b); }
+  ace neon_result_type operator>=(neon_type b) const { return GreaterThanOrEqual(b); }
 
-  ace T operator++() const { return Add(1); }
-  ace T operator--() const { return Subtract(1); }
+  ace neon_type operator++() const { return Add(1); }
+  ace neon_type operator--() const { return Subtract(1); }
 
-  ace T operator&(T b) const { return AndBitwise(b); }
-  ace T operator|(T b) const { return OrBitwise(b); }
-  ace T operator^(T b) const { return XorBitwise(b); }
-  ace T operator~() const { return NotBitwise(); }
+  ace neon_type operator&(neon_type b) const { return AndBitwise(b); }
+  ace neon_type operator|(neon_type b) const { return OrBitwise(b); }
+  ace neon_type operator^(neon_type b) const { return XorBitwise(b); }
+  ace neon_type operator~() const { return NotBitwise(); }
 
   ace Lane<vector_type> operator[](const int i) const { return Lane{vec_, i}; }
 
-  ace T operator>>(const int i) const { return ShiftRight(i); }
-  ace T operator<<(const int i) const { return ShiftLeft(i); }
+  ace neon_type operator>>(const int i) const { return ShiftRight(i); }
+  ace neon_type operator<<(const int i) const { return ShiftLeft(i); }
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
@@ -231,41 +252,41 @@ class Common {
 
   ace base_type Get(const int i) const { return neon::get<vector_type>(vec_, i); }
 
-  ace T Set(const int i, base_type b) const { return neon::set(vec_, i, b); }
+  ace neon_type Set(const int i, base_type b) const { return neon::set(vec_, i, b); }
 
-  ace T ShiftRight(const int i) const { return neon::shift_right(vec_, i); }
+  ace neon_type ShiftRight(const int i) const { return neon::shift_right(vec_, i); }
 
-  ace T ShiftLeft(const int i) const { return neon::shift_left(vec_, i); }
+  ace neon_type ShiftLeft(const int i) const { return neon::shift_left(vec_, i); }
 
-  ace T Negate() const { return neon::negate(vec_); }
+  ace neon_type Negate() const { return neon::negate(vec_); }
 
-  ace T Add(T b) const { return neon::add(vec_, b); }
+  ace neon_type Add(neon_type b) const { return neon::add(vec_, b); }
 
-  ace T AddHalve(T b) const { return neon::add_halve(vec_, b); }
+  ace neon_type AddHalve(neon_type b) const { return neon::add_halve(vec_, b); }
 
-  ace T AddHalveRound(T b) const { return neon::add_halve_round(vec_, b); }
+  ace neon_type AddHalveRound(neon_type b) const { return neon::add_halve_round(vec_, b); }
 
-  ace T AddSaturate(T b) const { return neon::add_saturate(vec_, b); }
+  ace neon_type AddSaturate(neon_type b) const { return neon::add_saturate(vec_, b); }
 
-  ace T Multiply(T b) const { return neon::multiply(vec_, b); }
+  ace neon_type Multiply(neon_type b) const { return neon::multiply(vec_, b); }
 
   /** a + (b * c) */
-  ace T MultiplyAdd(T b, T c) const { return neon::multiply_add(vec_, b, c); }
+  ace neon_type MultiplyAdd(neon_type b, neon_type c) const { return neon::multiply_add(vec_, b, c); }
 
   /** a - (b * c) */
-  ace T MultiplySubtract(T b, T c) const { return neon::multiply_subtract(vec_, b, c); }
+  ace neon_type MultiplySubtract(neon_type b, neon_type c) const { return neon::multiply_subtract(vec_, b, c); }
 
-  ace T Subtract(T b) const { return neon::subtract(vec_, b); }
+  ace neon_type Subtract(neon_type b) const { return neon::subtract(vec_, b); }
 
-  ace T SubtractHigh(T b) const { return neon::subtract_high(vec_, b); }
+  ace neon_type SubtractHigh(neon_type b) const { return neon::subtract_high(vec_, b); }
 
-  ace T SubtractSaturate(T b) const { return neon::subtract_saturate(vec_, b); }
+  ace neon_type SubtractSaturate(neon_type b) const { return neon::subtract_saturate(vec_, b); }
 
-  ace T SubtractAbs(T b) const { return neon::subtract_abs(vec_, b); }
+  ace neon_type SubtractAbs(neon_type b) const { return neon::subtract_abs(vec_, b); }
 
-  ace T SubtractAbsAdd(T b, T c) const { return neon::subtract_abs_add(vec_, b, c); }
+  ace neon_type SubtractAbsAdd(neon_type b, neon_type c) const { return neon::subtract_abs_add(vec_, b, c); }
 
-  ace T Divide(T b) const requires std::floating_point<base_type> {
+  ace neon_type Divide(neon_type b) const requires std::floating_point<base_type> {
 #ifdef __aarch64__
     return neon::divide(vec_, b);
 #else
@@ -275,42 +296,36 @@ class Common {
 #endif
     }
 
-  ace T Max(T b) const { return neon::max(vec_, b); }
+  ace neon_type Max(neon_type b) const { return neon::max(vec_, b); }
 
-  ace T Min(T b) const { return neon::min(vec_, b); }
+  ace neon_type Min(neon_type b) const { return neon::min(vec_, b); }
 
-  ace T AddPairwise(T b) const { return neon::add_pairwise(vec_, b); }
+  ace neon_type AddPairwise(neon_type b) const { return neon::add_pairwise(vec_, b); }
 
-  ace T MaxPairwise(T b) const { return neon::max_pairwise(vec_, b); }
+  ace neon_type MaxPairwise(neon_type b) const { return neon::max_pairwise(vec_, b); }
 
-  ace T MinPairwise(T b) const { return neon::min_pairwise(vec_, b); }
+  ace neon_type MinPairwise(neon_type b) const { return neon::min_pairwise(vec_, b); }
 
-  ace Common<result_type> Equal(T b) const { return neon::equal(vec_, b); }
+  ace neon_result_type Equal(neon_type b) const { return neon::equal(vec_, b); }
+  ace neon_result_type GreaterThanOrEqual(neon_type b) const { return neon::greater_than_or_equal(vec_, b); }
+  ace neon_result_type LessThanOrEqual(neon_type b) const { return neon::less_than_or_equal(vec_, b); }
+  ace neon_result_type GreaterThan(neon_type b) const { return neon::greater_than(vec_, b); }
+  ace neon_result_type LessThan(neon_type b) const { return neon::less_than(vec_, b); }
 
-  ace Common<result_type> GreaterThanOrEqual(T b) const { return neon::greater_than_or_equal(vec_, b); }
+  ace neon_type AndTestNonzero(neon_type b) const { return neon::and_test_nonzero(vec_, b); }
 
-  ace Common<result_type> LessThanOrEqual(T b) const { return neon::less_than_or_equal(vec_, b); }
+  ace neon_type ShiftLeft(Common<typename neon::make_signed<vector_type>::type> b) const { return neon::shift_left(vec_, b); }
 
-  ace Common<result_type> GreaterThan(T b) const { return neon::greater_than(vec_, b); }
-
-  ace Common<result_type> LessThan(T b) const { return neon::less_than(vec_, b); }
-
-  ace T AndTestNonzero(T b) const { return neon::and_test_nonzero(vec_, b); }
-
-  ace T ShiftLeft(Common<typename neon::make_signed<vector_type>::type> b) const { return neon::shift_left(vec_, b); }
-
-  ace T ShiftLeftSaturate(Common<typename neon::make_signed<vector_type>::type> b) const {
+  ace neon_type ShiftLeftSaturate(Common<typename neon::make_signed<vector_type>::type> b) const {
     return neon::shift_left_saturate(vec_, b);
   }
 
   template <int n>
-  ace T ShiftLeftSaturate() const {
-    return neon::shift_left_saturate<n>(vec_);
-  }
+  ace neon_type ShiftLeftSaturate() const { return neon::shift_left_saturate<n>(vec_); }
 
-  ace T ShiftLeftRound(T b) const { return neon::shift_left_round(vec_, b); }
+  ace neon_type ShiftLeftRound(neon_type b) const { return neon::shift_left_round(vec_, b); }
 
-  ace T ShiftLeftRoundSaturate(T b) const { return neon::shift_left_round_saturate(vec_, b); }
+  ace neon_type ShiftLeftRoundSaturate(neon_type b) const { return neon::shift_left_round_saturate(vec_, b); }
 
   template <int n>
   ace uint16x8_t ShiftLeftLong() const {
@@ -318,44 +333,44 @@ class Common {
   }
 
   template <int n>
-  ace T ShiftLeftInsert(T b) const {
+  ace neon_type ShiftLeftInsert(neon_type b) const {
     return neon::shift_left_insert<n>(vec_, b);
   }
 
   template <int n>
-  ace T ShiftRight() const {
+  ace neon_type ShiftRight() const {
     return neon::shift_right<n>(vec_);
   }
 
   template <int n>
-  ace T ShiftRightRound() const {
+  ace neon_type ShiftRightRound() const {
     return neon::shift_right_round<n>(vec_);
   }
 
   template <int n>
-  ace T ShiftRightAccumulate(T b) const {
+  ace neon_type ShiftRightAccumulate(neon_type b) const {
     return neon::shift_right_accumulate<n>(vec_, b);
   }
 
   template <int n>
-  ace T ShiftRightAccumulateRound(T b) const {
+  ace neon_type ShiftRightAccumulateRound(neon_type b) const {
     return neon::shift_right_accumulate_round<n>(vec_, b);
   }
 
   template <int n>
-  ace T ShiftRightInsert(T b) const {
+  ace neon_type ShiftRightInsert(neon_type b) const {
     return neon::shift_right_insert<n>(vec_, b);
   }
 
-  ace static T Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
-  ace static std::array<T, 2> Load2(base_type const* ptr) { return *(std::array<T, 2>*)(neon::load2<typename MultiVec<vector_type,2>::type>(ptr).val); }
-  ace static std::array<T, 3> Load3(base_type const* ptr) { return *(std::array<T, 3>*)(neon::load3<typename MultiVec<vector_type,3>::type>(ptr).val); }
-  ace static std::array<T, 4> Load4(base_type const* ptr) { return *(std::array<T, 4>*)(neon::load4<typename MultiVec<vector_type,4>::type>(ptr).val); }
+  ace static neon_type Load(base_type const* ptr) { return neon::load1<vector_type>(ptr); }
+  ace static std::array<neon_type, 2> Load2(base_type const* ptr) { return *(std::array<neon_type, 2>*)(neon::load2<typename MultiVec<vector_type,2>::type>(ptr).val); }
+  ace static std::array<neon_type, 3> Load3(base_type const* ptr) { return *(std::array<neon_type, 3>*)(neon::load3<typename MultiVec<vector_type,3>::type>(ptr).val); }
+  ace static std::array<neon_type, 4> Load4(base_type const* ptr) { return *(std::array<neon_type, 4>*)(neon::load4<typename MultiVec<vector_type,4>::type>(ptr).val); }
 
   ace void Store(base_type* ptr) { neon::store1(ptr, vec_); }
-  ace static void Store2(std::array<T, 2> multi_vec, base_type* ptr) { neon::store2(ptr, *(typename MultiVec<vector_type, 2>::type*)multi_vec.data()); }
-  ace static void Store3(std::array<T, 3> multi_vec, base_type* ptr) { neon::store3(ptr, *(typename MultiVec<vector_type, 3>::type*)multi_vec.data()); }
-  ace static void Store4(std::array<T, 4> multi_vec, base_type* ptr) { neon::store4(ptr, *(typename MultiVec<vector_type, 4>::type*)multi_vec.data()); }
+  ace static void Store2(std::array<neon_type, 2> multi_vec, base_type* ptr) { neon::store2(ptr, *(typename MultiVec<vector_type, 2>::type*)multi_vec.data()); }
+  ace static void Store3(std::array<neon_type, 3> multi_vec, base_type* ptr) { neon::store3(ptr, *(typename MultiVec<vector_type, 3>::type*)multi_vec.data()); }
+  ace static void Store4(std::array<neon_type, 4> multi_vec, base_type* ptr) { neon::store4(ptr, *(typename MultiVec<vector_type, 4>::type*)multi_vec.data()); }
 
   template <int lane>
   ace void StoreLane(base_type* ptr) {
@@ -363,47 +378,47 @@ class Common {
   }
 
   template <int lane>
-  ace static void StoreLane2(std::array<T, 2> multi_vec, base_type* ptr) {
+  ace static void StoreLane2(std::array<neon_type, 2> multi_vec, base_type* ptr) {
     neon::store2<lane>(ptr, *(typename MultiVec<vector_type, 2>::type*)multi_vec.data());
   }
 
   template <int lane>
-  ace static void StoreLane3(std::array<T, 3> multi_vec, base_type* ptr) {
+  ace static void StoreLane3(std::array<neon_type, 3> multi_vec, base_type* ptr) {
     neon::store3<lane>(ptr, *(typename MultiVec<vector_type, 3>::type*)multi_vec.data());
   }
 
   template <int lane>
-  ace static void StoreLane4(std::array<T, 4> multi_vec, base_type* ptr) {
+  ace static void StoreLane4(std::array<neon_type, 4> multi_vec, base_type* ptr) {
     neon::store4<lane>(ptr, *(typename MultiVec<vector_type, 4>::type*)multi_vec.data());
   }
 
-  ace static T LoadCopy(base_type b) { return neon::duplicate_element<vector_type>(b); }
-  ace static T Move(base_type b) { return neon::move<vector_type>(b); }
+  ace static neon_type LoadCopy(base_type b) { return neon::duplicate_element<vector_type>(b); }
+  ace static neon_type Move(base_type b) { return neon::move<vector_type>(b); }
 
-  ace T NotBitwise() const { return neon::not_bitwise(vec_); }
+  ace neon_type NotBitwise() const { return neon::not_bitwise(vec_); }
 
-  ace T AndBitwise(T b) const { return neon::and_bitwise(vec_, b); }
+  ace neon_type AndBitwise(neon_type b) const { return neon::and_bitwise(vec_, b); }
 
-  ace T OrBitwise(T b) const { return neon::or_bitwise(vec_, b); }
+  ace neon_type OrBitwise(neon_type b) const { return neon::or_bitwise(vec_, b); }
 
-  ace T XorBitwise(T b) const { return neon::xor_bitwise(vec_, b); }
+  ace neon_type XorBitwise(neon_type b) const { return neon::xor_bitwise(vec_, b); }
 
-  ace T OrNotBitwise(T b) const { return neon::or_not_bitwise(vec_, b); }
+  ace neon_type OrNotBitwise(neon_type b) const { return neon::or_not_bitwise(vec_, b); }
 
   ace typename neon::make_signed<vector_type>::type CountLeadingSignBits() const {
     return neon::count_leading_sign_bits(vec_);
   }
 
-  ace T CountLeadingZeroBits() const { return neon::count_leading_zero_bits(vec_); }
+  ace neon_type CountLeadingZeroBits() const { return neon::count_leading_zero_bits(vec_); }
 
-  ace T CountActiveBits() const { return neon::count_active_bits(vec_); }
+  ace neon_type CountActiveBits() const { return neon::count_active_bits(vec_); }
 
-  ace T ClearBitwise(T b) const { return neon::clear_bitwise(vec_, b); }
+  ace neon_type ClearBitwise(neon_type b) const { return neon::clear_bitwise(vec_, b); }
 
-  ace T SelectBitwise(T b, T c) const { return neon::select_bitwise(vec_, b, c); }
+  ace neon_type SelectBitwise(neon_type b, neon_type c) const { return neon::select_bitwise(vec_, b, c); }
 
   template <int lane>
-  ace T DuplicateElement() const {
+  ace neon_type DuplicateElement() const {
     return neon::duplicate_element(vec_, lane);
   }
 
@@ -418,28 +433,28 @@ class Common {
   }
 
   template <int n>
-  ace T Extract(T b) const {
+  ace neon_type Extract(neon_type b) const {
     return neon::extract(vec_, b, n);
   }
 
-  ace T Reverse64bit() const { return neon::reverse_64bit(vec_); }
+  ace neon_type Reverse64bit() const { return neon::reverse_64bit(vec_); }
 
-  ace T Reverse32bit() const { return neon::reverse_32bit(vec_); }
+  ace neon_type Reverse32bit() const { return neon::reverse_32bit(vec_); }
 
-  ace T Reverse16bit() const { return neon::reverse_16bit(vec_); }
+  ace neon_type Reverse16bit() const { return neon::reverse_16bit(vec_); }
 
-  ace uint8x8x2_t Zip(T b) const { return neon::zip(vec_, b); }
+  ace auto Zip(neon_type b) const { return neon::zip(vec_, b); }
 
-  uint8x8x2_t Unzip(T b) { return neon::unzip(vec_, b); }
+  auto Unzip(neon_type b) { return neon::unzip(vec_, b); }
 
-  ace uint8x8x2_t Transpose(T b) const { return neon::transpose(vec_, b); }
+  ace auto Transpose(neon_type b) const { return neon::transpose(vec_, b); }
 
   ace static int size() { return lanes; }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<base_type(base_type)>>
-  ace T map(FuncType body) const {
-    T out;
+  ace neon_type map(FuncType body) const {
+    neon_type out;
     for (int i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i]);
     }
@@ -448,8 +463,8 @@ class Common {
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<base_type(base_type, base_type)>>
-  ace T map2(T other, FuncType body) const {
-    T out;
+  ace neon_type map2(neon_type other, FuncType body) const {
+    neon_type out;
     for (int i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i], other.vec_[i]);
     }
@@ -536,7 +551,7 @@ class Common {
   }
 
   template<std::size_t Index>
-  std::tuple_element_t<Index, T> get() {
+  std::tuple_element_t<Index, neon_type> get() {
     return Lane{vec_, Index};
   }
 
@@ -576,7 +591,6 @@ class Neon128;
 template <typename base_type>
 class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
   using T = impl::Common<typename impl::Vec64<base_type>::type>;
-  using next_larger_type = impl::NextLarger<base_type>::type;
 
  public:
   using vector_type = impl::Vec64<base_type>::type;
@@ -602,20 +616,30 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
   ace static std::array<Neon64<base_type>, 3> Load3(base_type const* ptr) { return *(std::array<Neon64<base_type>, 3>*)(neon::load3<typename impl::MultiVec<vector_type,3>::type>(ptr).val); }
   ace static std::array<Neon64<base_type>, 4> Load4(base_type const* ptr) { return *(std::array<Neon64<base_type>, 4>*)(neon::load4<typename impl::MultiVec<vector_type,4>::type>(ptr).val); }
 
-  ace Neon128<next_larger_type> AddLong(T b) const { return neon::add_long(this->vec_, b); }
-  ace Neon128<next_larger_type> MultiplyLong(T b) const { return neon::multiply_long(this->vec_, b); }
+  
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> AddLong(Neon64<base_type> b) const { return neon::add_long(this->vec_, b); }
+  
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> MultiplyLong(Neon64<base_type> b) const { return neon::multiply_long(this->vec_, b); }
 
-  template <size_t n=32>
-  ace Neon64<base_type> MultiplyShiftRight(T b) {
-    Neon128<next_larger_type> intermediate = this->MultiplyLong(b);
-    return intermediate.template ShiftRightNarrow<n>();
-  }
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> SubtractLong(Neon64<base_type> b) const { return neon::subtract_long(this->vec_, b); }
+  
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> MoveLong() const { return neon::move_long(this->vec_); }
 
-  ace Neon128<next_larger_type> SubtractLong(T b) const { return neon::subtract_long(this->vec_, b); }
-  ace Neon128<next_larger_type> MoveLong() const { return neon::move_long(this->vec_); }
-
-  ace Neon128<next_larger_type> SubtractAbsLong(T b) const { return neon::subtract_abs_long(this->vec_, b); }
-  ace Neon128<next_larger_type> AddPairwiseLong() const { return neon::add_pairwise_long(this->vec_); }
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> SubtractAbsLong(Neon64<base_type> b) const { return neon::subtract_abs_long(this->vec_, b); }
+  
+  template <typename U>
+  requires impl::has_larger_v<base_type>
+  ace Neon128<U> AddPairwiseLong() const { return neon::add_pairwise_long(this->vec_); }
 
   ace T TableLookup1(T idx) const { return neon::table_lookup1(this->vec_, idx); }
   ace T TableLookupExtension1(T b, T idx) const { return neon::table_lookup_extension1(this->vec_, b, idx); }
@@ -639,10 +663,15 @@ class Neon64 : public impl::Common<typename impl::Vec64<base_type>::type> {
 template <typename base_type>
 class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   using T = impl::Common<typename impl::Vec128<base_type>::type>;
-  using next_smaller_type = impl::NextSmaller<base_type>::type;
 
  public:
   using vector_type = impl::Vec128<base_type>::type;
+
+  static_assert(neon::is_quadword_v<vector_type>);
+
+  static constexpr size_t bytes = 16;
+  static constexpr size_t lanes = bytes / sizeof(base_type);
+  
   constexpr Neon128() : T(){};
   constexpr Neon128(vector_type vector) : T(vector){};
   constexpr Neon128(base_type base) : T(base){};
@@ -660,26 +689,17 @@ class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   ace static std::array<Neon128<base_type>, 3> Load3(base_type const* ptr) { return *(std::array<Neon128<base_type>, 3>*)(neon::load3<typename impl::MultiVec<vector_type,3>::type>(ptr).val); }
   ace static std::array<Neon128<base_type>, 4> Load4(base_type const* ptr) { return *(std::array<Neon128<base_type>, 4>*)(neon::load4<typename impl::MultiVec<vector_type,4>::type>(ptr).val); }
 
-  ace Neon128<base_type> MultiplyAddLong(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) const { return neon::multiply_add_long(this->vec_, b, c); }
+  template <typename U>
+  requires impl::has_smaller_v<base_type> && std::is_same_v<U, typename impl::NextSmaller<base_type>::type>
+  ace Neon128<base_type> MultiplyAddLong(Neon64<U> b, Neon64<U> c) const{ return neon::multiply_add_long(this->vec_, b, c); }
 
-  /** Multiplies two doublewords, adds to a quadword, rounds, and then shifts the result right, narrowing
-   * a_q += b_d * c_d */
-  template <size_t n=32>
-  ace Neon64<next_smaller_type> MultiplyAddLongShiftRightRounded(Neon64<next_smaller_type> b, Neon64<next_smaller_type> c) {
-    Neon128<base_type> intermediate = this->MultiplyAddLong(b, c);
-    return intermediate.template ShiftRightNarrowRounded<n>();
-  }
+  template <size_t n=32, typename U>
+  requires impl::has_smaller_v<base_type> && std::is_same_v<U, typename impl::NextSmaller<base_type>::type>
+  ace Neon64<U> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
 
-  template <size_t n=32>
-  ace Neon64<next_smaller_type> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
-
-  template <size_t n=32>
-  ace Neon64<next_smaller_type> ShiftRightNarrowRounded() { return neon::shift_right_round_narrow<n>(this->vec_); }
-
-  static_assert(neon::is_quadword_v<vector_type>);
-
-  static constexpr size_t bytes = 16;
-  static constexpr size_t lanes = bytes / sizeof(base_type);
+  template <size_t n=32, typename U>
+  requires impl::has_smaller_v<base_type> && std::is_same_v<U, typename impl::NextSmaller<base_type>::type>
+  ace Neon64<U> ShiftRightNarrowRounded() { return neon::shift_right_round_narrow<n>(this->vec_); }
 
   ace Neon64<base_type> GetHigh() { return neon::get_high(this->vec_); }
   ace Neon64<base_type> GetLow() { return neon::get_low(this->vec_); }
@@ -695,10 +715,23 @@ class Neon128 : public impl::Common<typename impl::Vec128<base_type>::type> {
   }
 };
 
-template <typename NeonType, neon::is_vector_type V>
-ace NeonType reinterpret(impl::Common<V> in) {
-  static_assert(!std::is_same_v<typename NeonType::vector_type, V>);
-  return NeonType{neon::reinterpret<typename NeonType::vector_type>(in.vec())};
+namespace impl {
+template <neon::is_vector_type T> 
+requires neon::is_quadword<T>
+struct Neon<T> { using type = Neon128<typename neon::NonVec<T>::type>; };
+
+template <neon::is_vector_type T> 
+requires neon::is_doubleword<T>
+struct Neon<T> { using type = Neon64<typename neon::NonVec<T>::type>; };
+}
+
+template <typename T, typename V>
+ace auto reinterpret(impl::Common<V> in) {
+  if constexpr(neon::is_quadword_v<V>) {
+    return Neon128<T>{neon::reinterpret<typename Neon128<T>::vector_type>(in.vec())};
+  } else if constexpr(neon::is_doubleword_v<V>) {
+    return Neon64<T>{neon::reinterpret<typename Neon64<T>::vector_type>(in.vec())};
+  }
 }
 
 template <typename NeonType, neon::is_vector_type V>
