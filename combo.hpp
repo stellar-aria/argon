@@ -5832,7 +5832,7 @@ class Common {
 
   template <int n>
   ace neon_type Extract(neon_type b) const {
-    return neon::extract(vec_, b, n);
+    return neon::extract<n>(vec_, b);
   }
 
   ace neon_type Reverse64bit() const { return neon::reverse_64bit(vec_); }
