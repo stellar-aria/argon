@@ -459,9 +459,11 @@ class Common {
     return neon::get(vec_, lane);
   }
 
+  /// Extract n elements from the lower end of this vector, and the remaining elements from the higher end of the
+  /// operand, combining them into the result vector.
   template <int n>
   ace neon_type Extract(neon_type b) const {
-    return neon::extract(vec_, b, n);
+    return neon::extract<n>(vec_, b);
   }
 
   ace neon_type Reverse64bit() const { return neon::reverse_64bit(vec_); }
