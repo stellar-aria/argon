@@ -10,6 +10,7 @@
         "--background-index",
         "--query-driver=*LLVMEmbeddedToolchainForArm*", //for cross compile usage
     ],
+    "clangd.path": "C:\\Developer\\LLVMEmbeddedToolchainForArm\\bin\\clangd.exe",
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {

@@ -3,9 +3,7 @@ target_link_libraries(test argon)
 
 target_compile_options(test PUBLIC
   -O2
-  -fpeel-loops
-  -fpredictive-commoning
-  -ftree-loop-distribution
+  -funsafe-math-optimizations
 )
 
 set_target_properties(test

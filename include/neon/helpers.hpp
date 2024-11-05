@@ -3,245 +3,116 @@
 #include "../neon.hpp"
 
 #ifdef __clang__
-#define nce constexpr
+#define nce [[gnu::always_inline]] constexpr
 #else
-#define nce inline
+#define nce [[gnu::always_inline]] inline
 #endif
 
 namespace neon {
-template <typename T>
-struct make_unsigned;
-template <typename T>
-struct make_signed;
+// clang-format off
+template <typename T> struct make_unsigned;
+template <typename T> struct make_signed;
 
-template <>
-struct make_unsigned<int8x8_t> {
-  using type = uint8x8_t;
-};
-template <>
-struct make_unsigned<int8x16_t> {
-  using type = uint8x16_t;
-};
+template <> struct make_unsigned<int8x8_t> { using type = uint8x8_t; };
+template <> struct make_unsigned<int8x16_t> { using type = uint8x16_t; };
 
-template <>
-struct make_unsigned<uint8x8_t> {
-  using type = uint8x8_t;
-};
-template <>
-struct make_unsigned<uint8x16_t> {
-  using type = uint8x16_t;
-};
+template <> struct make_unsigned<uint8x8_t> { using type = uint8x8_t; };
+template <> struct make_unsigned<uint8x16_t> { using type = uint8x16_t; };
 
-template <>
-struct make_signed<uint8x8_t> {
-  using type = int8x8_t;
-};
-template <>
-struct make_signed<uint8x16_t> {
-  using type = int8x16_t;
-};
+template <> struct make_signed<uint8x8_t> { using type = int8x8_t; };
+template <> struct make_signed<uint8x16_t> { using type = int8x16_t; };
 
-template <>
-struct make_signed<int8x8_t> {
-  using type = int8x8_t;
-};
-template <>
-struct make_signed<int8x16_t> {
-  using type = int8x16_t;
-};
+template <> struct make_signed<int8x8_t> { using type = int8x8_t; };
+template <> struct make_signed<int8x16_t> { using type = int8x16_t; };
 
-template <>
-struct make_unsigned<int16x4_t> {
-  using type = uint16x4_t;
-};
-template <>
-struct make_unsigned<int16x8_t> {
-  using type = uint16x8_t;
-};
+template <> struct make_unsigned<int16x4_t> { using type = uint16x4_t; };
+template <> struct make_unsigned<int16x8_t> { using type = uint16x8_t; };
 
-template <>
-struct make_unsigned<uint16x4_t> {
-  using type = uint16x4_t;
-};
-template <>
-struct make_unsigned<uint16x8_t> {
-  using type = uint16x8_t;
-};
+template <> struct make_unsigned<uint16x4_t> { using type = uint16x4_t; };
+template <> struct make_unsigned<uint16x8_t> { using type = uint16x8_t; };
 
-template <>
-struct make_signed<uint16x4_t> {
-  using type = int16x4_t;
-};
-template <>
-struct make_signed<uint16x8_t> {
-  using type = int16x8_t;
-};
+template <> struct make_signed<uint16x4_t> { using type = int16x4_t; };
+template <> struct make_signed<uint16x8_t> { using type = int16x8_t; };
 
-template <>
-struct make_signed<int16x4_t> {
-  using type = int16x4_t;
-};
-template <>
-struct make_signed<int16x8_t> {
-  using type = int16x8_t;
-};
+template <> struct make_signed<int16x4_t> { using type = int16x4_t; };
+template <> struct make_signed<int16x8_t> { using type = int16x8_t; };
 
-template <>
-struct make_unsigned<int32x2_t> {
-  using type = uint32x2_t;
-};
-template <>
-struct make_unsigned<int32x4_t> {
-  using type = uint32x4_t;
-};
+template <> struct make_unsigned<int32x2_t> { using type = uint32x2_t; };
+template <> struct make_unsigned<int32x4_t> { using type = uint32x4_t; };
 
-template <>
-struct make_unsigned<uint32x2_t> {
-  using type = uint32x2_t;
-};
-template <>
-struct make_unsigned<uint32x4_t> {
-  using type = uint32x4_t;
-};
+template <> struct make_unsigned<uint32x2_t> { using type = uint32x2_t; };
+template <> struct make_unsigned<uint32x4_t> { using type = uint32x4_t; };
 
-template <>
-struct make_signed<uint32x2_t> {
-  using type = int32x2_t;
-};
-template <>
-struct make_signed<uint32x4_t> {
-  using type = int32x4_t;
-};
+template <> struct make_signed<uint32x2_t> { using type = int32x2_t; };
+template <> struct make_signed<uint32x4_t> { using type = int32x4_t; };
 
-template <>
-struct make_signed<int32x2_t> {
-  using type = int32x2_t;
-};
-template <>
-struct make_signed<int32x4_t> {
-  using type = int32x4_t;
-};
+template <> struct make_signed<int32x2_t> { using type = int32x2_t; };
+template <> struct make_signed<int32x4_t> { using type = int32x4_t; };
 
-template <>
-struct make_unsigned<int64x1_t> {
-  using type = uint64x1_t;
-};
-template <>
-struct make_unsigned<int64x2_t> {
-  using type = uint64x2_t;
-};
+template <> struct make_unsigned<int64x1_t> { using type = uint64x1_t; };
+template <> struct make_unsigned<int64x2_t> { using type = uint64x2_t; };
 
-template <>
-struct make_unsigned<uint64x1_t> {
-  using type = uint64x1_t;
-};
-template <>
-struct make_unsigned<uint64x2_t> {
-  using type = uint64x2_t;
-};
+template <> struct make_unsigned<uint64x1_t> { using type = uint64x1_t; };
+template <> struct make_unsigned<uint64x2_t> { using type = uint64x2_t; };
 
-template <>
-struct make_signed<uint64x1_t> {
-  using type = int64x1_t;
-};
-template <>
-struct make_signed<uint64x2_t> {
-  using type = int64x2_t;
-};
+template <> struct make_signed<uint64x1_t> { using type = int64x1_t; };
+template <> struct make_signed<uint64x2_t> { using type = int64x2_t; };
 
-template <>
-struct make_signed<int64x1_t> {
-  using type = int64x1_t;
-};
-template <>
-struct make_signed<int64x2_t> {
-  using type = int64x2_t;
-};
+template <> struct make_signed<int64x1_t> { using type = int64x1_t; };
+template <> struct make_signed<int64x2_t> { using type = int64x2_t; };
 
-template <>
-struct make_signed<float32x2_t> {
-  using type = float32x2_t;
-};
-template <>
-struct make_signed<float32x4_t> {
-  using type = float32x4_t;
-};
+template <> struct make_signed<float32x2_t> { using type = float32x2_t; };
+template <> struct make_signed<float32x4_t> { using type = float32x4_t; };
 
-template <typename T>
-struct NonVec;
-template <>
-struct NonVec<int8x8_t> {
-  using type = int8_t;
-};
-template <>
-struct NonVec<uint8x8_t> {
-  using type = uint8_t;
-};
-template <>
-struct NonVec<int16x4_t> {
-  using type = int16_t;
-};
-template <>
-struct NonVec<uint16x4_t> {
-  using type = uint16_t;
-};
-template <>
-struct NonVec<int32x2_t> {
-  using type = int32_t;
-};
-template <>
-struct NonVec<uint32x2_t> {
-  using type = uint32_t;
-};
-template <>
-struct NonVec<int64x1_t> {
-  using type = int64_t;
-};
-template <>
-struct NonVec<uint64x1_t> {
-  using type = uint64_t;
-};
-template <>
-struct NonVec<float32x2_t> {
-  using type = float;
-};
+template <typename T> struct NonVec;
+template <> struct NonVec<int8x8_t> { using type = int8_t; };
+template <> struct NonVec<uint8x8_t> { using type = uint8_t; };
+template <> struct NonVec<int16x4_t> { using type = int16_t; };
+template <> struct NonVec<uint16x4_t> { using type = uint16_t; };
+template <> struct NonVec<int32x2_t> { using type = int32_t; };
+template <> struct NonVec<uint32x2_t> { using type = uint32_t; };
+template <> struct NonVec<int64x1_t> { using type = int64_t; };
+template <> struct NonVec<uint64x1_t> { using type = uint64_t; };
+template <> struct NonVec<float32x2_t> { using type = float; };
 
-template <>
-struct NonVec<int8x16_t> {
-  using type = int8_t;
-};
-template <>
-struct NonVec<uint8x16_t> {
-  using type = uint8_t;
-};
-template <>
-struct NonVec<int16x8_t> {
-  using type = int16_t;
-};
-template <>
-struct NonVec<uint16x8_t> {
-  using type = uint16_t;
-};
-template <>
-struct NonVec<int32x4_t> {
-  using type = int32_t;
-};
-template <>
-struct NonVec<uint32x4_t> {
-  using type = uint32_t;
-};
-template <>
-struct NonVec<int64x2_t> {
-  using type = int64_t;
-};
-template <>
-struct NonVec<uint64x2_t> {
-  using type = uint64_t;
-};
-template <>
-struct NonVec<float32x4_t> {
-  using type = float;
-};
+template <> struct NonVec<int8x16_t> { using type = int8_t; };
+template <> struct NonVec<uint8x16_t> { using type = uint8_t; };
+template <> struct NonVec<int16x8_t> { using type = int16_t; };
+template <> struct NonVec<uint16x8_t> { using type = uint16_t; };
+template <> struct NonVec<int32x4_t> { using type = int32_t; };
+template <> struct NonVec<uint32x4_t> { using type = uint32_t; };
+template <> struct NonVec<int64x2_t> { using type = int64_t; };
+template <> struct NonVec<uint64x2_t> { using type = uint64_t; };
+template <> struct NonVec<float32x4_t> { using type = float; };
+
+template <typename type> struct Vec64 {};
+template <typename type> struct Vec128 {};
+template <> struct Vec64<int8_t> {using type = int8x8_t; };
+template <> struct Vec128<int8_t>  {using type = int8x16_t; };
+
+template <> struct Vec64<uint8_t> {using type = uint8x8_t; };
+template <> struct Vec128<uint8_t>  {using type = uint8x16_t; };
+
+template <> struct Vec64<int16_t> {using type = int16x4_t; };
+template <> struct Vec128<int16_t>  {using type = int16x8_t; };
+
+template <> struct Vec64<uint16_t> {using type = uint16x4_t; };
+template <> struct Vec128<uint16_t>  {using type = uint16x8_t; };
+
+template <> struct Vec64<int32_t> {using type = int32x2_t; };
+template <> struct Vec128<int32_t>  {using type = int32x4_t; };
+
+template <> struct Vec64<uint32_t> {using type = uint32x2_t; };
+template <> struct Vec128<uint32_t>  {using type = uint32x4_t; };
+
+template <> struct Vec64<int64_t> {using type = int64x1_t; };
+template <> struct Vec128<int64_t>  {using type = int64x2_t; };
+
+template <> struct Vec64<uint64_t> {using type = uint64x1_t; };
+template <> struct Vec128<uint64_t>  {using type = uint64x2_t; };
+
+template <> struct Vec64<float> {using type = float32x2_t; };
+template <> struct Vec128<float>  {using type = float32x4_t; };
 
 template <typename T>
 constexpr bool is_doubleword_v =
@@ -263,680 +134,926 @@ concept is_quadword = is_quadword_v<T>;
 
 template <typename T>
 concept is_vector_type = is_doubleword<T> || is_quadword<T>;
+// clang-format on
 
 template <typename T>
-nce auto get(T vec, const int i);
+nce auto get_lane(T vec, const int i);
 
 template <>
-nce auto get(uint8x16_t vec, const int i) {
+nce auto get_lane(uint8x16_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     case 8:
-      return neon::get<8>(vec);
+      return neon::get_lane<8>(vec);
     case 9:
-      return neon::get<9>(vec);
+      return neon::get_lane<9>(vec);
     case 10:
-      return neon::get<10>(vec);
+      return neon::get_lane<10>(vec);
     case 11:
-      return neon::get<11>(vec);
+      return neon::get_lane<11>(vec);
     case 12:
-      return neon::get<12>(vec);
+      return neon::get_lane<12>(vec);
     case 13:
-      return neon::get<13>(vec);
+      return neon::get_lane<13>(vec);
     case 14:
-      return neon::get<14>(vec);
+      return neon::get_lane<14>(vec);
     case 15:
-      return neon::get<15>(vec);
+      return neon::get_lane<15>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int8x16_t vec, const int i) {
+nce auto get_lane(int8x16_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     case 8:
-      return neon::get<8>(vec);
+      return neon::get_lane<8>(vec);
     case 9:
-      return neon::get<9>(vec);
+      return neon::get_lane<9>(vec);
     case 10:
-      return neon::get<10>(vec);
+      return neon::get_lane<10>(vec);
     case 11:
-      return neon::get<11>(vec);
+      return neon::get_lane<11>(vec);
     case 12:
-      return neon::get<12>(vec);
+      return neon::get_lane<12>(vec);
     case 13:
-      return neon::get<13>(vec);
+      return neon::get_lane<13>(vec);
     case 14:
-      return neon::get<14>(vec);
+      return neon::get_lane<14>(vec);
     case 15:
-      return neon::get<15>(vec);
+      return neon::get_lane<15>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint8x8_t vec, const int i) {
+nce auto get_lane(uint8x8_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int8x8_t vec, const int i) {
+nce auto get_lane(int8x8_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint16x8_t vec, const int i) {
+nce auto get_lane(uint16x8_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int16x8_t vec, const int i) {
+nce auto get_lane(int16x8_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     case 4:
-      return neon::get<4>(vec);
+      return neon::get_lane<4>(vec);
     case 5:
-      return neon::get<5>(vec);
+      return neon::get_lane<5>(vec);
     case 6:
-      return neon::get<6>(vec);
+      return neon::get_lane<6>(vec);
     case 7:
-      return neon::get<7>(vec);
+      return neon::get_lane<7>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint16x4_t vec, const int i) {
+nce auto get_lane(uint16x4_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int16x4_t vec, const int i) {
+nce auto get_lane(int16x4_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint32x4_t vec, const int i) {
+nce auto get_lane(uint32x4_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int32x4_t vec, const int i) {
+nce auto get_lane(int32x4_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(float32x4_t vec, const int i) {
+nce auto get_lane(float32x4_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     case 2:
-      return neon::get<2>(vec);
+      return neon::get_lane<2>(vec);
     case 3:
-      return neon::get<3>(vec);
+      return neon::get_lane<3>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint32x2_t vec, const int i) {
+nce auto get_lane(uint32x2_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int32x2_t vec, const int i) {
+nce auto get_lane(int32x2_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint64x2_t vec, const int i) {
+nce auto get_lane(uint64x2_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int64x2_t vec, const int i) {
+nce auto get_lane(int64x2_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(float32x2_t vec, const int i) {
+nce auto get_lane(float32x2_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     case 1:
-      return neon::get<1>(vec);
+      return neon::get_lane<1>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(uint64x1_t vec, const int i) {
+nce auto get_lane(uint64x1_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce auto get(int64x1_t vec, const int i) {
+nce auto get_lane(int64x1_t vec, const int i) {
   switch (i) {
     case 0:
-      return neon::get<0>(vec);
+      return neon::get_lane<0>(vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <typename T>
-nce T set(T vec, const int i, typename NonVec<T>::type a);
+nce T set_lane(T vec, const int i, typename NonVec<T>::type a);
 
 template <>
-nce uint8x16_t set(uint8x16_t vec, const int i, uint8_t a) {
+nce uint8x16_t set_lane(uint8x16_t vec, const int i, uint8_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     case 8:
-      return neon::set<8>(a, vec);
+      return neon::set_lane<8>(a, vec);
     case 9:
-      return neon::set<9>(a, vec);
+      return neon::set_lane<9>(a, vec);
     case 10:
-      return neon::set<10>(a, vec);
+      return neon::set_lane<10>(a, vec);
     case 11:
-      return neon::set<11>(a, vec);
+      return neon::set_lane<11>(a, vec);
     case 12:
-      return neon::set<12>(a, vec);
+      return neon::set_lane<12>(a, vec);
     case 13:
-      return neon::set<13>(a, vec);
+      return neon::set_lane<13>(a, vec);
     case 14:
-      return neon::set<14>(a, vec);
+      return neon::set_lane<14>(a, vec);
     case 15:
-      return neon::set<15>(a, vec);
+      return neon::set_lane<15>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int8x16_t set(int8x16_t vec, const int i, int8_t a) {
+nce int8x16_t set_lane(int8x16_t vec, const int i, int8_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     case 8:
-      return neon::set<8>(a, vec);
+      return neon::set_lane<8>(a, vec);
     case 9:
-      return neon::set<9>(a, vec);
+      return neon::set_lane<9>(a, vec);
     case 10:
-      return neon::set<10>(a, vec);
+      return neon::set_lane<10>(a, vec);
     case 11:
-      return neon::set<11>(a, vec);
+      return neon::set_lane<11>(a, vec);
     case 12:
-      return neon::set<12>(a, vec);
+      return neon::set_lane<12>(a, vec);
     case 13:
-      return neon::set<13>(a, vec);
+      return neon::set_lane<13>(a, vec);
     case 14:
-      return neon::set<14>(a, vec);
+      return neon::set_lane<14>(a, vec);
     case 15:
-      return neon::set<15>(a, vec);
+      return neon::set_lane<15>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint8x8_t set(uint8x8_t vec, const int i, uint8_t a) {
+nce uint8x8_t set_lane(uint8x8_t vec, const int i, uint8_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int8x8_t set(int8x8_t vec, const int i, int8_t a) {
+nce int8x8_t set_lane(int8x8_t vec, const int i, int8_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint16x8_t set(uint16x8_t vec, const int i, uint16_t a) {
+nce uint16x8_t set_lane(uint16x8_t vec, const int i, uint16_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int16x8_t set(int16x8_t vec, const int i, int16_t a) {
+nce int16x8_t set_lane(int16x8_t vec, const int i, int16_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     case 4:
-      return neon::set<4>(a, vec);
+      return neon::set_lane<4>(a, vec);
     case 5:
-      return neon::set<5>(a, vec);
+      return neon::set_lane<5>(a, vec);
     case 6:
-      return neon::set<6>(a, vec);
+      return neon::set_lane<6>(a, vec);
     case 7:
-      return neon::set<7>(a, vec);
+      return neon::set_lane<7>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint16x4_t set(uint16x4_t vec, const int i, uint16_t a) {
+nce uint16x4_t set_lane(uint16x4_t vec, const int i, uint16_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int16x4_t set(int16x4_t vec, const int i, int16_t a) {
+nce int16x4_t set_lane(int16x4_t vec, const int i, int16_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint32x4_t set(uint32x4_t vec, const int i, uint32_t a) {
+nce uint32x4_t set_lane(uint32x4_t vec, const int i, uint32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int32x4_t set(int32x4_t vec, const int i, int32_t a) {
+nce int32x4_t set_lane(int32x4_t vec, const int i, int32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce float32x4_t set(float32x4_t vec, const int i, float32_t a) {
+nce float32x4_t set_lane(float32x4_t vec, const int i, float32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     case 2:
-      return neon::set<2>(a, vec);
+      return neon::set_lane<2>(a, vec);
     case 3:
-      return neon::set<3>(a, vec);
+      return neon::set_lane<3>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint32x2_t set(uint32x2_t vec, const int i, uint32_t a) {
+nce uint32x2_t set_lane(uint32x2_t vec, const int i, uint32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int32x2_t set(int32x2_t vec, const int i, int32_t a) {
+nce int32x2_t set_lane(int32x2_t vec, const int i, int32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint64x2_t set(uint64x2_t vec, const int i, uint64_t a) {
+nce uint64x2_t set_lane(uint64x2_t vec, const int i, uint64_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int64x2_t set(int64x2_t vec, const int i, int64_t a) {
+nce int64x2_t set_lane(int64x2_t vec, const int i, int64_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce float32x2_t set(float32x2_t vec, const int i, float32_t a) {
+nce float32x2_t set_lane(float32x2_t vec, const int i, float32_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     case 1:
-      return neon::set<1>(a, vec);
+      return neon::set_lane<1>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce uint64x1_t set(uint64x1_t vec, const int i, uint64_t a) {
+nce uint64x1_t set_lane(uint64x1_t vec, const int i, uint64_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
     default:
       __builtin_unreachable();
   }
 }
 
 template <>
-nce int64x1_t set(int64x1_t vec, const int i, int64_t a) {
+nce int64x1_t set_lane(int64x1_t vec, const int i, int64_t a) {
   switch (i) {
     case 0:
-      return neon::set<0>(a, vec);
+      return neon::set_lane<0>(a, vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <typename T>
+nce T duplicate_lane(typename Vec64<typename NonVec<T>::type>::type vec, const int i);
+
+template <>
+nce uint8x8_t duplicate_lane(uint8x8_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    case 2:
+      return neon::duplicate_lane<2>(vec);
+    case 3:
+      return neon::duplicate_lane<3>(vec);
+    case 4:
+      return neon::duplicate_lane<4>(vec);
+    case 5:
+      return neon::duplicate_lane<5>(vec);
+    case 6:
+      return neon::duplicate_lane<6>(vec);
+    case 7:
+      return neon::duplicate_lane<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint8x16_t duplicate_lane(uint8x8_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    case 2:
+      return neon::duplicate_lane_quad<2>(vec);
+    case 3:
+      return neon::duplicate_lane_quad<3>(vec);
+    case 4:
+      return neon::duplicate_lane_quad<4>(vec);
+    case 5:
+      return neon::duplicate_lane_quad<5>(vec);
+    case 6:
+      return neon::duplicate_lane_quad<6>(vec);
+    case 7:
+      return neon::duplicate_lane_quad<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int8x8_t duplicate_lane(int8x8_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    case 2:
+      return neon::duplicate_lane<2>(vec);
+    case 3:
+      return neon::duplicate_lane<3>(vec);
+    case 4:
+      return neon::duplicate_lane<4>(vec);
+    case 5:
+      return neon::duplicate_lane<5>(vec);
+    case 6:
+      return neon::duplicate_lane<6>(vec);
+    case 7:
+      return neon::duplicate_lane<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int8x16_t duplicate_lane(int8x8_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    case 2:
+      return neon::duplicate_lane_quad<2>(vec);
+    case 3:
+      return neon::duplicate_lane_quad<3>(vec);
+    case 4:
+      return neon::duplicate_lane_quad<4>(vec);
+    case 5:
+      return neon::duplicate_lane_quad<5>(vec);
+    case 6:
+      return neon::duplicate_lane_quad<6>(vec);
+    case 7:
+      return neon::duplicate_lane_quad<7>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint16x4_t duplicate_lane(uint16x4_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    case 2:
+      return neon::duplicate_lane<2>(vec);
+    case 3:
+      return neon::duplicate_lane<3>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint16x8_t duplicate_lane(uint16x4_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    case 2:
+      return neon::duplicate_lane_quad<2>(vec);
+    case 3:
+      return neon::duplicate_lane_quad<3>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int16x4_t duplicate_lane(int16x4_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    case 2:
+      return neon::duplicate_lane<2>(vec);
+    case 3:
+      return neon::duplicate_lane<3>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int16x8_t duplicate_lane(int16x4_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    case 2:
+      return neon::duplicate_lane_quad<2>(vec);
+    case 3:
+      return neon::duplicate_lane_quad<3>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint32x2_t duplicate_lane(uint32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint32x4_t duplicate_lane(uint32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int32x2_t duplicate_lane(int32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce int32x4_t duplicate_lane(int32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce uint64x2_t duplicate_lane(uint64x1_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce float32x2_t duplicate_lane(float32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane<0>(vec);
+    case 1:
+      return neon::duplicate_lane<1>(vec);
+    default:
+      __builtin_unreachable();
+  }
+}
+
+template <>
+nce float32x4_t duplicate_lane(float32x2_t vec, const int i) {
+  switch (i) {
+    case 0:
+      return neon::duplicate_lane_quad<0>(vec);
+    case 1:
+      return neon::duplicate_lane_quad<1>(vec);
     default:
       __builtin_unreachable();
   }
