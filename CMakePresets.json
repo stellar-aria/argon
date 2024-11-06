@@ -1,0 +1,31 @@
+{
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "Deluge",
+      "displayName": "Deluge",
+      "description": "Sets Ninja generator, build and install directory",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "toolchainFile": "C:\\Developer\\LLVMEmbeddedToolchainForArm\\armv7a_hard_neon.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "ARGON_BUILD_TESTING": true
+      }
+    },
+    {
+      "name": "Rose",
+      "displayName": "Rose",
+      "description": "Sets Ninja generator, build and install directory",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "toolchainFile": "C:\\Developer\\LLVMEmbeddedToolchainForArm\\armv8.1m.main_hard_fpdp_mve.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "ARGON_BUILD_TESTING": true
+      }
+    }
+  ]
+}

@@ -4,11 +4,12 @@ target_link_libraries(test argon)
 target_compile_options(test PUBLIC
   -O2
   -funsafe-math-optimizations
+  -fexperimental-library
 )
 
 set_target_properties(test
   PROPERTIES
-    CXX_STANDARD 20
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS YES
 )
