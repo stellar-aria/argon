@@ -23,9 +23,9 @@
 #endif
 
 template <typename T>
-class Neon64;
+class Argon64;
 template <typename T>
-class Neon128;
+class Argon128;
 
 namespace argon::impl {
 
@@ -35,14 +35,14 @@ struct Neon;
 template <simd::is_vector_type T>
   requires simd::is_quadword<T>
 struct Neon<T> {
-  using type = Neon128<typename simd::NonVec<T>::type>;
+  using type = Argon128<typename simd::NonVec<T>::type>;
 };
 
 #if ARGON_HAS_DWORD
 template <simd::is_vector_type T>
   requires simd::is_doubleword<T>
 struct Neon<T> {
-  using type = Neon64<typename simd::NonVec<T>::type>;
+  using type = Argon64<typename simd::NonVec<T>::type>;
 };
 #endif
 
@@ -88,10 +88,10 @@ class Common {
   }
 
   ace neon_type operator=(Lane<simd::Vec128_t<scalar_type>> b) {
-    constexpr size_t doubleword_lanes = Neon64<scalar_type>::lanes;
+    constexpr size_t doubleword_lanes = Argon64<scalar_type>::lanes;
     size_t lane = b.lane();
-    Neon128<scalar_type> vec = b.vec();
-    Neon64<scalar_type> half;
+    Argon128<scalar_type> vec = b.vec();
+    Argon64<scalar_type> half;
     if (lane >= doubleword_lanes) {
       half = vec.GetHigh();
       lane -= doubleword_lanes;

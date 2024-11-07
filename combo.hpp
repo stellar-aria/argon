@@ -5482,8 +5482,8 @@ nce auto shift_left(int8x8_t vec, const int i) {
 #endif
 
 namespace argon {
-template <typename T> class Neon64;
-template <typename T> class Neon128;
+template <typename T> class Argon64;
+template <typename T> class Argon128;
 namespace impl {
 
 
@@ -5641,10 +5641,10 @@ class Common {
   ace neon_type operator=(scalar_type b) { return vec_ = neon::duplicate<vector_type>(b); }
   ace neon_type operator=(Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
   ace neon_type operator=(Lane<typename neon::Vec128<scalar_type>::type> b) {
-    constexpr size_t doubleword_lanes = Neon64<scalar_type>::lanes;
+    constexpr size_t doubleword_lanes = Argon64<scalar_type>::lanes;
     size_t lane = b.lane();
-    Neon128<scalar_type> vec = b.vec();
-    Neon64<scalar_type> half;
+    Argon128<scalar_type> vec = b.vec();
+    Argon64<scalar_type> half;
     if (lane >= doubleword_lanes) {
         half = vec.GetHigh();
         lane -= doubleword_lanes;
@@ -6017,10 +6017,10 @@ class Lane {
 }  // namespace impl
 
 template <typename scalar_type>
-class Neon128;
+class Argon128;
 
 template <typename scalar_type>
-class Neon64 : public impl::Common<typename neon::Vec64<scalar_type>::type> {
+class Argon64 : public impl::Common<typename neon::Vec64<scalar_type>::type> {
   using T = impl::Common<typename neon::Vec64<scalar_type>::type>;
 
  public:
@@ -6032,23 +6032,23 @@ class Neon64 : public impl::Common<typename neon::Vec64<scalar_type>::type> {
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Neon64() : T(){};
-  ace Neon64(vector_type vector) : T(vector){};
-  ace Neon64(scalar_type scalar) : T(scalar){};
-  ace Neon64(scalar_type const* ptr) : T(ptr){};
-  ace Neon64(T&& in) : T(in){};
-  ace Neon64(std::initializer_list<scalar_type> value_list) : T(value_list) {};
-  ace Neon64(std::span<scalar_type> slice) : T(slice) {};
+  ace Argon64() : T(){};
+  ace Argon64(vector_type vector) : T(vector){};
+  ace Argon64(scalar_type scalar) : T(scalar){};
+  ace Argon64(scalar_type const* ptr) : T(ptr){};
+  ace Argon64(T&& in) : T(in){};
+  ace Argon64(std::initializer_list<scalar_type> value_list) : T(value_list) {};
+  ace Argon64(std::span<scalar_type> slice) : T(slice) {};
 
-  ace static Neon64<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
+  ace static Argon64<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
 
-  ace Neon64<scalar_type> operator=(scalar_type b) { return this->vec_ = neon::duplicate<vector_type>(b); }
-  ace Neon64<scalar_type> operator=(impl::Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
-  ace Neon64<scalar_type> operator=(impl::Lane<typename neon::Vec128<scalar_type>::type> b) {
-    constexpr size_t doubleword_lanes = Neon64<scalar_type>::lanes;
+  ace Argon64<scalar_type> operator=(scalar_type b) { return this->vec_ = neon::duplicate<vector_type>(b); }
+  ace Argon64<scalar_type> operator=(impl::Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
+  ace Argon64<scalar_type> operator=(impl::Lane<typename neon::Vec128<scalar_type>::type> b) {
+    constexpr size_t doubleword_lanes = Argon64<scalar_type>::lanes;
     size_t lane = b.lane();
-    Neon128<scalar_type> vec = b.vec();
-    Neon64<scalar_type> half;
+    Argon128<scalar_type> vec = b.vec();
+    Argon64<scalar_type> half;
     if (lane >= doubleword_lanes) {
         half = vec.GetHigh();
         lane -= doubleword_lanes;
@@ -6060,62 +6060,62 @@ class Neon64 : public impl::Common<typename neon::Vec64<scalar_type>::type> {
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> AddLong(Neon64<scalar_type> b) const { return neon::add_long(this->vec_, b); }
+  ace Argon128<U> AddLong(Argon64<scalar_type> b) const { return neon::add_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> MultiplyLong(Neon64<scalar_type> b) const { return neon::multiply_long(this->vec_, b); }
+  ace Argon128<U> MultiplyLong(Argon64<scalar_type> b) const { return neon::multiply_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> MultiplyLong(scalar_type b) const { return neon::multiply_long(this->vec_, b); }
+  ace Argon128<U> MultiplyLong(scalar_type b) const { return neon::multiply_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> MultiplyLong(lane_type b) const { return neon::multiply_long_lane(this->vec_, b.vec(), b.lane()); }
+  ace Argon128<U> MultiplyLong(lane_type b) const { return neon::multiply_long_lane(this->vec_, b.vec(), b.lane()); }
 
   template <typename U>
   requires (std::is_same_v<vector_type, int16x4_t> || std::is_same_v<vector_type, int32x2_t>)
-  ace Neon128<U> MultiplyFixedLong(Neon64<scalar_type> b) const { return neon::multiply_subtract_long(this->vec_, b); }
+  ace Argon128<U> MultiplyFixedLong(Argon64<scalar_type> b) const { return neon::multiply_subtract_long(this->vec_, b); }
 
   template <typename U>
   requires (std::is_same_v<vector_type, int16x4_t> || std::is_same_v<vector_type, int32x2_t>)
-  ace Neon128<U> MultiplyFixedLong(scalar_type b) const { return neon::multiply_subtract_long(this->vec_, b); }
+  ace Argon128<U> MultiplyFixedLong(scalar_type b) const { return neon::multiply_subtract_long(this->vec_, b); }
 
   template <typename U>
   requires (std::is_same_v<vector_type, int16x4_t> || std::is_same_v<vector_type, int32x2_t>)
-  ace Neon128<U> MultiplyFixedLong(lane_type b) const { return neon::multiply_subtract_long(this->vec_, b.vec(), b.lane()); }
+  ace Argon128<U> MultiplyFixedLong(lane_type b) const { return neon::multiply_subtract_long(this->vec_, b.vec(), b.lane()); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> SubtractLong(Neon64<scalar_type> b) const { return neon::subtract_long(this->vec_, b); }
+  ace Argon128<U> SubtractLong(Argon64<scalar_type> b) const { return neon::subtract_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> SubtractAbsLong(Neon64<scalar_type> b) const { return neon::subtract_abs_long(this->vec_, b); }
+  ace Argon128<U> SubtractAbsLong(Argon64<scalar_type> b) const { return neon::subtract_abs_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> PairwiseAddLong() const { return neon::pairwise_add_long(this->vec_); }
+  ace Argon128<U> PairwiseAddLong() const { return neon::pairwise_add_long(this->vec_); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type>
-  ace Neon128<U> PairwiseAddLong(Neon64<typename impl::NextSmaller<scalar_type>> b) const { return neon::pairwise_add_long(this->vec_, b); }
+  ace Argon128<U> PairwiseAddLong(Argon64<typename impl::NextSmaller<scalar_type>> b) const { return neon::pairwise_add_long(this->vec_, b); }
 
   template <typename U>
   requires impl::has_larger_v<scalar_type>
-  ace Neon128<U> Widen() const { return neon::move_long(this->vec_); }
+  ace Argon128<U> Widen() const { return neon::move_long(this->vec_); }
 
-  ace Neon64<scalar_type> TableLookup(Neon64<scalar_type> idx) { return neon::table_lookup1(this->vec_, idx); }
-  ace Neon64<scalar_type> TableExtension(Neon64<scalar_type> b, Neon64<scalar_type> idx) { return neon::table_extension1(this->vec_, b, idx); }
+  ace Argon64<scalar_type> TableLookup(Argon64<scalar_type> idx) { return neon::table_lookup1(this->vec_, idx); }
+  ace Argon64<scalar_type> TableExtension(Argon64<scalar_type> b, Argon64<scalar_type> idx) { return neon::table_extension1(this->vec_, b, idx); }
 
   template <size_t num_tables>
-  ace Neon64<scalar_type> TableExtension(std::array<Neon64<scalar_type>, num_tables> b, Neon64<scalar_type> idx) {
+  ace Argon64<scalar_type> TableExtension(std::array<Argon64<scalar_type>, num_tables> b, Argon64<scalar_type> idx) {
     return TableExtension<num_tables>((vector_type*)b.data(), idx);
   }
 
   template <size_t num_tables>
-  ace Neon64<scalar_type> TableExtension(vector_type* b, Neon64<scalar_type> idx) {
+  ace Argon64<scalar_type> TableExtension(vector_type* b, Argon64<scalar_type> idx) {
     static_assert(num_tables > 1 && num_tables < 5, "Table Extension can only be performed with 1, 2, 3, or 4 tables");
 
     using multivec_type = impl::MultiVec<vector_type, num_tables>::type;
@@ -6131,14 +6131,14 @@ class Neon64 : public impl::Common<typename neon::Vec64<scalar_type>::type> {
     }
   }
 
-  template <typename U> ace Neon64<U> Convert() { return neon::convert<typename neon::Vec64<U>::type>(this->vec_); }
-  template <typename U> ace Neon64<U> Convert(int n) { return neon::convert_n<typename neon::Vec64<U>::type>(this->vec_, n); }
+  template <typename U> ace Argon64<U> Convert() { return neon::convert<typename neon::Vec64<U>::type>(this->vec_); }
+  template <typename U> ace Argon64<U> Convert(int n) { return neon::convert_n<typename neon::Vec64<U>::type>(this->vec_, n); }
 
-  ace Neon128<scalar_type> CombineWith(Neon64<scalar_type> high) const { return neon::combine(this->vec_, high); }
+  ace Argon128<scalar_type> CombineWith(Argon64<scalar_type> high) const { return neon::combine(this->vec_, high); }
 };
 
 template <typename scalar_type>
-class Neon128 : public impl::Common<typename neon::Vec128<scalar_type>::type> {
+class Argon128 : public impl::Common<typename neon::Vec128<scalar_type>::type> {
   using T = impl::Common<typename neon::Vec128<scalar_type>::type>;
 
  public:
@@ -6150,24 +6150,24 @@ class Neon128 : public impl::Common<typename neon::Vec128<scalar_type>::type> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Neon128() : T(){};
-  ace Neon128(vector_type vector) : T(vector){};
-  ace Neon128(scalar_type scalar) : T(scalar){};
-  ace Neon128(scalar_type const* ptr) : T(ptr){};
-  ace Neon128(T&& in) : T(in){};
-  ace Neon128(std::initializer_list<scalar_type> value_list) : T(value_list) {};
-  ace Neon128(std::span<scalar_type> slice) : T(slice) {};
-  ace Neon128(Neon64<scalar_type> low, Neon64<scalar_type> high) : T(neon::combine(low, high)) {};
+  ace Argon128() : T(){};
+  ace Argon128(vector_type vector) : T(vector){};
+  ace Argon128(scalar_type scalar) : T(scalar){};
+  ace Argon128(scalar_type const* ptr) : T(ptr){};
+  ace Argon128(T&& in) : T(in){};
+  ace Argon128(std::initializer_list<scalar_type> value_list) : T(value_list) {};
+  ace Argon128(std::span<scalar_type> slice) : T(slice) {};
+  ace Argon128(Argon64<scalar_type> low, Argon64<scalar_type> high) : T(neon::combine(low, high)) {};
 
-  ace static Neon128<scalar_type> Combine(Neon64<scalar_type> low, Neon64<scalar_type> high) { return neon::combine(low, high); }
+  ace static Argon128<scalar_type> Combine(Argon64<scalar_type> low, Argon64<scalar_type> high) { return neon::combine(low, high); }
 
-  ace Neon128<scalar_type> operator=(scalar_type b) { return this->vec_ = neon::duplicate<vector_type>(b); }
-  ace Neon128<scalar_type> operator=(impl::Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
-  ace Neon128<scalar_type> operator=(impl::Lane<typename neon::Vec128<scalar_type>::type> b) {
-    constexpr size_t doubleword_lanes = Neon64<scalar_type>::lanes;
+  ace Argon128<scalar_type> operator=(scalar_type b) { return this->vec_ = neon::duplicate<vector_type>(b); }
+  ace Argon128<scalar_type> operator=(impl::Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
+  ace Argon128<scalar_type> operator=(impl::Lane<typename neon::Vec128<scalar_type>::type> b) {
+    constexpr size_t doubleword_lanes = Argon64<scalar_type>::lanes;
     size_t lane = b.lane();
-    Neon128<scalar_type> vec = b.vec();
-    Neon64<scalar_type> half;
+    Argon128<scalar_type> vec = b.vec();
+    Argon64<scalar_type> half;
     if (lane >= doubleword_lanes) {
         half = vec.GetHigh();
         lane -= doubleword_lanes;
@@ -6180,91 +6180,91 @@ class Neon128 : public impl::Common<typename neon::Vec128<scalar_type>::type> {
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplyAddLong(Neon64<U> b, Neon64<U> c) const{ return neon::multiply_add_long(this->vec_, b, c); }
+  ace Argon128<scalar_type> MultiplyAddLong(Argon64<U> b, Argon64<U> c) const{ return neon::multiply_add_long(this->vec_, b, c); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplyAddLong(Neon64<U> b, U c) const { return neon::multiply_add_long(this->vec_, b, c); }
+  ace Argon128<scalar_type> MultiplyAddLong(Argon64<U> b, U c) const { return neon::multiply_add_long(this->vec_, b, c); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplyAddLong(Neon64<U> b, typename Neon64<U>::lane_type c) const { return neon::multiply_add_long(this->vec_, b, c.vec(), c.lane()); }
+  ace Argon128<scalar_type> MultiplyAddLong(Argon64<U> b, typename Argon64<U>::lane_type c) const { return neon::multiply_add_long(this->vec_, b, c.vec(), c.lane()); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplySubtractLong(Neon64<U> b, Neon64<U> c) const { return neon::multiply_subtract_long(this->vec_, b, c); }
+  ace Argon128<scalar_type> MultiplySubtractLong(Argon64<U> b, Argon64<U> c) const { return neon::multiply_subtract_long(this->vec_, b, c); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplySubtractLong(Neon64<U> b, U c) const { return neon::multiply_subtract_long(this->vec_, b, c); }
+  ace Argon128<scalar_type> MultiplySubtractLong(Argon64<U> b, U c) const { return neon::multiply_subtract_long(this->vec_, b, c); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon128<scalar_type> MultiplySubtractLong(Neon64<U> b, typename Neon64<U>::lane_type c) const { return neon::multiply_subtract_long(this->vec_, b, c.vec(), c.lane()); }
+  ace Argon128<scalar_type> MultiplySubtractLong(Argon64<U> b, typename Argon64<U>::lane_type c) const { return neon::multiply_subtract_long(this->vec_, b, c.vec(), c.lane()); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> AddNarrow(Neon128<scalar_type> b) { return neon::add_narrow(this->vec_, b); }
+  ace Argon64<U> AddNarrow(Argon128<scalar_type> b) { return neon::add_narrow(this->vec_, b); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> AddRoundNarrow(Neon128<scalar_type> b) { return neon::add_round_narrow(this->vec_, b); }
+  ace Argon64<U> AddRoundNarrow(Argon128<scalar_type> b) { return neon::add_round_narrow(this->vec_, b); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> SubtractNarrow(Neon128<scalar_type> b) { return neon::subtract_narrow(this->vec_, b); }
+  ace Argon64<U> SubtractNarrow(Argon128<scalar_type> b) { return neon::subtract_narrow(this->vec_, b); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> SubtractRoundNarrow(Neon128<scalar_type> b) { return neon::subtract_round_narrow(this->vec_, b); }
+  ace Argon64<U> SubtractRoundNarrow(Argon128<scalar_type> b) { return neon::subtract_round_narrow(this->vec_, b); }
 
   template <size_t n, typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
+  ace Argon64<U> ShiftRightNarrow() { return neon::shift_right_narrow<n>(this->vec_); }
 
   template <size_t n, typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> ShiftRightSaturateNarrow() { return neon::shift_right_saturate_narrow<n>(this->vec_); }
+  ace Argon64<U> ShiftRightSaturateNarrow() { return neon::shift_right_saturate_narrow<n>(this->vec_); }
 
   template <size_t n, typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> ShiftRightRoundSaturateNarrow() { return neon::shift_right_round_saturate_narrow<n>(this->vec_); }
+  ace Argon64<U> ShiftRightRoundSaturateNarrow() { return neon::shift_right_round_saturate_narrow<n>(this->vec_); }
 
   template <size_t n, typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> ShiftRightRoundNarrow() { return neon::shift_right_round_narrow<n>(this->vec_); }
+  ace Argon64<U> ShiftRightRoundNarrow() { return neon::shift_right_round_narrow<n>(this->vec_); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> Narrow(Neon128<scalar_type> b) { return neon::move_narrow(this->vec_); }
+  ace Argon64<U> Narrow(Argon128<scalar_type> b) { return neon::move_narrow(this->vec_); }
 
   template <typename U>
   requires impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename impl::NextSmaller<scalar_type>::type>
-  ace Neon64<U> SaturateNarrow(Neon128<scalar_type> b) { return neon::move_saturate_narrow(this->vec_); }
+  ace Argon64<U> SaturateNarrow(Argon128<scalar_type> b) { return neon::move_saturate_narrow(this->vec_); }
 
-  ace Neon64<scalar_type> GetHigh() { return neon::get_high(this->vec_); }
-  ace Neon64<scalar_type> GetLow() { return neon::get_low(this->vec_); }
+  ace Argon64<scalar_type> GetHigh() { return neon::get_high(this->vec_); }
+  ace Argon64<scalar_type> GetLow() { return neon::get_low(this->vec_); }
 
-  template <typename U> ace Neon128<U> Convert() { return neon::convert<typename neon::Vec128<U>::type>(this->vec_); }
-  template <typename U> ace Neon128<U> Convert(int n) { return neon::convert_n<typename neon::Vec128<U>::type>(this->vec_, n); }
+  template <typename U> ace Argon128<U> Convert() { return neon::convert<typename neon::Vec128<U>::type>(this->vec_); }
+  template <typename U> ace Argon128<U> Convert(int n) { return neon::convert_n<typename neon::Vec128<U>::type>(this->vec_, n); }
 };
 
 namespace impl {
 template <neon::is_vector_type T>
 requires neon::is_quadword<T>
-struct Neon<T> { using type = Neon128<typename neon::NonVec<T>::type>; };
+struct Neon<T> { using type = Argon128<typename neon::NonVec<T>::type>; };
 
 template <neon::is_vector_type T>
 requires neon::is_doubleword<T>
-struct Neon<T> { using type = Neon64<typename neon::NonVec<T>::type>; };
+struct Neon<T> { using type = Argon64<typename neon::NonVec<T>::type>; };
 }
 
 template <typename T, typename V>
 ace auto reinterpret(impl::Common<V> in) {
   if constexpr(neon::is_quadword_v<V>) {
-    return Neon128<T>{neon::reinterpret<typename Neon128<T>::vector_type>(in.vec())};
+    return Argon128<T>{neon::reinterpret<typename Argon128<T>::vector_type>(in.vec())};
   } else if constexpr(neon::is_doubleword_v<V>) {
-    return Neon64<T>{neon::reinterpret<typename Neon64<T>::vector_type>(in.vec())};
+    return Argon64<T>{neon::reinterpret<typename Argon64<T>::vector_type>(in.vec())};
   }
 }
 
@@ -6434,7 +6434,7 @@ ace void StoreLaneInterleaved(scalar_type* ptr, intrinsic_type* multi_vec) {
   }
 
 template <typename T>
-ace Neon128<T> Combine(Neon64<T> low, Neon64<T> high) { return neon::combine(low, high); }
+ace Argon128<T> Combine(Argon64<T> low, Argon64<T> high) { return neon::combine(low, high); }
 
 }  // namespace argon
 #undef ace
@@ -6447,13 +6447,13 @@ namespace std {
   };
 
   template<typename T>
-  struct tuple_size<argon::Neon128<T>> {
-    static constexpr size_t value = argon::Neon128<T>::lanes;
+  struct tuple_size<argon::Argon128<T>> {
+    static constexpr size_t value = argon::Argon128<T>::lanes;
   };
 
   template<typename T>
-  struct tuple_size<argon::Neon64<T>> {
-    static constexpr size_t value = argon::Neon64<T>::lanes;
+  struct tuple_size<argon::Argon64<T>> {
+    static constexpr size_t value = argon::Argon64<T>::lanes;
   };
 
   template<size_t Index, typename T>
@@ -6463,14 +6463,14 @@ namespace std {
   };
 
   template<size_t Index, typename T>
-  struct tuple_element<Index, argon::Neon128<T>> {
-    static_assert(Index < argon::Neon128<T>::lanes);
-    using type = argon::impl::Lane<typename argon::Neon128<T>::vector_type>;
+  struct tuple_element<Index, argon::Argon128<T>> {
+    static_assert(Index < argon::Argon128<T>::lanes);
+    using type = argon::impl::Lane<typename argon::Argon128<T>::vector_type>;
   };
 
   template<size_t Index, typename T>
-  struct tuple_element<Index, argon::Neon64<T>> {
-    static_assert(Index < argon::Neon64<T>::lanes);
-    using type = argon::impl::Lane<typename argon::Neon64<T>::vector_type>;
+  struct tuple_element<Index, argon::Argon64<T>> {
+    static_assert(Index < argon::Argon64<T>::lanes);
+    using type = argon::impl::Lane<typename argon::Argon64<T>::vector_type>;
   };
 }

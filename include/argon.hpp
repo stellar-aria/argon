@@ -26,9 +26,9 @@ namespace argon {
 template <typename T, typename V>
 ace auto reinterpret(impl::Common<V> in) {
   if constexpr(simd::is_quadword_v<V>) {
-    return Neon128<T>{simd::reinterpret<typename Neon128<T>::vector_type>(in.vec())};
+    return Argon128<T>{simd::reinterpret<typename Argon128<T>::vector_type>(in.vec())};
   } else if constexpr(simd::is_doubleword_v<V>) {
-    return Neon64<T>{simd::reinterpret<typename Neon64<T>::vector_type>(in.vec())};
+    return Argon64<T>{simd::reinterpret<typename Argon64<T>::vector_type>(in.vec())};
   }
 }
 
@@ -232,7 +232,7 @@ ace std::array<neon_type, 2> transpose(neon_type a, neon_type b) {
 }
 
 template <typename T>
-ace Neon128<T> combine(Neon64<T> low, Neon64<T> high) { return simd::combine(low, high); }
+ace Argon128<T> combine(Argon64<T> low, Argon64<T> high) { return simd::combine(low, high); }
 
 }  // namespace argon
 
@@ -243,13 +243,13 @@ struct tuple_size<argon::impl::Common<T>> {
 };
 
 template <typename T>
-struct tuple_size<Neon128<T>> {
-  static constexpr size_t value = Neon128<T>::lanes;
+struct tuple_size<Argon128<T>> {
+  static constexpr size_t value = Argon128<T>::lanes;
 };
 
 template <typename T>
-struct tuple_size<Neon64<T>> {
-  static constexpr size_t value = Neon64<T>::lanes;
+struct tuple_size<Argon64<T>> {
+  static constexpr size_t value = Argon64<T>::lanes;
 };
 
 template <size_t Index, typename T>
@@ -259,22 +259,20 @@ struct tuple_element<Index, argon::impl::Common<T>> {
 };
 
 template <size_t Index, typename T>
-struct tuple_element<Index, Neon128<T>> {
-  static_assert(Index < Neon128<T>::lanes);
-  using type = argon::impl::Lane<typename Neon128<T>::vector_type>;
+struct tuple_element<Index, Argon128<T>> {
+  static_assert(Index < Argon128<T>::lanes);
+  using type = argon::impl::Lane<typename Argon128<T>::vector_type>;
 };
 
 template <size_t Index, typename T>
-struct tuple_element<Index, Neon64<T>> {
-  static_assert(Index < Neon64<T>::lanes);
-  using type = argon::impl::Lane<typename Neon64<T>::vector_type>;
+struct tuple_element<Index, Argon64<T>> {
+  static_assert(Index < Argon64<T>::lanes);
+  using type = argon::impl::Lane<typename Argon64<T>::vector_type>;
 };
 }  // namespace std
 
 template <typename scalar_type>
-using Argon64 = Neon64<scalar_type>;
-template <typename scalar_type>
-using Argon128 = Neon128<scalar_type>;
+using Argon = Argon128<scalar_type>;
 
 #undef ace
 #undef simd
