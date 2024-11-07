@@ -1372,20 +1372,8 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce uint32x4_t multiply(uint32x4_t a, uint32_t b) { return vmulq_n_u32(a, b); }
 [[gnu::always_inline]] nce float32x2_t add(float32x2_t a, float32x2_t b) { return vadd_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t multiply(float32x2_t a, float32x2_t b) { return vmul_f32(a, b); }
-[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfma_f32(a, b, c);
-#else
-    return vmla_f32(a, b, c);
-#endif
-}
-[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfms_f32(a, b, c);
-#else
-    return vmls_f32(a, b, c);
-#endif
-}
+[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32x2_t c) { return vmla_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x2_t subtract(float32x2_t a, float32x2_t b) { return vsub_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t subtract_abs(float32x2_t a, float32x2_t b) { return vabd_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t abs(float32x2_t a) { return vabs_f32(a); }
@@ -1423,13 +1411,7 @@ template <> [[gnu::always_inline]] nce uint64x1_t reinterpret(float32x2_t a) { r
 template <> [[gnu::always_inline]] nce int64x1_t reinterpret(float32x2_t a) { return vreinterpret_s64_f32(a); }
 template <int lane> [[gnu::always_inline]] nce float32x2_t multiply_add_lane(float32x2_t a, float32x2_t b, float32x2_t v) { return vmla_lane_f32(a, b, v, lane); }
 template <int lane> [[gnu::always_inline]] nce float32x2_t multiply_subtract_lane(float32x2_t a, float32x2_t b, float32x2_t v) { return vmls_lane_f32(a, b, v, lane); }
-[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfma_n_f32(a, b, c);
-#else
-    return vmla_n_f32(a, b, c);
-#endif
-}
+[[gnu::always_inline]] nce float32x2_t multiply_add(float32x2_t a, float32x2_t b, float32_t c) { return vmla_n_f32(a, b, c); }
 template <int lane> [[gnu::always_inline]] nce float32x2_t multiply_lane(float32x2_t a, float32x2_t v) { return vmul_lane_f32(a, v, lane); }
 [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32_t c) { return vmls_n_f32(a, b, c); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t duplicate_lane(float32x2_t vec) { return vdup_lane_f32(vec, lane); }
@@ -1445,20 +1427,8 @@ template <int n>[[gnu::always_inline]] nce float32x2_t extract(float32x2_t a, fl
 [[gnu::always_inline]] nce float32x2_t negate(float32x2_t a) { return vneg_f32(a); }
 [[gnu::always_inline]] nce float32x4_t add(float32x4_t a, float32x4_t b) { return vaddq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32x4_t b) { return vmulq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x4_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfmaq_f32(a, b, c);
-#else
-    return vmlaq_f32(a, b, c);
-#endif
-}
-[[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32x4_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfmsq_f32(a, b, c);
-#else
-    return vmlsq_f32(a, b, c);
-#endif
-}
+[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32x4_t c) { return vmlaq_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32x4_t c) { return vmlsq_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t subtract(float32x4_t a, float32x4_t b) { return vsubq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t subtract_abs(float32x4_t a, float32x4_t b) { return vabdq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t abs(float32x4_t a) { return vabsq_f32(a); }
@@ -1494,13 +1464,7 @@ template <> [[gnu::always_inline]] nce int64x2_t reinterpret(float32x4_t a) { re
 template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_lane(float32x4_t a, float32x2_t v) { return vmulq_lane_f32(a, v, lane); }
 template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_add_lane(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlaq_lane_f32(a, b, v, lane); }
 template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_subtract_lane(float32x4_t a, float32x4_t b, float32x2_t v) { return vmlsq_lane_f32(a, b, v, lane); }
-[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32_t c) {
-#ifdef __ARM_FEATURE_FMA
-    return vfmaq_n_f32(a, b, c);
-#else
-    return vmlaq_n_f32(a, b, c);
-#endif
-}
+[[gnu::always_inline]] nce float32x4_t multiply_add(float32x4_t a, float32x4_t b, float32_t c) { return vmlaq_n_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply_subtract(float32x4_t a, float32x4_t b, float32_t c) { return vmlsq_n_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32_t b) { return vmulq_n_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t negate(float32x4_t a) { return vnegq_f32(a); }

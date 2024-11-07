@@ -162,6 +162,14 @@ template <> [[gnu::always_inline]] nce float16x4_t move(float16_t value) { retur
 template <> [[gnu::always_inline]] nce float16x8_t move(float16_t value) { return vmovq_n_f16(value); }
 template <> [[gnu::always_inline]] inline bfloat16x4x3_t load1_x3(bfloat16_t const *ptr) { return vld1_bf16_x3(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x8x3_t load1_x3(bfloat16_t const *ptr) { return vld1q_bf16_x3(ptr); }
+[[gnu::always_inline]] nce float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32x2_t c) { return vfma_f32(a, b, c);}
+[[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32x2_t c) { return vfms_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmaq_f32(a, b, c);}
+[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmsq_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfma_n_f32(a, b, c);}
+[[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfms_n_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmaq_n_f32(a, b, c);}
+[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmsq_n_f32(a, b, c); }
 // clang-format on
 }  // namespace neon
 #endif

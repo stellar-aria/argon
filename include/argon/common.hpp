@@ -561,3 +561,4 @@ class Lane {
 }  // namespace argon::impl
 
 #undef ace
+#undef simd
