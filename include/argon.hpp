@@ -770,64 +770,28 @@ ace NeonType reinterpret(V in) {
   return NeonType{neon::reinterpret<typename NeonType::vector_type>(in)};
 }
 
-template <neon::is_vector_type V>
-ace impl::Common<V> operator+(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator+(V a, Neon128<V> b) {
   return b.Add(a);
 }
 
-template <neon::is_vector_type V>
-ace impl::Common<V> operator-(typename neon::NonVec<V>::type a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Subtract(b);
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator-(V a, Neon128<V> b) {
+  return Neon128<V>{a}.Subtract(b);
 }
 
-template <neon::is_vector_type V>
-ace impl::Common<V> operator*(typename neon::NonVec<V>::type a, impl::Common<V> b) {
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator*(V a, Neon128<V> b) {
   return b.Multiply(a);
 }
 
-template <neon::is_vector_type V>
-ace impl::Common<V> operator/(typename neon::NonVec<V>::type a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Divide(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator+(impl::Common<V> a, typename neon::NonVec<V>::type b) {
-  return a.Add(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator-(impl::Common<V> a, typename neon::NonVec<V>::type b) {
-  return a.Subtract(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator*(impl::Common<V> a, typename neon::NonVec<V>::type b) {
-  return a.Multiply(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator/(impl::Common<V> a, typename neon::NonVec<V>::type b) {
-  return a.Divide(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator+(V a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Add(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator-(V a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Subtract(b);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator*(V a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Multiply(a);
-}
-
-template <neon::is_vector_type V>
-ace impl::Common<V> operator/(V a, impl::Common<V> b) {
-  return impl::Common<V>{a}.Divide(b);
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator/(V a, Neon128<V> b) {
+  return Neon128<V>{a}.Divide(b);
 }
 
 }  // namespace argon
