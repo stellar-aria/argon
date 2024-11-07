@@ -71,7 +71,6 @@ class Common {
   ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
   ace Common(scalar_type const* ptr) : vec_(Load(ptr)) {};
   ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
-  ace Common(std::initializer_list<scalar_type> value_list) : vec_(Load(value_list.begin())) {};
 
   ace static neon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD

@@ -51,7 +51,6 @@ class CosineOscillator {
     return temp + 0.5f;
   }
 
- private:
   float y[2];
   float iir_coefficient_;
   float initial_amplitude_;
@@ -64,7 +63,7 @@ class NeonCosineOscillator {
   enum class Mode { APPROX, EXACT };
 
   template <Mode mode = Mode::APPROX>
-  constexpr NeonCosineOscillator(std::array<float, 4> frequencies) {
+  constexpr NeonCosineOscillator(std::array<float, channels> frequencies) {
     if constexpr (mode == Mode::APPROX) {
       InitApproximate(frequencies);
     } else {
@@ -109,7 +108,6 @@ class NeonCosineOscillator {
     return temp + 0.5f;
   }
 
- private:
   Neon128<float> y_0;
   Neon128<float> y_1;
   Neon128<float> iir_coefficient_;
@@ -129,7 +127,7 @@ int main() {
   printf("Running %d iterations...\n", iterations);
 
   auto start = std::chrono::high_resolution_clock::now();
-  skyline::dsp::osc::CosineOscillator co{0.5f / 5000};
+  skyline::dsp::osc::CosineOscillator co = 0.5f / 5000;
   float f = 0;
   for (size_t i = 0; i < iterations; ++i) {
     f = co.Next();
@@ -138,22 +136,23 @@ int main() {
   print_time("VFPv3", start, stop);
   std::cout << "Result: " << f << std::endl;
 
-  // for (size_t i = 0; i < 4097; ++i) {
-  //     auto n = nco.Next();
-  //     auto f = co.Next();
-  //     if (i % 512 == 0) {
-  //       printf("Step %4d: VFPv3 {%.6f} vs NEON {%.6f, %.6f, %.6f, %.6f}\n", i, f, float(n[0]), float(n[1]),
-  //       float(n[2]), float(n[3]));
-  //     }
-  // }
-
   start = std::chrono::high_resolution_clock::now();
-  skyline::dsp::osc::NeonCosineOscillator nco{{0.5f / 5000, 0.75f / 5000, 1.0f / 5000, 1.5f / 5000}};
+  skyline::dsp::osc::NeonCosineOscillator nco = std::array{0.5f / 5000, 0.75f / 5000, 1.0f / 5000, 1.5f / 5000};
   Neon128<float> n;
+
   for (size_t i = 0; i < iterations; ++i) {
     n = nco.Next();
   }
   stop = std::chrono::high_resolution_clock::now();
   print_time("NEON", start, stop);
   printf("Result: {%.6f, %.6f, %.6f, %.6f}\n", float(n[0]), float(n[1]), float(n[2]), float(n[3]));
+
+  // printf("IIR: VFPv3 {%.6f} vs NEON {%.6f, %.6f, %.6f, %.6f}\n", co.iir_coefficient_, float(nco.iir_coefficient_[0]), float(nco.iir_coefficient_[1]), float(nco.iir_coefficient_[2]), float(nco.iir_coefficient_[3]));
+  // for (size_t i = 0; i < 4097; ++i) {
+  //     n = nco.Next();
+  //     f = co.Next();
+  //     if (i % 512 == 0) {
+  //       printf("Step %4d: VFPv3 {%.6f} vs NEON {%.6f, %.6f, %.6f, %.6f}\n", i, f, float(n[0]), float(n[1]), float(n[2]), float(n[3]));
+  //     }
+  // }
 }

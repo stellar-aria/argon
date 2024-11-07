@@ -36,7 +36,7 @@ class Neon128 : public argon::impl::Common<typename simd::Vec128<scalar_type>::t
   ace Neon128(scalar_type scalar) : T(scalar){};
   ace Neon128(scalar_type const* ptr) : T(ptr){};
   ace Neon128(T&& in) : T(in){};
-  ace Neon128(std::initializer_list<scalar_type> value_list) : T(value_list) {};
+  ace Neon128(std::array<scalar_type, 4> value_list) : T(value_list.data()) {};
   ace Neon128(std::span<scalar_type> slice) : T(slice) {};
   ace Neon128(Neon64<scalar_type> low, Neon64<scalar_type> high) : T(simd::combine(low, high)) {};
 
@@ -129,5 +129,30 @@ class Neon128 : public argon::impl::Common<typename simd::Vec128<scalar_type>::t
   template <typename U> ace Neon128<U> Convert() { return simd::convert<typename simd::Vec128<U>::type>(this->vec_); }
   template <typename U> ace Neon128<U> Convert(int n) { return simd::convert_n<typename simd::Vec128<U>::type>(this->vec_, n); }
 };
+
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator+(V a, Neon128<V> b) {
+  return b.Add(a);
+}
+
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator-(V a, Neon128<V> b) {
+  return Neon128<V>{a}.Subtract(b);
+}
+
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator*(V a, Neon128<V> b) {
+  return b.Multiply(a);
+}
+
+template <typename V>
+requires std::is_scalar_v<V>
+ace Neon128<V> operator/(V a, Neon128<V> b) {
+  return Neon128<V>{a}.Divide(b);
+}
+
 #undef ace
 #undef simd

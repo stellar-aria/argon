@@ -28,7 +28,7 @@ class Neon64 : public argon::impl::Common<typename neon::Vec64<scalar_type>::typ
   ace Neon64(scalar_type scalar) : T(scalar){};
   ace Neon64(scalar_type const* ptr) : T(ptr){};
   ace Neon64(T&& in) : T(in){};
-  ace Neon64(std::initializer_list<scalar_type> value_list) : T(value_list) {};
+  ace Neon64(std::array<scalar_type, 2> value_list) : T(value_list.data()) {};
   ace Neon64(std::span<scalar_type> slice) : T(slice) {};
 
   ace static Neon64<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
@@ -127,29 +127,5 @@ class Neon64 : public argon::impl::Common<typename neon::Vec64<scalar_type>::typ
 
   ace Neon128<scalar_type> CombineWith(Neon64<scalar_type> high) const { return neon::combine(this->vec_, high); }
 };
-
-template <typename V>
-requires std::is_scalar_v<V>
-ace Neon128<V> operator+(V a, Neon128<V> b) {
-  return Neon128<V>{a}.Add(b);
-}
-
-template <typename V>
-requires std::is_scalar_v<V>
-ace Neon128<V> operator-(V a, Neon128<V> b) {
-  return Neon128<V>{a}.Subtract(b);
-}
-
-template <typename V>
-requires std::is_scalar_v<V>
-ace Neon128<V> operator*(V a, Neon128<V> b) {
-  return Neon128<V>{a}.Multiply(a);
-}
-
-template <typename V>
-requires std::is_scalar_v<V>
-ace Neon128<V> operator/(V a, Neon128<V> b) {
-  return Neon128<V>{a}.Divide(b);
-}
 
 #undef ace
