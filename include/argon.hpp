@@ -67,7 +67,7 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
  * @param ptr The location to store to
  * @param vectors The vectors to store.
  * @warning The length of vectors _must_ be a strict multiple of the stride.
- *          This function will attempt to store all vectors possible but WILL NOT STORE THE REMAINDER.
+ *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
  */
 template <size_t stride = 1, typename scalar_type, typename intrinsic_type>
 requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
@@ -123,7 +123,7 @@ ace void store(scalar_type* ptr, std::span<intrinsic_type> vectors) {
  * @param ptr The location to store to
  * @param vectors The vectors to store.
  * @warning The length of vectors _must_ be a strict multiple of the stride.
- *          This function will attempt to store all vectors possible but WILL NOT STORE THE REMAINDER.
+ *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
  */
 template <size_t stride = 1, size_t size, typename scalar_type, typename intrinsic_type>
 requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
