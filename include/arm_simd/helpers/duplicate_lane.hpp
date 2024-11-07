@@ -24,8 +24,8 @@
 
 namespace simd {
 #if ARGON_HAS_DWORD
-  template <typename T>
-nce T duplicate_lane(typename Vec64<typename NonVec<T>::type>::type vec, const int i);
+template <typename T>
+nce T duplicate_lane(typename Vec64<NonVec_t<T>>::type vec, const int i);
 
 template <>
 nce uint8x8_t duplicate_lane(uint8x8_t vec, const int i) {
@@ -245,6 +245,7 @@ nce uint64x2_t duplicate_lane(uint64x1_t vec, const int i) {
   }
 }
 
+#if ARGON_HAS_SINGLE_FLOAT
 template <>
 nce float32x2_t duplicate_lane(float32x2_t vec, const int i) {
   switch (i) {
@@ -268,6 +269,7 @@ nce float32x4_t duplicate_lane(float32x2_t vec, const int i) {
       __builtin_unreachable();
   }
 }
+#endif
 #endif
 }
 #undef simd

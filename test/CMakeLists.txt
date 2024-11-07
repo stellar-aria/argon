@@ -4,7 +4,7 @@ target_link_libraries(test argon)
 target_compile_options(test PUBLIC
   -O2
   -funsafe-math-optimizations
-  -fexperimental-library
+  #-fexperimental-library
 )
 
 set_target_properties(test
