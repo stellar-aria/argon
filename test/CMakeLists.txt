@@ -4,9 +4,9 @@ target_link_libraries(test argon)
 target_compile_options(test PUBLIC
   -O2
   -ggdb3
-  -fpeel-loops
-  -fpredictive-commoning
-  -ftree-loop-distribution
+  $<$<CXX_COMPILER_ID:GCC>:-fpeel-loops>
+  $<$<CXX_COMPILER_ID:GCC>:-fpredictive-commoning>
+  $<$<CXX_COMPILER_ID:GCC>:-ftree-loop-distribution>
   -fno-tree-vectorize
   -save-temps
   -static
