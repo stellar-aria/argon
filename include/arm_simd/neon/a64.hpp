@@ -1,5 +1,6 @@
 #pragma once
-#include <arm_neon.h>
+#include "a32.hpp"
+
 #ifdef __cplusplus
 #ifdef __clang__
 #define nce constexpr
