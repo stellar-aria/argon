@@ -37,7 +37,7 @@ template <> [[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a) { retur
 template <int n>[[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a) { return vcvtq_n_f16_u16(a, n); }
 template <> [[gnu::always_inline]] nce float16x8_t convert(int16x8_t a) { return vcvtq_f16_s16(a); }
 template <int n>[[gnu::always_inline]] nce float16x8_t convert(int16x8_t a) { return vcvtq_n_f16_s16(a, n); }
-[[gnu::always_inline]] nce float16x8_t subtract_abs(float16x8_t a, float16x8_t b) { return vabdq_f16(a, b); }
+[[gnu::always_inline]] nce float16x8_t subtract_absolute(float16x8_t a, float16x8_t b) { return vabdq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t add(float16x8_t a, float16x8_t b) { return vaddq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t multiply(float16x8_t a, float16x8_t b) { return vmulq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t subtract(float16x8_t a, float16x8_t b) { return vsubq_f16(a, b); }

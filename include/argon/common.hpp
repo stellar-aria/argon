@@ -158,8 +158,8 @@ class Common {
   ace neon_type Subtract(neon_type b) const { return simd::subtract(vec_, b); }
   ace neon_type SubtractHalve(neon_type b) const { return simd::subtract_halve(vec_, b); }
   ace neon_type SubtractSaturate(neon_type b) const { return simd::subtract_saturate(vec_, b); }
-  ace neon_type SubtractAbs(neon_type b) const { return simd::subtract_abs(vec_, b); }
-  ace neon_type SubtractAbsAdd(neon_type b, neon_type c) const { return simd::subtract_abs_add(vec_, b, c); }
+  ace neon_type SubtractAbs(neon_type b) const { return simd::subtract_absolute(vec_, b); }
+  ace neon_type SubtractAbsAdd(neon_type b, neon_type c) const { return simd::subtract_absolute_add(vec_, b, c); }
 
   /** a * b */
   ace neon_type Multiply(neon_type b) const { return simd::multiply(vec_, b); }

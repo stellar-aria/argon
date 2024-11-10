@@ -83,7 +83,7 @@ class Argon64 : public argon::impl::Common<typename neon::Vec64<scalar_type>::ty
 
   template <typename U>
   requires argon::impl::has_larger_v<scalar_type>
-  ace Argon128<U> SubtractAbsLong(Argon64<scalar_type> b) const { return neon::subtract_abs_long(this->vec_, b); }
+  ace Argon128<U> SubtractAbsoluteLong(Argon64<scalar_type> b) const { return neon::subtract_absolute_long(this->vec_, b); }
 
   template <typename U>
   requires argon::impl::has_larger_v<scalar_type>

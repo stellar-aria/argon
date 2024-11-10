@@ -31,7 +31,7 @@ template <> [[gnu::always_inline]] nce float32x4_t reinterpret(uint32x4_t a) { r
 [[gnu::always_inline]] nce float32x4_t add(float32x4_t a, float32x4_t b) { return vaddq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32x4_t b) { return vmulq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t subtract(float32x4_t a, float32x4_t b) { return vsubq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t subtract_abs(float32x4_t a, float32x4_t b) { return vabdq_f32(a, b); }
+[[gnu::always_inline]] nce float32x4_t subtract_absolute(float32x4_t a, float32x4_t b) { return vabdq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t abs(float32x4_t a) { return vabsq_f32(a); }
 template <> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_s32_f32(a); }
 template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_u32_f32(a); }

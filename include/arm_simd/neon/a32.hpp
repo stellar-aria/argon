@@ -201,7 +201,7 @@ template <int lane>[[gnu::always_inline]] nce uint32x4_t dot_product_lane(uint32
 template <> [[gnu::always_inline]] nce bfloat16x8_t reinterpret(uint32x4_t a) { return vreinterpretq_bf16_u32(a); }
 [[gnu::always_inline]] nce poly64x1_t reinterpret(float16x4_t a) { return vreinterpret_p64_f16(a); }
 [[gnu::always_inline]] nce float16x4_t absolute(float16x4_t a) { return vabs_f16(a); }
-[[gnu::always_inline]] nce float16x4_t subtract_abs(float16x4_t a, float16x4_t b) { return vabd_f16(a, b); }
+[[gnu::always_inline]] nce float16x4_t subtract_absolute(float16x4_t a, float16x4_t b) { return vabd_f16(a, b); }
 [[gnu::always_inline]] nce float16x4_t reciprocal_estimate(float16x4_t a) { return vrecpe_f16(a); }
 [[gnu::always_inline]] nce float16x4_t reciprocal_sqrt_estimate(float16x4_t a) { return vrsqrte_f16(a); }
 [[gnu::always_inline]] nce float16x4_t reciprocal_sqrt_step(float16x4_t a, float16x4_t b) { return vrsqrts_f16(a, b); }
