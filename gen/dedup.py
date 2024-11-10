@@ -9,8 +9,8 @@ if len(sys.argv) != 6:
 # Get file paths from command line arguments
 file1_path = sys.argv[1]
 file2_path = sys.argv[2]
-output1_path = sys.argv[3]
-output2_path = sys.argv[4]
+output1_path = sys.argv[4]
+output2_path = sys.argv[3]
 common_path = sys.argv[5]
 
 # Read lines from file1

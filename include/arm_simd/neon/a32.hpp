@@ -1,5 +1,6 @@
 #pragma once
 #include "vfpv4.hpp"
+#include "arm_simd/shared/a32_float.hpp"
 
 #ifdef __cplusplus
 #ifdef __clang__
@@ -11,13 +12,9 @@
 namespace neon {
 // clang-format off
 template <typename T> nce T convert_round_to_nearest_with_ties_to_even(float32x2_t a);
-template <typename T> nce T convert_round_to_nearest_with_ties_to_even(float32x4_t a);
 template <typename T> nce T convert_round_toward_negative_infinity(float32x2_t a);
-template <typename T> nce T convert_round_toward_negative_infinity(float32x4_t a);
 template <typename T> nce T convert_round_toward_positive_infinity(float32x2_t a);
-template <typename T> nce T convert_round_toward_positive_infinity(float32x4_t a);
 template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float32x2_t a);
-template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float32x4_t a);
 template <typename T> nce T reinterpret(int8x8_t a);
 template <typename T> nce T reinterpret(int16x4_t a);
 template <typename T> nce T reinterpret(int32x2_t a);
@@ -29,16 +26,9 @@ template <typename T> nce T reinterpret(poly8x8_t a);
 template <typename T> nce T reinterpret(poly16x4_t a);
 template <typename T> nce T reinterpret(uint64x1_t a);
 template <typename T> nce T reinterpret(poly64x1_t a);
-template <typename T> nce T reinterpret(int8x16_t a);
-template <typename T> nce T reinterpret(int16x8_t a);
-template <typename T> nce T reinterpret(int32x4_t a);
 template <typename T> nce T reinterpret(float32x4_t a);
-template <typename T> nce T reinterpret(uint8x16_t a);
-template <typename T> nce T reinterpret(uint16x8_t a);
-template <typename T> nce T reinterpret(uint32x4_t a);
 template <typename T> nce T reinterpret(poly8x16_t a);
 template <typename T> nce T reinterpret(poly16x8_t a);
-template <typename T> nce T reinterpret(int64x2_t a);
 template <typename T> nce T reinterpret(uint64x2_t a);
 template <typename T> nce T reinterpret(poly64x2_t a);
 template <typename T> nce T reinterpret(float16x8_t a);
@@ -66,19 +56,12 @@ template <typename T> nce T max(float16x8_t a, float16x8_t b);
 template <typename T> nce T min(float16x4_t a, float16x4_t b);
 template <typename T> nce T min(float16x8_t a, float16x8_t b);
 template <typename T> nce T convert(int16x4_t a);
-template <typename T> nce T convert(int16x8_t a);
 template <typename T> nce T convert(uint16x4_t a);
-template <typename T> nce T convert(uint16x8_t a);
 template <typename T> nce T convert(float16x4_t a);
-template <typename T> nce T convert(float16x8_t a);
 template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float16x4_t a);
-template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float16x8_t a);
 template <typename T> nce T convert_round_toward_negative_infinity(float16x4_t a);
-template <typename T> nce T convert_round_toward_negative_infinity(float16x8_t a);
 template <typename T> nce T convert_round_to_nearest_with_ties_to_even(float16x4_t a);
-template <typename T> nce T convert_round_to_nearest_with_ties_to_even(float16x8_t a);
 template <typename T> nce T convert_round_toward_positive_infinity(float16x4_t a);
-template <typename T> nce T convert_round_toward_positive_infinity(float16x8_t a);
 template <typename T> nce T dot_product(uint32x2_t r, uint8x8_t a, uint8x8_t b);
 template <typename T> nce T dot_product(int32x2_t r, int8x8_t a, int8x8_t b);
 template <typename T> nce T dot_product(uint32x4_t r, uint8x16_t a, uint8x16_t b);
@@ -159,8 +142,6 @@ template <int n>[[gnu::always_inline]] nce float16x4_t convert(uint16x4_t a) { r
 template <> [[gnu::always_inline]] nce bfloat16x4_t reinterpret(uint16x4_t a) { return vreinterpret_bf16_u16(a); }
 template <> [[gnu::always_inline]] nce poly64x2_t reinterpret(uint16x8_t a) { return vreinterpretq_p64_u16(a); }
 template <> [[gnu::always_inline]] nce poly128_t reinterpret(uint16x8_t a) { return vreinterpretq_p128_u16(a); }
-template <> [[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a) { return vcvtq_f16_u16(a); }
-template <int n>[[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a) { return vcvtq_n_f16_u16(a, n); }
 template <> [[gnu::always_inline]] nce bfloat16x8_t reinterpret(uint16x8_t a) { return vreinterpretq_bf16_u16(a); }
 template <> [[gnu::always_inline]] nce poly64x1_t reinterpret(int16x4_t a) { return vreinterpret_p64_s16(a); }
 template <> [[gnu::always_inline]] nce float16x4_t convert(int16x4_t a) { return vcvt_f16_s16(a); }
@@ -168,8 +149,6 @@ template <int n>[[gnu::always_inline]] nce float16x4_t convert(int16x4_t a) { re
 template <> [[gnu::always_inline]] nce bfloat16x4_t reinterpret(int16x4_t a) { return vreinterpret_bf16_s16(a); }
 template <> [[gnu::always_inline]] nce poly64x2_t reinterpret(int16x8_t a) { return vreinterpretq_p64_s16(a); }
 template <> [[gnu::always_inline]] nce poly128_t reinterpret(int16x8_t a) { return vreinterpretq_p128_s16(a); }
-template <> [[gnu::always_inline]] nce float16x8_t convert(int16x8_t a) { return vcvtq_f16_s16(a); }
-template <int n>[[gnu::always_inline]] nce float16x8_t convert(int16x8_t a) { return vcvtq_n_f16_s16(a, n); }
 template <> [[gnu::always_inline]] nce bfloat16x8_t reinterpret(int16x8_t a) { return vreinterpretq_bf16_s16(a); }
 template <> [[gnu::always_inline]] nce poly64x1_t reinterpret(int32x2_t a) { return vreinterpret_p64_s32(a); }
 template <> [[gnu::always_inline]] nce int32x2_t dot_product(int32x2_t r, uint8x8_t a, int8x8_t b) { return vusdot_s32(r, a, b); }
@@ -291,7 +270,6 @@ template <int lane>[[gnu::always_inline]] nce float16x4_t complex_multiply_add_r
 template <> [[gnu::always_inline]] nce poly64x2_t reinterpret(float16x8_t a) { return vreinterpretq_p64_f16(a); }
 template <> [[gnu::always_inline]] nce poly128_t reinterpret(float16x8_t a) { return vreinterpretq_p128_f16(a); }
 [[gnu::always_inline]] nce float16x8_t absolute(float16x8_t a) { return vabsq_f16(a); }
-[[gnu::always_inline]] nce float16x8_t subtract_abs(float16x8_t a, float16x8_t b) { return vabdq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_estimate(float16x8_t a) { return vrecpeq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_sqrt_estimate(float16x8_t a) { return vrsqrteq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_sqrt_step(float16x8_t a, float16x8_t b) { return vrsqrtsq_f16(a, b); }
@@ -303,15 +281,12 @@ template <> [[gnu::always_inline]] nce poly128_t reinterpret(float16x8_t a) { re
 [[gnu::always_inline]] nce float16x8_t round_toward_positive_infinity(float16x8_t a) { return vrndpq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t round_inexact(float16x8_t a) { return vrndxq_f16(a); }
 template <int lane>[[gnu::always_inline]] nce float16x8_t multiply_lane(float16x8_t a, float16x4_t v) { return vmulq_lane_f16(a, v, lane); }
-[[gnu::always_inline]] nce float16x8_t add(float16x8_t a, float16x8_t b) { return vaddq_f16(a, b); }
 template <> [[gnu::always_inline]] nce float16x8_t max(float16x8_t a, float16x8_t b) { return vmaxq_f16(a, b); }
 template <> [[gnu::always_inline]] nce float16x8_t max(float16x8_t a, float16x8_t b) { return vmaxnmq_f16(a, b); }
 template <> [[gnu::always_inline]] nce float16x8_t min(float16x8_t a, float16x8_t b) { return vminq_f16(a, b); }
 template <> [[gnu::always_inline]] nce float16x8_t min(float16x8_t a, float16x8_t b) { return vminnmq_f16(a, b); }
-[[gnu::always_inline]] nce float16x8_t multiply(float16x8_t a, float16x8_t b) { return vmulq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16x8_t c) { return vfmaq_f16(a, b, c); }
 [[gnu::always_inline]] nce float16x8_t multiply_subtract_fused(float16x8_t a, float16x8_t b, float16x8_t c) { return vfmsq_f16(a, b, c); }
-[[gnu::always_inline]] nce float16x8_t subtract(float16x8_t a, float16x8_t b) { return vsubq_f16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t greater_than_zero(float16x8_t a) { return vcgtzq_f16(a); }
 [[gnu::always_inline]] nce uint16x8_t less_than_or_equal_to_zero(float16x8_t a) { return vclezq_f16(a); }
 [[gnu::always_inline]] nce uint16x8_t less_than_zero(float16x8_t a) { return vcltzq_f16(a); }
@@ -324,21 +299,6 @@ template <> [[gnu::always_inline]] nce float16x8_t min(float16x8_t a, float16x8_
 [[gnu::always_inline]] nce uint16x8_t greater_than(float16x8_t a, float16x8_t b) { return vcgtq_f16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t less_than_or_equal(float16x8_t a, float16x8_t b) { return vcleq_f16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t less_than(float16x8_t a, float16x8_t b) { return vcltq_f16(a, b); }
-template <> [[gnu::always_inline]] nce int16x8_t convert(float16x8_t a) { return vcvtq_s16_f16(a); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a) { return vcvtq_u16_f16(a); }
-template <> [[gnu::always_inline]] nce int16x8_t convert_round_to_nearest_with_ties_away_from_zero(float16x8_t a) { return vcvtaq_s16_f16(a); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert_round_to_nearest_with_ties_away_from_zero(float16x8_t a) { return vcvtaq_u16_f16(a); }
-template <> [[gnu::always_inline]] nce int16x8_t convert_round_toward_negative_infinity(float16x8_t a) { return vcvtmq_s16_f16(a); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert_round_toward_negative_infinity(float16x8_t a) { return vcvtmq_u16_f16(a); }
-template <> [[gnu::always_inline]] nce int16x8_t convert_round_to_nearest_with_ties_to_even(float16x8_t a) { return vcvtnq_s16_f16(a); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert_round_to_nearest_with_ties_to_even(float16x8_t a) { return vcvtnq_u16_f16(a); }
-template <> [[gnu::always_inline]] nce int16x8_t convert_round_toward_positive_infinity(float16x8_t a) { return vcvtpq_s16_f16(a); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert_round_toward_positive_infinity(float16x8_t a) { return vcvtpq_u16_f16(a); }
-template <int n>[[gnu::always_inline]] nce int16x8_t convert(float16x8_t a) { return vcvtq_n_s16_f16(a, n); }
-template <int n>[[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a) { return vcvtq_n_u16_f16(a, n); }
-[[gnu::always_inline]] nce float16x8_t negate(float16x8_t a) { return vnegq_f16(a); }
-[[gnu::always_inline]] nce float16x8_t complex_add_rotate_90(float16x8_t a, float16x8_t b) { return vcaddq_rot90_f16(a, b); }
-[[gnu::always_inline]] nce float16x8_t complex_add_rotate_270(float16x8_t a, float16x8_t b) { return vcaddq_rot270_f16(a, b); }
 template <int lane>[[gnu::always_inline]] nce float16x8_t complex_multiply_add_lane(float16x8_t r, float16x8_t a, float16x4_t b) { return vcmlaq_lane_f16(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float16x8_t complex_multiply_add_rotate_90_lane(float16x8_t r, float16x8_t a, float16x4_t b) { return vcmlaq_rot90_lane_f16(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float16x8_t complex_multiply_add_rotate_180_lane(float16x8_t r, float16x8_t a, float16x4_t b) { return vcmlaq_rot180_lane_f16(r, a, b, lane); }
@@ -402,23 +362,7 @@ template <> [[gnu::always_inline]] nce bfloat16x4_t reinterpret(float32x2_t a) {
 template <> [[gnu::always_inline]] nce float32x2_t dot_product(float32x2_t r, bfloat16x4_t a, bfloat16x4_t b) { return vbfdot_f32(r, a, b); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t dot_product_lane(float32x2_t r, bfloat16x4_t a, bfloat16x4_t b) { return vbfdot_lane_f32(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t dot_product_lane(float32x2_t r, bfloat16x4_t a, bfloat16x8_t b) { return vbfdot_laneq_f32(r, a, b, lane); }
-[[gnu::always_inline]] nce float32x4_t max(float32x4_t a, float32x4_t b) { return vmaxnmq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t min(float32x4_t a, float32x4_t b) { return vminnmq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t round(float32x4_t a) { return vrndq_f32(a); }
-[[gnu::always_inline]] nce float32x4_t round_to_nearest_with_ties_to_even(float32x4_t a) { return vrndnq_f32(a); }
-[[gnu::always_inline]] nce float32x4_t round_toward_negative_infinity(float32x4_t a) { return vrndmq_f32(a); }
-[[gnu::always_inline]] nce float32x4_t round_toward_positive_infinity(float32x4_t a) { return vrndpq_f32(a); }
-[[gnu::always_inline]] nce float32x4_t round_to_nearest_with_ties_away_from_zero(float32x4_t a) { return vrndaq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t round_using_current_mode(float32x4_t a) { return vrndiq_f32(a); }
-[[gnu::always_inline]] nce float32x4_t round_inexact(float32x4_t a) { return vrndxq_f32(a); }
-template <> [[gnu::always_inline]] nce int32x4_t convert_round_to_nearest_with_ties_to_even(float32x4_t a) { return vcvtnq_s32_f32(a); }
-template <> [[gnu::always_inline]] nce uint32x4_t convert_round_to_nearest_with_ties_to_even(float32x4_t a) { return vcvtnq_u32_f32(a); }
-template <> [[gnu::always_inline]] nce int32x4_t convert_round_toward_negative_infinity(float32x4_t a) { return vcvtmq_s32_f32(a); }
-template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_negative_infinity(float32x4_t a) { return vcvtmq_u32_f32(a); }
-template <> [[gnu::always_inline]] nce int32x4_t convert_round_toward_positive_infinity(float32x4_t a) { return vcvtpq_s32_f32(a); }
-template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_positive_infinity(float32x4_t a) { return vcvtpq_u32_f32(a); }
-template <> [[gnu::always_inline]] nce int32x4_t convert_round_to_nearest_with_ties_away_from_zero(float32x4_t a) { return vcvtaq_s32_f32(a); }
-template <> [[gnu::always_inline]] nce uint32x4_t convert_round_to_nearest_with_ties_away_from_zero(float32x4_t a) { return vcvtaq_u32_f32(a); }
 template <> [[gnu::always_inline]] nce poly64x2_t reinterpret(float32x4_t a) { return vreinterpretq_p64_f32(a); }
 template <> [[gnu::always_inline]] nce poly128_t reinterpret(float32x4_t a) { return vreinterpretq_p128_f32(a); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_add_long_fused_lane_low(float32x4_t r, float16x8_t a, float16x4_t b) { return vfmlalq_lane_low_f16(r, a, b, lane); }
@@ -433,8 +377,6 @@ template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_add_long_fuse
 template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_subtract_long_fused_lane_low(float32x4_t r, float16x8_t a, float16x8_t b) { return vfmlslq_laneq_low_f16(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_add_long_fused_lane_high(float32x4_t r, float16x8_t a, float16x8_t b) { return vfmlalq_laneq_high_f16(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_subtract_long_fused_lane_high(float32x4_t r, float16x8_t a, float16x8_t b) { return vfmlslq_laneq_high_f16(r, a, b, lane); }
-[[gnu::always_inline]] nce float32x4_t complex_add_rotate_90(float32x4_t a, float32x4_t b) { return vcaddq_rot90_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t complex_add_rotate_270(float32x4_t a, float32x4_t b) { return vcaddq_rot270_f32(a, b); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t complex_multiply_add_lane(float32x4_t r, float32x4_t a, float32x2_t b) { return vcmlaq_lane_f32(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t complex_multiply_add_rotate_90_lane(float32x4_t r, float32x4_t a, float32x2_t b) { return vcmlaq_rot90_lane_f32(r, a, b, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t complex_multiply_add_rotate_180_lane(float32x4_t r, float32x4_t a, float32x2_t b) { return vcmlaq_rot180_lane_f32(r, a, b, lane); }
