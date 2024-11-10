@@ -238,8 +238,8 @@ inline void store4(poly16_t *ptr, poly16x8x4_t val);
 [[gnu::always_inline]] nce uint8x8_t subtract_halve(uint8x8_t a, uint8x8_t b) { return vhsub_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t subtract_saturate(uint8x8_t a, uint8x8_t b) { return vqsub_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t subtract_abs(uint8x8_t a, uint8x8_t b) { return vabd_u8(a, b); }
-[[gnu::always_inline]] nce uint16x8_t subtract_abs_long(uint8x8_t a, uint8x8_t b) { return vabdl_u8(a, b); }
-[[gnu::always_inline]] nce uint8x8_t subtract_abs_add(uint8x8_t a, uint8x8_t b, uint8x8_t c) { return vaba_u8(a, b, c); }
+[[gnu::always_inline]] nce uint16x8_t subtract_absolute_long(uint8x8_t a, uint8x8_t b) { return vabdl_u8(a, b); }
+[[gnu::always_inline]] nce uint8x8_t subtract_absolute_add(uint8x8_t a, uint8x8_t b, uint8x8_t c) { return vaba_u8(a, b, c); }
 [[gnu::always_inline]] nce uint8x8_t max(uint8x8_t a, uint8x8_t b) { return vmax_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t min(uint8x8_t a, uint8x8_t b) { return vmin_u8(a, b); }
 [[gnu::always_inline]] nce uint8x8_t pairwise_add(uint8x8_t a, uint8x8_t b) { return vpadd_u8(a, b); }
@@ -308,7 +308,7 @@ template <int n>[[gnu::always_inline]] nce uint8x8_t extract(uint8x8_t a, uint8x
 [[gnu::always_inline]] nce uint8x8_t table_extension4(uint8x8_t a, uint8x8x4_t b, uint8x8_t idx) { return vtbx4_u8(a, b, idx); }
 [[gnu::always_inline]] nce uint8x16_t multiply_add(uint8x16_t a, uint8x16_t b, uint8x16_t c) { return vmlaq_u8(a, b, c); }
 [[gnu::always_inline]] nce uint8x16_t multiply_subtract(uint8x16_t a, uint8x16_t b, uint8x16_t c) { return vmlsq_u8(a, b, c); }
-[[gnu::always_inline]] nce uint8x16_t subtract_abs_add(uint8x16_t a, uint8x16_t b, uint8x16_t c) { return vabaq_u8(a, b, c); }
+[[gnu::always_inline]] nce uint8x16_t subtract_absolute_add(uint8x16_t a, uint8x16_t b, uint8x16_t c) { return vabaq_u8(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t pairwise_add_long(uint8x16_t a) { return vpaddlq_u8(a); }
 [[gnu::always_inline]] nce uint8x16_t equal(uint8x16_t a, uint8x16_t b) { return vceqq_u8(a, b); }
 [[gnu::always_inline]] nce uint8x16_t greater_than_or_equal(uint8x16_t a, uint8x16_t b) { return vcgeq_u8(a, b); }
@@ -348,10 +348,10 @@ template <int n>[[gnu::always_inline]] nce uint8x16_t extract(uint8x16_t a, uint
 [[gnu::always_inline]] nce int8x8_t subtract_halve(int8x8_t a, int8x8_t b) { return vhsub_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t subtract_saturate(int8x8_t a, int8x8_t b) { return vqsub_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t subtract_abs(int8x8_t a, int8x8_t b) { return vabd_s8(a, b); }
-[[gnu::always_inline]] nce int16x8_t subtract_abs_long(int8x8_t a, int8x8_t b) { return vabdl_s8(a, b); }
-[[gnu::always_inline]] nce int8x8_t subtract_abs_add(int8x8_t a, int8x8_t b, int8x8_t c) { return vaba_s8(a, b, c); }
-[[gnu::always_inline]] nce int8x8_t abs(int8x8_t a) { return vabs_s8(a); }
-[[gnu::always_inline]] nce int8x8_t abs_saturate(int8x8_t a) { return vqabs_s8(a); }
+[[gnu::always_inline]] nce int16x8_t subtract_absolute_long(int8x8_t a, int8x8_t b) { return vabdl_s8(a, b); }
+[[gnu::always_inline]] nce int8x8_t subtract_absolute_add(int8x8_t a, int8x8_t b, int8x8_t c) { return vaba_s8(a, b, c); }
+[[gnu::always_inline]] nce int8x8_t absolute(int8x8_t a) { return vabs_s8(a); }
+[[gnu::always_inline]] nce int8x8_t absolute_saturate(int8x8_t a) { return vqabs_s8(a); }
 [[gnu::always_inline]] nce int8x8_t max(int8x8_t a, int8x8_t b) { return vmax_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t min(int8x8_t a, int8x8_t b) { return vmin_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t pairwise_add(int8x8_t a, int8x8_t b) { return vpadd_s8(a, b); }
@@ -418,7 +418,7 @@ template <int n>[[gnu::always_inline]] nce int8x8_t extract(int8x8_t a, int8x8_t
 [[gnu::always_inline]] nce int8x8_t table_extension4(int8x8_t a, int8x8x4_t b, int8x8_t idx) { return vtbx4_s8(a, b, idx); }
 [[gnu::always_inline]] nce int8x16_t multiply_add(int8x16_t a, int8x16_t b, int8x16_t c) { return vmlaq_s8(a, b, c); }
 [[gnu::always_inline]] nce int8x16_t multiply_subtract(int8x16_t a, int8x16_t b, int8x16_t c) { return vmlsq_s8(a, b, c); }
-[[gnu::always_inline]] nce int8x16_t subtract_abs_add(int8x16_t a, int8x16_t b, int8x16_t c) { return vabaq_s8(a, b, c); }
+[[gnu::always_inline]] nce int8x16_t subtract_absolute_add(int8x16_t a, int8x16_t b, int8x16_t c) { return vabaq_s8(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t pairwise_add_long(int8x16_t a) { return vpaddlq_s8(a); }
 [[gnu::always_inline]] nce uint8x16_t equal(int8x16_t a, int8x16_t b) { return vceqq_s8(a, b); }
 [[gnu::always_inline]] nce uint8x16_t greater_than_or_equal(int8x16_t a, int8x16_t b) { return vcgeq_s8(a, b); }
@@ -453,8 +453,8 @@ template <int n>[[gnu::always_inline]] nce int8x16_t extract(int8x16_t a, int8x1
 [[gnu::always_inline]] nce uint16x4_t subtract_halve(uint16x4_t a, uint16x4_t b) { return vhsub_u16(a, b); }
 [[gnu::always_inline]] nce uint16x4_t subtract_saturate(uint16x4_t a, uint16x4_t b) { return vqsub_u16(a, b); }
 [[gnu::always_inline]] nce uint16x4_t subtract_abs(uint16x4_t a, uint16x4_t b) { return vabd_u16(a, b); }
-[[gnu::always_inline]] nce uint32x4_t subtract_abs_long(uint16x4_t a, uint16x4_t b) { return vabdl_u16(a, b); }
-[[gnu::always_inline]] nce uint16x4_t subtract_abs_add(uint16x4_t a, uint16x4_t b, uint16x4_t c) { return vaba_u16(a, b, c); }
+[[gnu::always_inline]] nce uint32x4_t subtract_absolute_long(uint16x4_t a, uint16x4_t b) { return vabdl_u16(a, b); }
+[[gnu::always_inline]] nce uint16x4_t subtract_absolute_add(uint16x4_t a, uint16x4_t b, uint16x4_t c) { return vaba_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x4_t max(uint16x4_t a, uint16x4_t b) { return vmax_u16(a, b); }
 [[gnu::always_inline]] nce uint16x4_t min(uint16x4_t a, uint16x4_t b) { return vmin_u16(a, b); }
 [[gnu::always_inline]] nce uint16x4_t pairwise_add(uint16x4_t a, uint16x4_t b) { return vpadd_u16(a, b); }
@@ -527,14 +527,14 @@ template <int n>[[gnu::always_inline]] nce uint16x4_t extract(uint16x4_t a, uint
 [[gnu::always_inline]] nce uint16x8_t multiply_add_long(uint16x8_t a, uint8x8_t b, uint8x8_t c) { return vmlal_u8(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t multiply_subtract_long(uint16x8_t a, uint8x8_t b, uint8x8_t c) { return vmlsl_u8(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t subtract(uint16x8_t a, uint8x8_t b) { return vsubw_u8(a, b); }
-[[gnu::always_inline]] nce uint16x8_t subtract_abs_add(uint16x8_t a, uint8x8_t b, uint8x8_t c) { return vabal_u8(a, b, c); }
+[[gnu::always_inline]] nce uint16x8_t subtract_absolute_add(uint16x8_t a, uint8x8_t b, uint8x8_t c) { return vabal_u8(a, b, c); }
 [[gnu::always_inline]] nce uint8x8_t add_narrow(uint16x8_t a, uint16x8_t b) { return vaddhn_u16(a, b); }
 [[gnu::always_inline]] nce uint8x8_t add_round_narrow(uint16x8_t a, uint16x8_t b) { return vraddhn_u16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t multiply_add(uint16x8_t a, uint16x8_t b, uint16x8_t c) { return vmlaq_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x8_t multiply_subtract(uint16x8_t a, uint16x8_t b, uint16x8_t c) { return vmlsq_u16(a, b, c); }
 [[gnu::always_inline]] nce uint8x8_t subtract_narrow(uint16x8_t a, uint16x8_t b) { return vsubhn_u16(a, b); }
 [[gnu::always_inline]] nce uint8x8_t subtract_round_narrow(uint16x8_t a, uint16x8_t b) { return vrsubhn_u16(a, b); }
-[[gnu::always_inline]] nce uint16x8_t subtract_abs_add(uint16x8_t a, uint16x8_t b, uint16x8_t c) { return vabaq_u16(a, b, c); }
+[[gnu::always_inline]] nce uint16x8_t subtract_absolute_add(uint16x8_t a, uint16x8_t b, uint16x8_t c) { return vabaq_u16(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t pairwise_add_long(uint16x8_t a) { return vpaddlq_u16(a); }
 [[gnu::always_inline]] nce uint16x8_t pairwise_add_accumulate_long(uint16x8_t a, uint8x16_t b) { return vpadalq_u8(a, b); }
 [[gnu::always_inline]] nce uint16x8_t equal(uint16x8_t a, uint16x8_t b) { return vceqq_u16(a, b); }
@@ -592,13 +592,13 @@ template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_double_round_s
 [[gnu::always_inline]] nce int16x4_t subtract_halve(int16x4_t a, int16x4_t b) { return vhsub_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t subtract_saturate(int16x4_t a, int16x4_t b) { return vqsub_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t subtract_abs(int16x4_t a, int16x4_t b) { return vabd_s16(a, b); }
-[[gnu::always_inline]] nce int32x4_t subtract_abs_long(int16x4_t a, int16x4_t b) { return vabdl_s16(a, b); }
-[[gnu::always_inline]] nce int16x4_t subtract_abs_add(int16x4_t a, int16x4_t b, int16x4_t c) { return vaba_s16(a, b, c); }
+[[gnu::always_inline]] nce int32x4_t subtract_absolute_long(int16x4_t a, int16x4_t b) { return vabdl_s16(a, b); }
+[[gnu::always_inline]] nce int16x4_t subtract_absolute_add(int16x4_t a, int16x4_t b, int16x4_t c) { return vaba_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_saturate_long(int16x4_t a, int16_t b) { return vqdmull_n_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t multiply_double_saturate_high(int16x4_t a, int16_t b) { return vqdmulh_n_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t multiply_double_round_saturate_high(int16x4_t a, int16_t b) { return vqrdmulh_n_s16(a, b); }
-[[gnu::always_inline]] nce int16x4_t abs(int16x4_t a) { return vabs_s16(a); }
-[[gnu::always_inline]] nce int16x4_t abs_saturate(int16x4_t a) { return vqabs_s16(a); }
+[[gnu::always_inline]] nce int16x4_t absolute(int16x4_t a) { return vabs_s16(a); }
+[[gnu::always_inline]] nce int16x4_t absolute_saturate(int16x4_t a) { return vqabs_s16(a); }
 [[gnu::always_inline]] nce int16x4_t max(int16x4_t a, int16x4_t b) { return vmax_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t min(int16x4_t a, int16x4_t b) { return vmin_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t pairwise_add(int16x4_t a, int16x4_t b) { return vpadd_s16(a, b); }
@@ -668,7 +668,7 @@ template <int n>[[gnu::always_inline]] nce int16x4_t extract(int16x4_t a, int16x
 [[gnu::always_inline]] nce int16x8_t multiply_add_long(int16x8_t a, int8x8_t b, int8x8_t c) { return vmlal_s8(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t multiply_subtract_long(int16x8_t a, int8x8_t b, int8x8_t c) { return vmlsl_s8(a, b, c); }
 [[gnu::always_inline]] nce int16x8_t subtract(int16x8_t a, int8x8_t b) { return vsubw_s8(a, b); }
-[[gnu::always_inline]] nce int16x8_t subtract_abs_add(int16x8_t a, int8x8_t b, int8x8_t c) { return vabal_s8(a, b, c); }
+[[gnu::always_inline]] nce int16x8_t subtract_absolute_add(int16x8_t a, int8x8_t b, int8x8_t c) { return vabal_s8(a, b, c); }
 template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_double_saturate_high_lane(int16x8_t a, int16x4_t v) { return vqdmulhq_lane_s16(a, v, lane); }
 template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_double_round_saturate_high_lane(int16x8_t a, int16x4_t v) { return vqrdmulhq_lane_s16(a, v, lane); }
 [[gnu::always_inline]] nce int8x8_t add_narrow(int16x8_t a, int16x8_t b) { return vaddhn_s16(a, b); }
@@ -677,7 +677,7 @@ template <int lane> [[gnu::always_inline]] nce int16x8_t multiply_double_round_s
 [[gnu::always_inline]] nce int16x8_t multiply_subtract(int16x8_t a, int16x8_t b, int16x8_t c) { return vmlsq_s16(a, b, c); }
 [[gnu::always_inline]] nce int8x8_t subtract_narrow(int16x8_t a, int16x8_t b) { return vsubhn_s16(a, b); }
 [[gnu::always_inline]] nce int8x8_t subtract_round_narrow(int16x8_t a, int16x8_t b) { return vrsubhn_s16(a, b); }
-[[gnu::always_inline]] nce int16x8_t subtract_abs_add(int16x8_t a, int16x8_t b, int16x8_t c) { return vabaq_s16(a, b, c); }
+[[gnu::always_inline]] nce int16x8_t subtract_absolute_add(int16x8_t a, int16x8_t b, int16x8_t c) { return vabaq_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t pairwise_add_long(int16x8_t a) { return vpaddlq_s16(a); }
 [[gnu::always_inline]] nce int16x8_t pairwise_add_accumulate_long(int16x8_t a, int8x16_t b) { return vpadalq_s8(a, b); }
 [[gnu::always_inline]] nce uint16x8_t equal(int16x8_t a, int16x8_t b) { return vceqq_s16(a, b); }
@@ -732,13 +732,13 @@ template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_double_round_s
 [[gnu::always_inline]] nce int32x2_t subtract_halve(int32x2_t a, int32x2_t b) { return vhsub_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t subtract_saturate(int32x2_t a, int32x2_t b) { return vqsub_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t subtract_abs(int32x2_t a, int32x2_t b) { return vabd_s32(a, b); }
-[[gnu::always_inline]] nce int64x2_t subtract_abs_long(int32x2_t a, int32x2_t b) { return vabdl_s32(a, b); }
-[[gnu::always_inline]] nce int32x2_t subtract_abs_add(int32x2_t a, int32x2_t b, int32x2_t c) { return vaba_s32(a, b, c); }
+[[gnu::always_inline]] nce int64x2_t subtract_absolute_long(int32x2_t a, int32x2_t b) { return vabdl_s32(a, b); }
+[[gnu::always_inline]] nce int32x2_t subtract_absolute_add(int32x2_t a, int32x2_t b, int32x2_t c) { return vaba_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t multiply_double_saturate_long(int32x2_t a, int32_t b) { return vqdmull_n_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t multiply_double_saturate_high(int32x2_t a, int32_t b) { return vqdmulh_n_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t multiply_double_round_saturate_high(int32x2_t a, int32_t b) { return vqrdmulh_n_s32(a, b); }
-[[gnu::always_inline]] nce int32x2_t abs(int32x2_t a) { return vabs_s32(a); }
-[[gnu::always_inline]] nce int32x2_t abs_saturate(int32x2_t a) { return vqabs_s32(a); }
+[[gnu::always_inline]] nce int32x2_t absolute(int32x2_t a) { return vabs_s32(a); }
+[[gnu::always_inline]] nce int32x2_t absolute_saturate(int32x2_t a) { return vqabs_s32(a); }
 [[gnu::always_inline]] nce int32x2_t max(int32x2_t a, int32x2_t b) { return vmax_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t min(int32x2_t a, int32x2_t b) { return vmin_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t pairwise_add(int32x2_t a, int32x2_t b) { return vpadd_s32(a, b); }
@@ -813,7 +813,7 @@ template <int n>[[gnu::always_inline]] nce int32x2_t extract(int32x2_t a, int32x
 [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16x4_t c) { return vqdmlsl_s16(a, b, c); }
 template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long_lane(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlal_lane_s16(a, b, v, lane); }
 template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long_lane(int32x4_t a, int16x4_t b, int16x4_t v) { return vqdmlsl_lane_s16(a, b, v, lane); }
-[[gnu::always_inline]] nce int32x4_t subtract_abs_add(int32x4_t a, int16x4_t b, int16x4_t c) { return vabal_s16(a, b, c); }
+[[gnu::always_inline]] nce int32x4_t subtract_absolute_add(int32x4_t a, int16x4_t b, int16x4_t c) { return vabal_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_add_saturate_long(int32x4_t a, int16x4_t b, int16_t c) { return vqdmlal_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t multiply_double_subtract_saturate_long(int32x4_t a, int16x4_t b, int16_t c) { return vqdmlsl_n_s16(a, b, c); }
 [[gnu::always_inline]] nce int32x4_t subtract(int32x4_t a, int16x4_t b) { return vsubw_s16(a, b); }
@@ -825,7 +825,7 @@ template <int lane> [[gnu::always_inline]] nce int32x4_t multiply_double_round_s
 [[gnu::always_inline]] nce int32x4_t multiply_subtract(int32x4_t a, int32x4_t b, int32x4_t c) { return vmlsq_s32(a, b, c); }
 [[gnu::always_inline]] nce int16x4_t subtract_narrow(int32x4_t a, int32x4_t b) { return vsubhn_s32(a, b); }
 [[gnu::always_inline]] nce int16x4_t subtract_round_narrow(int32x4_t a, int32x4_t b) { return vrsubhn_s32(a, b); }
-[[gnu::always_inline]] nce int32x4_t subtract_abs_add(int32x4_t a, int32x4_t b, int32x4_t c) { return vabaq_s32(a, b, c); }
+[[gnu::always_inline]] nce int32x4_t subtract_absolute_add(int32x4_t a, int32x4_t b, int32x4_t c) { return vabaq_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x2_t pairwise_add_long(int32x4_t a) { return vpaddlq_s32(a); }
 [[gnu::always_inline]] nce int32x4_t pairwise_add_accumulate_long(int32x4_t a, int16x8_t b) { return vpadalq_s16(a, b); }
 [[gnu::always_inline]] nce uint32x4_t equal(int32x4_t a, int32x4_t b) { return vceqq_s32(a, b); }
@@ -919,7 +919,7 @@ template <int n>[[gnu::always_inline]] nce uint64x2_t shift_left_insert(uint64x2
 [[gnu::always_inline]] nce uint64x2_t multiply_add_long(uint64x2_t a, uint32x2_t b, uint32x2_t c) { return vmlal_u32(a, b, c); }
 [[gnu::always_inline]] nce uint64x2_t multiply_subtract_long(uint64x2_t a, uint32x2_t b, uint32x2_t c) { return vmlsl_u32(a, b, c); }
 [[gnu::always_inline]] nce uint64x2_t subtract(uint64x2_t a, uint32x2_t b) { return vsubw_u32(a, b); }
-[[gnu::always_inline]] nce uint64x2_t subtract_abs_add(uint64x2_t a, uint32x2_t b, uint32x2_t c) { return vabal_u32(a, b, c); }
+[[gnu::always_inline]] nce uint64x2_t subtract_absolute_add(uint64x2_t a, uint32x2_t b, uint32x2_t c) { return vabal_u32(a, b, c); }
 [[gnu::always_inline]] nce uint64x2_t shift_left_round(uint64x2_t a, int64x2_t b) { return vrshlq_u64(a, b); }
 [[gnu::always_inline]] nce uint64x2_t shift_left_round_saturate(uint64x2_t a, int64x2_t b) { return vqrshlq_u64(a, b); }
 template <int n>[[gnu::always_inline]] nce uint64x2_t shift_right(uint64x2_t a) { return vshrq_n_u64(a, n); }
@@ -967,8 +967,8 @@ template <int lane>[[gnu::always_inline]] nce uint64x2_t multiply_subtract_long_
 [[gnu::always_inline]] nce uint32x2_t subtract_halve(uint32x2_t a, uint32x2_t b) { return vhsub_u32(a, b); }
 [[gnu::always_inline]] nce uint32x2_t subtract_saturate(uint32x2_t a, uint32x2_t b) { return vqsub_u32(a, b); }
 [[gnu::always_inline]] nce uint32x2_t subtract_abs(uint32x2_t a, uint32x2_t b) { return vabd_u32(a, b); }
-[[gnu::always_inline]] nce uint64x2_t subtract_abs_long(uint32x2_t a, uint32x2_t b) { return vabdl_u32(a, b); }
-[[gnu::always_inline]] nce uint32x2_t subtract_abs_add(uint32x2_t a, uint32x2_t b, uint32x2_t c) { return vaba_u32(a, b, c); }
+[[gnu::always_inline]] nce uint64x2_t subtract_absolute_long(uint32x2_t a, uint32x2_t b) { return vabdl_u32(a, b); }
+[[gnu::always_inline]] nce uint32x2_t subtract_absolute_add(uint32x2_t a, uint32x2_t b, uint32x2_t c) { return vaba_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x2_t max(uint32x2_t a, uint32x2_t b) { return vmax_u32(a, b); }
 [[gnu::always_inline]] nce uint32x2_t min(uint32x2_t a, uint32x2_t b) { return vmin_u32(a, b); }
 [[gnu::always_inline]] nce uint32x2_t reciprocal_estimate(uint32x2_t a) { return vrecpe_u32(a); }
@@ -1043,14 +1043,14 @@ template <int n>[[gnu::always_inline]] nce uint32x2_t extract(uint32x2_t a, uint
 [[gnu::always_inline]] nce uint32x4_t multiply_add_long(uint32x4_t a, uint16x4_t b, uint16x4_t c) { return vmlal_u16(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t multiply_subtract_long(uint32x4_t a, uint16x4_t b, uint16x4_t c) { return vmlsl_u16(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t subtract(uint32x4_t a, uint16x4_t b) { return vsubw_u16(a, b); }
-[[gnu::always_inline]] nce uint32x4_t subtract_abs_add(uint32x4_t a, uint16x4_t b, uint16x4_t c) { return vabal_u16(a, b, c); }
+[[gnu::always_inline]] nce uint32x4_t subtract_absolute_add(uint32x4_t a, uint16x4_t b, uint16x4_t c) { return vabal_u16(a, b, c); }
 [[gnu::always_inline]] nce uint16x4_t add_narrow(uint32x4_t a, uint32x4_t b) { return vaddhn_u32(a, b); }
 [[gnu::always_inline]] nce uint16x4_t add_round_narrow(uint32x4_t a, uint32x4_t b) { return vraddhn_u32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t multiply_add(uint32x4_t a, uint32x4_t b, uint32x4_t c) { return vmlaq_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t multiply_subtract(uint32x4_t a, uint32x4_t b, uint32x4_t c) { return vmlsq_u32(a, b, c); }
 [[gnu::always_inline]] nce uint16x4_t subtract_narrow(uint32x4_t a, uint32x4_t b) { return vsubhn_u32(a, b); }
 [[gnu::always_inline]] nce uint16x4_t subtract_round_narrow(uint32x4_t a, uint32x4_t b) { return vrsubhn_u32(a, b); }
-[[gnu::always_inline]] nce uint32x4_t subtract_abs_add(uint32x4_t a, uint32x4_t b, uint32x4_t c) { return vabaq_u32(a, b, c); }
+[[gnu::always_inline]] nce uint32x4_t subtract_absolute_add(uint32x4_t a, uint32x4_t b, uint32x4_t c) { return vabaq_u32(a, b, c); }
 [[gnu::always_inline]] nce uint32x4_t reciprocal_estimate(uint32x4_t a) { return vrecpeq_u32(a); }
 [[gnu::always_inline]] nce uint32x4_t reciprocal_sqrt_estimate(uint32x4_t a) { return vrsqrteq_u32(a); }
 [[gnu::always_inline]] nce uint64x2_t pairwise_add_long(uint32x4_t a) { return vpaddlq_u32(a); }
@@ -1100,7 +1100,7 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x2_t subtract(float32x2_t a, float32x2_t b) { return vsub_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t subtract_abs(float32x2_t a, float32x2_t b) { return vabd_f32(a, b); }
-[[gnu::always_inline]] nce float32x2_t abs(float32x2_t a) { return vabs_f32(a); }
+[[gnu::always_inline]] nce float32x2_t absolute(float32x2_t a) { return vabs_f32(a); }
 [[gnu::always_inline]] nce float32x2_t max(float32x2_t a, float32x2_t b) { return vmax_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t min(float32x2_t a, float32x2_t b) { return vmin_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t reciprocal_estimate(float32x2_t a) { return vrecpe_f32(a); }
@@ -1266,7 +1266,7 @@ template <int lane> [[gnu::always_inline]] nce int64x2_t multiply_double_subtrac
 [[gnu::always_inline]] nce int32x2_t subtract_round_narrow(int64x2_t a, int64x2_t b) { return vrsubhn_s64(a, b); }
 [[gnu::always_inline]] nce int64x1_t subtract_saturate(int64x1_t a, int64x1_t b) { return vqsub_s64(a, b); }
 [[gnu::always_inline]] nce int64x2_t subtract_saturate(int64x2_t a, int64x2_t b) { return vqsubq_s64(a, b); }
-[[gnu::always_inline]] nce int64x2_t subtract_abs_add(int64x2_t a, int32x2_t b, int32x2_t c) { return vabal_s32(a, b, c); }
+[[gnu::always_inline]] nce int64x2_t subtract_absolute_add(int64x2_t a, int32x2_t b, int32x2_t c) { return vabal_s32(a, b, c); }
 [[gnu::always_inline]] nce int64x1_t pairwise_add_accumulate_long(int64x1_t a, int32x2_t b) { return vpadal_s32(a, b); }
 [[gnu::always_inline]] nce int64x2_t pairwise_add_accumulate_long(int64x2_t a, int32x4_t b) { return vpadalq_s32(a, b); }
 [[gnu::always_inline]] nce uint8x16_t equal(poly8x16_t a, poly8x16_t b) { return vceqq_p8(a, b); }
