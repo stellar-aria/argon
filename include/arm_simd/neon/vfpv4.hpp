@@ -175,3 +175,4 @@ template <> [[gnu::always_inline]] inline bfloat16x8x3_t load1_x3(bfloat16_t con
 // clang-format on
 }  // namespace neon
 #undef nce
+#endif // __cplusplus
