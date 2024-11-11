@@ -77,7 +77,7 @@ class NeonCosineOscillator {
   ~NeonCosineOscillator() = default;
 
   inline void InitApproximate(std::array<float, channels> frequencies) {
-    Argon128<float> sign = 16.0f;
+    Argon<float> sign = 16.0f;
     for (size_t i = 0; i < frequencies.size(); ++i) {
       float& frequency = frequencies[i];
       frequency -= 0.25f;
@@ -89,7 +89,7 @@ class NeonCosineOscillator {
         sign[i] = -16.0f;
       }
     }
-    Argon128<float> frequency = frequencies.data();
+    Argon<float> frequency = frequencies.data();
     iir_coefficient_ = sign * frequency * (1.0f - (2.0f * frequency));
     initial_amplitude_ = iir_coefficient_ * 0.25f;
   }
@@ -99,19 +99,19 @@ class NeonCosineOscillator {
     y_1 = 0.5f;
   }
 
-  [[nodiscard]] inline Argon128<float> values() const { return y_0 + 0.5f; }
+  [[nodiscard]] inline Argon<float> values() const { return y_0 + 0.5f; }
 
-  inline Argon128<float> Next() {
-    Argon128<float> temp = y_1;
+  inline Argon<float> Next() {
+    Argon<float> temp = y_1;
     y_1 = iir_coefficient_ * y_1 - y_0;
     y_0 = temp;
     return temp + 0.5f;
   }
 
-  Argon128<float> y_0;
-  Argon128<float> y_1;
-  Argon128<float> iir_coefficient_;
-  Argon128<float> initial_amplitude_;
+  Argon<float> y_0;
+  Argon<float> y_1;
+  Argon<float> iir_coefficient_;
+  Argon<float> initial_amplitude_;
 };
 }  // namespace skyline::dsp::osc
 
@@ -138,7 +138,7 @@ int main() {
 
   start = std::chrono::high_resolution_clock::now();
   skyline::dsp::osc::NeonCosineOscillator nco = std::array{0.5f / 5000, 0.75f / 5000, 1.0f / 5000, 1.5f / 5000};
-  Argon128<float> n;
+  Argon<float> n;
 
   for (size_t i = 0; i < iterations; ++i) {
     n = nco.Next();

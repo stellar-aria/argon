@@ -489,7 +489,7 @@ template <> [[gnu::always_inline]] nce poly64x1_t create(uint64_t a) { return vc
 template <> [[gnu::always_inline]] nce poly64x1_t duplicate(poly64_t value) { return vdup_n_p64(value); }
 template <> [[gnu::always_inline]] nce poly64x2_t duplicate(poly64_t value) { return vdupq_n_p64(value); }
 template <int lane>[[gnu::always_inline]] nce poly64x1_t duplicate_lane(poly64x1_t vec) { return vdup_lane_p64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce poly64x2_t duplicate_lane(poly64x1_t vec) { return vdupq_lane_p64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce poly64x2_t duplicate_lane_quad(poly64x1_t vec) { return vdupq_lane_p64(vec, lane); }
 [[gnu::always_inline]] nce poly64x2_t combine(poly64x1_t low, poly64x1_t high) { return vcombine_p64(low, high); }
 template <> [[gnu::always_inline]] nce poly64x1_t get_high(poly64x2_t a) { return vget_high_p64(a); }
 template <> [[gnu::always_inline]] nce poly64x1_t get_low(poly64x2_t a) { return vget_low_p64(a); }
@@ -584,9 +584,9 @@ template <> [[gnu::always_inline]] nce bfloat16x4_t create(uint64_t a) { return 
 template <> [[gnu::always_inline]] nce bfloat16x4_t duplicate(bfloat16_t value) { return vdup_n_bf16(value); }
 template <> [[gnu::always_inline]] nce bfloat16x8_t duplicate(bfloat16_t value) { return vdupq_n_bf16(value); }
 template <int lane>[[gnu::always_inline]] nce bfloat16x4_t duplicate_lane(bfloat16x4_t vec) { return vdup_lane_bf16(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce bfloat16x8_t duplicate_lane(bfloat16x4_t vec) { return vdupq_lane_bf16(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce bfloat16x8_t duplicate_lane_quad(bfloat16x4_t vec) { return vdupq_lane_bf16(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce bfloat16x4_t duplicate_lane(bfloat16x8_t vec) { return vdup_laneq_bf16(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce bfloat16x8_t duplicate_lane(bfloat16x8_t vec) { return vdupq_laneq_bf16(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce bfloat16x8_t duplicate_lane_quad(bfloat16x8_t vec) { return vdupq_laneq_bf16(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce bfloat16_t duplicate_lane(bfloat16x4_t vec) { return vduph_lane_bf16(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce bfloat16_t duplicate_lane(bfloat16x8_t vec) { return vduph_laneq_bf16(vec, lane); }
 [[gnu::always_inline]] nce bfloat16x8_t combine(bfloat16x4_t low, bfloat16x4_t high) { return vcombine_bf16(low, high); }

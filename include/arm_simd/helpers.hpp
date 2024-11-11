@@ -4,7 +4,7 @@
 #include "helpers/get_lane.hpp"
 #include "helpers/make_signed.hpp"
 #include "helpers/make_unsigned.hpp"
-#include "helpers/multiply_add_lane.hpp"
+#include "helpers/lane_helpers.hpp"
 #include "helpers/nonvec.hpp"
 #include "helpers/set_lane.hpp"
 #include "helpers/shift_left.hpp"

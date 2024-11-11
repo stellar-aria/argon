@@ -546,7 +546,7 @@ template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_subtract_lane(i
 template <int lane>[[gnu::always_inline]] nce int32x4_t multiply_lane(int32x4_t a, int32x4_t v) { return vmulq_laneq_s32(a, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int64x2_t multiply_long_lane_high(int32x4_t a, int32x4_t v) { return vmull_high_laneq_s32(a, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32x2_t duplicate_lane(int32x4_t vec) { return vdup_laneq_s32(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t duplicate_lane(int32x4_t vec) { return vdupq_laneq_s32(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce int32x4_t duplicate_lane_quad(int32x4_t vec) { return vdupq_laneq_s32(vec, lane); }
 [[gnu::always_inline]] nce int32x4_t zip1(int32x4_t a, int32x4_t b) { return vzip1q_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t zip2(int32x4_t a, int32x4_t b) { return vzip2q_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t unzip1(int32x4_t a, int32x4_t b) { return vuzp1q_s32(a, b); }
@@ -598,7 +598,7 @@ template <int lane>[[gnu::always_inline]] nce uint64_t duplicate_lane(uint64x1_t
 template <> [[gnu::always_inline]] nce float64x2_t convert(uint64x2_t a) { return vcvtq_f64_u64(a); }
 template <int n>[[gnu::always_inline]] nce float64x2_t convert(uint64x2_t a) { return vcvtq_n_f64_u64(a, n); }
 template <int lane>[[gnu::always_inline]] nce uint64x1_t duplicate_lane(uint64x2_t vec) { return vdup_laneq_u64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce uint64x2_t duplicate_lane(uint64x2_t vec) { return vdupq_laneq_u64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce uint64x2_t duplicate_lane_quad(uint64x2_t vec) { return vdupq_laneq_u64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce uint64_t duplicate_lane(uint64x2_t vec) { return vdupd_laneq_u64(vec, lane); }
 [[gnu::always_inline]] nce uint64x2_t zip1(uint64x2_t a, uint64x2_t b) { return vzip1q_u64(a, b); }
 [[gnu::always_inline]] nce uint64x2_t zip2(uint64x2_t a, uint64x2_t b) { return vzip2q_u64(a, b); }
@@ -685,7 +685,7 @@ template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_subtract_lane(
 template <int lane>[[gnu::always_inline]] nce uint32x4_t multiply_lane(uint32x4_t a, uint32x4_t v) { return vmulq_laneq_u32(a, v, lane); }
 template <int lane>[[gnu::always_inline]] nce uint64x2_t multiply_long_lane_high(uint32x4_t a, uint32x4_t v) { return vmull_high_laneq_u32(a, v, lane); }
 template <int lane>[[gnu::always_inline]] nce uint32x2_t duplicate_lane(uint32x4_t vec) { return vdup_laneq_u32(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t duplicate_lane(uint32x4_t vec) { return vdupq_laneq_u32(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce uint32x4_t duplicate_lane_quad(uint32x4_t vec) { return vdupq_laneq_u32(vec, lane); }
 [[gnu::always_inline]] nce uint32x4_t zip1(uint32x4_t a, uint32x4_t b) { return vzip1q_u32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t zip2(uint32x4_t a, uint32x4_t b) { return vzip2q_u32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t unzip1(uint32x4_t a, uint32x4_t b) { return vuzp1q_u32(a, b); }
@@ -833,7 +833,7 @@ template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_subtract_fuse
 template <> [[gnu::always_inline]] nce float64x2_t reinterpret(float32x4_t a) { return vreinterpretq_f64_f32(a); }
 template <int lane>[[gnu::always_inline]] nce float32x4_t multiply_lane(float32x4_t a, float32x4_t v) { return vmulq_laneq_f32(a, v, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t duplicate_lane(float32x4_t vec) { return vdup_laneq_f32(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4_t duplicate_lane(float32x4_t vec) { return vdupq_laneq_f32(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce float32x4_t duplicate_lane_quad(float32x4_t vec) { return vdupq_laneq_f32(vec, lane); }
 [[gnu::always_inline]] nce float32x4_t round_to_32bit_integer(float32x4_t a) { return vrnd32zq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t round_to_64bit_integer(float32x4_t a) { return vrnd64zq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t round_to_32bit_integer_using_current_mode(float32x4_t a) { return vrnd32xq_f32(a); }
@@ -926,7 +926,7 @@ template <int lane>[[gnu::always_inline]] nce float64x1_t multiply_lane(float64x
 [[gnu::always_inline]] nce float64x1_t multiply(float64x1_t a, float64_t b) { return vmul_n_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t negate(float64x1_t a) { return vneg_f64(a); }
 template <int lane>[[gnu::always_inline]] nce float64x1_t duplicate_lane(float64x1_t vec) { return vdup_lane_f64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce float64x2_t duplicate_lane(float64x1_t vec) { return vdupq_lane_f64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce float64x2_t duplicate_lane_quad(float64x1_t vec) { return vdupq_lane_f64(vec, lane); }
 [[gnu::always_inline]] nce float64x2_t combine(float64x1_t low, float64x1_t high) { return vcombine_f64(low, high); }
 template <int lane>[[gnu::always_inline]] nce float64_t duplicate_lane(float64x1_t vec) { return vdupd_lane_f64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce float64_t get_lane(float64x1_t v) { return vget_lane_f64(v, lane); }
@@ -1034,7 +1034,7 @@ template <int lane>[[gnu::always_inline]] nce float64x2_t multiply_lane(float64x
 [[gnu::always_inline]] nce float64x2_t multiply(float64x2_t a, float64_t b) { return vmulq_n_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t negate(float64x2_t a) { return vnegq_f64(a); }
 template <int lane>[[gnu::always_inline]] nce float64x1_t duplicate_lane(float64x2_t vec) { return vdup_laneq_f64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce float64x2_t duplicate_lane(float64x2_t vec) { return vdupq_laneq_f64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce float64x2_t duplicate_lane_quad(float64x2_t vec) { return vdupq_laneq_f64(vec, lane); }
 template <> [[gnu::always_inline]] nce float64x1_t get_high(float64x2_t a) { return vget_high_f64(a); }
 template <> [[gnu::always_inline]] nce float64x1_t get_low(float64x2_t a) { return vget_low_f64(a); }
 template <int lane>[[gnu::always_inline]] nce float64_t duplicate_lane(float64x2_t vec) { return vdupd_laneq_f64(vec, lane); }
@@ -1419,13 +1419,13 @@ template <> [[gnu::always_inline]] nce float64x2_t duplicate(float64_t value) { 
 template <> [[gnu::always_inline]] nce float64x1_t move(float64_t value) { return vmov_n_f64(value); }
 template <> [[gnu::always_inline]] nce float64x2_t move(float64_t value) { return vmovq_n_f64(value); }
 template <int lane>[[gnu::always_inline]] nce int64x1_t duplicate_lane(int64x2_t vec) { return vdup_laneq_s64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t duplicate_lane(int64x2_t vec) { return vdupq_laneq_s64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce int64x2_t duplicate_lane_quad(int64x2_t vec) { return vdupq_laneq_s64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce poly64x1_t duplicate_lane(poly64x2_t vec) { return vdup_laneq_p64(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce poly64x2_t duplicate_lane(poly64x2_t vec) { return vdupq_laneq_p64(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce poly64x2_t duplicate_lane_quad(poly64x2_t vec) { return vdupq_laneq_p64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8_t duplicate_lane(poly8x16_t vec) { return vdup_laneq_p8(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce poly8x16_t duplicate_lane(poly8x16_t vec) { return vdupq_laneq_p8(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce poly8x16_t duplicate_lane_quad(poly8x16_t vec) { return vdupq_laneq_p8(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce poly16x4_t duplicate_lane(poly16x8_t vec) { return vdup_laneq_p16(vec, lane); }
-template <int lane>[[gnu::always_inline]] nce poly16x8_t duplicate_lane(poly16x8_t vec) { return vdupq_laneq_p16(vec, lane); }
+template <int lane>[[gnu::always_inline]] nce poly16x8_t duplicate_lane_quad(poly16x8_t vec) { return vdupq_laneq_p16(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce int64_t duplicate_lane(int64x1_t vec) { return vdupd_lane_s64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce int64_t duplicate_lane(int64x2_t vec) { return vdupd_laneq_s64(vec, lane); }
 [[gnu::always_inline]] nce int64x2_t zip1(int64x2_t a, int64x2_t b) { return vzip1q_s64(a, b); }

@@ -30,5 +30,8 @@ template <> struct Result<uint64x1_t> { using type = uint64x1_t; };
 template <> struct Result<float32x2_t> { using type = uint32x2_t; };
 #endif
 #endif
+
+template <typename T>
+using Result_t = Result<T>::type;
 // clang-format off
 }
