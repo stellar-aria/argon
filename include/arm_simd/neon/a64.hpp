@@ -1,18 +1,23 @@
 #pragma once
 #include "a32.hpp"
 
-#ifdef __cplusplus
 #ifdef __clang__
 #define nce constexpr
 #else
 #define nce inline
 #endif
 
+#ifdef __cplusplus
 namespace neon {
 template <typename T> nce T max(float64x1_t a, float64x1_t b);
 template <typename T> nce T max(float64x2_t a, float64x2_t b);
 template <typename T> nce T min(float64x1_t a, float64x1_t b);
 template <typename T> nce T min(float64x2_t a, float64x2_t b);
+template <typename T> nce T max_strict(float64x1_t a, float64x1_t b);
+template <typename T> nce T max_strict(float64x2_t a, float64x2_t b);
+template <typename T> nce T min_strict(float64x1_t a, float64x1_t b);
+template <typename T> nce T min_strict(float64x2_t a, float64x2_t b);
+
 template <typename T> nce T shift_right_saturate_narrow(int16_t a);
 template <typename T> nce T shift_right_saturate_narrow(int32_t a);
 template <typename T> nce T shift_right_saturate_narrow(int64_t a);
@@ -923,8 +928,8 @@ template <int lane>[[gnu::always_inline]] nce float64x1_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x1_t absolute(float64x1_t a) { return vabs_f64(a); }
 template <> [[gnu::always_inline]] nce float64x1_t max(float64x1_t a, float64x1_t b) { return vmax_f64(a, b); }
 template <> [[gnu::always_inline]] nce float64x1_t min(float64x1_t a, float64x1_t b) { return vmin_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x1_t max(float64x1_t a, float64x1_t b) { return vmaxnm_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x1_t min(float64x1_t a, float64x1_t b) { return vminnm_f64(a, b); }
+template <> [[gnu::always_inline]] nce float64x1_t max_strict(float64x1_t a, float64x1_t b) { return vmaxnm_f64(a, b); }
+template <> [[gnu::always_inline]] nce float64x1_t min_strict(float64x1_t a, float64x1_t b) { return vminnm_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t round(float64x1_t a) { return vrnd_f64(a); }
 [[gnu::always_inline]] nce float64x1_t round_toward_negative_infinity(float64x1_t a) { return vrndm_f64(a); }
 [[gnu::always_inline]] nce float64x1_t round_toward_positive_infinity(float64x1_t a) { return vrndp_f64(a); }
@@ -1016,8 +1021,8 @@ template <int lane>[[gnu::always_inline]] nce float64x2_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x2_t absolute_min(float64x2_t vn, float64x2_t vm) { return vaminq_f64(vn, vm); }
 template <> [[gnu::always_inline]] nce float64x2_t max(float64x2_t a, float64x2_t b) { return vmaxq_f64(a, b); }
 template <> [[gnu::always_inline]] nce float64x2_t min(float64x2_t a, float64x2_t b) { return vminq_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x2_t max(float64x2_t a, float64x2_t b) { return vmaxnmq_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x2_t min(float64x2_t a, float64x2_t b) { return vminnmq_f64(a, b); }
+template <> [[gnu::always_inline]] nce float64x2_t max_strict(float64x2_t a, float64x2_t b) { return vmaxnmq_f64(a, b); }
+template <> [[gnu::always_inline]] nce float64x2_t min_strict(float64x2_t a, float64x2_t b) { return vminnmq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t round(float64x2_t a) { return vrndq_f64(a); }
 [[gnu::always_inline]] nce float64x2_t round_toward_negative_infinity(float64x2_t a) { return vrndmq_f64(a); }
 [[gnu::always_inline]] nce float64x2_t round_toward_positive_infinity(float64x2_t a) { return vrndpq_f64(a); }
@@ -2004,5 +2009,5 @@ template <> [[gnu::always_inline]] nce mfloat8x8_t reinterpret(bfloat16x4_t a) {
 template <> [[gnu::always_inline]] nce mfloat8x16_t reinterpret(bfloat16x8_t a) { return vreinterpretq_mf8_bf16(a); }
 */
 }
-#endif
+#endif // __cplusplus
 #undef nce
