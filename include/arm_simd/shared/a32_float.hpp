@@ -11,7 +11,11 @@
 
 #ifdef __cplusplus
 
+#ifdef __clang__
+#define nce constexpr
+#else
 #define nce inline
+#endif
 
 namespace simd {
 // clang-format off
@@ -56,8 +60,8 @@ template <> [[gnu::always_inline]] nce int16x8_t convert(float16x8_t a) { return
 template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a) { return vcvtq_u16_f16(a); }
 template <int n>[[gnu::always_inline]] nce int16x8_t convert(float16x8_t a) { return vcvtq_n_s16_f16(a, n); }
 template <int n>[[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a) { return vcvtq_n_u16_f16(a, n); }
-[[gnu::always_inline]] nce float32x4_t min(float32x4_t a, float32x4_t b) { return vminnmq_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t max(float32x4_t a, float32x4_t b) { return vmaxnmq_f32(a, b); }
+[[gnu::always_inline]] nce float32x4_t min_strict(float32x4_t a, float32x4_t b) { return vminnmq_f32(a, b); }
+[[gnu::always_inline]] nce float32x4_t max_strict(float32x4_t a, float32x4_t b) { return vmaxnmq_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t round(float32x4_t a) { return vrndq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t round_to_nearest_with_ties_to_even(float32x4_t a) { return vrndnq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t round_toward_negative_infinity(float32x4_t a) { return vrndmq_f32(a); }

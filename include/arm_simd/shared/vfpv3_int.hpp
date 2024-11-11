@@ -11,7 +11,11 @@
 
 #ifdef __cplusplus
 
+#ifdef __clang__
+#define nce constexpr
+#else
 #define nce inline
+#endif
 
 namespace simd {
 // clang-format off

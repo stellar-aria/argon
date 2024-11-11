@@ -11,7 +11,11 @@
 
 #ifdef __cplusplus
 
+#ifdef __clang__
+#define nce constexpr
+#else
 #define nce inline
+#endif
 
 namespace simd {
 // clang-format off
@@ -48,6 +52,6 @@ template <int lane>[[gnu::always_inline]] nce float16_t get_lane(float16x8_t v) 
 template <int lane>[[gnu::always_inline]] nce float16x8_t set_lane(float16_t a, float16x8_t v) { return vsetq_lane_f16(a, v, lane); }
 // clang-format on
 }
-#endif
+#endif  // __cplusplus
 #undef nce
 #undef simd

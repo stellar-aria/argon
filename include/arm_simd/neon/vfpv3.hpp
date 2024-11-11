@@ -2,6 +2,7 @@
 #include "arm_simd/shared/vfpv3_int.hpp"
 #include "arm_simd/shared/vfpv3_float.hpp"
 
+#ifdef __cplusplus
 #ifdef __clang__
 #define nce constexpr
 #else
@@ -14,12 +15,6 @@ namespace neon {
 template <typename T> nce T convert(float32x2_t a);
 template <typename T> nce T convert(int32x2_t a);
 template <typename T> nce T convert(uint32x2_t a);
-template <typename T> nce T convert(float32x2_t a, int n);
-template <typename T> nce T convert(float32x4_t a, int n);
-template <typename T> nce T convert(int32x2_t a, int n);
-template <typename T> nce T convert(int32x4_t a, int n);
-template <typename T> nce T convert(uint32x2_t a, int n);
-template <typename T> nce T convert(uint32x4_t a, int n);
 template <typename T> nce T reinterpret(int8x8_t a);
 template <typename T> nce T reinterpret(int16x4_t a);
 template <typename T> nce T reinterpret(int32x2_t a);
@@ -154,6 +149,19 @@ template <typename T> nce T load1_x4(poly8_t const *ptr);
 template <typename T> nce T load1_x4(poly16_t const *ptr);
 template <typename T> nce T load1_x4(int64_t const *ptr);
 template <typename T> nce T load1_x4(uint64_t const *ptr);
+template <typename T> nce T load2(int64_t const *ptr);
+template <typename T> nce T load2(uint64_t const *ptr);
+template <typename T> nce T load3(int64_t const *ptr);
+template <typename T> nce T load3(uint64_t const *ptr);
+template <typename T> nce T load4(int64_t const *ptr);
+template <typename T> nce T load4(uint64_t const *ptr);
+template <typename T> nce T load2_duplicate(int64_t const *ptr);
+template <typename T> nce T load2_duplicate(uint64_t const *ptr);
+template <typename T> nce T load3_duplicate(int64_t const *ptr);
+template <typename T> nce T load3_duplicate(uint64_t const *ptr);
+template <typename T> nce T load4_duplicate(int64_t const *ptr);
+template <typename T> nce T load4_duplicate(uint64_t const *ptr);
+
 inline void store1(int8_t *ptr, int8x8_t val);
 inline void store1(int8_t *ptr, int8x16_t val);
 inline void store1(int16_t *ptr, int16x4_t val);
@@ -767,7 +775,7 @@ template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_accumulate(int3
 template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_accumulate_round(int32x2_t a, int32x2_t b) { return vrsra_n_s32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce int32x2_t shift_right_insert(int32x2_t a, int32x2_t b) { return vsri_n_s32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x2_t convert(int32x2_t a) { return vcvt_f32_s32(a); }
-template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(int32x2_t a, int n) { return vcvt_n_f32_s32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(int32x2_t a) { return vcvt_n_f32_s32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(int32x2_t a) { return vreinterpret_s8_s32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(int32x2_t a) { return vreinterpret_s16_s32(a); }
 template <> [[gnu::always_inline]] nce float32x2_t reinterpret(int32x2_t a) { return vreinterpret_f32_s32(a); }
@@ -844,7 +852,7 @@ template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_saturate_narrow
 template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_saturate_narrow_unsigned(int32x4_t a) { return vqrshrun_n_s32(a, n); }
 template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_round_saturate_narrow(int32x4_t a) { return vqrshrn_n_s32(a, n); }
 template <int n>[[gnu::always_inline]] nce int16x4_t shift_right_round_narrow(int32x4_t a) { return vrshrn_n_s32(a, n); }
-template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(int32x4_t a, int n) { return vcvtq_n_f32_s32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(int32x4_t a) { return vcvtq_n_f32_s32(a, fracbits); }
 template <> [[gnu::always_inline]] nce poly8x16_t reinterpret(int32x4_t a) { return vreinterpretq_p8_s32(a); }
 template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(int32x4_t a) { return vreinterpretq_p16_s32(a); }
 [[gnu::always_inline]] nce int16x4_t move_narrow(int32x4_t a) { return vmovn_s32(a); }
@@ -997,7 +1005,7 @@ template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_accumulate(uin
 template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_accumulate_round(uint32x2_t a, uint32x2_t b) { return vrsra_n_u32(a, b, n); }
 template <int n>[[gnu::always_inline]] nce uint32x2_t shift_right_insert(uint32x2_t a, uint32x2_t b) { return vsri_n_u32(a, b, n); }
 template <> [[gnu::always_inline]] nce float32x2_t convert(uint32x2_t a) { return vcvt_f32_u32(a); }
-template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(uint32x2_t a, int n) { return vcvt_n_f32_u32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce float32x2_t convert_n(uint32x2_t a) { return vcvt_n_f32_u32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(uint32x2_t a) { return vreinterpret_s8_u32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(uint32x2_t a) { return vreinterpret_s16_u32(a); }
 template <> [[gnu::always_inline]] nce int32x2_t reinterpret(uint32x2_t a) { return vreinterpret_s32_u32(a); }
@@ -1068,7 +1076,7 @@ template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_narrow(uint32x
 template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_saturate_narrow(uint32x4_t a) { return vqshrn_n_u32(a, n); }
 template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_saturate_narrow(uint32x4_t a) { return vqrshrn_n_u32(a, n); }
 template <int n>[[gnu::always_inline]] nce uint16x4_t shift_right_round_narrow(uint32x4_t a) { return vrshrn_n_u32(a, n); }
-template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(uint32x4_t a, int n) { return vcvtq_n_f32_u32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce float32x4_t convert_n(uint32x4_t a) { return vcvtq_n_f32_u32(a, fracbits); }
 template <> [[gnu::always_inline]] nce poly8x16_t reinterpret(uint32x4_t a) { return vreinterpretq_p8_u32(a); }
 template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(uint32x4_t a) { return vreinterpretq_p16_u32(a); }
 [[gnu::always_inline]] nce uint16x4_t move_narrow(uint32x4_t a) { return vmovn_u32(a); }
@@ -1121,8 +1129,8 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce uint32x2_t absolute_less_than(float32x2_t a, float32x2_t b) { return vcalt_f32(a, b); }
 template <> [[gnu::always_inline]] nce int32x2_t convert(float32x2_t a) { return vcvt_s32_f32(a); }
 template <> [[gnu::always_inline]] nce uint32x2_t convert(float32x2_t a) { return vcvt_u32_f32(a); }
-template <int fracbits> [[gnu::always_inline]] nce int32x2_t convert_n(float32x2_t a) { return vcvt_n_s32_f32(a, fracbits); }
-template <int fracbits> [[gnu::always_inline]] nce uint32x2_t convert_n(float32x2_t a) { return vcvt_n_u32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce int32x2_t convert_n_signed(float32x2_t a) { return vcvt_n_s32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce uint32x2_t convert_n_unsigned(float32x2_t a) { return vcvt_n_u32_f32(a, fracbits); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(float32x2_t a) { return vreinterpret_s8_f32(a); }
 template <> [[gnu::always_inline]] nce int16x4_t reinterpret(float32x2_t a) { return vreinterpret_s16_f32(a); }
 template <> [[gnu::always_inline]] nce int32x2_t reinterpret(float32x2_t a) { return vreinterpret_s32_f32(a); }
@@ -1166,8 +1174,8 @@ template <int n>[[gnu::always_inline]] nce float32x2_t extract(float32x2_t a, fl
 [[gnu::always_inline]] nce uint32x4_t absolute_less_than_or_equal(float32x4_t a, float32x4_t b) { return vcaleq_f32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t absolute_greater_than(float32x4_t a, float32x4_t b) { return vcagtq_f32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t absolute_less_than(float32x4_t a, float32x4_t b) { return vcaltq_f32(a, b); }
-template <int fracbits> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_n_s32_f32(a, fracbits); }
-template <int fracbits> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_n_u32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce int32x4_t convert_n_signed(float32x4_t a) { return vcvtq_n_s32_f32(a, fracbits); }
+template <int fracbits> [[gnu::always_inline]] nce uint32x4_t convert_n_unsigned(float32x4_t a) { return vcvtq_n_u32_f32(a, fracbits); }
 template <> [[gnu::always_inline]] nce poly8x16_t reinterpret(float32x4_t a) { return vreinterpretq_p8_f32(a); }
 template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(float32x4_t a) { return vreinterpretq_p16_f32(a); }
 template <int lane> [[gnu::always_inline]] nce float32x4_t multiply_lane(float32x4_t a, float32x2_t v) { return vmulq_lane_f32(a, v, lane); }
@@ -1515,8 +1523,8 @@ template <> [[gnu::always_inline]] inline poly8x8x2_t load2(poly8_t const *ptr) 
 template <> [[gnu::always_inline]] inline poly8x16x2_t load2(poly8_t const *ptr) { return vld2q_p8(ptr); }
 template <> [[gnu::always_inline]] inline poly16x4x2_t load2(poly16_t const *ptr) { return vld2_p16(ptr); }
 template <> [[gnu::always_inline]] inline poly16x8x2_t load2(poly16_t const *ptr) { return vld2q_p16(ptr); }
-[[gnu::always_inline]] inline int64x1x2_t load2(int64_t const *ptr) { return vld2_s64(ptr); }
-[[gnu::always_inline]] inline uint64x1x2_t load2(uint64_t const *ptr) { return vld2_u64(ptr); }
+template <> [[gnu::always_inline]] inline int64x1x2_t load2(int64_t const *ptr) { return vld2_s64(ptr); }
+template <> [[gnu::always_inline]] inline uint64x1x2_t load2(uint64_t const *ptr) { return vld2_u64(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x3_t load3(int8_t const *ptr) { return vld3_s8(ptr); }
 template <> [[gnu::always_inline]] inline int8x16x3_t load3(int8_t const *ptr) { return vld3q_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x3_t load3(int16_t const *ptr) { return vld3_s16(ptr); }
@@ -1535,8 +1543,8 @@ template <> [[gnu::always_inline]] inline poly8x8x3_t load3(poly8_t const *ptr) 
 template <> [[gnu::always_inline]] inline poly8x16x3_t load3(poly8_t const *ptr) { return vld3q_p8(ptr); }
 template <> [[gnu::always_inline]] inline poly16x4x3_t load3(poly16_t const *ptr) { return vld3_p16(ptr); }
 template <> [[gnu::always_inline]] inline poly16x8x3_t load3(poly16_t const *ptr) { return vld3q_p16(ptr); }
-[[gnu::always_inline]] inline int64x1x3_t load3(int64_t const *ptr) { return vld3_s64(ptr); }
-[[gnu::always_inline]] inline uint64x1x3_t load3(uint64_t const *ptr) { return vld3_u64(ptr); }
+template <> [[gnu::always_inline]] inline int64x1x3_t load3(int64_t const *ptr) { return vld3_s64(ptr); }
+template <> [[gnu::always_inline]] inline uint64x1x3_t load3(uint64_t const *ptr) { return vld3_u64(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x4_t load4(int8_t const *ptr) { return vld4_s8(ptr); }
 template <> [[gnu::always_inline]] inline int8x16x4_t load4(int8_t const *ptr) { return vld4q_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x4_t load4(int16_t const *ptr) { return vld4_s16(ptr); }
@@ -1555,8 +1563,8 @@ template <> [[gnu::always_inline]] inline poly8x8x4_t load4(poly8_t const *ptr) 
 template <> [[gnu::always_inline]] inline poly8x16x4_t load4(poly8_t const *ptr) { return vld4q_p8(ptr); }
 template <> [[gnu::always_inline]] inline poly16x4x4_t load4(poly16_t const *ptr) { return vld4_p16(ptr); }
 template <> [[gnu::always_inline]] inline poly16x8x4_t load4(poly16_t const *ptr) { return vld4q_p16(ptr); }
-[[gnu::always_inline]] inline int64x1x4_t load4(int64_t const *ptr) { return vld4_s64(ptr); }
-[[gnu::always_inline]] inline uint64x1x4_t load4(uint64_t const *ptr) { return vld4_u64(ptr); }
+template <> [[gnu::always_inline]] inline int64x1x4_t load4(int64_t const *ptr) { return vld4_s64(ptr); }
+template <> [[gnu::always_inline]] inline uint64x1x4_t load4(uint64_t const *ptr) { return vld4_u64(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x2_t load2_duplicate(int8_t const *ptr) { return vld2_dup_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x2_t load2_duplicate(int16_t const *ptr) { return vld2_dup_s16(ptr); }
 template <> [[gnu::always_inline]] inline int32x2x2_t load2_duplicate(int32_t const *ptr) { return vld2_dup_s32(ptr); }
@@ -1566,8 +1574,8 @@ template <> [[gnu::always_inline]] inline uint32x2x2_t load2_duplicate(uint32_t 
 template <> [[gnu::always_inline]] inline float32x2x2_t load2_duplicate(float32_t const *ptr) { return vld2_dup_f32(ptr); }
 template <> [[gnu::always_inline]] inline poly8x8x2_t load2_duplicate(poly8_t const *ptr) { return vld2_dup_p8(ptr); }
 template <> [[gnu::always_inline]] inline poly16x4x2_t load2_duplicate(poly16_t const *ptr) { return vld2_dup_p16(ptr); }
-[[gnu::always_inline]] inline int64x1x2_t load2_duplicate(int64_t const *ptr) { return vld2_dup_s64(ptr); }
-[[gnu::always_inline]] inline uint64x1x2_t load2_duplicate(uint64_t const *ptr) { return vld2_dup_u64(ptr); }
+template <> [[gnu::always_inline]] inline int64x1x2_t load2_duplicate(int64_t const *ptr) { return vld2_dup_s64(ptr); }
+template <> [[gnu::always_inline]] inline uint64x1x2_t load2_duplicate(uint64_t const *ptr) { return vld2_dup_u64(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x3_t load3_duplicate(int8_t const *ptr) { return vld3_dup_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x3_t load3_duplicate(int16_t const *ptr) { return vld3_dup_s16(ptr); }
 template <> [[gnu::always_inline]] inline int32x2x3_t load3_duplicate(int32_t const *ptr) { return vld3_dup_s32(ptr); }
@@ -1577,8 +1585,8 @@ template <> [[gnu::always_inline]] inline uint32x2x3_t load3_duplicate(uint32_t 
 template <> [[gnu::always_inline]] inline float32x2x3_t load3_duplicate(float32_t const *ptr) { return vld3_dup_f32(ptr); }
 template <> [[gnu::always_inline]] inline poly8x8x3_t load3_duplicate(poly8_t const *ptr) { return vld3_dup_p8(ptr); }
 template <> [[gnu::always_inline]] inline poly16x4x3_t load3_duplicate(poly16_t const *ptr) { return vld3_dup_p16(ptr); }
-[[gnu::always_inline]] inline int64x1x3_t load3_duplicate(int64_t const *ptr) { return vld3_dup_s64(ptr); }
-[[gnu::always_inline]] inline uint64x1x3_t load3_duplicate(uint64_t const *ptr) { return vld3_dup_u64(ptr); }
+template <> [[gnu::always_inline]] inline int64x1x3_t load3_duplicate(int64_t const *ptr) { return vld3_dup_s64(ptr); }
+template <> [[gnu::always_inline]] inline uint64x1x3_t load3_duplicate(uint64_t const *ptr) { return vld3_dup_u64(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x4_t load4_duplicate(int8_t const *ptr) { return vld4_dup_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x4_t load4_duplicate(int16_t const *ptr) { return vld4_dup_s16(ptr); }
 template <> [[gnu::always_inline]] inline int32x2x4_t load4_duplicate(int32_t const *ptr) { return vld4_dup_s32(ptr); }
@@ -1877,7 +1885,6 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(float32_t *ptr, f
 template <int lane>[[gnu::always_inline]] nce void store4_lane(float32_t *ptr, float32x4x4_t val) { return vst4q_lane_f32(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, poly16x4x4_t val) { return vst4_lane_p16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, poly16x8x4_t val) { return vst4q_lane_p16(ptr, val, lane); }
-#ifdef __clang__
 [[gnu::always_inline]] inline void store1_x2(int8_t *ptr, int8x8x2_t val) { return vst1_s8_x2(ptr, val); }
 [[gnu::always_inline]] inline void store1_x2(int8_t *ptr, int8x16x2_t val) { return vst1q_s8_x2(ptr, val); }
 [[gnu::always_inline]] inline void store1_x2(int16_t *ptr, int16x4x2_t val) { return vst1_s16_x2(ptr, val); }
@@ -1945,7 +1952,6 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, po
 [[gnu::always_inline]] inline void store1_x4(uint64_t *ptr, uint64x1x4_t val) { return vst1_u64_x4(ptr, val); }
 [[gnu::always_inline]] inline void store1_x4(int64_t *ptr, int64x2x4_t val) { return vst1q_s64_x4(ptr, val); }
 [[gnu::always_inline]] inline void store1_x4(uint64_t *ptr, uint64x2x4_t val) { return vst1q_u64_x4(ptr, val); }
-#endif
 [[gnu::always_inline]] nce int8x8_t table_lookup2(int8x8x2_t a, int8x8_t idx) { return vtbl2_s8(a, idx); }
 [[gnu::always_inline]] nce uint8x8_t table_lookup2(uint8x8x2_t a, uint8x8_t idx) { return vtbl2_u8(a, idx); }
 [[gnu::always_inline]] nce poly8x8_t table_lookup2(poly8x8x2_t a, uint8x8_t idx) { return vtbl2_p8(a, idx); }
@@ -1962,15 +1968,9 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, po
 [[gnu::always_inline]] nce poly64x2_t add(poly64x2_t a, poly64x2_t b) { return vaddq_p64(a, b); }
 // [[gnu::always_inline]] nce poly128_t add(poly128_t a, poly128_t b) { return vaddq_p128(a, b); }
 #endif
-
-#ifdef __aarch64__
-[[gnu::always_inline]] nce float32x2_t divide(float32x2_t a, float32x2_t b) { return vdiv_f32(a, b); }
-[[gnu::always_inline]] nce float32x4_t divide(float32x4_t a, float32x4_t b) { return vdivq_f32(a, b); }
-[[gnu::always_inline]] nce float64x1_t divide(float64x1_t a, float64x1_t b) { return vdiv_f64(a, b); }
-[[gnu::always_inline]] nce float64x2_t divide(float64x2_t a, float64x2_t b) { return vdivq_f64(a, b); }
-#endif
 // clang-format on
 
 }  // namespace neon
 #undef nce
 
+#endif // __cplusplus

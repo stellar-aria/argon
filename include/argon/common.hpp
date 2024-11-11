@@ -3,6 +3,7 @@
 #include <functional>
 #include <type_traits>
 #include "arm_simd/helpers.hpp"
+#include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/multivec.hpp"
@@ -83,22 +84,8 @@ class Common {
   ace neon_type operator=(scalar_type b) { return vec_ = FromScalar(b); }
 
 #if ARGON_HAS_DWORD
-  ace neon_type operator=(Lane<simd::Vec64_t<scalar_type>> b) {
+  ace neon_type operator=(lane_type b) {
     return this->vec_ = simd::duplicate_lane<vector_type>(b.vec(), b.lane());
-  }
-
-  ace neon_type operator=(Lane<simd::Vec128_t<scalar_type>> b) {
-    constexpr size_t doubleword_lanes = Argon64<scalar_type>::lanes;
-    size_t lane = b.lane();
-    Argon128<scalar_type> vec = b.vec();
-    Argon64<scalar_type> half;
-    if (lane >= doubleword_lanes) {
-      half = vec.GetHigh();
-      lane -= doubleword_lanes;
-    } else {
-      half = vec.GetLow();
-    }
-    return this->vec_ = simd::duplicate_lane<vector_type>(half, lane);
   }
 #endif
 
@@ -128,7 +115,7 @@ class Common {
   ace neon_type operator^(neon_type b) const { return BitwiseXor(b); }
   ace neon_type operator~() const { return BitwiseNot(); }
 
-  ace Lane<vector_type> operator[](const int i) const { return Lane{vec_, i}; }
+  ace lane_type operator[](const int i) const { return Lane{vec_, i}; }
 
   ace neon_type operator>>(const int i) const { return ShiftRight(i); }
   ace neon_type operator<<(const int i) const { return ShiftLeft(i); }
@@ -170,14 +157,14 @@ class Common {
   ace neon_type MultiplyAdd(neon_type b, neon_type c) const { return simd::multiply_add(vec_, b, c); }
   ace neon_type MultiplyAdd(neon_type b, scalar_type c) const { return simd::multiply_add(vec_, b, c); }
   ace neon_type MultiplyAdd(neon_type b, lane_type c) const {
-    return simd::multiply_add_lane(vec_, b, c.vec(), c.lane());
+    return simd::multiply_add_lane(vec_, b.vec(), c.vec(), c.lane());
   }
 
   /** a - (b * c) */
   ace neon_type MultiplySubtract(neon_type b, neon_type c) const { return simd::multiply_subtract(vec_, b, c); }
   ace neon_type MultiplySubtract(neon_type b, scalar_type c) const { return simd::multiply_subtract(vec_, b, c); }
   ace neon_type MultiplySubtract(neon_type b, lane_type c) const {
-    return simd::multiply_subtract(vec_, b, c.vec(), c.lane());
+    return simd::multiply_subtract_lane(vec_, b.vec(), c.vec(), c.lane());
   }
 
   /**
@@ -185,12 +172,8 @@ class Common {
    * This is equivalent to (a * b) >> 31
    */
   ace neon_type MultiplyFixedPoint(neon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
-
-  /**
-   * Multiply a fixed-point vector by a scalar, returning a fixed-point product
-   * This is equivalent to (a * b) >> 31
-   */
   ace neon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+  ace neon_type MultiplyFixedPoint(lane_type l) const { return simd::multiply_double_saturate_high(vec_, l.vec(), l.lane()); }
 
   /**
    * Multiply two fixed-point vectors and round, returning a fixed-point product
@@ -527,26 +510,49 @@ class Common {
 
 template <typename vector_type>
 class Lane {
-  using scalar_type = simd::NonVec<vector_type>::type;
-  using lane_type = Lane<vector_type>;
+  using scalar_type = simd::NonVec_t<vector_type>;
+#ifdef __aarch64__
+  using lane_vector_type = vector_type;
+#else
+  using lane_vector_type = neon::Vec64_t<scalar_type>;
+#endif
+  using type = Lane<vector_type>;
+  using neon_type = Neon_t<vector_type>;
 
  public:
-  ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {};
+#ifdef __aarch64__
+  ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {}
+#else
+  ace Lane(vector_type vec, const int lane)
+  requires simd::is_doubleword_v<vector_type>
+   : vec_(vec), lane_(lane) {}
+
+  ace Lane(vector_type vec, const int lane)
+  requires simd::is_quadword_v<vector_type> {
+    if (lane >= Argon64<scalar_type>::lanes) {
+      lane_ = (lane - Argon64<scalar_type>::lanes);
+      vec_ = simd::get_high(vec);
+    } else {
+      lane_ = lane;
+      vec_ = simd::get_low(vec);
+    }
+   }
+#endif
 
   ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
 
-  ace Common<vector_type> operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
+  ace neon_type operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
 
-  ace Common<vector_type> operator+=(scalar_type b) {
+  ace neon_type operator+=(scalar_type b) {
     return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) + b);
   }
-  ace Common<vector_type> operator-=(scalar_type b) {
+  ace neon_type operator-=(scalar_type b) {
     return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) - b);
   }
-  ace Common<vector_type> operator*=(scalar_type b) {
+  ace neon_type operator*=(scalar_type b) {
     return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) * b);
   }
-  ace Common<vector_type> operator/=(scalar_type b) {
+  ace neon_type operator/=(scalar_type b) {
     return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) / b);
   }
 

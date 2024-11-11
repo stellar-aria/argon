@@ -122,8 +122,18 @@ class Argon64 : public argon::impl::Common<typename neon::Vec64<scalar_type>::ty
     }
   }
 
-  template <typename U> ace Argon64<U> Convert() { return neon::convert<typename neon::Vec64<U>::type>(this->vec_); }
-  template <typename U> ace Argon64<U> Convert(int n) { return neon::convert_n<typename neon::Vec64<U>::type>(this->vec_, n); }
+  template <typename U> ace Argon64<U> ConvertTo() { return neon::convert<typename neon::Vec64<U>::type>(this->vec_); }
+  template <typename U, int fracbits>
+    requires(std::is_same_v<U, uint32_t> || std::is_same_v<U, int32_t> || std::is_same_v<U, float>)
+  ace Argon64<U> ConvertTo() {
+    if constexpr (std::is_same_v<U, float>) {
+      return neon::convert_n<fracbits>(this->vec_);
+    } else if constexpr (std::is_unsigned_v<U>) {
+      return neon::convert_n_unsigned<fracbits>(this->vec_);
+    } else if constexpr (std::is_signed_v<U>) {
+      return neon::convert_n_signed<fracbits>(this->vec_);
+    }
+  }
 
   ace Argon128<scalar_type> CombineWith(Argon64<scalar_type> high) const { return neon::combine(this->vec_, high); }
 };

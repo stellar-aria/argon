@@ -11,8 +11,8 @@ template <int n>[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a) { re
 template <int n>[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a) { return vcvtq_n_f32_u32(a, n); }
 [[gnu::always_inline]] nce float16x8_t reverse_32bit(float16x8_t a) { return vrev32q_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reverse_64bit(float16x8_t a) { return vrev64q_f16(a); }
-[[gnu::always_inline]] nce float16x8_t min(float16x8_t a, float16x8_t b) { return vminnmq_f16(a, b); }
-[[gnu::always_inline]] nce float16x8_t max(float16x8_t a, float16x8_t b) { return vmaxnmq_f16(a, b); }
+[[gnu::always_inline]] nce float16x8_t min_strict(float16x8_t a, float16x8_t b) { return vminnmq_f16(a, b); }
+[[gnu::always_inline]] nce float16x8_t max_strict(float16x8_t a, float16x8_t b) { return vmaxnmq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t abs(float16x8_t a) { return vabsq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t bitwise_clear(float16x8_t a, float16x8_t b) { return vbicq_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t multiply(float16x8_t a, float16_t b) { return vmulq_n_f16(a, b); }

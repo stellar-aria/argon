@@ -9,7 +9,11 @@
 #endif
 #endif
 
+#ifdef __clang__
+#define nce constexpr
+#else
 #define nce inline
+#endif
 
 #ifdef __cplusplus
 

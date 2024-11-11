@@ -1,6 +1,7 @@
 #pragma once
 #include <initializer_list>
 #include <span>
+#include <utility>
 #include "common.hpp"
 
 #ifdef __ARM_NEON
@@ -41,6 +42,8 @@ class Argon128 : public argon::impl::Common<typename simd::Vec128<scalar_type>::
   ace Argon128(Argon64<scalar_type> low, Argon64<scalar_type> high) : T(simd::combine(low, high)) {};
 
   ace static Argon128<scalar_type> Combine(Argon64<scalar_type> low, Argon64<scalar_type> high) { return simd::combine(low, high); }
+
+  [[gnu::always_inline]] constexpr operator vector_type() const { return this->vec_; }
 
   ace Argon128<scalar_type> operator=(scalar_type b) { return this->vec_ = simd::duplicate<vector_type>(b); }
   ace Argon128<scalar_type> operator=(argon::impl::Lane<typename simd::Vec64<scalar_type>::type> b) { return this->vec_ = simd::duplicate_lane<vector_type>(b.vec(), b.lane()); }
@@ -126,8 +129,18 @@ class Argon128 : public argon::impl::Common<typename simd::Vec128<scalar_type>::
   ace Argon64<scalar_type> GetHigh() { return simd::get_high(this->vec_); }
   ace Argon64<scalar_type> GetLow() { return simd::get_low(this->vec_); }
 
-  template <typename U> ace Argon128<U> Convert() { return simd::convert<typename simd::Vec128<U>::type>(this->vec_); }
-  template <typename U> ace Argon128<U> Convert(int n) { return simd::convert_n<typename simd::Vec128<U>::type>(this->vec_, n); }
+  template <typename U> ace Argon128<U> ConvertTo() { return simd::convert<typename simd::Vec128<U>::type>(this->vec_); }
+  template <typename U, int fracbits>
+    requires(std::is_same_v<U, uint32_t> || std::is_same_v<U, int32_t> || std::is_same_v<U, float>)
+  ace Argon128<U> ConvertTo() {
+    if constexpr (std::is_same_v<U, float>) {
+      return neon::convert_n<fracbits>(this->vec_);
+    } else if constexpr (std::is_unsigned_v<U>) {
+      return neon::convert_n_unsigned<fracbits>(this->vec_);
+    } else if constexpr (std::is_signed_v<U>) {
+      return neon::convert_n_signed<fracbits>(this->vec_);
+    }
+  }
 };
 
 template <typename V>
