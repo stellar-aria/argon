@@ -63,7 +63,11 @@ template <typename vector_type>
 class Common {
  public:
   using scalar_type = simd::NonVec<vector_type>::type;
+#ifdef __aarch64__
   using lane_type = Lane<vector_type>;
+#else
+  using lane_type = Lane<neon::Vec64_t<scalar_type>>;
+#endif
   using result_type = Result_t<vector_type>;
   using argon_result_type = ArgonFor_t<result_type>;
   using argon_type = ArgonFor_t<vector_type>;
@@ -115,7 +119,7 @@ class Common {
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
   ace argon_type operator~() const { return BitwiseNot(); }
 
-  ace lane_type operator[](const int i) const { return Lane{vec_, i}; }
+  ace lane_type operator[](const int i) const { return lane_type{vec_, i}; }
 
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
   ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
@@ -545,11 +549,6 @@ class Common {
 template <typename vector_type>
 class Lane {
   using scalar_type = simd::NonVec_t<vector_type>;
-#ifdef __aarch64__
-  using lane_vector_type = vector_type;
-#else
-  using lane_vector_type = neon::Vec64_t<scalar_type>;
-#endif
   using type = Lane<vector_type>;
   using argon_type = ArgonFor_t<vector_type>;
 
@@ -557,19 +556,19 @@ class Lane {
 #ifdef __aarch64__
   ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {}
 #else
-  ace Lane(vector_type vec, const int lane)
-    requires simd::is_doubleword_v<vector_type>
-      : vec_(vec), lane_(lane) {}
-
-  ace Lane(vector_type vec, const int lane)
-    requires simd::is_quadword_v<vector_type>
-  {
-    if (lane >= ArgonHalf<scalar_type>::lanes) {
-      lane_ = (lane - ArgonHalf<scalar_type>::lanes);
-      vec_ = simd::get_high(vec);
-    } else {
+  template <typename input_vector_type>
+  ace Lane(input_vector_type vec, const int lane) {
+    if constexpr (simd::is_doubleword_v<input_vector_type>){
       lane_ = lane;
-      vec_ = simd::get_low(vec);
+      vec_ = vec;
+    } else if constexpr (simd::is_quadword_v<input_vector_type>){
+      if (lane >= ArgonHalf<scalar_type>::lanes) {
+	lane_ = (lane - ArgonHalf<scalar_type>::lanes);
+	vec_ = simd::get_high(vec);
+      } else {
+	lane_ = lane;
+	vec_ = simd::get_low(vec);
+      }
     }
   }
 #endif
@@ -588,7 +587,7 @@ class Lane {
 
  private:
   vector_type vec_;
-  const int lane_;
+  int lane_;
 };
 
 }  // namespace argon::impl
