@@ -33,10 +33,10 @@ ace auto reinterpret(impl::Common<V> in) {
   }
 }
 
-template <typename NeonType, simd::is_vector_type V>
-ace NeonType reinterpret(V in) {
-  static_assert(!std::is_same_v<typename NeonType::vector_type, V>);
-  return NeonType{simd::reinterpret<typename NeonType::vector_type>(in)};
+template <typename argon_type, simd::is_vector_type V>
+ace argon_type reinterpret(V in) {
+  static_assert(!std::is_same_v<typename argon_type::vector_type, V>);
+  return argon_type{simd::reinterpret<typename argon_type::vector_type>(in)};
 }
 
 template <size_t stride, typename scalar_type, typename intrinsic_type>
@@ -68,62 +68,6 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
   simd::store1(ptr, vector);
 }
 
-// /**
-//  * @brief Store a contiguous collection of vectors to a location in memory, potentially with interleaving
-//  *
-//  * @tparam stride The interleaving stride: 2, 3, 4
-//  * @param ptr The location to store to
-//  * @param vectors The vectors to store.
-//  * @warning The length of vectors _must_ be a strict multiple of the stride.
-//  *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
-//  */
-// template <size_t stride = 1, typename scalar_type, typename intrinsic_type>
-// requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
-// ace void store(scalar_type* ptr, std::span<intrinsic_type> vectors) {
-//   // Best case scenerio: we know both length and stride
-//   static_assert(0 < stride && stride < 5, "Stores can only be performed with a stride of 1, 2, 3, or 4");
-//   //assert(vectors.size() >= stride, "You cannot store less vectors than your stride!");
-//   //assert(vectors.size() % stride == 0, "The number of vectors being stored must be a multiple of the stride!");
-
-//   if (stride == 1) {
-//     size_t tail_size = vectors.size() % 4;
-// #pragma unroll
-//     for (auto v : vectors | std::views::chunk(4)) {
-//       if (v.size() == 4) {  // 4-element chunks
-//         using multi_type = impl::MultiVec<intrinsic_type, 4>::type;
-//         simd::store1_x4(ptr, *(multi_type*)v.begin());
-//         ptr += (sizeof(intrinsic_type) / sizeof(*ptr)) * 4; // increment output pointer
-//       } else {
-//         if (tail_size == 1) {  // 1-element tail
-//           simd::store1(ptr, v.begin());
-//         } else if (tail_size == 2) {
-//           using tail_multi_type = impl::MultiVec<intrinsic_type, 2>::type;
-//           simd::store1_x2(ptr, *(tail_multi_type*)v.begin());
-//         } else if (tail_size == 3) {
-//           using tail_multi_type = impl::MultiVec<intrinsic_type, 3>::type;
-//           simd::store1_x3(ptr, *(tail_multi_type*)v.begin());
-//         }
-//       }
-//     }
-//   } else {
-// #pragma unroll
-//     for (auto v : vectors | std::views::chunk(stride)) {
-//       if (v.size() != stride) {
-//         return;
-//       }
-
-//       if constexpr (stride == 2) {
-//         store_interleaved<2>(ptr, v.begin());
-//       } else if constexpr (stride == 3) {
-//         store_interleaved<3>(ptr, v.begin());
-//       } else if constexpr (stride == 4) {
-//         store_interleaved<4>(ptr, v.begin());
-//       }
-//       ptr += sizeof(intrinsic_type) / sizeof(*ptr); // increment output pointer
-//     }
-//   }
-// }
-
 /**
  * @brief Store an array of vectors to a location in memory, potentially with interleaving
  *
@@ -133,20 +77,24 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
  * @warning The length of vectors _must_ be a strict multiple of the stride.
  *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
  */
-template <size_t stride = 1, size_t size, typename scalar_type, typename argon_type>
-requires std::is_same_v<scalar_type, simd::NonVec_t<typename argon_type::vector_type>>
-ace void store(scalar_type* ptr, std::array<argon_type, size> vectors) {
+template <size_t stride = 1, typename scalar_type, typename... intrinsic_types>
+requires (std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_types>> && ...)
+ace void store(scalar_type* ptr, intrinsic_types... vectors) {
+  // TODO: C++26 change to `typename intrinsic_types...[0]`
+  using intrinsic_type = typename std::tuple_element<0, std::tuple<intrinsic_types...>>::type;
+
+  constexpr size_t size = sizeof...(vectors);
+  constexpr std::array<intrinsic_type, sizeof...(vectors)> vec_array = {vectors...};
+
   // Best case scenerio: we know both length and stride
   static_assert(0 < stride && stride < 5, "Stores can only be performed with a stride of 1, 2, 3, or 4");
   static_assert(size >= stride, "You cannot store less vectors than your stride!");
   static_assert(size % stride == 0, "The number of vectors being stored must be a multiple of the stride!");
 
-  using intrinsic_type = typename argon_type::vector_type;
-
   if constexpr (stride == 1) {
     constexpr size_t tail_size = size % 4;
 #pragma unroll
-    for (auto v : vectors | std::views::chunk(4)) {
+    for (auto v : vec_array | std::views::chunk(4)) {
       if (v.size() == 4) {  // 4-element chunks
         using multi_type = impl::MultiVec<intrinsic_type, 4>::type;
         simd::store1_x4(ptr, *(multi_type*)v.begin());
@@ -165,7 +113,7 @@ ace void store(scalar_type* ptr, std::array<argon_type, size> vectors) {
     }
   } else {
 #pragma unroll
-    for (auto v : vectors | std::views::chunk(stride)) {
+    for (auto v : vec_array | std::views::chunk(stride)) {
       if constexpr (stride == 2) {
         store_interleaved<2>(ptr, v.begin());
       } else if constexpr (stride == 3) {
@@ -246,6 +194,10 @@ ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) { return simd::combine
 
 }  // namespace argon
 
+
+/**
+ * Lane deconstruction feature
+ */
 namespace std {
 template <typename T>
 struct tuple_size<argon::impl::Common<T>> {

@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 #if (__ARM_ARCH >= 8)  // ARMv8
 #ifdef __ARM_64BIT_STATE  // A64
 #include "arm_simd/neon/a64.hpp"
@@ -21,8 +18,7 @@
 #include "arm_simd/neon/vfpv3.hpp"
 #endif
 
-#endif // __ARM_NEON
-
+#endif
 #ifdef __ARM_FEATURE_MVE
 
 #if (__ARM_FEATURE_MVE & 2)
@@ -34,3 +30,8 @@
 #endif // __ARM_FEATURE_MVE
 
 #endif  // __ARM_ARCH
+
+#if !defined(__ARM_NEON) && !defined(__ARM_FEATURE_MVE)
+// mock
+
+#endif

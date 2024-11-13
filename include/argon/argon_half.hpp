@@ -16,7 +16,7 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
 
  public:
   using vector_type = neon::Vec64<scalar_type>::type;
-  using lane_type = argon::impl::Lane<vector_type>;
+  using lane_type = const argon::impl::Lane<vector_type>;
 
   static_assert(neon::is_doubleword_v<vector_type>);
 
@@ -31,23 +31,10 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
   ace ArgonHalf(std::array<scalar_type, 2> value_list) : T(value_list.data()) {};
   ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
 
-  ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
+  template <neon::is_vector_type intrinsic_type>
+  ace ArgonHalf(argon::impl::Lane<intrinsic_type> b) : T(b) {};
 
-  ace ArgonHalf<scalar_type> operator=(scalar_type b) { return this->vec_ = neon::duplicate<vector_type>(b); }
-  ace ArgonHalf<scalar_type> operator=(argon::impl::Lane<typename neon::Vec64<scalar_type>::type> b) { return this->vec_ = neon::duplicate_lane<vector_type>(b.vec(), b.lane()); }
-  ace ArgonHalf<scalar_type> operator=(argon::impl::Lane<typename neon::Vec128<scalar_type>::type> b) {
-    constexpr size_t doubleword_lanes = ArgonHalf<scalar_type>::lanes;
-    size_t lane = b.lane();
-    Argon<scalar_type> vec = b.vec();
-    ArgonHalf<scalar_type> half;
-    if (lane >= doubleword_lanes) {
-        half = vec.GetHigh();
-        lane -= doubleword_lanes;
-    } else {
-        half = vec.GetLow();
-    }
-    return this->vec_ = neon::duplicate_lane<vector_type>(half, lane);
-  }
+  ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
 
   template <typename U>
   requires argon::impl::has_larger_v<scalar_type>

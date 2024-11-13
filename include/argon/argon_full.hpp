@@ -13,9 +13,9 @@
 #endif
 
 #ifdef __clang__
-#define ace [[gnu::always_inline]] constexpr
+#define ace [[nodiscard]] [[gnu::always_inline]] constexpr
 #else
-#define ace [[gnu::always_inline]] inline
+#define ace [[nodiscard]] [[gnu::always_inline]] inline
 #endif
 
 
@@ -25,7 +25,7 @@ class Argon : public argon::impl::Common<typename simd::Vec128<scalar_type>::typ
 
  public:
   using vector_type = simd::Vec128<scalar_type>::type;
-  using lane_type = argon::impl::Lane<vector_type>;
+  using lane_type = const argon::impl::Lane<vector_type>;
 
   static_assert(simd::is_quadword_v<vector_type>);
 
@@ -41,26 +41,12 @@ class Argon : public argon::impl::Common<typename simd::Vec128<scalar_type>::typ
   ace Argon(std::span<scalar_type> slice) : T(slice) {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T(simd::combine(low, high)) {};
 
+  template <simd::is_vector_type intrinsic_type>
+  ace Argon(argon::impl::Lane<intrinsic_type> b) : T(b) {};
+
   ace static Argon<scalar_type> Combine(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) { return simd::combine(low, high); }
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return this->vec_; }
-
-  ace Argon<scalar_type> operator=(scalar_type b) { return this->vec_ = simd::duplicate<vector_type>(b); }
-  ace Argon<scalar_type> operator=(argon::impl::Lane<typename simd::Vec64<scalar_type>::type> b) { return this->vec_ = simd::duplicate_lane<vector_type>(b.vec(), b.lane()); }
-  ace Argon<scalar_type> operator=(argon::impl::Lane<typename simd::Vec128<scalar_type>::type> b) {
-    constexpr size_t doubleword_lanes = ArgonHalf<scalar_type>::lanes;
-    size_t lane = b.lane();
-    Argon<scalar_type> vec = b.vec();
-    ArgonHalf<scalar_type> half;
-    if (lane >= doubleword_lanes) {
-        half = vec.GetHigh();
-        lane -= doubleword_lanes;
-    } else {
-        half = vec.GetLow();
-    }
-    return this->vec_ = simd::duplicate_lane<vector_type>(half, lane);
-  }
-
 
   template <typename U>
   requires argon::impl::has_smaller_v<scalar_type> && std::is_same_v<U, typename argon::impl::NextSmaller<scalar_type>::type>

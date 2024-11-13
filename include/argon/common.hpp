@@ -62,11 +62,11 @@ class Lane;
 template <typename vector_type>
 class Common {
  public:
-  using scalar_type = simd::NonVec<vector_type>::type;
-#ifdef __aarch64__
-  using lane_type = Lane<vector_type>;
-#else
+  using scalar_type = simd::NonVec_t<vector_type>;
+#if defined(__ARM_NEON) && !defined(__aarch64__)  // ARMv7
   using lane_type = Lane<neon::Vec64_t<scalar_type>>;
+#else
+  using lane_type = Lane<vector_type>;
 #endif
   using result_type = Result_t<vector_type>;
   using argon_result_type = ArgonFor_t<result_type>;
@@ -80,6 +80,10 @@ class Common {
   ace Common(scalar_type const* ptr) : vec_(Load(ptr)) {};
   ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
+  template <simd::is_vector_type intrinsic_type>
+  requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+
   ace static argon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD
     return simd::duplicate<vector_type>(scalar);
@@ -88,14 +92,20 @@ class Common {
 #endif
   }
 
-  ace static argon_type FromLane(lane_type lane)
-  requires simd::is_quadword<vector_type>
-  { return simd::duplicate_lane_quad(lane.vec(), lane.lane()); }
+  template <simd::is_vector_type intrinsic_type>
+  ace static argon_type FromLane(argon::impl::Lane<intrinsic_type> lane)
+    requires simd::is_quadword<vector_type>
+  {
+    return simd::duplicate_lane_quad(lane.vec(), lane.lane());
+  }
 
 #if ARGON_HAS_DWORD
-  ace static argon_type FromLane(lane_type lane)
-  requires simd::is_doubleword<vector_type>
-  { return simd::duplicate_lane(lane.vec(), lane.lane()); }
+  template <simd::is_vector_type intrinsic_type>
+  ace static argon_type FromLane(argon::impl::Lane<intrinsic_type> lane)
+    requires simd::is_doubleword<vector_type>
+  {
+    return simd::duplicate_lane(lane.vec(), lane.lane());
+  }
 #endif
 
   ace argon_type operator-() const { return Negate(); }
@@ -119,7 +129,8 @@ class Common {
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
   ace argon_type operator~() const { return BitwiseNot(); }
 
-  ace lane_type operator[](const int i) const { return lane_type{vec_, i}; }
+  ace const lane_type operator[](const int i) const { return lane_type{vec_, i}; }
+  ace lane_type operator[](const int i) { return lane_type{vec_, i}; }
 
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
   ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
@@ -134,7 +145,7 @@ class Common {
 
   ace vector_type vec() const { return vec_; }
 
-  ace lane_type GetLane(const int i) { return simd::get_lane(vec_, i); }
+  ace scalar_type GetLane(const int i) { return simd::get_lane(vec_, i); }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
   ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
@@ -185,19 +196,22 @@ class Common {
    * Multiply two fixed-point vectors, returning a fixed-point product
    * This is equivalent to (a * b) >> 31
    */
-  ace argon_type MultiplyRoundFixedPoint(argon_type v) const { return simd::multiply_double_round_saturate_high(vec_, v); }
-  ace argon_type MultiplyRoundFixedPoint(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
+  ace argon_type MultiplyRoundFixedPoint(argon_type v) const {
+    return simd::multiply_double_round_saturate_high(vec_, v);
+  }
+  ace argon_type MultiplyRoundFixedPoint(scalar_type s) const {
+    return simd::multiply_double_round_saturate_high(vec_, s);
+  }
   ace argon_type MultiplyRoundFixedPoint(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
-
 
   /**
    * Multiply-add three fixed-point vectors, returning a fixed-point sum
    * This is equivalent to a + ((b * c) >> 31)
    */
-   template <typename arg_type>
-   requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
+  template <typename arg_type>
+    requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
   ace argon_type MultiplyAddFixedPoint(argon_type b, arg_type c) const {
     return Add(b.MultiplyFixedPoint(c));
   }
@@ -206,12 +220,11 @@ class Common {
    * Multiply-round-add three fixed-point vectors, returning a fixed-point sum
    * This is equivalent to a + (rnd(b * c) >> 31)
    */
-   template <typename arg_type>
-   requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
+  template <typename arg_type>
+    requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
   ace argon_type MultiplyRoundAddFixedPoint(argon_type b, arg_type c) const {
     return Add(b.MultiplyRoundFixedPoint(c));
   }
-
 
   /**
    * Multiply two fixed-point vectors and round, returning a fixed-point product
@@ -331,7 +344,7 @@ class Common {
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(scalar_type const* ptr) {
     std::array<argon_type, n> out;
-#pragma unroll
+    // #pragma unroll
     for (size_t i = 0; i < n; ++i) {
       out[i] = Load(ptr);
       ptr += lanes;
@@ -558,29 +571,23 @@ class Lane {
 #else
   template <typename input_vector_type>
   ace Lane(input_vector_type vec, const int lane) {
-    if constexpr (simd::is_doubleword_v<input_vector_type>){
+    if constexpr (simd::is_doubleword_v<input_vector_type>) {
       lane_ = lane;
       vec_ = vec;
-    } else if constexpr (simd::is_quadword_v<input_vector_type>){
+    } else if constexpr (simd::is_quadword_v<input_vector_type>) {
       if (lane >= ArgonHalf<scalar_type>::lanes) {
-	lane_ = (lane - ArgonHalf<scalar_type>::lanes);
-	vec_ = simd::get_high(vec);
+        lane_ = (lane - ArgonHalf<scalar_type>::lanes);
+        vec_ = simd::get_high(vec);
       } else {
-	lane_ = lane;
-	vec_ = simd::get_low(vec);
+        lane_ = lane;
+        vec_ = simd::get_low(vec);
       }
     }
   }
 #endif
 
   ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
-
   ace argon_type operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
-
-  ace argon_type operator+=(scalar_type b) { return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) + b); }
-  ace argon_type operator-=(scalar_type b) { return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) - b); }
-  ace argon_type operator*=(scalar_type b) { return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) * b); }
-  ace argon_type operator/=(scalar_type b) { return simd::set_lane(vec_, lane_, simd::get_lane(vec_, lane_) / b); }
 
   ace vector_type vec() { return vec_; }
   ace const int lane() { return lane_; }
