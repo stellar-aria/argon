@@ -194,44 +194,5 @@ ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) { return simd::combine
 
 }  // namespace argon
 
-
-/**
- * Lane deconstruction feature
- */
-namespace std {
-template <typename T>
-struct tuple_size<argon::impl::Common<T>> {
-  static constexpr size_t value = argon::impl::Common<T>::lanes;
-};
-
-template <typename T>
-struct tuple_size<Argon<T>> {
-  static constexpr size_t value = Argon<T>::lanes;
-};
-
-template <typename T>
-struct tuple_size<ArgonHalf<T>> {
-  static constexpr size_t value = ArgonHalf<T>::lanes;
-};
-
-template <size_t Index, typename T>
-struct tuple_element<Index, argon::impl::Common<T>> {
-  static_assert(Index < argon::impl::Common<T>::lanes);
-  using type = argon::impl::Common<T>::lane_type;
-};
-
-template <size_t Index, typename T>
-struct tuple_element<Index, Argon<T>> {
-  static_assert(Index < Argon<T>::lanes);
-  using type = argon::impl::Lane<typename Argon<T>::vector_type>;
-};
-
-template <size_t Index, typename T>
-struct tuple_element<Index, ArgonHalf<T>> {
-  static_assert(Index < ArgonHalf<T>::lanes);
-  using type = argon::impl::Lane<typename ArgonHalf<T>::vector_type>;
-};
-}  // namespace std
-
 #undef ace
 #undef simd

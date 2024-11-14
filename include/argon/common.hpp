@@ -8,6 +8,7 @@
 #include "helpers.hpp"
 #include "helpers/multivec.hpp"
 #include "helpers/result.hpp"
+#include "iterator.hpp"
 
 #ifdef __ARM_NEON
 #define simd neon
@@ -81,8 +82,32 @@ class Common {
   ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
-  requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
+    requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
   ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+
+  static constexpr MainIterator<vector_type> vectorize_main(scalar_type* start, scalar_type* end) {
+    return MainIterator<vector_type>{start, end};
+  }
+
+  static constexpr MainIterator<vector_type> vectorize_main(std::span<scalar_type> span) {
+    return MainIterator<vector_type>{span};
+  }
+
+  static constexpr MainIterator<vector_type> vectorize_main(scalar_type* start, size_t size) {
+    return MainIterator<vector_type>{start, size};
+  }
+
+  static constexpr TailIterator<vector_type> vectorize_tail(scalar_type* start, scalar_type* end) {
+    return TailIterator<vector_type>{start, end};
+  }
+
+  static constexpr TailIterator<vector_type> vectorize_tail(std::span<scalar_type> span) {
+    return TailIterator<vector_type>{span};
+  }
+
+  static constexpr TailIterator<vector_type> vectorize_tail(scalar_type* start, size_t size) {
+    return TailIterator<vector_type>{start, size};
+  }
 
   ace static argon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD
@@ -598,6 +623,22 @@ class Lane {
 };
 
 }  // namespace argon::impl
+
+/**
+ * Lane deconstruction feature
+ */
+namespace std {
+template <typename T>
+struct tuple_size<argon::impl::Common<T>> {
+  static constexpr size_t value = argon::impl::Common<T>::lanes;
+};
+
+template <size_t Index, typename T>
+struct tuple_element<Index, argon::impl::Common<T>> {
+  static_assert(Index < argon::impl::Common<T>::lanes);
+  using type = argon::impl::Common<T>::lane_type;
+};
+}  // namespace std
 
 #undef ace
 #undef simd
