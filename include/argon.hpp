@@ -84,7 +84,7 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
   using intrinsic_type = typename std::tuple_element<0, std::tuple<intrinsic_types...>>::type;
 
   constexpr size_t size = sizeof...(vectors);
-  constexpr std::array<intrinsic_type, sizeof...(vectors)> vec_array = {vectors...};
+  const std::array<intrinsic_type, sizeof...(vectors)> vec_array = {vectors...};
 
   // Best case scenerio: we know both length and stride
   static_assert(0 < stride && stride < 5, "Stores can only be performed with a stride of 1, 2, 3, or 4");
@@ -124,6 +124,12 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
       ptr += sizeof(intrinsic_type) / sizeof(*ptr); // increment output pointer
     }
   }
+}
+
+template <size_t stride = 1, typename scalar_type, typename... argon_types>
+requires (std::is_same_v<scalar_type, simd::NonVec_t<typename argon_types::vector_type>> && ...)
+ace void store(scalar_type* ptr, argon_types... vectors) {
+  store<stride>(ptr, std::forward<typename argon_types::vector_type>(vectors)...);
 }
 
 

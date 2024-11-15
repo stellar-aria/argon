@@ -8,7 +8,7 @@
 #include "helpers.hpp"
 #include "helpers/multivec.hpp"
 #include "helpers/result.hpp"
-#include "iterator.hpp"
+#include "vectorize.hpp"
 
 #ifdef __ARM_NEON
 #define simd neon
@@ -85,29 +85,35 @@ class Common {
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
   ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
-  static constexpr MainIterator<vector_type> vectorize_main(scalar_type* start, scalar_type* end) {
-    return MainIterator<vector_type>{start, end};
-  }
+  struct vectorize {
+    static constexpr size_t step = lanes;
+    static constexpr size_t main_size(size_t size) { return size & ~(lanes - 1); }
+    static constexpr size_t tail_start(size_t size) { return size & ~(lanes - 1); }
 
-  static constexpr MainIterator<vector_type> vectorize_main(std::span<scalar_type> span) {
-    return MainIterator<vector_type>{span};
-  }
+    static constexpr ::argon::vectorize::main<vector_type> main(scalar_type* start, scalar_type* end) {
+      return ::argon::vectorize::main<vector_type>{start, end};
+    }
 
-  static constexpr MainIterator<vector_type> vectorize_main(scalar_type* start, size_t size) {
-    return MainIterator<vector_type>{start, size};
-  }
+    static constexpr ::argon::vectorize::main<vector_type> main(std::span<scalar_type> span) {
+      return ::argon::vectorize::main<vector_type>{span};
+    }
 
-  static constexpr TailIterator<vector_type> vectorize_tail(scalar_type* start, scalar_type* end) {
-    return TailIterator<vector_type>{start, end};
-  }
+    static constexpr ::argon::vectorize::main<vector_type> main(scalar_type* start, size_t size) {
+      return ::argon::vectorize::main<vector_type>{start, size};
+    }
 
-  static constexpr TailIterator<vector_type> vectorize_tail(std::span<scalar_type> span) {
-    return TailIterator<vector_type>{span};
-  }
+    static constexpr ::argon::vectorize::tail<vector_type> tail(scalar_type* start, scalar_type* end) {
+      return ::argon::vectorize::tail<vector_type>{start, end};
+    }
 
-  static constexpr TailIterator<vector_type> vectorize_tail(scalar_type* start, size_t size) {
-    return TailIterator<vector_type>{start, size};
-  }
+    static constexpr ::argon::vectorize::tail<vector_type> tail(std::span<scalar_type> span) {
+      return ::argon::vectorize::tail<vector_type>{span};
+    }
+
+    static constexpr ::argon::vectorize::tail<vector_type> tail(scalar_type* start, size_t size) {
+      return ::argon::vectorize::tail<vector_type>{start, size};
+    }
+  };
 
   ace static argon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD
@@ -219,7 +225,7 @@ class Common {
 
   /**
    * Multiply two fixed-point vectors, returning a fixed-point product
-   * This is equivalent to (a * b) >> 31
+   * This is equivalent to round(a * b) >> 31
    */
   ace argon_type MultiplyRoundFixedPoint(argon_type v) const {
     return simd::multiply_double_round_saturate_high(vec_, v);
@@ -249,22 +255,6 @@ class Common {
     requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
   ace argon_type MultiplyRoundAddFixedPoint(argon_type b, arg_type c) const {
     return Add(b.MultiplyRoundFixedPoint(c));
-  }
-
-  /**
-   * Multiply two fixed-point vectors and round, returning a fixed-point product
-   * This is equivalent to round(a * b) >> 31
-   */
-  ace argon_type MultiplyFixedPointRound(argon_type v) const {
-    return simd::multiply_double_round_saturate_high(vec_, v);
-  }
-
-  /**
-   * Multiply a fixed-point vector by a scalar and round, returning a fixed-point product
-   * This is equivalent to round(a * b) >> 31
-   */
-  ace argon_type MultiplyFixedPointRound(scalar_type s) const {
-    return simd::multiply_double_round_saturate_high(vec_, s);
   }
 
   ace argon_type Divide(argon_type b) const
