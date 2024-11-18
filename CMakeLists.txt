@@ -7,6 +7,7 @@ project(argon
 
 add_library(argon INTERFACE)
 target_include_directories(argon INTERFACE include)
+target_compile_features(argon INTERFACE cxx_std_23)
 
 file(GLOB_RECURSE sources_GLOB include/**/*.hpp)
 target_sources(argon PUBLIC

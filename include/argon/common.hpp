@@ -242,7 +242,8 @@ class Common {
    * This is equivalent to a + ((b * c) >> 31)
    */
   template <typename arg_type>
-    requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
+    requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
+             std::is_convertible_v<arg_type, scalar_type>)
   ace argon_type MultiplyAddFixedPoint(argon_type b, arg_type c) const {
     return Add(b.MultiplyFixedPoint(c));
   }
@@ -252,7 +253,8 @@ class Common {
    * This is equivalent to a + (rnd(b * c) >> 31)
    */
   template <typename arg_type>
-    requires is_one_of<arg_type, argon_type, scalar_type, lane_type>
+    requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
+             std::is_convertible_v<arg_type, scalar_type>)
   ace argon_type MultiplyRoundAddFixedPoint(argon_type b, arg_type c) const {
     return Add(b.MultiplyRoundFixedPoint(c));
   }
@@ -405,12 +407,13 @@ class Common {
   ace argon_type CountLeadingZeroBits() const { return simd::count_leading_zero_bits(vec_); }
   ace argon_type CountActiveBits() const { return simd::count_active_bits(vec_); }
 
-  /// Extract n elements from the lower end of this vector, and the remaining elements from the higher end of the
-  /// operand, combining them into the result vector.
+  /// Extract n elements from the lower end of the operand, and the remaining elements from the top end of this vector,
+  /// combining them into the result vector.
   template <int n>
   ace argon_type Extract(argon_type b) const {
     return simd::extract<n>(vec_, b);
   }
+
 
   ace argon_type Reverse64bit() const { return simd::reverse_64bit(vec_); }
   ace argon_type Reverse32bit() const { return simd::reverse_32bit(vec_); }
