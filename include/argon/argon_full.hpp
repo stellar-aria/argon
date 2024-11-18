@@ -2,7 +2,7 @@
 #include <initializer_list>
 #include <span>
 #include <utility>
-#include "arm_simd/neon/a64.hpp"
+#include "arm_simd.hpp"
 #include "common.hpp"
 
 #ifdef __ARM_NEON
