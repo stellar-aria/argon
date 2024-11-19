@@ -154,6 +154,30 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
   ace Argon<scalar_type> CombineWith(ArgonHalf<scalar_type> high) const { return neon::combine(this->vec_, high); }
 };
 
+template <typename V>
+  requires std::is_scalar_v<V>
+ace ArgonHalf<V> operator+(const V a, const ArgonHalf<V> b) {
+  return b.Add(a);
+}
+
+template <typename V>
+  requires std::is_scalar_v<V>
+ace ArgonHalf<V> operator-(const V a, const ArgonHalf<V> b) {
+  return ArgonHalf<V>{a}.Subtract(b);
+}
+
+template <typename V>
+  requires std::is_scalar_v<V>
+ace ArgonHalf<V> operator*(const V a, const ArgonHalf<V> b) {
+  return b.Multiply(a);
+}
+
+template <typename V>
+  requires std::is_scalar_v<V>
+ace ArgonHalf<V> operator/(const V a, const ArgonHalf<V> b) {
+  return ArgonHalf<V>{a}.Divide(b);
+}
+
 namespace std {
 template <typename T>
 struct tuple_size<ArgonHalf<T>> {

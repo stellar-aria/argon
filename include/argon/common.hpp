@@ -115,6 +115,8 @@ class Common {
     }
   };
 
+  ace static argon_type FromScalar(scalar_type* ptr){ return simd::load1_duplicate(ptr);}
+
   ace static argon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD
     return simd::duplicate<vector_type>(scalar);
@@ -170,7 +172,7 @@ class Common {
 
   ace std::array<scalar_type, lanes> as_array() {
     std::array<scalar_type, lanes> out;
-    Store(out.data());
+    StoreTo(out.data());
     return out;
   }
 
@@ -328,6 +330,29 @@ class Common {
   }
 
   ace static argon_type Load(scalar_type const* ptr) { return simd::load1<vector_type>(ptr); }
+  ace static argon_type LoadCopy(scalar_type const* ptr) { return simd::load1_duplicate(ptr); }
+
+  template <size_t stride>
+  ace static std::array<argon_type, stride> LoadCopyInterleaved(scalar_type const* ptr) {
+    static_assert(stride > 1 && stride < 5, "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
+    using multivec_type = MultiVec<vector_type, stride>::type;
+    using array_type = std::array<argon_type, stride>;
+
+    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
+    // the validity and POD-ness of std::array needs to be verified
+    static_assert(std::is_standard_layout_v<array_type>);
+    static_assert(std::is_trivial_v<array_type>);
+    static_assert(sizeof(multivec_type) == sizeof(array_type),
+                  "std::array isn't layout-compatible with this NEON multi-vector.");
+
+    if constexpr (stride == 2) {
+      return *(array_type*)(simd::load2_duplicate<multivec_type>(ptr).val);
+    } else if constexpr (stride == 3) {
+      return *(array_type*)(simd::load3_duplicate<multivec_type>(ptr).val);
+    } else if constexpr (stride == 4) {
+      return *(array_type*)(simd::load4_duplicate<multivec_type>(ptr).val);
+    }
+  }
 
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(scalar_type const* ptr) {

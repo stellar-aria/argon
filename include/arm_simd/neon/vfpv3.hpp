@@ -116,6 +116,7 @@ template <typename T> nce T load4_duplicate(uint32_t const *ptr);
 template <typename T> nce T load4_duplicate(float32_t const *ptr);
 template <typename T> nce T load4_duplicate(poly8_t const *ptr);
 template <typename T> nce T load4_duplicate(poly16_t const *ptr);
+#if defined(__clang__) || (__GNUC__ > 13)
 template <typename T> nce T load1_x2(int8_t const *ptr);
 template <typename T> nce T load1_x2(int16_t const *ptr);
 template <typename T> nce T load1_x2(int32_t const *ptr);
@@ -149,6 +150,7 @@ template <typename T> nce T load1_x4(poly8_t const *ptr);
 template <typename T> nce T load1_x4(poly16_t const *ptr);
 template <typename T> nce T load1_x4(int64_t const *ptr);
 template <typename T> nce T load1_x4(uint64_t const *ptr);
+#endif
 template <typename T> nce T load2(int64_t const *ptr);
 template <typename T> nce T load2(uint64_t const *ptr);
 template <typename T> nce T load3(int64_t const *ptr);
@@ -1885,6 +1887,7 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(float32_t *ptr, f
 template <int lane>[[gnu::always_inline]] nce void store4_lane(float32_t *ptr, float32x4x4_t val) { return vst4q_lane_f32(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, poly16x4x4_t val) { return vst4_lane_p16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, poly16x8x4_t val) { return vst4q_lane_p16(ptr, val, lane); }
+#if defined(__clang__) || (__GNUC__ > 13)
 [[gnu::always_inline]] inline void store1_x2(int8_t *ptr, int8x8x2_t val) { return vst1_s8_x2(ptr, val); }
 [[gnu::always_inline]] inline void store1_x2(int8_t *ptr, int8x16x2_t val) { return vst1q_s8_x2(ptr, val); }
 [[gnu::always_inline]] inline void store1_x2(int16_t *ptr, int16x4x2_t val) { return vst1_s16_x2(ptr, val); }
@@ -1952,6 +1955,7 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, po
 [[gnu::always_inline]] inline void store1_x4(uint64_t *ptr, uint64x1x4_t val) { return vst1_u64_x4(ptr, val); }
 [[gnu::always_inline]] inline void store1_x4(int64_t *ptr, int64x2x4_t val) { return vst1q_s64_x4(ptr, val); }
 [[gnu::always_inline]] inline void store1_x4(uint64_t *ptr, uint64x2x4_t val) { return vst1q_u64_x4(ptr, val); }
+#endif
 [[gnu::always_inline]] nce int8x8_t table_lookup2(int8x8x2_t a, int8x8_t idx) { return vtbl2_s8(a, idx); }
 [[gnu::always_inline]] nce uint8x8_t table_lookup2(uint8x8x2_t a, uint8x8_t idx) { return vtbl2_u8(a, idx); }
 [[gnu::always_inline]] nce poly8x8_t table_lookup2(poly8x8x2_t a, uint8x8_t idx) { return vtbl2_p8(a, idx); }

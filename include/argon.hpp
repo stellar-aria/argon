@@ -68,6 +68,7 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
   simd::store1(ptr, vector);
 }
 
+#if defined(__clang__) || (__GNUC__ > 13)
 /**
  * @brief Store an array of vectors to a location in memory, potentially with interleaving
  *
@@ -131,7 +132,7 @@ requires (std::is_same_v<scalar_type, simd::NonVec_t<typename argon_types::vecto
 ace void store(scalar_type* ptr, argon_types... vectors) {
   store<stride>(ptr, std::forward<typename argon_types::vector_type>(vectors)...);
 }
-
+#endif
 
 template <int lane, size_t stride, typename scalar_type, typename intrinsic_type>
 ace void store_lane_interleaved(scalar_type* ptr, std::array<intrinsic_type, stride> multi_vec) {
