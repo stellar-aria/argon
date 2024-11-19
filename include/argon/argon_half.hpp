@@ -22,18 +22,23 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace ArgonHalf() : T() {};
-  ace ArgonHalf(vector_type vector) : T(vector) {};
-  ace ArgonHalf(scalar_type scalar) : T(scalar) {};
-  ace ArgonHalf(scalar_type const* ptr) : T(ptr) {};
-  ace ArgonHalf(T&& in) : T(in) {};
-  ace ArgonHalf(std::array<scalar_type, 2> value_list) : T(value_list.data()) {};
-  ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
+  ace ArgonHalf() : T(){};
+  ace ArgonHalf(vector_type vector) : T{vector} {};
+  ace ArgonHalf(scalar_type scalar) : T{scalar} {};
+  // ace ArgonHalf(scalar_type const* ptr) : T(ptr) {};
+  ace ArgonHalf(T&& in) : T{in} {};
+  ace ArgonHalf(std::array<scalar_type, 2> value_list) : T{T::Load(value_list.data())} {};
+  // ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
 
   template <neon::is_vector_type intrinsic_type>
-  ace ArgonHalf(argon::impl::Lane<intrinsic_type> b) : T(b) {};
+  ace ArgonHalf(argon::impl::Lane<intrinsic_type> b) : T(b){};
 
   ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
+
+  template <typename new_scalar_type>
+  ace ArgonHalf<new_scalar_type> As() {
+    return neon::reinterpret<neon::Vec64_t<new_scalar_type>>(this->vec_);
+  }
 
   template <typename U>
     requires argon::impl::has_larger_v<scalar_type>
@@ -105,6 +110,19 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
     requires argon::impl::has_larger_v<scalar_type>
   ace Argon<U> Widen() const {
     return neon::move_long(this->vec_);
+  }
+
+  template <size_t n>
+  ace Argon<argon::impl::NextLarger_t<scalar_type>> ShiftLeftLong()
+    requires argon::impl::has_larger_v<scalar_type>
+  {
+    return neon::shift_left_long<n>(this->vec_);
+  }
+
+  ace Argon<argon::impl::NextLarger_t<scalar_type>> MultiplyDoubleSaturateLong(ArgonHalf<scalar_type> b)
+    requires argon::impl::has_larger_v<scalar_type>
+  {
+    return neon::multiply_double_saturate_long(this->vec_, b);
   }
 
   ace ArgonHalf<scalar_type> TableLookup(ArgonHalf<scalar_type> idx) { return neon::table_lookup1(this->vec_, idx); }

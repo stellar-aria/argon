@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include "argon/features.h"
 
 #ifdef __ARM_NEON

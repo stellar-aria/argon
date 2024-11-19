@@ -52,6 +52,9 @@ template <> struct NextLarger<float> { using type = double; };
 template <> struct NextLarger<float16_t> { using type = float; };
 #endif
 
+template <typename T>
+using NextLarger_t = NextLarger<T>::type;
+
 template <typename T> struct NextSmaller;
 template <> struct NextSmaller<int16_t> { using type = int8_t; };
 template <> struct NextSmaller<uint16_t> { using type = uint8_t; };
@@ -63,6 +66,9 @@ template <> struct NextSmaller<double> { using type = float; };
 #if ARGON_HAS_HALF_FLOAT
 template <> struct NextSmaller<float> { using type = float16_t; };
 #endif
+
+template <typename T>
+using NextSmaller_t = NextSmaller<T>::type;
 
 // clang-format on
 }  // namespace argon::impl

@@ -65,11 +65,7 @@ template <typename vector_type>
 class Common {
  public:
   using scalar_type = simd::NonVec_t<vector_type>;
-#if defined(__ARM_NEON) && !defined(__aarch64__)  // ARMv7
-  using lane_type = Lane<neon::Vec64_t<scalar_type>>;
-#else
   using lane_type = Lane<vector_type>;
-#endif
   using result_type = Result_t<vector_type>;
   using argon_result_type = ArgonFor_t<result_type>;
   using argon_type = ArgonFor_t<vector_type>;
@@ -77,14 +73,14 @@ class Common {
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
   constexpr Common() : vec_{0} {};
-  constexpr Common(vector_type vector) : vec_(vector) {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
-  ace Common(scalar_type const* ptr) : vec_(Load(ptr)) {};
-  ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
+  constexpr Common(vector_type vector) : vec_(vector){};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
+  // ace Common(scalar_type const* ptr) : vec_(Load(ptr)) {};
+  // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
 
   struct vectorize {
     static constexpr size_t step = lanes;
@@ -335,7 +331,11 @@ class Common {
 
   template <size_t lane>
   ace argon_type LoadToLane(scalar_type const* ptr) {
-    return simd::load1_lane<lane>(ptr, vec_);
+    if constexpr (simd::is_quadword_v<vector_type>) {
+      return simd::load1_lane_quad<lane>(ptr, vec_);
+    } else {
+      return simd::load1_lane<lane>(ptr, vec_);
+    }
   }
 
   template <size_t stride>
@@ -385,7 +385,7 @@ class Common {
 
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadInterleavedToLane(MultiVec_t<vector_type, stride> multi,
-                                                                   scalar_type const* ptr) {
+                                                                  scalar_type const* ptr) {
     using array_type = std::array<argon_type, stride>;
 
     // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
@@ -418,7 +418,7 @@ class Common {
 
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadInterleavedToLane(std::array<vector_type, stride> multi,
-                                                                   scalar_type const* ptr) {
+                                                                  scalar_type const* ptr) {
     using multivec_type = MultiVec_t<vector_type, stride>;
     return LoadInterleavedToLane(*(multivec_type*)(multi.data()));
   }
@@ -657,8 +657,9 @@ class Lane {
  public:
   ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {}
   ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
-  ace argon_type operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
-  ace argon_type Load(scalar_type* ptr) { return simd::load1_lane(ptr, vec_); }
+  ace argon_type operator=(scalar_type b) { return Set(b); }
+  ace argon_type Load(scalar_type* ptr) { return simd::load1_lane(vec_, lane_, ptr); }
+  ace argon_type Set(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
 
 #if __ARM_ARCH >= 8
   ace vector_type vec() { return vec_; }
