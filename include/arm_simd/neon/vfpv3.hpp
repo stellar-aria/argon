@@ -1464,27 +1464,27 @@ template <> [[gnu::always_inline]] inline poly8x16_t load1(poly8_t const *ptr) {
 template <> [[gnu::always_inline]] inline poly16x4_t load1(poly16_t const *ptr) { return vld1_p16(ptr); }
 template <> [[gnu::always_inline]] inline poly16x8_t load1(poly16_t const *ptr) { return vld1q_p16(ptr); }
 template <int lane>[[gnu::always_inline]] nce int8x8_t load1_lane(int8_t const *ptr, int8x8_t src) { return vld1_lane_s8(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int8x16_t load1_lane(int8_t const *ptr, int8x16_t src) { return vld1q_lane_s8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int8x16_t load1_lane_quad(int8_t const *ptr, int8x16_t src) { return vld1q_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int16x4_t load1_lane(int16_t const *ptr, int16x4_t src) { return vld1_lane_s16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8_t load1_lane(int16_t const *ptr, int16x8_t src) { return vld1q_lane_s16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int16x8_t load1_lane_quad(int16_t const *ptr, int16x8_t src) { return vld1q_lane_s16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int32x2_t load1_lane(int32_t const *ptr, int32x2_t src) { return vld1_lane_s32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4_t load1_lane(int32_t const *ptr, int32x4_t src) { return vld1q_lane_s32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int32x4_t load1_lane_quad(int32_t const *ptr, int32x4_t src) { return vld1q_lane_s32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int64x1_t load1_lane(int64_t const *ptr, int64x1_t src) { return vld1_lane_s64(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int64x2_t load1_lane(int64_t const *ptr, int64x2_t src) { return vld1q_lane_s64(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int64x2_t load1_lane_quad(int64_t const *ptr, int64x2_t src) { return vld1q_lane_s64(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x8_t load1_lane(uint8_t const *ptr, uint8x8_t src) { return vld1_lane_u8(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint8x16_t load1_lane(uint8_t const *ptr, uint8x16_t src) { return vld1q_lane_u8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint8x16_t load1_lane_quad(uint8_t const *ptr, uint8x16_t src) { return vld1q_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint16x4_t load1_lane(uint16_t const *ptr, uint16x4_t src) { return vld1_lane_u16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x8_t load1_lane(uint16_t const *ptr, uint16x8_t src) { return vld1q_lane_u16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint16x8_t load1_lane_quad(uint16_t const *ptr, uint16x8_t src) { return vld1q_lane_u16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint32x2_t load1_lane(uint32_t const *ptr, uint32x2_t src) { return vld1_lane_u32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4_t load1_lane(uint32_t const *ptr, uint32x4_t src) { return vld1q_lane_u32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint32x4_t load1_lane_quad(uint32_t const *ptr, uint32x4_t src) { return vld1q_lane_u32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint64x1_t load1_lane(uint64_t const *ptr, uint64x1_t src) { return vld1_lane_u64(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint64x2_t load1_lane(uint64_t const *ptr, uint64x2_t src) { return vld1q_lane_u64(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint64x2_t load1_lane_quad(uint64_t const *ptr, uint64x2_t src) { return vld1q_lane_u64(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2_t load1_lane(float32_t const *ptr, float32x2_t src) { return vld1_lane_f32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4_t load1_lane(float32_t const *ptr, float32x4_t src) { return vld1q_lane_f32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce float32x4_t load1_lane_quad(float32_t const *ptr, float32x4_t src) { return vld1q_lane_f32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8_t load1_lane(poly8_t const *ptr, poly8x8_t src) { return vld1_lane_p8(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce poly8x16_t load1_lane(poly8_t const *ptr, poly8x16_t src) { return vld1q_lane_p8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce poly8x16_t load1_lane_quad(poly8_t const *ptr, poly8x16_t src) { return vld1q_lane_p8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly16x4_t load1_lane(poly16_t const *ptr, poly16x4_t src) { return vld1_lane_p16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce poly16x8_t load1_lane(poly16_t const *ptr, poly16x8_t src) { return vld1q_lane_p16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce poly16x8_t load1_lane_quad(poly16_t const *ptr, poly16x8_t src) { return vld1q_lane_p16(ptr, src, lane); }
 template <> [[gnu::always_inline]] inline int8x8_t load1_duplicate(int8_t const *ptr) { return vld1_dup_s8(ptr); }
 template <> [[gnu::always_inline]] inline int8x16_t load1_duplicate(int8_t const *ptr) { return vld1q_dup_s8(ptr); }
 template <> [[gnu::always_inline]] inline int16x4_t load1_duplicate(int16_t const *ptr) { return vld1_dup_s16(ptr); }
@@ -1630,50 +1630,56 @@ template <> [[gnu::always_inline]] inline poly16x8x4_t load4_duplicate(poly16_t 
 [[gnu::always_inline]] inline int64x1x4_t load4_duplicate(int64_t const *ptr) { return vld4_dup_s64(ptr); }
 [[gnu::always_inline]] inline uint64x1x4_t load4_duplicate(uint64_t const *ptr) { return vld4_dup_u64(ptr); }
 template <int lane>[[gnu::always_inline]] nce int16x4x2_t load2_lane(int16_t const *ptr, int16x4x2_t src) { return vld2_lane_s16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8x2_t load2_lane(int16_t const *ptr, int16x8x2_t src) { return vld2q_lane_s16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int16x8x2_t load2_lane_quad(int16_t const *ptr, int16x8x2_t src) { return vld2q_lane_s16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int32x2x2_t load2_lane(int32_t const *ptr, int32x2x2_t src) { return vld2_lane_s32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4x2_t load2_lane(int32_t const *ptr, int32x4x2_t src) { return vld2q_lane_s32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int32x4x2_t load2_lane_quad(int32_t const *ptr, int32x4x2_t src) { return vld2q_lane_s32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint16x4x2_t load2_lane(uint16_t const *ptr, uint16x4x2_t src) { return vld2_lane_u16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x8x2_t load2_lane(uint16_t const *ptr, uint16x8x2_t src) { return vld2q_lane_u16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint16x8x2_t load2_lane_quad(uint16_t const *ptr, uint16x8x2_t src) { return vld2q_lane_u16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint32x2x2_t load2_lane(uint32_t const *ptr, uint32x2x2_t src) { return vld2_lane_u32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4x2_t load2_lane(uint32_t const *ptr, uint32x4x2_t src) { return vld2q_lane_u32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint32x4x2_t load2_lane_quad(uint32_t const *ptr, uint32x4x2_t src) { return vld2q_lane_u32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2x2_t load2_lane(float32_t const *ptr, float32x2x2_t src) { return vld2_lane_f32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4x2_t load2_lane(float32_t const *ptr, float32x4x2_t src) { return vld2q_lane_f32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce float32x4x2_t load2_lane_quad(float32_t const *ptr, float32x4x2_t src) { return vld2q_lane_f32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly16x4x2_t load2_lane(poly16_t const *ptr, poly16x4x2_t src) { return vld2_lane_p16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce poly16x8x2_t load2_lane(poly16_t const *ptr, poly16x8x2_t src) { return vld2q_lane_p16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce poly16x8x2_t load2_lane_quad(poly16_t const *ptr, poly16x8x2_t src) { return vld2q_lane_p16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int8x8x2_t load2_lane(int8_t const *ptr, int8x8x2_t src) { return vld2_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x8x2_t load2_lane(uint8_t const *ptr, uint8x8x2_t src) { return vld2_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8x2_t load2_lane(poly8_t const *ptr, poly8x8x2_t src) { return vld2_lane_p8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int16x4x3_t load3_lane(int16_t const *ptr, int16x4x3_t src) { return vld3_lane_s16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8x3_t load3_lane(int16_t const *ptr, int16x8x3_t src) { return vld3q_lane_s16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int16x8x3_t load3_lane_quad(int16_t const *ptr, int16x8x3_t src) { return vld3q_lane_s16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int32x2x3_t load3_lane(int32_t const *ptr, int32x2x3_t src) { return vld3_lane_s32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4x3_t load3_lane(int32_t const *ptr, int32x4x3_t src) { return vld3q_lane_s32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int32x4x3_t load3_lane_quad(int32_t const *ptr, int32x4x3_t src) { return vld3q_lane_s32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint16x4x3_t load3_lane(uint16_t const *ptr, uint16x4x3_t src) { return vld3_lane_u16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x8x3_t load3_lane(uint16_t const *ptr, uint16x8x3_t src) { return vld3q_lane_u16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint16x8x3_t load3_lane_quad(uint16_t const *ptr, uint16x8x3_t src) { return vld3q_lane_u16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint32x2x3_t load3_lane(uint32_t const *ptr, uint32x2x3_t src) { return vld3_lane_u32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4x3_t load3_lane(uint32_t const *ptr, uint32x4x3_t src) { return vld3q_lane_u32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint32x4x3_t load3_lane_quad(uint32_t const *ptr, uint32x4x3_t src) { return vld3q_lane_u32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2x3_t load3_lane(float32_t const *ptr, float32x2x3_t src) { return vld3_lane_f32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4x3_t load3_lane(float32_t const *ptr, float32x4x3_t src) { return vld3q_lane_f32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce float32x4x3_t load3_lane_quad(float32_t const *ptr, float32x4x3_t src) { return vld3q_lane_f32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly16x4x3_t load3_lane(poly16_t const *ptr, poly16x4x3_t src) { return vld3_lane_p16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce poly16x8x3_t load3_lane(poly16_t const *ptr, poly16x8x3_t src) { return vld3q_lane_p16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce poly16x8x3_t load3_lane_quad(poly16_t const *ptr, poly16x8x3_t src) { return vld3q_lane_p16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int8x8x3_t load3_lane(int8_t const *ptr, int8x8x3_t src) { return vld3_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x8x3_t load3_lane(uint8_t const *ptr, uint8x8x3_t src) { return vld3_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8x3_t load3_lane(poly8_t const *ptr, poly8x8x3_t src) { return vld3_lane_p8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int16x4x4_t load4_lane(int16_t const *ptr, int16x4x4_t src) { return vld4_lane_s16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int16x8x4_t load4_lane(int16_t const *ptr, int16x8x4_t src) { return vld4q_lane_s16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int16x8x4_t load4_lane_quad(int16_t const *ptr, int16x8x4_t src) { return vld4q_lane_s16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int32x2x4_t load4_lane(int32_t const *ptr, int32x2x4_t src) { return vld4_lane_s32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce int32x4x4_t load4_lane(int32_t const *ptr, int32x4x4_t src) { return vld4q_lane_s32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int32x4x4_t load4_lane_quad(int32_t const *ptr, int32x4x4_t src) { return vld4q_lane_s32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint16x4x4_t load4_lane(uint16_t const *ptr, uint16x4x4_t src) { return vld4_lane_u16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint16x8x4_t load4_lane(uint16_t const *ptr, uint16x8x4_t src) { return vld4q_lane_u16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint16x8x4_t load4_lane_quad(uint16_t const *ptr, uint16x8x4_t src) { return vld4q_lane_u16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint32x2x4_t load4_lane(uint32_t const *ptr, uint32x2x4_t src) { return vld4_lane_u32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce uint32x4x4_t load4_lane(uint32_t const *ptr, uint32x4x4_t src) { return vld4q_lane_u32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint32x4x4_t load4_lane_quad(uint32_t const *ptr, uint32x4x4_t src) { return vld4q_lane_u32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float32x2x4_t load4_lane(float32_t const *ptr, float32x2x4_t src) { return vld4_lane_f32(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce float32x4x4_t load4_lane(float32_t const *ptr, float32x4x4_t src) { return vld4q_lane_f32(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce float32x4x4_t load4_lane_quad(float32_t const *ptr, float32x4x4_t src) { return vld4q_lane_f32(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly16x4x4_t load4_lane(poly16_t const *ptr, poly16x4x4_t src) { return vld4_lane_p16(ptr, src, lane); }
-template <int lane>[[gnu::always_inline]] nce poly16x8x4_t load4_lane(poly16_t const *ptr, poly16x8x4_t src) { return vld4q_lane_p16(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce poly16x8x4_t load4_lane_quad(poly16_t const *ptr, poly16x8x4_t src) { return vld4q_lane_p16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int8x8x4_t load4_lane(int8_t const *ptr, int8x8x4_t src) { return vld4_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x8x4_t load4_lane(uint8_t const *ptr, uint8x8x4_t src) { return vld4_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8x4_t load4_lane(poly8_t const *ptr, poly8x8x4_t src) { return vld4_lane_p8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int8x16x2_t load2_lane_quad(int8_t const *ptr, int8x16x2_t src) { return vld2q_lane_s8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint8x16x2_t load2_lane_quad(uint8_t const *ptr, uint8x16x2_t src) { return vld2q_lane_u8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int8x16x3_t load3_lane_quad(int8_t const *ptr, int8x16x3_t src) { return vld3q_lane_s8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint8x16x3_t load3_lane_quad(uint8_t const *ptr, uint8x16x3_t src) { return vld3q_lane_u8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce int8x16x4_t load4_lane_quad(int8_t const *ptr, int8x16x4_t src) { return vld4q_lane_s8(ptr, src, lane); }
+template <int lane>[[gnu::always_inline]] nce uint8x16x4_t load4_lane_quad(uint8_t const *ptr, uint8x16x4_t src) { return vld4q_lane_u8(ptr, src, lane); }
 #ifdef __clang__
 template <> [[gnu::always_inline]] inline int8x8x2_t load1_x2(int8_t const *ptr) { return vld1_s8_x2(ptr); }
 template <> [[gnu::always_inline]] inline int8x16x2_t load1_x2(int8_t const *ptr) { return vld1q_s8_x2(ptr); }

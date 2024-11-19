@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include "arm_simd.hpp"
 #include "argon/features.h"
 
@@ -78,4 +79,7 @@ template <> struct MultiVec<uint32x2_t, 4> { using type = uint32x2x4_t; };
 template <> struct MultiVec<int64x1_t, 4> { using type = int64x1x4_t; };
 template <> struct MultiVec<uint64x1_t, 4> { using type = uint64x1x4_t; };
 #endif
+
+template <typename T, size_t size>
+using MultiVec_t = MultiVec<T, size>::type;
 }

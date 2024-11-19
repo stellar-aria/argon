@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <functional>
+#include <span>
 #include <type_traits>
 #include "arm_simd/helpers.hpp"
 #include "arm_simd/helpers/vec64.hpp"
@@ -115,7 +116,7 @@ class Common {
     }
   };
 
-  ace static argon_type FromScalar(scalar_type* ptr){ return simd::load1_duplicate(ptr);}
+  ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 
   ace static argon_type FromScalar(scalar_type scalar) {
 #if ARGON_HAS_DWORD
@@ -332,9 +333,15 @@ class Common {
   ace static argon_type Load(scalar_type const* ptr) { return simd::load1<vector_type>(ptr); }
   ace static argon_type LoadCopy(scalar_type const* ptr) { return simd::load1_duplicate(ptr); }
 
+  template <size_t lane>
+  ace argon_type LoadToLane(scalar_type const* ptr) {
+    return simd::load1_lane<lane>(ptr, vec_);
+  }
+
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadCopyInterleaved(scalar_type const* ptr) {
-    static_assert(stride > 1 && stride < 5, "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
+    static_assert(stride > 1 && stride < 5,
+                  "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
     using multivec_type = MultiVec<vector_type, stride>::type;
     using array_type = std::array<argon_type, stride>;
 
@@ -346,18 +353,18 @@ class Common {
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
     if constexpr (stride == 2) {
-      return *(array_type*)(simd::load2_duplicate<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load2_duplicate<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
-      return *(array_type*)(simd::load3_duplicate<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load3_duplicate<multivec_type>(ptr).val);
     } else if constexpr (stride == 4) {
-      return *(array_type*)(simd::load4_duplicate<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load4_duplicate<multivec_type>(ptr).val);
     }
   }
 
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(scalar_type const* ptr) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = MultiVec<vector_type, stride>::type;
+    using multivec_type = MultiVec_t<vector_type, stride>;
     using array_type = std::array<argon_type, stride>;
 
     // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
@@ -368,12 +375,52 @@ class Common {
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
     if constexpr (stride == 2) {
-      return *(array_type*)(simd::load2<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load2<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
-      return *(array_type*)(simd::load3<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load3<multivec_type>(ptr).val);
     } else if constexpr (stride == 4) {
-      return *(array_type*)(simd::load4<multivec_type>(ptr).val);
+      return *(array_type*)(&simd::load4<multivec_type>(ptr).val);
     }
+  }
+
+  template <size_t lane, size_t stride>
+  ace static std::array<argon_type, stride> LoadInterleavedToLane(MultiVec_t<vector_type, stride> multi,
+                                                                   scalar_type const* ptr) {
+    using array_type = std::array<argon_type, stride>;
+
+    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
+    // the validity and POD-ness of std::array needs to be verified
+    static_assert(std::is_standard_layout_v<array_type>);
+    static_assert(std::is_trivial_v<array_type>);
+    static_assert(sizeof(MultiVec_t<vector_type, stride>) == sizeof(array_type),
+                  "std::array isn't layout-compatible with this NEON multi-vector.");
+
+    if constexpr (stride == 2) {
+      if constexpr (simd::is_quadword_v<vector_type>) {
+        return *(array_type*)(&simd::load2_lane_quad<lane>(ptr, multi).val);
+      } else {
+        return *(array_type*)(&simd::load2_lane<lane>(ptr, multi).val);
+      }
+    } else if constexpr (stride == 3) {
+      if constexpr (simd::is_quadword_v<vector_type>) {
+        return *(array_type*)(&simd::load3_lane_quad<lane>(ptr, multi).val);
+      } else {
+        return *(array_type*)(&simd::load3_lane<lane>(ptr, multi).val);
+      }
+    } else if constexpr (stride == 4) {
+      if constexpr (simd::is_quadword_v<vector_type>) {
+        return *(array_type*)(&simd::load4_lane_quad<lane>(ptr, multi).val);
+      } else {
+        return *(array_type*)(&simd::load4_lane<lane>(ptr, multi).val);
+      }
+    }
+  }
+
+  template <size_t lane, size_t stride>
+  ace static std::array<argon_type, stride> LoadInterleavedToLane(std::array<vector_type, stride> multi,
+                                                                   scalar_type const* ptr) {
+    using multivec_type = MultiVec_t<vector_type, stride>;
+    return LoadInterleavedToLane(*(multivec_type*)(multi.data()));
   }
 
   /**
@@ -386,7 +433,7 @@ class Common {
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(scalar_type const* ptr) {
     std::array<argon_type, n> out;
-    // #pragma unroll
+#pragma unroll
     for (size_t i = 0; i < n; ++i) {
       out[i] = Load(ptr);
       ptr += lanes;
@@ -439,7 +486,6 @@ class Common {
     return simd::extract<n>(vec_, b);
   }
 
-
   ace argon_type Reverse64bit() const { return simd::reverse_64bit(vec_); }
   ace argon_type Reverse32bit() const { return simd::reverse_32bit(vec_); }
   ace argon_type Reverse16bit() const { return simd::reverse_16bit(vec_); }
@@ -455,7 +501,7 @@ class Common {
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
-    return *(array_type*)simd::zip(vec_, b).val;
+    return *(array_type*)&simd::zip(vec_, b).val;
   }
 
   std::array<argon_type, 2> UnzipWith(argon_type b) {
@@ -469,7 +515,7 @@ class Common {
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
-    return *(array_type*)simd::unzip(vec_, b).val;
+    return *(array_type*)&simd::unzip(vec_, b).val;
   }
 
   std::array<argon_type, 2> TransposeWith(argon_type b) const {
@@ -483,7 +529,7 @@ class Common {
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
-    return *(array_type*)simd::transpose(vec_, b).val;
+    return *(array_type*)&simd::transpose(vec_, b).val;
   }
 
   ace static int size() { return lanes; }
@@ -609,31 +655,38 @@ class Lane {
   using argon_type = ArgonFor_t<vector_type>;
 
  public:
-#ifdef __aarch64__
   ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {}
+  ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
+  ace argon_type operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
+  ace argon_type Load(scalar_type* ptr) { return simd::load1_lane(ptr, vec_); }
+
+#if __ARM_ARCH >= 8
+  ace vector_type vec() { return vec_; }
+  ace const int lane() { return lane_; }
 #else
-  template <typename input_vector_type>
-  ace Lane(input_vector_type vec, const int lane) {
-    if constexpr (simd::is_doubleword_v<input_vector_type>) {
-      lane_ = lane;
-      vec_ = vec;
-    } else if constexpr (simd::is_quadword_v<input_vector_type>) {
-      if (lane >= ArgonHalf<scalar_type>::lanes) {
-        lane_ = (lane - ArgonHalf<scalar_type>::lanes);
-        vec_ = simd::get_high(vec);
+  ace vector_type vec() {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
+      return vec_;
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
+      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
+        return simd::get_high(vec);
       } else {
-        lane_ = lane;
-        vec_ = simd::get_low(vec);
+        return simd::get_low(vec);
+      }
+    }
+  }
+  ace const int lane() {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
+      return lane_;
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
+      if (lane >= ArgonHalf<scalar_type>::lanes) {
+        return (lane_ - ArgonHalf<scalar_type>::lanes);
+      } else {
+        return lane_;
       }
     }
   }
 #endif
-
-  ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
-  ace argon_type operator=(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
-
-  ace vector_type vec() { return vec_; }
-  ace const int lane() { return lane_; }
 
  private:
   vector_type vec_;

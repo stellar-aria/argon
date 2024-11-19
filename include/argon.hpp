@@ -1,11 +1,12 @@
 #pragma once
 #include <array>
 #include <cstddef>
-#include <span>
 #include <ranges>
+#include <span>
 #include <type_traits>
-#include "argon/argon_half.hpp"
 #include "argon/argon_full.hpp"
+#include "argon/argon_half.hpp"
+#include "argon/helpers/multivec.hpp"
 #include "arm_simd/helpers/nonvec.hpp"
 
 #ifdef __ARM_NEON
@@ -26,9 +27,9 @@ namespace argon {
 
 template <typename T, typename V>
 ace auto reinterpret(impl::Common<V> in) {
-  if constexpr(simd::is_quadword_v<V>) {
+  if constexpr (simd::is_quadword_v<V>) {
     return Argon<T>{simd::reinterpret<typename Argon<T>::vector_type>(in.vec())};
-  } else if constexpr(simd::is_doubleword_v<V>) {
+  } else if constexpr (simd::is_doubleword_v<V>) {
     return ArgonHalf<T>{simd::reinterpret<typename ArgonHalf<T>::vector_type>(in.vec())};
   }
 }
@@ -39,31 +40,55 @@ ace argon_type reinterpret(V in) {
   return argon_type{simd::reinterpret<typename argon_type::vector_type>(in)};
 }
 
-template <size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_interleaved(scalar_type* ptr, std::array<intrinsic_type, stride> multi_vec) {
-  store_interleaved<stride, scalar_type, intrinsic_type>(ptr, multi_vec.data());
+template <size_t lane, size_t stride, typename argon_type>
+ace static std::array<argon_type, stride> load_interleaved_to_lane(
+    impl::MultiVec_t<typename argon_type::vector_type, stride> multi,
+    typename argon_type::scalar_type const* ptr) {
+  return argon_type::load_interleaved_to_lane(multi, ptr);
+}
+
+template <size_t lane, size_t stride, typename argon_type>
+ace static std::array<argon_type, stride> load_interleaved_to_lane(std::array<argon_type, stride> multi,
+                                                                   typename argon_type::scalar_type const* ptr) {
+  return argon_type::load_interleaved_to_lane(multi, ptr);
+}
+
+template <size_t stride, typename scalar_type, typename argon_type>
+ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
+  using array_type = std::array<argon_type, stride>;
+
+  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
+  // the validity and POD-ness of std::array needs to be verified
+  static_assert(std::is_standard_layout_v<array_type>);
+  static_assert(std::is_trivial_v<array_type>);
+  static_assert(sizeof(multivec_type) == sizeof(array_type),
+                "std::array isn't layout-compatible with this NEON multi-vector.");
+
+  store_interleaved<stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
 }
 
 template <size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_interleaved(scalar_type* ptr, intrinsic_type* multi_vec) {
+ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
   if constexpr (stride == 2) {
-    simd::store2(ptr, *(typename impl::MultiVec<intrinsic_type, 2>::type*)multi_vec);
+    simd::store2(ptr, multi_vec);
   } else if constexpr (stride == 3) {
-    simd::store3(ptr, *(typename impl::MultiVec<intrinsic_type, 3>::type*)multi_vec);
+    simd::store3(ptr, multi_vec);
   } else if constexpr (stride == 4) {
-    simd::store4(ptr, *(typename impl::MultiVec<intrinsic_type, 4>::type*)multi_vec);
+    simd::store4(ptr, multi_vec);
   }
 }
 
 template <typename scalar_type, typename argon_type>
-requires std::is_same_v<scalar_type, simd::NonVec_t<typename argon_type::vector_type>>
+  requires std::is_same_v<scalar_type, simd::NonVec_t<typename argon_type::vector_type>>
 ace void store(scalar_type* ptr, argon_type vector) {
   simd::store1(ptr, vector);
 }
 
 template <typename scalar_type, simd::is_vector_type intrinsic_type>
-requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
+  requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
 ace void store(scalar_type* ptr, intrinsic_type vector) {
   simd::store1(ptr, vector);
 }
@@ -79,7 +104,7 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
  *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
  */
 template <size_t stride = 1, typename scalar_type, typename... intrinsic_types>
-requires (std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_types>> && ...)
+  requires(std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_types>> && ...)
 ace void store(scalar_type* ptr, intrinsic_types... vectors) {
   // TODO: C++26 change to `typename intrinsic_types...[0]`
   using intrinsic_type = typename std::tuple_element<0, std::tuple<intrinsic_types...>>::type;
@@ -99,7 +124,7 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
       if (v.size() == 4) {  // 4-element chunks
         using multi_type = impl::MultiVec<intrinsic_type, 4>::type;
         simd::store1_x4(ptr, *(multi_type*)v.begin());
-        ptr += (sizeof(intrinsic_type) / sizeof(*ptr)) * 4; // increment output pointer
+        ptr += (sizeof(intrinsic_type) / sizeof(*ptr)) * 4;  // increment output pointer
       } else {
         if constexpr (tail_size == 1) {  // 1-element tail
           simd::store1(ptr, v.begin());
@@ -122,39 +147,51 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
       } else if constexpr (stride == 4) {
         store_interleaved<4>(ptr, v.begin());
       }
-      ptr += sizeof(intrinsic_type) / sizeof(*ptr); // increment output pointer
+      ptr += sizeof(intrinsic_type) / sizeof(*ptr);  // increment output pointer
     }
   }
 }
 
 template <size_t stride = 1, typename scalar_type, typename... argon_types>
-requires (std::is_same_v<scalar_type, simd::NonVec_t<typename argon_types::vector_type>> && ...)
+  requires(std::is_same_v<scalar_type, simd::NonVec_t<typename argon_types::vector_type>> && ...)
 ace void store(scalar_type* ptr, argon_types... vectors) {
   store<stride>(ptr, std::forward<typename argon_types::vector_type>(vectors)...);
 }
 #endif
 
-template <int lane, size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_lane_interleaved(scalar_type* ptr, std::array<intrinsic_type, stride> multi_vec) {
-  store_lane_interleaved<lane, stride, scalar_type, intrinsic_type>(ptr, multi_vec.data());
+template <int lane, size_t stride, typename scalar_type, typename argon_type>
+ace void store_lane_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
+  using array_type = std::array<argon_type, 2>;
+
+  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
+  // the validity and POD-ness of std::array needs to be verified
+  static_assert(std::is_standard_layout_v<array_type>);
+  static_assert(std::is_trivial_v<array_type>);
+  static_assert(sizeof(multivec_type) == sizeof(array_type),
+                "std::array isn't layout-compatible with this NEON multi-vector.");
+
+  store_lane_interleaved<lane, stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
 }
 
 template <int lane, size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_lane_interleaved(scalar_type* ptr, intrinsic_type* multi_vec) {
+ace void store_lane_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
   if constexpr (stride == 2) {
-    simd::store2_lane<lane>(ptr, *(typename impl::MultiVec<intrinsic_type, 2>::type*)multi_vec);
+    simd::store2_lane<lane>(ptr, multi_vec);
   } else if constexpr (stride == 3) {
-    simd::store3_lane<lane>(ptr, *(typename impl::MultiVec<intrinsic_type, 3>::type*)multi_vec);
+    simd::store3_lane<lane>(ptr, multi_vec);
   } else if constexpr (stride == 4) {
-    simd::store4_lane<lane>(ptr, *(typename impl::MultiVec<intrinsic_type, 4>::type*)multi_vec);
+    simd::store4_lane<lane>(ptr, multi_vec);
   }
 }
 
-template <typename neon_type>
-ace std::array<neon_type, 2> zip(neon_type a, neon_type b) {
-  using multivec_type = impl::MultiVec<typename neon_type::vector_type, 2>::type;
-  using array_type = std::array<neon_type, 2>;
+template <typename argon_type>
+ace std::array<argon_type, 2> zip(argon_type a, argon_type b) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
+  using array_type = std::array<argon_type, 2>;
 
   // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
   // the validity and POD-ness of std::array needs to be verified
@@ -163,13 +200,14 @@ ace std::array<neon_type, 2> zip(neon_type a, neon_type b) {
   static_assert(sizeof(multivec_type) == sizeof(array_type),
                 "std::array isn't layout-compatible with this NEON multi-vector.");
 
-  return *(array_type*)simd::zip(a, b).val;
+  return *(array_type*)&simd::zip(a, b).val;
 }
 
-template <typename neon_type>
-ace std::array<neon_type, 2> unzip(neon_type a, neon_type b) {
-  using multivec_type = impl::MultiVec<typename neon_type::vector_type, 2>::type;
-  using array_type = std::array<neon_type, 2>;
+template <typename argon_type>
+ace std::array<argon_type, 2> unzip(argon_type a, argon_type b) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
+  using array_type = std::array<argon_type, 2>;
 
   // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
   // the validity and POD-ness of std::array needs to be verified
@@ -178,13 +216,14 @@ ace std::array<neon_type, 2> unzip(neon_type a, neon_type b) {
   static_assert(sizeof(multivec_type) == sizeof(array_type),
                 "std::array isn't layout-compatible with this NEON multi-vector.");
 
-  return *(array_type*)simd::unzip(a, b).val;
+  return *(array_type*)&simd::unzip(a, b).val;
 }
 
-template <typename neon_type>
-ace std::array<neon_type, 2> transpose(neon_type a, neon_type b) {
-  using multivec_type = impl::MultiVec<typename neon_type::vector_type, 2>::type;
-  using array_type = std::array<neon_type, 2>;
+template <typename argon_type>
+ace std::array<argon_type, 2> transpose(argon_type a, argon_type b) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
+  using array_type = std::array<argon_type, 2>;
 
   // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
   // the validity and POD-ness of std::array needs to be verified
@@ -193,11 +232,13 @@ ace std::array<neon_type, 2> transpose(neon_type a, neon_type b) {
   static_assert(sizeof(multivec_type) == sizeof(array_type),
                 "std::array isn't layout-compatible with this NEON multi-vector.");
 
-  return *(array_type*)simd::transpose(a, b).val;
+  return *(array_type*)&simd::transpose(a, b).val;
 }
 
 template <typename T>
-ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) { return simd::combine(low, high); }
+ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) {
+  return simd::combine(low, high);
+}
 
 }  // namespace argon
 
