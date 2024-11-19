@@ -116,6 +116,12 @@ template <typename T> nce T load4(bfloat16_t const *ptr);
 template <typename T> nce T load2_duplicate(bfloat16_t const *ptr);
 template <typename T> nce T load3_duplicate(bfloat16_t const *ptr);
 template <typename T> nce T load4_duplicate(bfloat16_t const *ptr);
+template <typename T> nce T load2(poly64_t const *ptr);
+template <typename T> nce T load3(poly64_t const *ptr);
+template <typename T> nce T load4(poly64_t const *ptr);
+template <typename T> nce T load2_duplicate(poly64_t const *ptr);
+template <typename T> nce T load3_duplicate(poly64_t const *ptr);
+template <typename T> nce T load4_duplicate(poly64_t const *ptr);
 template <typename T> nce T load1_x2(bfloat16_t const *ptr);
 template <typename T> nce T load1_x4(bfloat16_t const *ptr);
 template <typename T> nce T store1(bfloat16_t *ptr, bfloat16x4_t val);
@@ -479,8 +485,13 @@ template <> [[gnu::always_inline]] nce poly16x8_t reinterpret(poly128_t a) { ret
 template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(poly128_t a) { return vreinterpretq_u64_p128(a); }
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(poly128_t a) { return vreinterpretq_s64_p128(a); }
 template <> [[gnu::always_inline]] nce float16x8_t reinterpret(poly128_t a) { return vreinterpretq_f16_p128(a); }
+#ifdef __clang__
 [[gnu::always_inline]] nce poly64x1_t bitwise_select(poly64x1_t a, poly64x1_t b, poly64x1_t c) { return vbsl_p64(a, b, c); }
 [[gnu::always_inline]] nce poly64x2_t bitwise_select(poly64x2_t a, poly64x2_t b, poly64x2_t c) { return vbslq_p64(a, b, c); }
+#else
+[[gnu::always_inline]] nce poly64x1_t bitwise_select(poly64x1_t a, poly64x1_t b, poly64x1_t c) { return vbsl_p64(*(uint64x1_t*)&a, b, c); }
+[[gnu::always_inline]] nce poly64x2_t bitwise_select(poly64x2_t a, poly64x2_t b, poly64x2_t c) { return vbslq_p64(*(uint64x2_t*)&a, b, c); }
+#endif
 template <int lane1, int lane2>[[gnu::always_inline]] nce poly64x1_t copy_lane(poly64x1_t a, poly64x1_t b) { return vcopy_lane_p64(a, lane1, b, lane2); }
 template <int lane1, int lane2>[[gnu::always_inline]] nce poly64x2_t copy_lane(poly64x2_t a, poly64x1_t b) { return vcopyq_lane_p64(a, lane1, b, lane2); }
 template <int lane1, int lane2>[[gnu::always_inline]] nce poly64x1_t copy_lane(poly64x1_t a, poly64x2_t b) { return vcopy_laneq_p64(a, lane1, b, lane2); }
