@@ -1,7 +1,9 @@
 #pragma once
 #include <cstddef>
 #include <iterator>
+#include <span>
 #include "arm_simd/helpers/nonvec.hpp"
+#include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_NEON
 #define simd neon
@@ -91,9 +93,9 @@ struct vectorize {
   vectorize(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
 
   iterator begin() { return Iterator(start_); }
-  iterator end() { return start_ + size_; }
+  scalar_type* end() { return start_ + size_; }
   const_iterator cbegin() const { return ConstIterator(start_); }
-  const_iterator cend() const { return start_ + size_; }
+  const scalar_type* cend() const { return start_ + size_; }
   size_t size() const { return size_; }
 
  private:
