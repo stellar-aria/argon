@@ -49,14 +49,14 @@ class Common {
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
   constexpr Common() : vec_{0} {};
-  constexpr Common(vector_type vector) : vec_(vector) {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
+  constexpr Common(vector_type vector) : vec_(vector){};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
 
   struct vectorize_loop {
     static constexpr size_t step = lanes;
@@ -314,7 +314,7 @@ class Common {
    * @param offset_vector A vector of offset indices
    * @return A new vector constructed from the various indices
    */
-  template <typename intrinsic_type>
+  template <simd::is_vector_type intrinsic_type>
   ace static argon_type LoadGather(const scalar_type* base, intrinsic_type offset_vector) {
     using offset_type = simd::NonVec_t<intrinsic_type>;
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
@@ -326,6 +326,11 @@ class Common {
       destination = destination.template LoadToLane<i>(base + lane_val);
     });
     return destination;
+  }
+
+  template <typename T>
+  ace static argon_type LoadGather(const scalar_type* base, T offset_vector) {
+    return argon_type::template LoadGather<typename T::vector_type>(base, offset_vector);
   }
 
   template <size_t lane>
@@ -407,7 +412,7 @@ class Common {
    * @param offset_vector a vector of offset values that are added to base_ptr to get the address to load
    * @return std::array<argon_type, stride> An array of vectors from the resulting interleaved loads
    */
-  template <size_t stride, typename intrinsic_type>
+  template <size_t stride, simd::is_vector_type intrinsic_type>
   ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
                                                                   intrinsic_type offset_vector) {
     using offset_type = simd::NonVec_t<intrinsic_type>;
@@ -420,6 +425,11 @@ class Common {
       multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
     });
     return multi;
+  }
+
+  template <size_t stride, typename T>
+  ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr, T offset_vector) {
+    return argon_type::template LoadGatherInterleaved<stride, typename T::vector_type>(base_ptr, offset_vector);
   }
 
   /**
