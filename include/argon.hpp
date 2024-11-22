@@ -189,50 +189,17 @@ ace void store_lane_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_typ
 
 template <typename argon_type>
 ace std::array<argon_type, 2> zip(argon_type a, argon_type b) {
-  using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
-  using array_type = std::array<argon_type, 2>;
-
-  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-  // the validity and POD-ness of std::array needs to be verified
-  static_assert(std::is_standard_layout_v<array_type>);
-  static_assert(std::is_trivial_v<array_type>);
-  static_assert(sizeof(multivec_type) == sizeof(array_type),
-                "std::array isn't layout-compatible with this NEON multi-vector.");
-
-  return *(array_type*)&simd::zip(a, b).val;
+  return argon::to_array(simd::zip(a, b).val);
 }
 
 template <typename argon_type>
 ace std::array<argon_type, 2> unzip(argon_type a, argon_type b) {
-  using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
-  using array_type = std::array<argon_type, 2>;
-
-  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-  // the validity and POD-ness of std::array needs to be verified
-  static_assert(std::is_standard_layout_v<array_type>);
-  static_assert(std::is_trivial_v<array_type>);
-  static_assert(sizeof(multivec_type) == sizeof(array_type),
-                "std::array isn't layout-compatible with this NEON multi-vector.");
-
-  return *(array_type*)&simd::unzip(a, b).val;
+  return argon::to_array(simd::unzip(a, b).val);
 }
 
 template <typename argon_type>
 ace std::array<argon_type, 2> transpose(argon_type a, argon_type b) {
-  using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, 2>;
-  using array_type = std::array<argon_type, 2>;
-
-  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-  // the validity and POD-ness of std::array needs to be verified
-  static_assert(std::is_standard_layout_v<array_type>);
-  static_assert(std::is_trivial_v<array_type>);
-  static_assert(sizeof(multivec_type) == sizeof(array_type),
-                "std::array isn't layout-compatible with this NEON multi-vector.");
-
-  return *(array_type*)&simd::transpose(a, b).val;
+  return argon::to_array(simd::transpose(a, b).val);
 }
 
 template <typename T>

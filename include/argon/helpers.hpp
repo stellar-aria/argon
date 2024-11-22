@@ -70,5 +70,13 @@ template <> struct NextSmaller<float> { using type = float16_t; };
 template <typename T>
 using NextSmaller_t = NextSmaller<T>::type;
 
+template <auto Start, auto End, auto Inc, class F>
+constexpr void constexpr_for(F&& f) {
+	if constexpr (Start < End) {
+		f.template operator()<Start>();
+		constexpr_for<Start + Inc, End, Inc>(f);
+	}
+}
+
 // clang-format on
 }  // namespace argon::impl

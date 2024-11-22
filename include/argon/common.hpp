@@ -4,11 +4,13 @@
 #include <span>
 #include <type_traits>
 #include "arm_simd/helpers.hpp"
+#include "arm_simd/helpers/nonvec.hpp"
 #include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/multivec.hpp"
 #include "helpers/result.hpp"
+#include "helpers/to_array.hpp"
 #include "vectorize.hpp"
 
 #ifdef __ARM_NEON
@@ -25,33 +27,7 @@
 #define ace [[gnu::always_inline]] inline
 #endif
 
-template <typename T>
-class ArgonHalf;
-template <typename T>
-class Argon;
-
 namespace argon::impl {
-
-template <typename T>
-struct ArgonFor;
-
-template <simd::is_vector_type T>
-  requires simd::is_quadword<T>
-struct ArgonFor<T> {
-  using type = Argon<typename simd::NonVec<T>::type>;
-};
-
-#if ARGON_HAS_DWORD
-template <simd::is_vector_type T>
-  requires simd::is_doubleword<T>
-struct ArgonFor<T> {
-  using type = ArgonHalf<typename simd::NonVec<T>::type>;
-};
-#endif
-
-template <typename T>
-using ArgonFor_t = typename ArgonFor<T>::type;
-
 template <typename T>
 concept arithmetic = std::is_arithmetic_v<T>;
 
@@ -73,14 +49,14 @@ class Common {
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
   constexpr Common() : vec_{0} {};
-  constexpr Common(vector_type vector) : vec_(vector){};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
-  // ace Common(scalar_type const* ptr) : vec_(Load(ptr)) {};
+  constexpr Common(vector_type vector) : vec_(vector) {};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
+  // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
   struct vectorize_loop {
     static constexpr size_t step = lanes;
@@ -167,7 +143,7 @@ class Common {
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
-  ace std::array<scalar_type, lanes> as_array() {
+  ace std::array<scalar_type, lanes> to_array() {
     std::array<scalar_type, lanes> out;
     StoreTo(out.data());
     return out;
@@ -326,11 +302,34 @@ class Common {
     return simd::shift_right_insert<n>(vec_, b);
   }
 
-  ace static argon_type Load(scalar_type const* ptr) { return simd::load1<vector_type>(ptr); }
-  ace static argon_type LoadCopy(scalar_type const* ptr) { return simd::load1_duplicate(ptr); }
+  ace static argon_type Load(const scalar_type* ptr) { return simd::load1<vector_type>(ptr); }
+  ace static argon_type LoadCopy(const scalar_type* ptr) { return simd::load1_duplicate(ptr); }
+
+  /**
+   * @brief Using a base address and a vector of offset indices and a base pointer, create a new vector
+   *
+   * @note On NEON this incurs a writeback + load penalty
+   *
+   * @param base The address to index from
+   * @param offset_vector A vector of offset indices
+   * @return A new vector constructed from the various indices
+   */
+  template <typename intrinsic_type>
+  ace static argon_type LoadGather(const scalar_type* base, intrinsic_type offset_vector) {
+    using offset_type = simd::NonVec_t<intrinsic_type>;
+    static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
+    static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
+                  "Number of elements in offset vector must match number of elements in destination vector");
+    argon_type destination;
+    constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      offset_type lane_val = simd::get_lane<i>(offset_vector);
+      destination = destination.template LoadToLane<i>(base + lane_val);
+    });
+    return destination;
+  }
 
   template <size_t lane>
-  ace argon_type LoadToLane(scalar_type const* ptr) {
+  ace argon_type LoadToLane(const scalar_type* ptr) {
     if constexpr (simd::is_quadword_v<vector_type>) {
       return simd::load1_lane_quad<lane>(ptr, vec_);
     } else {
@@ -339,88 +338,88 @@ class Common {
   }
 
   template <size_t stride>
-  ace static std::array<argon_type, stride> LoadCopyInterleaved(scalar_type const* ptr) {
+  ace static std::array<argon_type, stride> LoadCopyInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
     using multivec_type = MultiVec<vector_type, stride>::type;
-    using array_type = std::array<argon_type, stride>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
 
     if constexpr (stride == 2) {
-      return *(array_type*)(&simd::load2_duplicate<multivec_type>(ptr).val);
+      return argon::to_array(simd::load2_duplicate<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
-      return *(array_type*)(&simd::load3_duplicate<multivec_type>(ptr).val);
+      return argon::to_array(simd::load3_duplicate<multivec_type>(ptr).val);
     } else if constexpr (stride == 4) {
-      return *(array_type*)(&simd::load4_duplicate<multivec_type>(ptr).val);
+      return argon::to_array(simd::load4_duplicate<multivec_type>(ptr).val);
     }
   }
 
   template <size_t stride>
-  ace static std::array<argon_type, stride> LoadInterleaved(scalar_type const* ptr) {
+  ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     using multivec_type = MultiVec_t<vector_type, stride>;
-    using array_type = std::array<argon_type, stride>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
 
     if constexpr (stride == 2) {
-      return *(array_type*)(&simd::load2<multivec_type>(ptr).val);
+      return argon::to_array(simd::load2<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
-      return *(array_type*)(&simd::load3<multivec_type>(ptr).val);
+      return argon::to_array(simd::load3<multivec_type>(ptr).val);
     } else if constexpr (stride == 4) {
-      return *(array_type*)(&simd::load4<multivec_type>(ptr).val);
+      return argon::to_array(simd::load4<multivec_type>(ptr).val);
     }
   }
 
   template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadInterleavedToLane(MultiVec_t<vector_type, stride> multi,
-                                                                  scalar_type const* ptr) {
-    using array_type = std::array<argon_type, stride>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
-    static_assert(sizeof(MultiVec_t<vector_type, stride>) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
+  ace static std::array<argon_type, stride> LoadToLaneInterleaved(MultiVec_t<vector_type, stride> multi,
+                                                                  const scalar_type* ptr) {
     if constexpr (stride == 2) {
       if constexpr (simd::is_quadword_v<vector_type>) {
-        return *(array_type*)(&simd::load2_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load2_lane_quad<lane>(ptr, multi).val);
       } else {
-        return *(array_type*)(&simd::load2_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load2_lane<lane>(ptr, multi).val);
       }
     } else if constexpr (stride == 3) {
       if constexpr (simd::is_quadword_v<vector_type>) {
-        return *(array_type*)(&simd::load3_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load3_lane_quad<lane>(ptr, multi).val);
       } else {
-        return *(array_type*)(&simd::load3_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load3_lane<lane>(ptr, multi).val);
       }
     } else if constexpr (stride == 4) {
       if constexpr (simd::is_quadword_v<vector_type>) {
-        return *(array_type*)(&simd::load4_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load4_lane_quad<lane>(ptr, multi).val);
       } else {
-        return *(array_type*)(&simd::load4_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load4_lane<lane>(ptr, multi).val);
       }
     }
   }
 
   template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadInterleavedToLane(std::array<vector_type, stride> multi,
-                                                                  scalar_type const* ptr) {
+  ace static std::array<argon_type, stride> LoadToLaneInterleaved(std::array<argon_type, stride> multi,
+                                                                  const scalar_type* ptr) {
     using multivec_type = MultiVec_t<vector_type, stride>;
-    return LoadInterleavedToLane(*(multivec_type*)(multi.data()));
+    return LoadToLaneInterleaved<lane, stride>(*(multivec_type*)multi.data(), ptr);
+  }
+
+  /**
+   * @brief Perform a Load-Gather of interleaved elements
+   *
+   * @note On NEON this incurs a writeback + load penalty
+   *
+   * @tparam stride the distance between similar elements
+   * @param base_ptr the address to use as a base for the gather operation
+   * @param offset_vector a vector of offset values that are added to base_ptr to get the address to load
+   * @return std::array<argon_type, stride> An array of vectors from the resulting interleaved loads
+   */
+  template <size_t stride, typename intrinsic_type>
+  ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
+                                                                  intrinsic_type offset_vector) {
+    using offset_type = simd::NonVec_t<intrinsic_type>;
+    static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
+    static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
+                  "Number of elements in offset vector must match number of elements in destination vector");
+    std::array<argon_type, stride> multi;
+    constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      offset_type lane_val = simd::get_lane<i>(offset_vector);
+      multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
+    });
+    return multi;
   }
 
   /**
@@ -431,7 +430,7 @@ class Common {
    * @return std::array An array of NEON vectors.
    */
   template <size_t n>
-  ace static std::array<argon_type, n> LoadMulti(scalar_type const* ptr) {
+  ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
     std::array<argon_type, n> out;
 #pragma unroll
     for (size_t i = 0; i < n; ++i) {
@@ -497,7 +496,6 @@ class Common {
     // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
     // the validity and POD-ness of std::array needs to be verified
     static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
@@ -511,7 +509,6 @@ class Common {
     // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
     // the validity and POD-ness of std::array needs to be verified
     static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
@@ -525,7 +522,6 @@ class Common {
     // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
     // the validity and POD-ness of std::array needs to be verified
     static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(std::is_trivial_v<array_type>);
     static_assert(sizeof(multivec_type) == sizeof(array_type),
                   "std::array isn't layout-compatible with this NEON multi-vector.");
 
@@ -537,7 +533,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace argon_type map(FuncType body) const {
-    std::array<scalar_type, lanes> arr = this->as_array();
+    std::array<scalar_type, lanes> arr = this->to_array();
     std::array<scalar_type, lanes> out;
     for (size_t i = 0; i < lanes; ++i) {
       out[i] = body(arr[i]);
@@ -548,8 +544,8 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, scalar_type)>>
   ace argon_type map2(argon_type other, FuncType body) const {
-    std::array<scalar_type, lanes> arr0 = this->as_array();
-    std::array<scalar_type, lanes> arr1 = other.as_array();
+    std::array<scalar_type, lanes> arr0 = this->to_array();
+    std::array<scalar_type, lanes> arr1 = other.to_array();
     std::array<scalar_type, lanes> out;
     for (size_t i = 0; i < lanes; ++i) {
       out[i] = body(arr0[i], arr1[i]);
@@ -560,7 +556,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&)>>
   ace void each_lane(FuncType body) {
-    for (scalar_type s : this->as_array()) {
+    for (scalar_type s : this->to_array()) {
       body(s);
     }
   }
@@ -568,7 +564,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&, int)>>
   ace void each_lane_with_index(FuncType body) {
-    auto arr = this->as_array();
+    auto arr = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
       body(arr[i], i);
     }
@@ -577,7 +573,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_lane(FuncType true_branch) {
-    for (scalar_type s : this->as_array()) {
+    for (scalar_type s : this->to_array()) {
       if (s != 0) {
         true_branch();
       }
@@ -587,7 +583,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_else_lane(FuncType true_branch, FuncType false_branch) {
-    for (scalar_type s : this->as_array()) {
+    for (scalar_type s : this->to_array()) {
       if (s != 0) {
         true_branch();
       } else {
@@ -599,7 +595,7 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(int)>>
   ace void if_lane_with_index(FuncType true_branch) {
-    std::array<scalar_type, lanes> arr = this->as_array();
+    std::array<scalar_type, lanes> arr = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
       if (arr[i] != 0) {
         true_branch(i);
@@ -611,7 +607,7 @@ class Common {
     requires std::convertible_to<FuncType1, std::function<void(int)>> &&
              std::convertible_to<FuncType2, std::function<void(int)>>
   ace void if_else_lane_with_index(FuncType1 true_branch, FuncType2 false_branch) {
-    std::array<scalar_type, lanes> arr = this->as_array();
+    std::array<scalar_type, lanes> arr = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
       if (arr[i] != 0) {
         true_branch(i);
@@ -622,7 +618,7 @@ class Common {
   }
 
   ace bool any() {
-    for (scalar_type s : this->as_array()) {
+    for (scalar_type s : this->to_array()) {
       if (s) {
         return true;
       }
@@ -631,7 +627,7 @@ class Common {
   }
 
   ace bool all() {
-    for (scalar_type s : this->TestNonzero().as_array()) {
+    for (scalar_type s : this->TestNonzero().to_array()) {
       if (s == 0) {
         return false;
       }
