@@ -10,11 +10,11 @@
 #endif
 
 template <typename scalar_type>
-class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::type> {
-  using T = argon::impl::Common<typename neon::Vec64<scalar_type>::type>;
+class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
+  using T = argon::impl::Common<neon::Vec64_t<scalar_type>>;
 
  public:
-  using vector_type = neon::Vec64<scalar_type>::type;
+  using vector_type = neon::Vec64_t<scalar_type>;
   using lane_type = const argon::impl::Lane<vector_type>;
 
   static_assert(neon::is_doubleword_v<vector_type>);
@@ -32,6 +32,10 @@ class ArgonHalf : public argon::impl::Common<typename neon::Vec64<scalar_type>::
 
   template <neon::is_vector_type intrinsic_type>
   ace ArgonHalf(argon::impl::Lane<intrinsic_type> b) : T(b){};
+
+  template <typename... arg_types>
+  requires (sizeof...(arg_types) > 1)
+  ace ArgonHalf(arg_types ...args) : T{vector_type{args...}} {}
 
   ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
 

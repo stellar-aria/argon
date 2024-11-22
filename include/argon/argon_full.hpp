@@ -21,11 +21,11 @@
 #endif
 
 template <typename scalar_type>
-class Argon : public argon::impl::Common<typename simd::Vec128<scalar_type>::type> {
-  using T = argon::impl::Common<typename simd::Vec128<scalar_type>::type>;
+class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
+  using T = argon::impl::Common<simd::Vec128_t<scalar_type>>;
 
  public:
-  using vector_type = simd::Vec128<scalar_type>::type;
+  using vector_type = simd::Vec128_t<scalar_type>;
   using lane_type = const argon::impl::Lane<vector_type>;
 
   static_assert(simd::is_quadword_v<vector_type>);
@@ -41,6 +41,10 @@ class Argon : public argon::impl::Common<typename simd::Vec128<scalar_type>::typ
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   // ace Argon(std::span<scalar_type> slice) : T{slice} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
+
+  template <typename... arg_types>
+  requires (sizeof...(arg_types) > 1)
+  ace Argon(arg_types ...args) : T{vector_type{args...}} {}
 
   template <simd::is_vector_type intrinsic_type>
   ace Argon(argon::impl::Lane<intrinsic_type> b) : T{b} {};

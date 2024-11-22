@@ -262,6 +262,11 @@ class Common {
     return simd::shift_left(vec_, b);
   }
 
+  template <int n>
+  ace argon_type ShiftLeft() const {
+    return simd::shift_left<n>(vec_);
+  }
+
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
              std::is_same_v<signed_vector, typename ArgonFor<simd::make_signed_t<vector_type>>::type>)
@@ -303,7 +308,7 @@ class Common {
   }
 
   ace static argon_type Load(const scalar_type* ptr) { return simd::load1<vector_type>(ptr); }
-  ace static argon_type LoadCopy(const scalar_type* ptr) { return simd::load1_duplicate(ptr); }
+  ace static argon_type LoadCopy(const scalar_type* ptr) { return simd::load1_duplicate<vector_type>(ptr); }
 
   /**
    * @brief Using a base address and a vector of offset indices and a base pointer, create a new vector
@@ -416,6 +421,7 @@ class Common {
   ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
                                                                   intrinsic_type offset_vector) {
     using offset_type = simd::NonVec_t<intrinsic_type>;
+    static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
@@ -480,7 +486,7 @@ class Common {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, typename ArgonFor<simd::make_signed_t<vector_type>>::type>)
+             std::is_same_v<signed_vector, ArgonFor_t<simd::make_signed_t<vector_type>>>)
   ace signed_vector CountLeadingSignBits() const {
     return simd::count_leading_sign_bits(vec_);
   }
@@ -661,17 +667,17 @@ class Lane {
   using argon_type = ArgonFor_t<vector_type>;
 
  public:
-  ace Lane(vector_type vec, const int lane) : vec_(vec), lane_(lane) {}
+  ace Lane(vector_type& vec, const int lane) : vec_{vec}, lane_{lane} {}
   ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
   ace argon_type operator=(scalar_type b) { return Set(b); }
-  ace argon_type Load(scalar_type* ptr) { return simd::load1_lane(vec_, lane_, ptr); }
-  ace argon_type Set(scalar_type b) { return simd::set_lane(vec_, lane_, b); }
+  ace argon_type Load(scalar_type* ptr) { return vec_ = simd::load1_lane(vec_, lane_, ptr); }
+  ace argon_type Set(scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
 
 #if __ARM_ARCH >= 8
-  ace vector_type vec() { return vec_; }
+  ace vector_type& vec() { return vec_; }
   ace const int lane() { return lane_; }
 #else
-  ace vector_type vec() {
+  ace vector_type& vec() {
     if constexpr (simd::is_doubleword_v<vector_type>) {
       return vec_;
     } else if constexpr (simd::is_quadword_v<vector_type>) {
@@ -696,7 +702,7 @@ class Lane {
 #endif
 
  private:
-  vector_type vec_;
+  vector_type &vec_;
   int lane_;
 };
 
