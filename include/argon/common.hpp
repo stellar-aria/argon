@@ -49,7 +49,7 @@ class Common {
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
   constexpr Common() : vec_{0} {};
-  constexpr Common(vector_type vector) : vec_(vector){};
+  constexpr Common(vector_type vector) : vec_{vector} {};
   ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
@@ -549,48 +549,58 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace argon_type map(FuncType body) const {
-    std::array<scalar_type, lanes> arr = this->to_array();
-    std::array<scalar_type, lanes> out;
+    vector_type out;
     for (size_t i = 0; i < lanes; ++i) {
-      out[i] = body(arr[i]);
+      out[i] = body(vec_[i]);
     }
-    return argon_type::Load(out);
+    return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, int)>>
+  ace argon_type map_with_index(FuncType body) const {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body(vec_[i], i);
+    }
+    return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, scalar_type)>>
   ace argon_type map2(argon_type other, FuncType body) const {
-    std::array<scalar_type, lanes> arr0 = this->to_array();
-    std::array<scalar_type, lanes> arr1 = other.to_array();
-    std::array<scalar_type, lanes> out;
+    vector_type out;
     for (size_t i = 0; i < lanes; ++i) {
-      out[i] = body(arr0[i], arr1[i]);
+      out[i] = body(vec_[i], other.vec_[i]);
     }
-    return argon_type::Load(out);
+    return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&)>>
-  ace void each_lane(FuncType body) {
-    for (scalar_type s : this->to_array()) {
-      body(s);
+  ace argon_type each_lane(FuncType body) {
+    vector_type out = vec_;
+    for (size_t i = 0; i < lanes; ++i) {
+      body(out[i]);
     }
+    return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&, int)>>
-  ace void each_lane_with_index(FuncType body) {
-    auto arr = this->to_array();
+  ace argon_type each_lane_with_index(FuncType body) {
+    vector_type out = vec_;
     for (size_t i = 0; i < lanes; ++i) {
-      body(arr[i], i);
+      body(out[i], i);
     }
+    return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_lane(FuncType true_branch) {
-    for (scalar_type s : this->to_array()) {
-      if (s != 0) {
+    for (size_t i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
         true_branch();
       }
     }
@@ -599,8 +609,8 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_else_lane(FuncType true_branch, FuncType false_branch) {
-    for (scalar_type s : this->to_array()) {
-      if (s != 0) {
+    for (size_t i = 0; i < lanes; ++i) {
+      if (vec_[i] != 0) {
         true_branch();
       } else {
         false_branch();
@@ -611,9 +621,8 @@ class Common {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(int)>>
   ace void if_lane_with_index(FuncType true_branch) {
-    std::array<scalar_type, lanes> arr = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
-      if (arr[i] != 0) {
+      if (vec_[i] != 0) {
         true_branch(i);
       }
     }
@@ -623,9 +632,8 @@ class Common {
     requires std::convertible_to<FuncType1, std::function<void(int)>> &&
              std::convertible_to<FuncType2, std::function<void(int)>>
   ace void if_else_lane_with_index(FuncType1 true_branch, FuncType2 false_branch) {
-    std::array<scalar_type, lanes> arr = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
-      if (arr[i] != 0) {
+      if (vec_[i] != 0) {
         true_branch(i);
       } else {
         false_branch(i);
@@ -634,8 +642,8 @@ class Common {
   }
 
   ace bool any() {
-    for (scalar_type s : this->to_array()) {
-      if (s) {
+    for (size_t i = 0; i < lanes; ++i) {
+      if (vec_[i]) {
         return true;
       }
     }
@@ -643,8 +651,9 @@ class Common {
   }
 
   ace bool all() {
-    for (scalar_type s : this->TestNonzero().to_array()) {
-      if (s == 0) {
+    auto nonzero = TestNonzero();
+    for (size_t i = 0; i < lanes; ++i) {
+      if (nonzero[i] == 0) {
         return false;
       }
     }
@@ -702,7 +711,7 @@ class Lane {
 #endif
 
  private:
-  vector_type &vec_;
+  vector_type& vec_;
   int lane_;
 };
 
