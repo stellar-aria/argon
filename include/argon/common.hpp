@@ -2,7 +2,9 @@
 #include <array>
 #include <functional>
 #include <span>
+#include <tuple>
 #include <type_traits>
+#include <utility>
 #include "arm_simd/helpers.hpp"
 #include "arm_simd/helpers/nonvec.hpp"
 #include "arm_simd/helpers/vec64.hpp"
@@ -12,6 +14,7 @@
 #include "helpers/result.hpp"
 #include "helpers/to_array.hpp"
 #include "vectorize.hpp"
+
 
 #ifdef __ARM_NEON
 #define simd neon

@@ -1,6 +1,4 @@
 #pragma once
-#include <initializer_list>
-#include <span>
 #include "common.hpp"
 
 #ifdef __clang__
@@ -175,6 +173,11 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
 
   ace Argon<scalar_type> CombineWith(ArgonHalf<scalar_type> high) const { return neon::combine(this->vec_, high); }
 };
+
+template <class... arg_types>
+  requires(sizeof...(arg_types) > 1)
+//ArgonHalf(arg_types...) -> ArgonHalf<arg_types...[0]>;
+ArgonHalf(arg_types...) -> ArgonHalf<std::tuple_element_t<0, std::tuple<arg_types...>>>;
 
 template <typename V>
   requires std::is_scalar_v<V>

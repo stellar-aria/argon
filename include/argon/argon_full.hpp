@@ -1,7 +1,4 @@
 #pragma once
-#include <initializer_list>
-#include <span>
-#include <utility>
 #include "arm_simd.hpp"
 #include "common.hpp"
 #include "helpers.hpp"
@@ -43,8 +40,8 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
 
   template <typename... arg_types>
-  requires (sizeof...(arg_types) > 1)
-  ace Argon(arg_types ...args) : T{vector_type{args...}} {}
+    requires(sizeof...(arg_types) > 1)
+  ace Argon(arg_types... args) : T{vector_type{args...}} {}
 
   template <simd::is_vector_type intrinsic_type>
   ace Argon(argon::impl::Lane<intrinsic_type> b) : T{b} {};
@@ -215,6 +212,11 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
 
   ace Argon<scalar_type> SwapDoublewords() { return Combine(GetHigh(), GetLow()); }
 };
+
+template <typename... arg_types>
+  requires(sizeof...(arg_types) > 1)
+// Argon(arg_types...) -> Argon<arg_types...[0]>;
+Argon(arg_types...) -> Argon<std::tuple_element_t<0, std::tuple<arg_types...>>>;
 
 template <typename V>
   requires std::is_scalar_v<V>
