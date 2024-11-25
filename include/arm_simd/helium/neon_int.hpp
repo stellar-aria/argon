@@ -1,5 +1,5 @@
 #pragma once
-#include "arm_simd/shared/vfpv4_int.hpp"
+#include "arm_simd/shared/vfpv3_int.hpp"
 
 #ifdef __cplusplus
 
