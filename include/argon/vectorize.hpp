@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <iterator>
+#include <ranges>
 #include <span>
 #include "arm_simd/helpers/nonvec.hpp"
 #include "arm_simd/helpers/vec128.hpp"
@@ -18,7 +19,7 @@ class Argon;
 
 namespace argon {
 template <typename scalar_type>
-struct vectorize {
+struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
@@ -34,6 +35,8 @@ struct vectorize {
 
     value_type& operator*() { return vec; }
     value_type* operator->() { return &vec; }
+    const value_type& operator*() const { return vec; }
+    const value_type* operator->() const { return &vec; }
     Iterator& operator++() {
       vec.StoreTo(ptr);  // store before increment
       ptr += lanes;
@@ -54,19 +57,19 @@ struct vectorize {
     scalar_type* ptr = nullptr;
     value_type vec;
   };
+  static_assert(std::input_or_output_iterator<Iterator>);
   struct ConstIterator {
     using iterator_category = std::forward_iterator_tag;
     using value_type = Argon<scalar_type>;
     using difference_type = std::ptrdiff_t;
 
     ConstIterator() = default;
-    ConstIterator(scalar_type const* ptr) : ptr{ptr}, vec{value_type::Load(ptr)} {}
+    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)}{}
 
-    value_type& operator*() const { return vec; }
-    value_type* operator->() const { return &vec; }
+    const value_type operator*() const { return vec; }
     ConstIterator& operator++() {
       ptr += lanes;
-      vec = value_type::Load(ptr);
+	  vec = value_type::Load(ptr);
       return *this;
     }
     ConstIterator operator++(int) {
@@ -75,15 +78,13 @@ struct vectorize {
       return tmp;
     }
     friend bool operator==(const ConstIterator& a, const ConstIterator& b) { return a.ptr == b.ptr; }
-    friend bool operator==(const ConstIterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
     friend bool operator!=(const ConstIterator& a, const ConstIterator& b) { return a.ptr != b.ptr; }
-    friend bool operator!=(const ConstIterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
 
    private:
-    scalar_type* ptr = nullptr;
-    value_type vec;
+    const scalar_type* ptr = nullptr;
+	value_type vec;
   };
-  //static_assert(std::forward_iterator<Iterator>);
+  static_assert(std::input_iterator<ConstIterator>);
 
   using iterator = Iterator;
   using const_iterator = ConstIterator;
@@ -92,8 +93,8 @@ struct vectorize {
   vectorize(const std::span<scalar_type> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
   vectorize(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
 
-  iterator begin() { return Iterator(start_); }
-  scalar_type* end() { return start_ + size_; }
+  iterator begin() const { return Iterator(start_); }
+  scalar_type* end() const { return start_ + size_; }
   const_iterator cbegin() const { return ConstIterator(start_); }
   const scalar_type* cend() const { return start_ + size_; }
   size_t size() const { return size_; }

@@ -47,7 +47,7 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   ace Argon(argon::impl::Lane<intrinsic_type> b) : T{b} {};
 
   template <typename new_scalar_type>
-  ace Argon<new_scalar_type> As() {
+  ace Argon<new_scalar_type> As() const {
     return simd::reinterpret<simd::Vec128_t<new_scalar_type>>(this->vec_);
   }
 

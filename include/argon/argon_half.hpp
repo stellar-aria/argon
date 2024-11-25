@@ -38,7 +38,7 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
 
   template <typename new_scalar_type>
-  ace ArgonHalf<new_scalar_type> As() {
+  ace ArgonHalf<new_scalar_type> As() const {
     return neon::reinterpret<neon::Vec64_t<new_scalar_type>>(this->vec_);
   }
 
