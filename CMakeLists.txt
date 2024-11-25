@@ -7,12 +7,14 @@ project(argon
 
 add_library(argon INTERFACE)
 target_include_directories(argon INTERFACE include)
+target_compile_features(argon INTERFACE cxx_std_23)
+
+file(GLOB_RECURSE sources_GLOB include/**/*.hpp)
 target_sources(argon PUBLIC
-  include/argon.hpp
-  include/neon.hpp
-  include/neon/helpers.hpp
+  ${sources_GLOB}
 )
 
+option(ARGON_BUILD_TESTING "Build Argon tests" OFF)
 if(ARGON_BUILD_TESTING)
   add_subdirectory(test)
 endif(ARGON_BUILD_TESTING)
