@@ -64,12 +64,12 @@ struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
     using difference_type = std::ptrdiff_t;
 
     ConstIterator() = default;
-    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)}{}
+    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)} {}
 
     const value_type operator*() const { return vec; }
     ConstIterator& operator++() {
       ptr += lanes;
-	  vec = value_type::Load(ptr);
+      vec = value_type::Load(ptr);
       return *this;
     }
     ConstIterator operator++(int) {
@@ -82,7 +82,7 @@ struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
 
    private:
     const scalar_type* ptr = nullptr;
-	value_type vec;
+    value_type vec;
   };
   static_assert(std::input_iterator<ConstIterator>);
 
@@ -139,15 +139,15 @@ class main {
   using iterator = Iterator;
   using const_iterator = const Iterator;
 
-  main(scalar_type* start, size_t size) : store{start, vectorizeable_size(size)} {};
-  main(const std::span<scalar_type> span) : store{span.begin(), vectorizeable_size(span.size())} {};
-  main(scalar_type* start, scalar_type* end) : store{start, vectorizeable_size(end - start)} {};
+  constexpr main(scalar_type* start, size_t size) : store{start, vectorizeable_size(size)} {};
+  constexpr main(const std::span<scalar_type> span) : store{span.begin(), vectorizeable_size(span.size())} {};
+  constexpr main(scalar_type* start, scalar_type* end) : store{start, vectorizeable_size(end - start)} {};
 
-  iterator begin() { return store.begin(); }
-  const_iterator begin() const { return store.cbegin(); }
-  iterator end() { return store.end(); }
-  const_iterator end() const { return store.cend(); }
-  size_t size() const { return store.size(); }
+  constexpr iterator begin() { return store.begin(); }
+  constexpr const_iterator begin() const { return store.cbegin(); }
+  constexpr iterator end() { return store.end(); }
+  constexpr const_iterator end() const { return store.cend(); }
+  constexpr size_t size() const { return store.size(); }
 
  private:
   std::span<scalar_type> store;
@@ -164,11 +164,18 @@ struct tail : std::span<simd::NonVec_t<intrinsic_type>> {
   static constexpr size_t tail_size(size_t size) { return size & (lanes - 1); }
 
  public:
-  tail(value_type* start, size_t size) : super{start + vectorizeable_size(size), tail_size(size)} {}
-  tail(const std::span<value_type> span)
+  constexpr tail(value_type* start, const size_t size) : super{start + vectorizeable_size(size), tail_size(size)} {}
+  constexpr tail(const std::span<value_type> span)
       : super{span.begin() + vectorizeable_size(span.size()), tail_size(span.size())} {}
-  tail(value_type* start, value_type* end) : super{start + vectorizeable_size(end - start), tail_size(end - start)} {}
+  constexpr tail(value_type* start, value_type* end)
+      : super{start + vectorizeable_size(end - start), tail_size(end - start)} {}
 };
+template <typename value_type>
+tail(value_type* start, const size_t size) -> tail<simd::Vec128_t<value_type>>;
+template <typename value_type>
+tail(const std::span<value_type> span) -> tail<simd::Vec128_t<value_type>>;
+template <typename value_type>
+tail(value_type* start, value_type* end) -> tail<simd::Vec128_t<value_type>>;
 
 }  // namespace vectorize_loop
 }  // namespace argon

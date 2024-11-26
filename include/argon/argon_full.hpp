@@ -30,11 +30,11 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Argon() : T(){};
+  ace Argon() : T() {};
   ace Argon(vector_type vector) : T{vector} {};
   ace Argon(scalar_type scalar) : T{scalar} {};
   // ace Argon(scalar_type const* ptr) : T{ptr} {};
-  ace Argon(T&& in) : T(in){};
+  ace Argon(T&& in) : T(in) {};
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   // ace Argon(std::span<scalar_type> slice) : T{slice} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
@@ -64,6 +64,11 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     requires argon::impl::has_smaller_v<scalar_type> &&
              std::is_same_v<U, typename argon::impl::NextSmaller<scalar_type>::type>
   ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, ArgonHalf<U> c) {
+    return simd::multiply_add_long(this->vec_, b, c);
+  }
+  template <typename U>
+    requires argon::impl::has_smaller_v<scalar_type>
+  ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, simd::Vec64_t<argon::impl::NextSmaller_t<scalar_type>> c) {
     return simd::multiply_add_long(this->vec_, b, c);
   }
 
