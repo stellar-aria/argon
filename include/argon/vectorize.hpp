@@ -89,19 +89,19 @@ struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
   using iterator = Iterator;
   using const_iterator = ConstIterator;
 
-  vectorize(scalar_type* start, size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
+  vectorize(scalar_type* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
   vectorize(const std::span<scalar_type> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
-  vectorize(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
+  vectorize(scalar_type* start, const scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
 
   iterator begin() const { return Iterator(start_); }
-  scalar_type* end() const { return start_ + size_; }
+  const scalar_type* end() const { return start_ + size_; }
   const_iterator cbegin() const { return ConstIterator(start_); }
   const scalar_type* cend() const { return start_ + size_; }
   size_t size() const { return size_; }
 
  private:
   scalar_type* start_;
-  size_t size_;
+  const size_t size_;
 };
 
 namespace vectorize_loop {
