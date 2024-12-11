@@ -54,7 +54,7 @@ constexpr platform target = platform::NEON;
 
 #endif
 
-#elifdef(__ARM_FEATURE_MVE)
+#elifdef __ARM_FEATURE_MVE
 namespace argon {
 constexpr platform target = platform::MVE;
 }

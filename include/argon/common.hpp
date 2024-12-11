@@ -509,42 +509,15 @@ class Common {
   ace argon_type Reverse16bit() const { return simd::reverse_16bit(vec_); }
 
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::zip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
   std::array<argon_type, 2> UnzipWith(argon_type b) {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::unzip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
   std::array<argon_type, 2> TransposeWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::transpose(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
   ace static int size() { return lanes; }
