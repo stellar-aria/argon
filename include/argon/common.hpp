@@ -15,7 +15,6 @@
 #include "helpers/to_array.hpp"
 #include "vectorize.hpp"
 
-
 #ifdef __ARM_NEON
 #define simd neon
 #else
@@ -116,6 +115,26 @@ class Common {
     return simd::duplicate_lane(lane.vec(), lane.lane());
   }
 #endif
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type()>>
+  ace static argon_type Generate(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body();
+    }
+    return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
+  ace static argon_type GenerateWithIndex(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body(i);
+    }
+    return out;
+  }
 
   ace argon_type operator-() const { return Negate(); }
 
@@ -516,8 +535,9 @@ class Common {
     return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
-  std::array<argon_type, 2> TransposeWith(argon_type b) const {
-    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
+  std::tuple<argon_type, argon_type> TransposeWith(argon_type b) const {
+    auto result = simd::transpose(vec_, b.vec());
+    return std::tuple<argon_type, argon_type>(result.val[0], result.val[1]);
   }
 
   ace static int size() { return lanes; }
