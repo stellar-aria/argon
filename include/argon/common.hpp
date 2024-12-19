@@ -174,6 +174,7 @@ class Common {
   ace vector_type vec() const { return vec_; }
 
   ace scalar_type GetLane(const int i) { return simd::get_lane(vec_, i); }
+  ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
   ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
