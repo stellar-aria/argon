@@ -52,13 +52,13 @@ class Common {
 
   constexpr Common() : vec_{0} {};
   constexpr Common(vector_type vector) : vec_{vector} {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
   struct vectorize_loop {
     static constexpr size_t step = lanes;
@@ -461,6 +461,7 @@ class Common {
     return argon_type::template LoadGatherInterleaved<stride, typename T::vector_type>(base_ptr, offset_vector);
   }
 
+#if defined(__clang__) || (__GNUC__ >= 14)
   /**
    * @brief Load n vectors from a single contiguous set of memory.
    *
@@ -470,16 +471,23 @@ class Common {
    */
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
-    std::array<argon_type, n> out;
-#pragma unroll
-    for (size_t i = 0; i < n; ++i) {
-      out[i] = Load(ptr);
-      ptr += lanes;
-    }
-    return out;
-  }
+    static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
+    using multivec_type = MultiVec_t<vector_type, n>;
+    using array_type = std::array<argon_type, n>;
 
-  ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
+    if constexpr (stride == 2) {
+      return argon::to_array(simd::load1_x2(ptr).val);
+    } else if constexpr (stride == 3) {
+      return argon::to_array(simd::load1_x3(ptr).val);
+    } else if constexpr (stride == 4) {
+      return argon::to_array(simd::load1_x4(ptr).val);
+    }
+  }
+#endif
+
+  ace void StoreTo(scalar_type* ptr) const {
+    simd::store1(ptr, vec_);
+  }
 
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {

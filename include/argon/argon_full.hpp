@@ -213,8 +213,8 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
 #ifdef __aarch64__
     return simd::reduce_add(this->vec_);
 #else
-    auto rev = SwapDoublewords();
-    auto sum = Add(rev);
+    auto rev = this->SwapDoublewords();
+    auto sum = this->Add(rev);
     if constexpr (lanes == 16) {
       rev = sum.Reverse16bit();
       sum = sum.Add(rev);
