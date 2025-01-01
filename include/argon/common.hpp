@@ -461,7 +461,6 @@ class Common {
     return argon_type::template LoadGatherInterleaved<stride, typename T::vector_type>(base_ptr, offset_vector);
   }
 
-#if defined(__clang__) || (__GNUC__ >= 14)
   /**
    * @brief Load n vectors from a single contiguous set of memory.
    *
@@ -475,15 +474,14 @@ class Common {
     using multivec_type = MultiVec_t<vector_type, n>;
     using array_type = std::array<argon_type, n>;
 
-    if constexpr (stride == 2) {
+    if constexpr (n == 2) {
       return argon::to_array(simd::load1_x2(ptr).val);
-    } else if constexpr (stride == 3) {
+    } else if constexpr (n == 3) {
       return argon::to_array(simd::load1_x3(ptr).val);
-    } else if constexpr (stride == 4) {
+    } else if constexpr (n == 4) {
       return argon::to_array(simd::load1_x4(ptr).val);
     }
   }
-#endif
 
   ace void StoreTo(scalar_type* ptr) const {
     simd::store1(ptr, vec_);
