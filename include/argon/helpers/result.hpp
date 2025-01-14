@@ -1,8 +1,10 @@
 #pragma once
+#include <cstddef>
+#include <type_traits>
 #include "arm_simd.hpp"
 
 namespace argon::impl {
-// clang-format on
+// clang-format off
 template <typename T> struct Result;
 template <> struct Result<int8x16_t> { using type = uint8x16_t; };
 template <> struct Result<uint8x16_t> { using type = uint8x16_t; };
@@ -33,5 +35,5 @@ template <> struct Result<float32x2_t> { using type = uint32x2_t; };
 
 template <typename T>
 using Result_t = Result<T>::type;
-// clang-format off
-}
+// clang-format on
+}  // namespace argon::impl

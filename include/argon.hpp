@@ -75,6 +75,45 @@ ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) {
   return simd::combine(low, high);
 }
 
+template <typename CondType, typename ArgonType>
+  requires std::is_same_v<CondType, typename ArgonType::argon_result_type>
+class CondMonad : public std::pair<CondType, ArgonType> {
+ public:
+  using PairType = std::pair<CondType, ArgonType>;
+  using PairType::PairType;
+
+  CondMonad else_if_(CondType condition, ArgonType value) const {
+    CondType exclusive_condition = condition & ~this->first;
+    ArgonType new_value = ((value.template As<typename CondType::scalar_type>() & exclusive_condition) |
+                           (this->second.template As<typename CondType::scalar_type>() & ~exclusive_condition))
+                              .template As<typename ArgonType::scalar_type>();
+    return CondMonad{this->first | condition, new_value};
+  }
+
+  template <typename FunctionType>
+  CondMonad else_if_(CondType condition, FunctionType func) const {
+    return else_if_(condition, func());
+  }
+
+  ArgonType else_(ArgonType value) const {
+    // negate mask to get what's left, and select those lanes from the input
+    return ((~(this->first) & value.template As<typename CondType::scalar_type>()) |
+            (this->first & this->second.template As<typename CondType::scalar_type>()))
+        .template As<typename ArgonType::scalar_type>();
+  }
+};
+
+template <typename CondType, typename ArgonType>
+  requires std::is_same_v<CondType, typename ArgonType::argon_result_type>
+ace CondMonad<CondType, ArgonType> if_(CondType condition, ArgonType value) {
+  return CondMonad<CondType, ArgonType>{condition, value};
+}
+
+template <typename CondType, typename FunctionType>
+ace CondMonad<CondType, decltype(std::declval<FunctionType>()())> if_(CondType condition, FunctionType func) {
+  return {condition, func()};
+}
+
 }  // namespace argon
 
 #undef ace

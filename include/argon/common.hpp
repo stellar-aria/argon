@@ -52,13 +52,13 @@ class Common {
 
   constexpr Common() : vec_{0} {};
   constexpr Common(vector_type vector) : vec_{vector} {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
 
   struct vectorize_loop {
     static constexpr size_t step = lanes;
@@ -156,6 +156,24 @@ class Common {
   ace argon_type operator|(argon_type b) const { return BitwiseOr(b); }
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
   ace argon_type operator~() const { return BitwiseNot(); }
+
+  ace argon_type operator&&(argon_type b) const
+    requires std::is_same_v<argon_type, argon_result_type>
+  {
+    return *this & b;
+  }
+
+  ace argon_type operator||(argon_type b) const
+    requires std::is_same_v<argon_type, argon_result_type>
+  {
+    return *this | b;
+  }
+
+  ace argon_type operator!() const
+    requires std::is_same_v<argon_type, argon_result_type>
+  {
+    return ~*this;
+  }
 
   ace const lane_type operator[](const int i) const { return lane_type{vec_, i}; }
   ace lane_type operator[](const int i) { return lane_type{vec_, i}; }
@@ -483,9 +501,7 @@ class Common {
     }
   }
 
-  ace void StoreTo(scalar_type* ptr) const {
-    simd::store1(ptr, vec_);
-  }
+  ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
 
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {
@@ -548,6 +564,15 @@ class Common {
   }
 
   ace static int size() { return lanes; }
+
+  /// @brief Treats the input as a bitmask, selecting bits that are high from `a` and bits that are low from `b`
+  /// This is equivalent to (a & mask) | (b & ~mask)
+  template <typename ArgonType>
+    requires std::is_same_v<argon_type, argon_result_type>
+  ace ArgonType MaskSelect(ArgonType a, ArgonType b) {
+    return ((*this & a.template As<scalar_type>()) | (~*this & b.template As<scalar_type>()))
+        .template As<typename ArgonType::scalar_type>();
+  }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
