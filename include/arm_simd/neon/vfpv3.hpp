@@ -1707,7 +1707,7 @@ template <> [[gnu::always_inline]] inline uint64x2x2_t load1_x2(uint64_t const *
 template <> [[gnu::always_inline]] inline int8x8x3_t load1_x3(int8_t const *ptr) { return vld1_s8_x3(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x3_t load1_x3(int16_t const *ptr) { return vld1_s16_x3(ptr); }
 
-#if defined(__GNUC__) && __GNUC__ == 14
+#if defined(__GNUC__) && __GNUC__ == 14 && (__ARM_ARCH < 8)
 template <> [[gnu::always_inline]] inline int8x16x3_t load1_x3(int8_t const *ptr) { return vld1q_s8_x3((const uint8_t*)ptr); }
 template <> [[gnu::always_inline]] inline int16x8x3_t load1_x3(int16_t const *ptr) { return vld1q_s16_x3((const uint16_t*)ptr); }
 #else
@@ -1735,7 +1735,7 @@ template <> [[gnu::always_inline]] inline int64x2x3_t load1_x3(int64_t const *pt
 template <> [[gnu::always_inline]] inline uint64x2x3_t load1_x3(uint64_t const *ptr) { return vld1q_u64_x3(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x4_t load1_x4(int8_t const *ptr) { return vld1_s8_x4(ptr); }
 
-#if defined(__GNUC__) && __GNUC__ == 14
+#if defined(__GNUC__) && __GNUC__ == 14 && (__ARM_ARCH < 8)
 template <> [[gnu::always_inline]] inline int8x16x4_t load1_x4(int8_t const *ptr) { return vld1q_s8_x4((const uint8_t*)ptr); }
 template <> [[gnu::always_inline]] inline int16x8x4_t load1_x4(int16_t const *ptr) { return vld1q_s16_x4((const uint16_t*)ptr); }
 #else
