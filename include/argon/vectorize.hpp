@@ -105,6 +105,10 @@ struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
   const size_t size_;
 };
 
+static_assert(std::ranges::range<vectorize<int>>);
+static_assert(std::ranges::view<vectorize<int>>);
+static_assert(std::ranges::begin<vectorize<int>>()));
+
 template <size_t stride, typename scalar_type>
 struct vectorize_interleaved : public std::ranges::view_interface<vectorize<scalar_type>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;

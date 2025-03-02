@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include "arm_simd.hpp"
 #include "common.hpp"
 #include "helpers.hpp"
@@ -236,8 +237,12 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
 
 template <typename... arg_types>
   requires(sizeof...(arg_types) > 1)
-// Argon(arg_types...) -> Argon<arg_types...[0]>;
+//Argon(arg_types...) -> Argon<arg_types...[0]>;
 Argon(arg_types...) -> Argon<std::tuple_element_t<0, std::tuple<arg_types...>>>;
+
+template <typename ScalarType>
+requires std::is_scalar_v<ScalarType>
+Argon(ScalarType) -> Argon<ScalarType>;
 
 template <typename V>
   requires std::is_scalar_v<V>

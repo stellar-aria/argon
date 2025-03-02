@@ -75,6 +75,16 @@ ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) {
   return simd::combine(low, high);
 }
 
+template <typename T>
+ace Argon<T> load(const T* ptr) {
+  return Argon<T>::Load(ptr);
+}
+
+template <typename T>
+ace Argon<T> load_half(const T* ptr) {
+  return ArgonHalf<T>::Load(ptr);
+}
+
 }  // namespace argon
 
 #undef ace

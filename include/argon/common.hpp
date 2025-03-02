@@ -60,24 +60,40 @@ class Common {
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
   ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
-  struct vectorize_loop {
+  struct vectorize {
     static constexpr size_t step = lanes;
     static constexpr size_t main_size(size_t size) { return size & ~(lanes - 1); }
     static constexpr size_t tail_start(size_t size) { return size & ~(lanes - 1); }
 
-    static constexpr std::span<scalar_type> head_simd(std::span<scalar_type> span) {
+    static constexpr std::pair<::argon::vectorize<scalar_type>, std::span<scalar_type>> head_aligned(std::span<scalar_type> span) {
+      return {head_simd(span), tail_remainder(span)};
+    }
+
+    static constexpr std::pair<std::span<scalar_type>, ::argon::vectorize<scalar_type>> tail_aligned(std::span<scalar_type> span) {
+      return {head_remainder(span), tail_simd(span)};
+    }
+
+    static constexpr ::argon::vectorize<scalar_type> head_simd(std::span<scalar_type> span) {
+      return ::argon::vectorize<scalar_type>(head_main(span));
+    }
+
+    static constexpr ::argon::vectorize<scalar_type> tail_simd(std::span<scalar_type> span) {
+      return ::argon::vectorize<scalar_type>(tail_main(span));
+    }
+
+    static constexpr std::span<scalar_type> head_main(std::span<scalar_type> span) {
       return span.first(span.size() & ~(lanes - 1));
     }
 
-    static constexpr std::span<scalar_type> tail_simd(std::span<scalar_type> span) {
+    static constexpr std::span<scalar_type> tail_main(std::span<scalar_type> span) {
       return span.last(span.size() & ~(lanes - 1));
     }
 
-    static constexpr std::span<scalar_type> head(std::span<scalar_type> span) {
+    static constexpr std::span<scalar_type> head_remainder(std::span<scalar_type> span) {
       return span.first(span.size() & (lanes - 1));
     }
 
-    static constexpr std::span<scalar_type> tail(std::span<scalar_type> span) {
+    static constexpr std::span<scalar_type> tail_remainder(std::span<scalar_type> span) {
       return span.last(span.size() & (lanes - 1));
     }
   };
