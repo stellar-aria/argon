@@ -13,7 +13,7 @@
 #include "helpers/multivec.hpp"
 #include "helpers/result.hpp"
 #include "helpers/to_array.hpp"
-#include "vectorize.hpp"
+
 
 #ifdef __ARM_NEON
 #define simd neon
@@ -59,36 +59,6 @@ class Common {
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
   ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
-
-  struct vectorize_loop {
-    static constexpr size_t step = lanes;
-    static constexpr size_t main_size(size_t size) { return size & ~(lanes - 1); }
-    static constexpr size_t tail_start(size_t size) { return size & ~(lanes - 1); }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::main<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::main<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::main<vector_type>{start, size};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::tail<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, size};
-    }
-  };
 
   ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 

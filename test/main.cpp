@@ -89,7 +89,7 @@ class NeonCosineOscillator {
         sign[i] = -16.0f;
       }
     }
-    Argon<float> frequency = frequencies.data();
+    auto frequency = argon::load(frequencies.data());
     iir_coefficient_ = sign * frequency * (1.0f - (2.0f * frequency));
     initial_amplitude_ = iir_coefficient_ * 0.25f;
   }
