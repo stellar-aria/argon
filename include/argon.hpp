@@ -86,6 +86,14 @@ ace Argon<T> load_half(const T* ptr) {
   return ArgonHalf<T>::Load(ptr);
 }
 
+template <typename CondType, typename ArgonType>
+  requires std::is_same_v<CondType, typename ArgonType::argon_result_type>
+ace ArgonType ternary(CondType condition, ArgonType true_value, ArgonType false_value) {
+  return ((condition & true_value.template As<typename CondType::scalar_type>()) |
+          (~condition & false_value.template As<typename CondType::scalar_type>()))
+      .template As<typename ArgonType::scalar_type>();
+}
+
 }  // namespace argon
 
 #undef ace
