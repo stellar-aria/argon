@@ -7544,9 +7544,9 @@ class Lane {
       return vec_;
     } else if constexpr (simd::is_quadword_v<vector_type>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec);
+        return simd::get_high(vec_);
       } else {
-        return simd::get_low(vec);
+        return simd::get_low(vec_);
       }
     }
   }
@@ -7554,7 +7554,7 @@ class Lane {
     if constexpr (simd::is_doubleword_v<vector_type>) {
       return lane_;
     } else if constexpr (simd::is_quadword_v<vector_type>) {
-      if (lane >= ArgonHalf<scalar_type>::lanes) {
+      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return (lane_ - ArgonHalf<scalar_type>::lanes);
       } else {
         return lane_;
