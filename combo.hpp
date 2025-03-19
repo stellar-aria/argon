@@ -5,6 +5,8 @@
 #include <span>
 #include <type_traits>
 #pragma once
+#include <array>
+#include <type_traits>
 #pragma once
 
 #if (__ARM_ARCH >= 8)  // ARMv8
@@ -2064,7 +2066,6 @@ template <int lane>[[gnu::always_inline]] nce uint8x16x3_t load3_lane_quad(uint8
 template <int lane>[[gnu::always_inline]] nce int8x16x4_t load4_lane_quad(int8_t const *ptr, int8x16x4_t src) { return vld4q_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x16x4_t load4_lane_quad(uint8_t const *ptr, uint8x16x4_t src) { return vld4q_lane_u8(ptr, src, lane); }
 #endif
-#if defined(__clang__) || (__GNUC__ >= 14)
 template <> [[gnu::always_inline]] inline int8x8x2_t load1_x2(int8_t const *ptr) { return vld1_s8_x2(ptr); }
 template <> [[gnu::always_inline]] inline int8x16x2_t load1_x2(int8_t const *ptr) { return vld1q_s8_x2(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x2_t load1_x2(int16_t const *ptr) { return vld1_s16_x2(ptr); }
@@ -2088,9 +2089,16 @@ template <> [[gnu::always_inline]] inline uint64x1x2_t load1_x2(uint64_t const *
 template <> [[gnu::always_inline]] inline int64x2x2_t load1_x2(int64_t const *ptr) { return vld1q_s64_x2(ptr); }
 template <> [[gnu::always_inline]] inline uint64x2x2_t load1_x2(uint64_t const *ptr) { return vld1q_u64_x2(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x3_t load1_x3(int8_t const *ptr) { return vld1_s8_x3(ptr); }
-template <> [[gnu::always_inline]] inline int8x16x3_t load1_x3(int8_t const *ptr) { return vld1q_s8_x3(ptr); }
 template <> [[gnu::always_inline]] inline int16x4x3_t load1_x3(int16_t const *ptr) { return vld1_s16_x3(ptr); }
+
+#if defined(__GNUC__) && __GNUC__ == 14 && (__ARM_ARCH < 8)
+template <> [[gnu::always_inline]] inline int8x16x3_t load1_x3(int8_t const *ptr) { return vld1q_s8_x3((const uint8_t*)ptr); }
+template <> [[gnu::always_inline]] inline int16x8x3_t load1_x3(int16_t const *ptr) { return vld1q_s16_x3((const uint16_t*)ptr); }
+#else
+template <> [[gnu::always_inline]] inline int8x16x3_t load1_x3(int8_t const *ptr) { return vld1q_s8_x3(ptr); }
 template <> [[gnu::always_inline]] inline int16x8x3_t load1_x3(int16_t const *ptr) { return vld1q_s16_x3(ptr); }
+#endif
+
 template <> [[gnu::always_inline]] inline int32x2x3_t load1_x3(int32_t const *ptr) { return vld1_s32_x3(ptr); }
 template <> [[gnu::always_inline]] inline int32x4x3_t load1_x3(int32_t const *ptr) { return vld1q_s32_x3(ptr); }
 template <> [[gnu::always_inline]] inline uint8x8x3_t load1_x3(uint8_t const *ptr) { return vld1_u8_x3(ptr); }
@@ -2110,9 +2118,16 @@ template <> [[gnu::always_inline]] inline uint64x1x3_t load1_x3(uint64_t const *
 template <> [[gnu::always_inline]] inline int64x2x3_t load1_x3(int64_t const *ptr) { return vld1q_s64_x3(ptr); }
 template <> [[gnu::always_inline]] inline uint64x2x3_t load1_x3(uint64_t const *ptr) { return vld1q_u64_x3(ptr); }
 template <> [[gnu::always_inline]] inline int8x8x4_t load1_x4(int8_t const *ptr) { return vld1_s8_x4(ptr); }
+
+#if defined(__GNUC__) && __GNUC__ == 14 && (__ARM_ARCH < 8)
+template <> [[gnu::always_inline]] inline int8x16x4_t load1_x4(int8_t const *ptr) { return vld1q_s8_x4((const uint8_t*)ptr); }
+template <> [[gnu::always_inline]] inline int16x8x4_t load1_x4(int16_t const *ptr) { return vld1q_s16_x4((const uint16_t*)ptr); }
+#else
 template <> [[gnu::always_inline]] inline int8x16x4_t load1_x4(int8_t const *ptr) { return vld1q_s8_x4(ptr); }
-template <> [[gnu::always_inline]] inline int16x4x4_t load1_x4(int16_t const *ptr) { return vld1_s16_x4(ptr); }
 template <> [[gnu::always_inline]] inline int16x8x4_t load1_x4(int16_t const *ptr) { return vld1q_s16_x4(ptr); }
+#endif
+
+template <> [[gnu::always_inline]] inline int16x4x4_t load1_x4(int16_t const *ptr) { return vld1_s16_x4(ptr); }
 template <> [[gnu::always_inline]] inline int32x2x4_t load1_x4(int32_t const *ptr) { return vld1_s32_x4(ptr); }
 template <> [[gnu::always_inline]] inline int32x4x4_t load1_x4(int32_t const *ptr) { return vld1q_s32_x4(ptr); }
 template <> [[gnu::always_inline]] inline uint8x8x4_t load1_x4(uint8_t const *ptr) { return vld1_u8_x4(ptr); }
@@ -2131,7 +2146,6 @@ template <> [[gnu::always_inline]] inline int64x1x4_t load1_x4(int64_t const *pt
 template <> [[gnu::always_inline]] inline uint64x1x4_t load1_x4(uint64_t const *ptr) { return vld1_u64_x4(ptr); }
 template <> [[gnu::always_inline]] inline int64x2x4_t load1_x4(int64_t const *ptr) { return vld1q_s64_x4(ptr); }
 template <> [[gnu::always_inline]] inline uint64x2x4_t load1_x4(uint64_t const *ptr) { return vld1q_u64_x4(ptr); }
-#endif
 [[gnu::always_inline]] inline void store1(int8_t *ptr, int8x8_t val) { return vst1_s8(ptr, val); }
 [[gnu::always_inline]] inline void store1(int16_t *ptr, int16x4_t val) { return vst1_s16(ptr, val); }
 [[gnu::always_inline]] inline void store1(int32_t *ptr, int32x2_t val) { return vst1_s32(ptr, val); }
@@ -5294,7 +5308,7 @@ constexpr platform target = platform::NEON;
 
 #endif
 
-#elifdef(__ARM_FEATURE_MVE)
+#elifdef __ARM_FEATURE_MVE
 namespace argon {
 constexpr platform target = platform::MVE;
 }
@@ -5466,7 +5480,7 @@ using NonVec_t = typename NonVec<T>::type;
 
 namespace simd {
 #if ARGON_HAS_DWORD
-template <typename type> struct Vec64 {};
+template <typename type> struct Vec64;
 template <> struct Vec64<int8_t> { using type = int8x8_t; };
 template <> struct Vec64<uint8_t> { using type = uint8x8_t; };
 template <> struct Vec64<int16_t> { using type = int16x4_t; };
@@ -9500,7 +9514,7 @@ nce auto shift_right(int8x8_t vec, const int i) {
 #endif
 
 namespace simd {
-template <typename type> struct Vec128 {};
+template <typename type> struct Vec128;
 template <> struct Vec128<int8_t>  {using type = int8x16_t; };
 template <> struct Vec128<uint8_t>  {using type = uint8x16_t; };
 template <> struct Vec128<int16_t>  {using type = int16x8_t; };
@@ -9802,181 +9816,6 @@ constexpr std::array<impl::ArgonFor_t<intrinsic_type>, N> to_array(intrinsic_typ
 }
 
 }  // namespace argon
-#pragma once
-#include <cstddef>
-#include <iterator>
-#include <ranges>
-#include <span>
-
-
-
-#ifdef __ARM_NEON
-#define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
-#define simd helium
-#endif
-#endif
-
-template <typename T>
-class Argon;
-
-namespace argon {
-template <typename scalar_type>
-struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
-  using intrinsic_type = simd::Vec128_t<scalar_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
-  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
-
- public:
-  struct Iterator {
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = Argon<scalar_type>;
-    using difference_type = std::ptrdiff_t;
-
-    Iterator() = default;
-    Iterator(scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)} {}
-
-    value_type& operator*() { return vec; }
-    value_type* operator->() { return &vec; }
-    const value_type& operator*() const { return vec; }
-    const value_type* operator->() const { return &vec; }
-    Iterator& operator++() {
-      vec.StoreTo(ptr);  // store before increment
-      ptr += lanes;
-      vec = value_type::Load(ptr);
-      return *this;
-    }
-    Iterator operator++(int) {
-      Iterator tmp = *this;
-      ++(*this);
-      return tmp;
-    }
-    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
-    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
-    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
-    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
-
-   private:
-    scalar_type* ptr = nullptr;
-    value_type vec;
-  };
-  static_assert(std::input_or_output_iterator<Iterator>);
-  struct ConstIterator {
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = Argon<scalar_type>;
-    using difference_type = std::ptrdiff_t;
-
-    ConstIterator() = default;
-    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)}{}
-
-    const value_type operator*() const { return vec; }
-    ConstIterator& operator++() {
-      ptr += lanes;
-	  vec = value_type::Load(ptr);
-      return *this;
-    }
-    ConstIterator operator++(int) {
-      ConstIterator tmp = *this;
-      ++(*this);
-      return tmp;
-    }
-    friend bool operator==(const ConstIterator& a, const ConstIterator& b) { return a.ptr == b.ptr; }
-    friend bool operator!=(const ConstIterator& a, const ConstIterator& b) { return a.ptr != b.ptr; }
-
-   private:
-    const scalar_type* ptr = nullptr;
-	value_type vec;
-  };
-  static_assert(std::input_iterator<ConstIterator>);
-
-  using iterator = Iterator;
-  using const_iterator = ConstIterator;
-
-  vectorize(scalar_type* start, size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
-  vectorize(const std::span<scalar_type> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
-  vectorize(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
-
-  iterator begin() const { return Iterator(start_); }
-  scalar_type* end() const { return start_ + size_; }
-  const_iterator cbegin() const { return ConstIterator(start_); }
-  const scalar_type* cend() const { return start_ + size_; }
-  size_t size() const { return size_; }
-
- private:
-  scalar_type* start_;
-  size_t size_;
-};
-
-namespace vectorize_loop {
-
-template <typename intrinsic_type>
-class main {
-  using scalar_type = simd::NonVec_t<intrinsic_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
-  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
-
- public:
-  struct Iterator {
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = simd::NonVec_t<intrinsic_type>;
-    using difference_type = std::ptrdiff_t;
-
-    value_type& operator*() const { return *ptr; }
-    value_type* operator->() { return ptr; }
-    Iterator& operator++() {
-      ptr += lanes;
-      return *this;
-    }
-    Iterator operator++(int) {
-      Iterator tmp = *this;
-      ++(*this);
-      return tmp;
-    }
-    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
-
-   private:
-    value_type* ptr;
-  };
-  static_assert(std::forward_iterator<Iterator>);
-
-  using iterator = Iterator;
-  using const_iterator = const Iterator;
-
-  main(scalar_type* start, size_t size) : store{start, vectorizeable_size(size)} {};
-  main(const std::span<scalar_type> span) : store{span.begin(), vectorizeable_size(span.size())} {};
-  main(scalar_type* start, scalar_type* end) : store{start, vectorizeable_size(end - start)} {};
-
-  iterator begin() { return store.begin(); }
-  const_iterator begin() const { return store.cbegin(); }
-  iterator end() { return store.end(); }
-  const_iterator end() const { return store.cend(); }
-  size_t size() const { return store.size(); }
-
- private:
-  std::span<scalar_type> store;
-};
-
-template <typename intrinsic_type>
-struct tail : std::span<simd::NonVec_t<intrinsic_type>> {
-  using value_type = simd::NonVec_t<intrinsic_type>;
-
- private:
-  using super = std::span<value_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(value_type);
-  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
-  static constexpr size_t tail_size(size_t size) { return size & (lanes - 1); }
-
- public:
-  tail(value_type* start, size_t size) : super{start + vectorizeable_size(size), tail_size(size)} {}
-  tail(const std::span<value_type> span)
-      : super{span.begin() + vectorizeable_size(span.size()), tail_size(span.size())} {}
-  tail(value_type* start, value_type* end) : super{start + vectorizeable_size(end - start), tail_size(end - start)} {}
-};
-
-}  // namespace vectorize_loop
-}  // namespace argon
-#undef simd
 
 
 #ifdef __ARM_NEON
@@ -10016,41 +9855,11 @@ class Common {
 
   constexpr Common() : vec_{0} {};
   constexpr Common(vector_type vector) : vec_{vector} {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
-
-  struct vectorize_loop {
-    static constexpr size_t step = lanes;
-    static constexpr size_t main_size(size_t size) { return size & ~(lanes - 1); }
-    static constexpr size_t tail_start(size_t size) { return size & ~(lanes - 1); }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::main<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::main<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::main<vector_type>{start, size};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::tail<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, size};
-    }
-  };
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
   ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 
@@ -10077,6 +9886,26 @@ class Common {
     return simd::duplicate_lane(lane.vec(), lane.lane());
   }
 #endif
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type()>>
+  ace static argon_type Generate(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body();
+    }
+    return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
+  ace static argon_type GenerateWithIndex(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body(i);
+    }
+    return out;
+  }
 
   ace argon_type operator-() const { return Negate(); }
 
@@ -10116,6 +9945,7 @@ class Common {
   ace vector_type vec() const { return vec_; }
 
   ace scalar_type GetLane(const int i) { return simd::get_lane(vec_, i); }
+  ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
   ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
@@ -10366,16 +10196,22 @@ class Common {
 
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
-    std::array<argon_type, n> out;
-#pragma unroll
-    for (size_t i = 0; i < n; ++i) {
-      out[i] = Load(ptr);
-      ptr += lanes;
+    static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
+    using multivec_type = MultiVec_t<vector_type, n>;
+    using array_type = std::array<argon_type, n>;
+
+    if constexpr (n == 2) {
+      return argon::to_array(simd::load1_x2(ptr).val);
+    } else if constexpr (n == 3) {
+      return argon::to_array(simd::load1_x3(ptr).val);
+    } else if constexpr (n == 4) {
+      return argon::to_array(simd::load1_x4(ptr).val);
     }
-    return out;
   }
 
-  ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
+  ace void StoreTo(scalar_type* ptr) const {
+    simd::store1(ptr, vec_);
+  }
 
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {
@@ -10419,36 +10255,16 @@ class Common {
   ace argon_type Reverse16bit() const { return simd::reverse_16bit(vec_); }
 
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::zip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
   std::array<argon_type, 2> UnzipWith(argon_type b) {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::unzip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
-  std::array<argon_type, 2> TransposeWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::transpose(vec_, b).val;
+  std::tuple<argon_type, argon_type> TransposeWith(argon_type b) const {
+    auto result = simd::transpose(vec_, b.vec());
+    return std::tuple<argon_type, argon_type>(result.val[0], result.val[1]);
   }
 
   ace static int size() { return lanes; }
@@ -10702,6 +10518,12 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, ArgonHalf<U> c) {
     return simd::multiply_add_long(this->vec_, b, c);
   }
+  template <typename U, typename C>
+    requires argon::impl::has_smaller_v<scalar_type> &&
+             std::is_same_v<C, simd::Vec64_t<argon::impl::NextSmaller_t<scalar_type>>>
+  ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, C c) {
+    return simd::multiply_add_long(this->vec_, b, c);
+  }
 
   template <typename U>
     requires argon::impl::has_smaller_v<scalar_type> &&
@@ -10738,70 +10560,80 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     return simd::multiply_subtract_long(this->vec_, b, c.vec(), c.lane());
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> AddNarrow(Argon<scalar_type> b) const
+  ace auto AddNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::add_narrow(this->vec_, b);
+    auto result = simd::add_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> AddRoundNarrow(Argon<scalar_type> b) const
+  ace auto AddRoundNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::add_round_narrow(this->vec_, b);
+    auto result = simd::add_round_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SubtractNarrow(Argon<scalar_type> b) const
+  ace auto SubtractNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::subtract_narrow(this->vec_, b);
+    auto result = simd::subtract_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SubtractRoundNarrow(Argon<scalar_type> b) const
+  ace auto SubtractRoundNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::subtract_round_narrow(this->vec_, b);
+    auto result = simd::subtract_round_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightNarrow() const {
-    return simd::shift_right_narrow<n>(this->vec_);
+  ace auto ShiftRightNarrow() const {
+    auto result = simd::shift_right_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightSaturateNarrow() const {
-    return simd::shift_right_saturate_narrow<n>(this->vec_);
+  ace auto ShiftRightSaturateNarrow() const {
+    auto result = simd::shift_right_saturate_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightRoundSaturateNarrow() const {
-    return simd::shift_right_round_saturate_narrow<n>(this->vec_);
+  ace auto ShiftRightRoundSaturateNarrow() const {
+    auto result = simd::shift_right_round_saturate_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightRoundNarrow() const {
-    return simd::shift_right_round_narrow<n>(this->vec_);
+  ace auto ShiftRightRoundNarrow() const {
+    auto result = simd::shift_right_round_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> Narrow() const
+  ace auto Narrow() const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::move_narrow(this->vec_);
+    auto result = simd::move_narrow(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SaturateNarrow() const
+  ace auto SaturateNarrow() const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::move_saturate_narrow(this->vec_);
+    auto result = simd::move_saturate_narrow(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace Argon<scalar_type> MultiplyDoubleAddSaturateLong(ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> b,
-                                                       ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> c)
-    requires argon::impl::has_smaller_v<scalar_type>
-  {
+  template <typename NextSmallerType>
+    requires argon::impl::has_smaller_v<scalar_type> &&
+             std::is_same_v<NextSmallerType, argon::impl::NextSmaller_t<scalar_type>>
+  ace Argon<scalar_type> MultiplyDoubleAddSaturateLong(ArgonHalf<NextSmallerType> b, ArgonHalf<NextSmallerType> c) {
     return neon::multiply_double_add_saturate_long(this->vec_, b, c);
   }
 
@@ -10824,12 +10656,17 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     }
   }
 
+  ace Argon<scalar_type> Reverse() const {
+    Argon<scalar_type> rev = this->Reverse64bit();  // rev within dword
+    return Argon{rev.GetHigh(), rev.GetLow()};      // swap dwords
+  }
+
   scalar_type ReduceAdd() {
 #ifdef __aarch64__
     return simd::reduce_add(this->vec_);
 #else
-    auto rev = SwapDoublewords();
-    auto sum = Add(rev);
+    auto rev = this->SwapDoublewords();
+    auto sum = this->Add(rev);
     if constexpr (lanes == 16) {
       rev = sum.Reverse16bit();
       sum = sum.Add(rev);
@@ -10852,6 +10689,10 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
 template <typename... arg_types>
   requires(sizeof...(arg_types) > 1)
 Argon(arg_types...) -> Argon<std::tuple_element_t<0, std::tuple<arg_types...>>>;
+
+template <typename ScalarType>
+requires std::is_scalar_v<ScalarType>
+Argon(ScalarType) -> Argon<ScalarType>;
 
 template <typename V>
   requires std::is_scalar_v<V>
@@ -11065,6 +10906,10 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   }
 
   ace Argon<scalar_type> CombineWith(ArgonHalf<scalar_type> high) const { return neon::combine(this->vec_, high); }
+
+  ace ArgonHalf<scalar_type> Reverse() const {
+    return this->Reverse64bit();
+  }
 };
 
 template <class... arg_types>
@@ -11110,6 +10955,13 @@ struct tuple_element<Index, ArgonHalf<T>> {
 #undef ace
 
 
+#pragma once
+#include <array>
+#include <cstddef>
+#include <type_traits>
+
+
+
 
 #ifdef __ARM_NEON
 #define simd neon
@@ -11124,51 +10976,7 @@ struct tuple_element<Index, ArgonHalf<T>> {
 #else
 #define ace [[gnu::always_inline]] inline
 #endif
-
 namespace argon {
-
-template <typename T, typename V>
-ace auto reinterpret(impl::Common<V> in) {
-  if constexpr (simd::is_quadword_v<V>) {
-    return Argon<T>{simd::reinterpret<typename Argon<T>::vector_type>(in.vec())};
-  } else if constexpr (simd::is_doubleword_v<V>) {
-    return ArgonHalf<T>{simd::reinterpret<typename ArgonHalf<T>::vector_type>(in.vec())};
-  }
-}
-
-template <typename argon_type, simd::is_vector_type V>
-ace argon_type reinterpret(V in) {
-  static_assert(!std::is_same_v<typename argon_type::vector_type, V>);
-  return argon_type{simd::reinterpret<typename argon_type::vector_type>(in)};
-}
-
-template <size_t lane, size_t stride, typename argon_type>
-ace static std::array<argon_type, stride> load_interleaved_to_lane(
-    impl::MultiVec_t<typename argon_type::vector_type, stride> multi,
-    typename argon_type::scalar_type const* ptr) {
-  return argon_type::load_interleaved_to_lane(multi, ptr);
-}
-
-template <size_t lane, size_t stride, typename argon_type>
-ace static std::array<argon_type, stride> load_interleaved_to_lane(std::array<argon_type, stride> multi,
-                                                                   typename argon_type::scalar_type const* ptr) {
-  return argon_type::load_interleaved_to_lane(multi, ptr);
-}
-
-template <size_t stride, typename scalar_type, typename argon_type>
-ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
-  using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
-  using array_type = std::array<argon_type, stride>;
-
-  static_assert(std::is_standard_layout_v<array_type>);
-  static_assert(std::is_trivial_v<array_type>);
-  static_assert(sizeof(multivec_type) == sizeof(array_type),
-                "std::array isn't layout-compatible with this NEON multi-vector.");
-
-  store_interleaved<stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
-}
-
 template <size_t stride, typename scalar_type, typename intrinsic_type>
 ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
@@ -11179,6 +10987,25 @@ ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, st
   } else if constexpr (stride == 4) {
     simd::store4(ptr, multi_vec);
   }
+}
+
+template <size_t stride, typename scalar_type, typename argon_type>
+ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
+  using intrinsic_type = typename argon_type::vector_type;
+  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
+  using array_type = std::array<argon_type, stride>;
+
+  static_assert(std::is_standard_layout_v<array_type>);
+  static_assert(sizeof(multivec_type) == sizeof(array_type),
+                "std::array isn't layout-compatible with this NEON multi-vector.");
+
+  store_interleaved<stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
+}
+
+template <size_t stride, typename scalar_type, typename... argon_types>
+ace void store_interleaved(scalar_type* ptr, argon_types... vecs) {
+  store_interleaved<sizeof...(argon_types)>(
+      ptr, std::array<std::common_type_t<argon_types...>, sizeof...(vecs)>{std::forward<argon_types>(vecs)...});
 }
 
 template <typename scalar_type, typename argon_type>
@@ -11273,6 +11100,392 @@ ace void store_lane_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_typ
     simd::store4_lane<lane>(ptr, multi_vec);
   }
 }
+}  // namespace argon
+#undef ace
+#undef simd
+#pragma once
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
+#include <memory>
+#include <ranges>
+#include <span>
+
+
+
+
+
+#ifdef __ARM_NEON
+#define simd neon
+#else
+#ifdef __ARM_FEATURE_MVE
+#define simd helium
+#endif
+#endif
+
+template <typename scalar_type>
+struct ArgonPtr {
+  using intrinsic_type = simd::Vec128_t<scalar_type>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
+  using difference_type = std::ptrdiff_t;
+  using value_type = Argon<scalar_type>;
+  using pointer = Argon<scalar_type>*;
+
+  ArgonPtr(scalar_type* ptr) : ptr_{ptr}, vec_{Argon<scalar_type>::Load(ptr_)} {}
+  ArgonPtr(const ArgonPtr&) = default;
+  ArgonPtr& operator=(const ArgonPtr&) = default;
+  ArgonPtr(ArgonPtr&&) = default;
+
+  ~ArgonPtr() {
+    if (dirty_) {
+      vec_.StoreTo(ptr_);
+    }
+  }
+
+  pointer operator->() {
+    dirty_ = true;
+    return &vec_;
+  }
+
+  value_type& operator*() {
+    dirty_ = true;
+    return vec_;
+  }
+
+  const value_type& operator*() const { return vec_; }
+  const pointer operator->() const { return &vec_; }
+
+  void store() { vec_.StoreTo(ptr_); }
+  void reload() { vec_ = value_type::Load(ptr_); }
+
+  friend bool operator==(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ == b.ptr_; }
+  friend bool operator==(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ == ptr; }
+  friend bool operator!=(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ != b.ptr_; }
+  friend bool operator!=(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ != ptr; }
+
+ private:
+  scalar_type* ptr_;
+  value_type vec_;
+  bool dirty_ = false;
+};
+
+namespace argon {
+
+template <typename scalar_type>
+struct vectorize_ptr : std::ranges::view_interface<vectorize_ptr<scalar_type>> {
+  using intrinsic_type = simd::Vec128_t<scalar_type>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
+ public:
+  struct Iterator {
+    using difference_type = std::ptrdiff_t;
+    using value_type = ArgonPtr<scalar_type>;
+
+    Iterator(scalar_type* ptr) : ptr{ptr} {}
+
+    value_type operator*() const { return value_type{ptr}; }
+
+    Iterator& operator++() {
+      ptr += lanes;
+      return *this;
+    }
+
+    void operator++(int) { ++*this; }
+    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
+    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
+    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
+    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
+
+   private:
+    scalar_type* ptr = nullptr;
+  };
+  static_assert(std::input_iterator<Iterator>);
+
+  using iterator = Iterator;
+
+  iterator begin() { return start_; }
+  scalar_type* end() { return start_ + size_; }
+  size_t size() const { return size_ / lanes; }
+
+  template <std::ranges::contiguous_range R>
+  vectorize_ptr(R&& r) : start_{std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+
+ private:
+  scalar_type* start_;
+  size_t size_;
+};
+template <std::ranges::contiguous_range R>
+vectorize_ptr(R&& r) -> vectorize_ptr<std::ranges::range_value_t<R>>;
+
+static_assert(std::ranges::range<vectorize_ptr<int32_t>>);
+static_assert(std::ranges::view<vectorize_ptr<int32_t>>);
+static_assert(std::movable<vectorize_ptr<int32_t>>);
+static_assert(std::ranges::viewable_range<vectorize_ptr<int32_t>>);
+
+template <typename scalar_type>
+struct vectorize : public std::ranges::view_interface<vectorize<scalar_type>> {
+  using intrinsic_type = simd::Vec128_t<scalar_type>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
+ public:
+  struct Iterator {
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = Argon<scalar_type>;
+    using difference_type = std::ptrdiff_t;
+
+    Iterator() = default;
+    Iterator(scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)} {}
+
+    value_type& operator*() { return vec; }
+    value_type* operator->() { return &vec; }
+    const value_type& operator*() const { return vec; }
+    const value_type* operator->() const { return &vec; }
+    Iterator& operator++() {
+      vec.StoreTo(ptr);  // store before increment
+      ptr += lanes;
+      vec = value_type::Load(ptr);
+      return *this;
+    }
+    void operator++(int) { ++(*this); }
+    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
+    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
+    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
+    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
+
+   private:
+    scalar_type* ptr = nullptr;
+    value_type vec;
+  };
+  static_assert(std::input_or_output_iterator<Iterator>);
+
+  struct ConstIterator {
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = Argon<scalar_type>;
+    using difference_type = std::ptrdiff_t;
+
+    ConstIterator() = default;
+    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{value_type::Load(ptr)} {}
+
+    const value_type operator*() const { return vec; }
+    ConstIterator& operator++() {
+      ptr += lanes;
+      vec = value_type::Load(ptr);
+      return *this;
+    }
+    ConstIterator operator++(int) {
+      ConstIterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+    friend bool operator==(const ConstIterator& a, const ConstIterator& b) { return a.ptr == b.ptr; }
+    friend bool operator!=(const ConstIterator& a, const ConstIterator& b) { return a.ptr != b.ptr; }
+
+   private:
+    const scalar_type* ptr = nullptr;
+    value_type vec;
+  };
+  static_assert(std::input_iterator<ConstIterator>);
+
+  using iterator = Iterator;
+  using const_iterator = ConstIterator;
+
+  vectorize(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
+  vectorize(scalar_type* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
+  vectorize(std::span<scalar_type> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
+
+  template <std::ranges::contiguous_range R>
+  vectorize(R&& r) : start_{std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+
+  vectorize(vectorize&&) = default;
+  vectorize(const vectorize&) = default;
+  vectorize& operator=(vectorize&&) = default;
+  vectorize& operator=(const vectorize&) = default;
+
+  iterator begin() const { return Iterator(start_); }
+  scalar_type* end() const { return start_ + size_; }
+  const_iterator cbegin() const { return ConstIterator(start_); }
+  const scalar_type* cend() const { return start_ + size_; }
+  size_t size() const { return size_; }
+
+ private:
+  scalar_type* start_;
+  size_t size_;
+};
+
+template <std::ranges::contiguous_range R>
+vectorize(R&& r) -> vectorize<std::ranges::range_value_t<R>>;
+
+static_assert(std::ranges::range<vectorize<int32_t>>);
+static_assert(std::ranges::view<vectorize<int32_t>>);
+static_assert(std::movable<vectorize<int32_t>>);
+static_assert(std::ranges::viewable_range<vectorize<int32_t>>);
+
+template <size_t stride, typename scalar_type>
+struct vectorize_interleaved : public std::ranges::view_interface<vectorize<scalar_type>> {
+  using intrinsic_type = simd::Vec128_t<scalar_type>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
+ public:
+  struct Iterator {
+    using iterator_category = std::forward_iterator_tag;
+    using argon_type = Argon<scalar_type>;
+    using value_type = std::array<argon_type, stride>;
+    using difference_type = std::ptrdiff_t;
+
+    Iterator() = default;
+    Iterator(scalar_type* ptr) : ptr{ptr}, vec{argon_type::template LoadInterleaved<stride>(ptr)} {}
+
+    value_type& operator*() { return vec; }
+    value_type* operator->() { return &vec; }
+    const value_type& operator*() const { return vec; }
+    const value_type* operator->() const { return &vec; }
+    Iterator& operator++() {
+      argon::store_interleaved(ptr, vec);  // store before increment
+      ptr += lanes;
+      vec = argon_type::template LoadInterleaved<stride>(ptr);
+      return *this;
+    }
+    Iterator operator++(int) {
+      Iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
+    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
+    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
+    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
+
+   private:
+    scalar_type* ptr = nullptr;
+    value_type vec;
+  };
+  static_assert(std::input_or_output_iterator<Iterator>);
+  struct ConstIterator {
+    using iterator_category = std::forward_iterator_tag;
+    using argon_type = Argon<scalar_type>;
+    using value_type = std::array<argon_type, stride>;
+    using difference_type = std::ptrdiff_t;
+
+    ConstIterator() = default;
+    ConstIterator(const scalar_type* ptr) : ptr{ptr}, vec{argon_type::template LoadInterleaved<stride>(ptr)} {}
+
+    const value_type operator*() const { return vec; }
+    ConstIterator& operator++() {
+      ptr += lanes;
+      vec = argon_type::template LoadInterleaved<stride>(ptr);
+      return *this;
+    }
+    ConstIterator operator++(int) {
+      ConstIterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+    friend bool operator==(const ConstIterator& a, const ConstIterator& b) { return a.ptr == b.ptr; }
+    friend bool operator!=(const ConstIterator& a, const ConstIterator& b) { return a.ptr != b.ptr; }
+
+   private:
+    const scalar_type* ptr = nullptr;
+    value_type vec;
+  };
+  static_assert(std::input_iterator<ConstIterator>);
+
+  using iterator = Iterator;
+  using const_iterator = ConstIterator;
+
+  vectorize_interleaved(scalar_type* start, scalar_type* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
+  vectorize_interleaved(scalar_type* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
+  vectorize_interleaved(const std::span<scalar_type> span)
+      : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
+
+  template <size_t, std::ranges::contiguous_range R>
+  vectorize_interleaved(R&& r) : start_{std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+
+  iterator begin() const { return Iterator(start_); }
+  const scalar_type* end() const { return start_ + size_; }
+  const_iterator cbegin() const { return ConstIterator(start_); }
+  const scalar_type* cend() const { return start_ + size_; }
+  size_t size() const { return size_; }
+
+ private:
+  scalar_type* start_;
+  size_t size_;
+};
+
+template <size_t stride, std::ranges::contiguous_range R>
+vectorize_interleaved(R&& r) -> vectorize_interleaved<stride, std::ranges::range_value_t<R>>;
+
+static_assert(std::ranges::range<vectorize_interleaved<3, int32_t>>);
+static_assert(std::ranges::view<vectorize_interleaved<3, int32_t>>);
+static_assert(std::movable<vectorize_interleaved<3, int32_t>>);
+static_assert(std::ranges::viewable_range<vectorize_interleaved<3, int32_t>>);
+
+namespace split {
+
+template <typename scalar_type>
+std::pair<std::span<scalar_type>, std::span<scalar_type>> head_aligned(std::span<scalar_type> span) {
+  constexpr size_t lanes = sizeof(simd::Vec128_t<scalar_type>) / sizeof(scalar_type);
+  return {span.first(span.size() & ~(lanes - 1)), span.last(span.size() & (lanes - 1))};
+}
+
+template <typename scalar_type>
+std::pair<std::span<scalar_type>, std::span<scalar_type>> tail_aligned(std::span<scalar_type> span) {
+  constexpr size_t lanes = sizeof(simd::Vec128_t<scalar_type>) / sizeof(scalar_type);
+  return {span.first(span.size() & (lanes - 1)), span.last(span.size() & ~(lanes - 1))};
+}
+
+}  // namespace split
+}  // namespace argon
+#undef simd
+
+
+#ifdef __ARM_NEON
+#define simd neon
+#else
+#ifdef __ARM_FEATURE_MVE
+#define simd helium
+#endif
+#endif
+
+#ifdef __clang__
+#define ace [[gnu::always_inline]] constexpr
+#else
+#define ace [[gnu::always_inline]] inline
+#endif
+
+namespace argon {
+
+template <typename T, typename V>
+ace auto reinterpret(impl::Common<V> in) {
+  if constexpr (simd::is_quadword_v<V>) {
+    return Argon<T>{simd::reinterpret<typename Argon<T>::vector_type>(in.vec())};
+  } else if constexpr (simd::is_doubleword_v<V>) {
+    return ArgonHalf<T>{simd::reinterpret<typename ArgonHalf<T>::vector_type>(in.vec())};
+  }
+}
+
+template <typename argon_type, simd::is_vector_type V>
+ace argon_type reinterpret(V in) {
+  static_assert(!std::is_same_v<typename argon_type::vector_type, V>);
+  return argon_type{simd::reinterpret<typename argon_type::vector_type>(in)};
+}
+
+template <size_t lane, size_t stride, typename argon_type>
+ace static std::array<argon_type, stride> load_interleaved_to_lane(
+    impl::MultiVec_t<typename argon_type::vector_type, stride> multi,
+    typename argon_type::scalar_type const* ptr) {
+  return argon_type::load_interleaved_to_lane(multi, ptr);
+}
+
+template <size_t lane, size_t stride, typename argon_type>
+ace static std::array<argon_type, stride> load_interleaved_to_lane(std::array<argon_type, stride> multi,
+                                                                   typename argon_type::scalar_type const* ptr) {
+  return argon_type::load_interleaved_to_lane(multi, ptr);
+}
 
 template <typename argon_type>
 ace std::array<argon_type, 2> zip(argon_type a, argon_type b) {
@@ -11292,6 +11505,24 @@ ace std::array<argon_type, 2> transpose(argon_type a, argon_type b) {
 template <typename T>
 ace Argon<T> combine(ArgonHalf<T> low, ArgonHalf<T> high) {
   return simd::combine(low, high);
+}
+
+template <typename T>
+ace Argon<T> load(const T* ptr) {
+  return Argon<T>::Load(ptr);
+}
+
+template <typename T>
+ace Argon<T> load_half(const T* ptr) {
+  return ArgonHalf<T>::Load(ptr);
+}
+
+template <typename CondType, typename ArgonType>
+  requires std::is_same_v<CondType, typename ArgonType::argon_result_type>
+ace ArgonType ternary(CondType condition, ArgonType true_value, ArgonType false_value) {
+  return ((condition & true_value.template As<typename CondType::scalar_type>()) |
+          (~condition & false_value.template As<typename CondType::scalar_type>()))
+      .template As<typename ArgonType::scalar_type>();
 }
 
 }  // namespace argon
