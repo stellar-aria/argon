@@ -13,7 +13,6 @@
 #include "helpers/multivec.hpp"
 #include "helpers/result.hpp"
 #include "helpers/to_array.hpp"
-#include "vectorize.hpp"
 
 
 #ifdef __ARM_NEON
@@ -53,43 +52,13 @@ class Common {
 
   constexpr Common() : vec_{0} {};
   constexpr Common(vector_type vector) : vec_{vector} {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)){};
+  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
   // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)){};
-
-  struct vectorize_loop {
-    static constexpr size_t step = lanes;
-    static constexpr size_t main_size(size_t size) { return size & ~(lanes - 1); }
-    static constexpr size_t tail_start(size_t size) { return size & ~(lanes - 1); }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::main<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::main<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::main<vector_type> main(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::main<vector_type>{start, size};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, scalar_type* end) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, end};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(std::span<scalar_type> span) {
-      return ::argon::vectorize_loop::tail<vector_type>{span};
-    }
-
-    static constexpr ::argon::vectorize_loop::tail<vector_type> tail(scalar_type* start, size_t size) {
-      return ::argon::vectorize_loop::tail<vector_type>{start, size};
-    }
-  };
+  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
   ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 
@@ -116,6 +85,26 @@ class Common {
     return simd::duplicate_lane(lane.vec(), lane.lane());
   }
 #endif
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type()>>
+  ace static argon_type Generate(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body();
+    }
+    return out;
+  }
+
+  template <typename FuncType>
+    requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
+  ace static argon_type GenerateWithIndex(FuncType body) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = body(i);
+    }
+    return out;
+  }
 
   ace argon_type operator-() const { return Negate(); }
 
@@ -155,6 +144,7 @@ class Common {
   ace vector_type vec() const { return vec_; }
 
   ace scalar_type GetLane(const int i) { return simd::get_lane(vec_, i); }
+  ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
   ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
@@ -450,16 +440,22 @@ class Common {
    */
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
-    std::array<argon_type, n> out;
-#pragma unroll
-    for (size_t i = 0; i < n; ++i) {
-      out[i] = Load(ptr);
-      ptr += lanes;
+    static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
+    using multivec_type = MultiVec_t<vector_type, n>;
+    using array_type = std::array<argon_type, n>;
+
+    if constexpr (n == 2) {
+      return argon::to_array(simd::load1_x2(ptr).val);
+    } else if constexpr (n == 3) {
+      return argon::to_array(simd::load1_x3(ptr).val);
+    } else if constexpr (n == 4) {
+      return argon::to_array(simd::load1_x4(ptr).val);
     }
-    return out;
   }
 
-  ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
+  ace void StoreTo(scalar_type* ptr) const {
+    simd::store1(ptr, vec_);
+  }
 
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {
@@ -509,42 +505,16 @@ class Common {
   ace argon_type Reverse16bit() const { return simd::reverse_16bit(vec_); }
 
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::zip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
   std::array<argon_type, 2> UnzipWith(argon_type b) {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::unzip(vec_, b).val;
+    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
-  std::array<argon_type, 2> TransposeWith(argon_type b) const {
-    using multivec_type = MultiVec<vector_type, 2>::type;
-    using array_type = std::array<argon_type, 2>;
-
-    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-    // the validity and POD-ness of std::array needs to be verified
-    static_assert(std::is_standard_layout_v<array_type>);
-    static_assert(sizeof(multivec_type) == sizeof(array_type),
-                  "std::array isn't layout-compatible with this NEON multi-vector.");
-
-    return *(array_type*)&simd::transpose(vec_, b).val;
+  std::tuple<argon_type, argon_type> TransposeWith(argon_type b) const {
+    auto result = simd::transpose(vec_, b.vec());
+    return std::tuple<argon_type, argon_type>(result.val[0], result.val[1]);
   }
 
   ace static int size() { return lanes; }

@@ -14,7 +14,7 @@
 namespace simd {
 // clang-format off
 #if ARGON_HAS_DWORD
-template <typename type> struct Vec64 {};
+template <typename type> struct Vec64;
 template <> struct Vec64<int8_t> { using type = int8x8_t; };
 template <> struct Vec64<uint8_t> { using type = uint8x8_t; };
 template <> struct Vec64<int16_t> { using type = int16x4_t; };

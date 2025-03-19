@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+#include <type_traits>
 #include "arm_simd.hpp"
 #include "common.hpp"
 #include "helpers.hpp"
@@ -66,6 +68,12 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, ArgonHalf<U> c) {
     return simd::multiply_add_long(this->vec_, b, c);
   }
+  template <typename U, typename C>
+    requires argon::impl::has_smaller_v<scalar_type> &&
+             std::is_same_v<C, simd::Vec64_t<argon::impl::NextSmaller_t<scalar_type>>>
+  ace Argon<scalar_type> MultiplyAddLong(ArgonHalf<U> b, C c) {
+    return simd::multiply_add_long(this->vec_, b, c);
+  }
 
   template <typename U>
     requires argon::impl::has_smaller_v<scalar_type> &&
@@ -102,70 +110,80 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     return simd::multiply_subtract_long(this->vec_, b, c.vec(), c.lane());
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> AddNarrow(Argon<scalar_type> b) const
+  ace auto AddNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::add_narrow(this->vec_, b);
+    auto result = simd::add_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> AddRoundNarrow(Argon<scalar_type> b) const
+  ace auto AddRoundNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::add_round_narrow(this->vec_, b);
+    auto result = simd::add_round_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SubtractNarrow(Argon<scalar_type> b) const
+  ace auto SubtractNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::subtract_narrow(this->vec_, b);
+    auto result = simd::subtract_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SubtractRoundNarrow(Argon<scalar_type> b) const
+  ace auto SubtractRoundNarrow(Argon<scalar_type> b) const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::subtract_round_narrow(this->vec_, b);
+    auto result = simd::subtract_round_narrow(this->vec_, b);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightNarrow() const {
-    return simd::shift_right_narrow<n>(this->vec_);
+  ace auto ShiftRightNarrow() const {
+    auto result = simd::shift_right_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightSaturateNarrow() const {
-    return simd::shift_right_saturate_narrow<n>(this->vec_);
+  ace auto ShiftRightSaturateNarrow() const {
+    auto result = simd::shift_right_saturate_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightRoundSaturateNarrow() const {
-    return simd::shift_right_round_saturate_narrow<n>(this->vec_);
+  ace auto ShiftRightRoundSaturateNarrow() const {
+    auto result = simd::shift_right_round_saturate_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
   template <size_t n>
     requires argon::impl::has_smaller_v<scalar_type>
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> ShiftRightRoundNarrow() const {
-    return simd::shift_right_round_narrow<n>(this->vec_);
+  ace auto ShiftRightRoundNarrow() const {
+    auto result = simd::shift_right_round_narrow<n>(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> Narrow() const
+  ace auto Narrow() const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::move_narrow(this->vec_);
+    auto result = simd::move_narrow(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> SaturateNarrow() const
+  ace auto SaturateNarrow() const
     requires argon::impl::has_smaller_v<scalar_type>
   {
-    return simd::move_saturate_narrow(this->vec_);
+    auto result = simd::move_saturate_narrow(this->vec_);
+    return argon::impl::ArgonFor_t<decltype(result)>{result};
   }
 
-  ace Argon<scalar_type> MultiplyDoubleAddSaturateLong(ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> b,
-                                                       ArgonHalf<argon::impl::NextSmaller_t<scalar_type>> c)
-    requires argon::impl::has_smaller_v<scalar_type>
-  {
+  template <typename NextSmallerType>
+    requires argon::impl::has_smaller_v<scalar_type> &&
+             std::is_same_v<NextSmallerType, argon::impl::NextSmaller_t<scalar_type>>
+  ace Argon<scalar_type> MultiplyDoubleAddSaturateLong(ArgonHalf<NextSmallerType> b, ArgonHalf<NextSmallerType> c) {
     return neon::multiply_double_add_saturate_long(this->vec_, b, c);
   }
 
@@ -188,12 +206,17 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     }
   }
 
+  ace Argon<scalar_type> Reverse() const {
+    Argon<scalar_type> rev = this->Reverse64bit();  // rev within dword
+    return Argon{rev.GetHigh(), rev.GetLow()};      // swap dwords
+  }
+
   scalar_type ReduceAdd() {
 #ifdef __aarch64__
     return simd::reduce_add(this->vec_);
 #else
-    auto rev = SwapDoublewords();
-    auto sum = Add(rev);
+    auto rev = this->SwapDoublewords();
+    auto sum = this->Add(rev);
     if constexpr (lanes == 16) {
       rev = sum.Reverse16bit();
       sum = sum.Add(rev);
@@ -215,8 +238,12 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
 
 template <typename... arg_types>
   requires(sizeof...(arg_types) > 1)
-// Argon(arg_types...) -> Argon<arg_types...[0]>;
+//Argon(arg_types...) -> Argon<arg_types...[0]>;
 Argon(arg_types...) -> Argon<std::tuple_element_t<0, std::tuple<arg_types...>>>;
+
+template <typename ScalarType>
+requires std::is_scalar_v<ScalarType>
+Argon(ScalarType) -> Argon<ScalarType>;
 
 template <typename V>
   requires std::is_scalar_v<V>

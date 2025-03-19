@@ -172,6 +172,10 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   }
 
   ace Argon<scalar_type> CombineWith(ArgonHalf<scalar_type> high) const { return neon::combine(this->vec_, high); }
+
+  ace ArgonHalf<scalar_type> Reverse() const {
+    return this->Reverse64bit();
+  }
 };
 
 template <class... arg_types>

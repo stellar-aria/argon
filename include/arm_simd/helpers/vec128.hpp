@@ -14,7 +14,7 @@
 
 namespace simd {
 // clang-format off
-template <typename type> struct Vec128 {};
+template <typename type> struct Vec128;
 template <> struct Vec128<int8_t>  {using type = int8x16_t; };
 template <> struct Vec128<uint8_t>  {using type = uint8x16_t; };
 template <> struct Vec128<int16_t>  {using type = int16x8_t; };
