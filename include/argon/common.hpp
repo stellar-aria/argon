@@ -14,7 +14,6 @@
 #include "helpers/result.hpp"
 #include "helpers/to_array.hpp"
 
-
 #ifdef __ARM_NEON
 #define simd neon
 #else
@@ -143,7 +142,7 @@ class Common {
 
   ace vector_type vec() const { return vec_; }
 
-  ace scalar_type GetLane(const int i) { return simd::get_lane(vec_, i); }
+  ace scalar_type GetLane(const int i) const { return simd::get_lane(vec_, i); }
   ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
@@ -170,6 +169,7 @@ class Common {
   /** a + (b * c) */
   ace argon_type MultiplyAdd(argon_type b, argon_type c) const { return simd::multiply_add(vec_, b, c); }
   ace argon_type MultiplyAdd(argon_type b, scalar_type c) const { return simd::multiply_add(vec_, b, c); }
+  ace argon_type MultiplyAdd(scalar_type b, argon_type c) const { return simd::multiply_add(vec_, c, b); }
   ace argon_type MultiplyAdd(argon_type b, lane_type c) const {
     return simd::multiply_add_lane(vec_, b.vec(), c.vec(), c.lane());
   }
@@ -177,6 +177,7 @@ class Common {
   /** a - (b * c) */
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const { return simd::multiply_subtract(vec_, b, c); }
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const { return simd::multiply_subtract(vec_, b, c); }
+  ace argon_type MultiplySubtract(scalar_type b, argon_type c) const { return simd::multiply_subtract(vec_, c, b); }
   ace argon_type MultiplySubtract(argon_type b, lane_type c) const {
     return simd::multiply_subtract_lane(vec_, b.vec(), c.vec(), c.lane());
   }
@@ -185,11 +186,11 @@ class Common {
    * Multiply two fixed-point vectors, returning a fixed-point product
    * This is equivalent to (a * b) >> 31
    */
-  ace argon_type MultiplyFixedPoint(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
-  ace argon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
-  ace argon_type MultiplyFixedPoint(lane_type l) const {
-    return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
-  }
+   ace argon_type MultiplyFixedPoint(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
+   ace argon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+   ace argon_type MultiplyFixedPoint(lane_type l) const {
+     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
+   }
 
   /**
    * Multiply two fixed-point vectors, returning a fixed-point product
@@ -204,6 +205,8 @@ class Common {
   ace argon_type MultiplyRoundFixedPoint(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
+
+  ace argon_type Absolute() const { return simd::abs(vec_); }
 
   /**
    * Multiply-add three fixed-point vectors, returning a fixed-point sum
@@ -453,9 +456,7 @@ class Common {
     }
   }
 
-  ace void StoreTo(scalar_type* ptr) const {
-    simd::store1(ptr, vec_);
-  }
+  ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
 
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {
@@ -650,7 +651,7 @@ class Lane {
 
  public:
   ace Lane(vector_type& vec, const int lane) : vec_{vec}, lane_{lane} {}
-  ace operator scalar_type() { return simd::get_lane(vec_, lane_); }
+  ace operator scalar_type() const { return simd::get_lane(vec_, lane_); }
   ace argon_type operator=(scalar_type b) { return Set(b); }
   ace argon_type Load(scalar_type* ptr) { return vec_ = simd::load1_lane(vec_, lane_, ptr); }
   ace argon_type Set(scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
