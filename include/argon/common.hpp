@@ -113,6 +113,7 @@ class Common {
   ace argon_type operator/(argon_type b) const { return Divide(b); }
 
   ace argon_result_type operator==(argon_type b) const { return Equal(b); }
+  ace argon_result_type operator!=(argon_type b) const { return ~Equal(b); }
   ace argon_result_type operator<(argon_type b) const { return LessThan(b); }
   ace argon_result_type operator>(argon_type b) const { return GreaterThan(b); }
   ace argon_result_type operator<=(argon_type b) const { return LessThanOrEqual(b); }
@@ -129,6 +130,9 @@ class Common {
   ace const lane_type operator[](const int i) const { return lane_type{vec_, i}; }
   ace lane_type operator[](const int i) { return lane_type{vec_, i}; }
 
+  ace const lane_type operator[](const size_t i) const { return lane_type{vec_, static_cast<int>(i)}; }
+  ace lane_type operator[](const size_t i) { return lane_type{vec_, static_cast<int>(i)}; }
+
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
   ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
 
@@ -143,6 +147,7 @@ class Common {
   ace vector_type vec() const { return vec_; }
 
   ace scalar_type GetLane(const int i) const { return simd::get_lane(vec_, i); }
+  ace scalar_type GetLane(const size_t i) const { return simd::get_lane(vec_, static_cast<int>(i)); }
   ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
@@ -186,11 +191,11 @@ class Common {
    * Multiply two fixed-point vectors, returning a fixed-point product
    * This is equivalent to (a * b) >> 31
    */
-   ace argon_type MultiplyFixedPoint(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
-   ace argon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
-   ace argon_type MultiplyFixedPoint(lane_type l) const {
-     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
-   }
+  ace argon_type MultiplyFixedPoint(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
+  ace argon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+  ace argon_type MultiplyFixedPoint(lane_type l) const {
+    return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
+  }
 
   /**
    * Multiply two fixed-point vectors, returning a fixed-point product
@@ -207,6 +212,14 @@ class Common {
   }
 
   ace argon_type Absolute() const { return simd::abs(vec_); }
+
+  /// @brief 1 / value, using an estimate for speed
+  /// @note This is not a precise reciprocal, but it is fast and useful for many applications
+  ace argon_type ReciprocalEstimate() const
+    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+  {
+    return simd::reciprocal_estimate(vec_);
+  }
 
   /**
    * Multiply-add three fixed-point vectors, returning a fixed-point sum
