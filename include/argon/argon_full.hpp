@@ -211,25 +211,43 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
     return Argon{rev.GetHigh(), rev.GetLow()};      // swap dwords
   }
 
+  template <typename CommutableOpType>
+  scalar_type Reduce(CommutableOpType op) {
+    auto rev = this->SwapDoublewords();
+    auto sum = op(*this, rev);
+    if constexpr (lanes == 16) {
+      sum = op(*this, sum.Reverse16bit());
+    }
+    if constexpr (lanes == 8 || lanes == 16) {
+      sum = op(*this, sum.Reverse32bit());
+    }
+    if constexpr (lanes == 4 || lanes == 8 || lanes == 16) {
+      sum = op(*this, sum.Reverse64bit());
+    }
+    return sum[0];
+  }
+
   scalar_type ReduceAdd() {
 #ifdef __aarch64__
     return simd::reduce_add(this->vec_);
 #else
-    auto rev = this->SwapDoublewords();
-    auto sum = this->Add(rev);
-    if constexpr (lanes == 16) {
-      rev = sum.Reverse16bit();
-      sum = sum.Add(rev);
-    }
-    if constexpr (lanes == 8 || lanes == 16) {
-      rev = sum.Reverse32bit();
-      sum = sum.Add(rev);
-    }
-    if constexpr (lanes == 4 || lanes == 8 || lanes == 16) {
-      rev = sum.Reverse64bit();
-      sum = sum.Add(rev);
-    }
-    return sum[0];
+    return this->Reduce([](auto a, auto b) { return a + b; });
+#endif
+  }
+
+  scalar_type ReduceMax() {
+#ifdef __aarch64__
+    return simd::reduce_max(this->vec_);
+#else
+    return this->Reduce([](auto a, auto b) { return std::max(a, b); });
+#endif
+  }
+
+  scalar_type ReduceMin() {
+#ifdef __aarch64__
+    return simd::reduce_min(this->vec_);
+#else
+    return this->Reduce([](auto a, auto b) { return std::min(a, b); });
 #endif
   }
 

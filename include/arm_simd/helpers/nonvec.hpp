@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include "argon/features.h"
 
 #ifdef __ARM_NEON
@@ -58,7 +59,7 @@ template <> struct NonVec<float64x1_t> { using type = double; };
 #endif
 
 template <typename T>
-using NonVec_t = typename NonVec<T>::type;
+using NonVec_t = typename NonVec<std::remove_cv_t<T>>::type;
 
 // clang-format on
 }  // namespace simd

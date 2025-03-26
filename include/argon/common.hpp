@@ -127,10 +127,7 @@ class Common {
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
   ace argon_type operator~() const { return BitwiseNot(); }
 
-  ace const lane_type operator[](const int i) const { return lane_type{vec_, i}; }
-  ace lane_type operator[](const int i) { return lane_type{vec_, i}; }
-
-  ace const lane_type operator[](const size_t i) const { return lane_type{vec_, static_cast<int>(i)}; }
+  ace Lane<const vector_type> operator[](const size_t i) const { return {vec_, static_cast<int>(i)}; }
   ace lane_type operator[](const size_t i) { return lane_type{vec_, static_cast<int>(i)}; }
 
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
@@ -665,9 +662,9 @@ class Lane {
  public:
   ace Lane(vector_type& vec, const int lane) : vec_{vec}, lane_{lane} {}
   ace operator scalar_type() const { return simd::get_lane(vec_, lane_); }
-  ace argon_type operator=(scalar_type b) { return Set(b); }
+  ace argon_type operator=(const scalar_type b) { return Set(b); }
   ace argon_type Load(scalar_type* ptr) { return vec_ = simd::load1_lane(vec_, lane_, ptr); }
-  ace argon_type Set(scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
+  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
 
 #if __ARM_ARCH >= 8
   ace vector_type& vec() { return vec_; }

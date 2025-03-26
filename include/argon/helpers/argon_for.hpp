@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include "arm_simd/helpers/concepts.hpp"
 #include "arm_simd/helpers/nonvec.hpp"
 
@@ -35,6 +36,6 @@ struct ArgonFor<T> {
 #endif
 
 template <typename T>
-using ArgonFor_t = typename ArgonFor<T>::type;
+using ArgonFor_t = typename ArgonFor<std::remove_cv_t<T>>::type;
 }  // namespace argon::impl
 #undef simd
