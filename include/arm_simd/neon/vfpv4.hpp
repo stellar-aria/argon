@@ -54,7 +54,6 @@ template <typename T> nce T store4(float16_t *ptr, float16x8x4_t val);
 template <typename T> nce T duplicate(float16_t value);
 template <typename T> nce T duplicate(float16x4_t vec);
 template <typename T> nce T move(float16_t value);
-template <typename T> nce T load1_x3(bfloat16_t const *ptr);
 template <typename T> nce T convert(float16x4_t a) ;
 template <typename T> nce T convert(float32x4_t a);
 template <> [[gnu::always_inline]] nce float16x4_t reinterpret(uint8x8_t a) { return vreinterpret_f16_u8(a); }
@@ -162,8 +161,6 @@ template <> [[gnu::always_inline]] nce float16x4_t duplicate(float16_t value) { 
 template <> [[gnu::always_inline]] nce float16x8_t duplicate(float16_t value) { return vdupq_n_f16(value); }
 template <> [[gnu::always_inline]] nce float16x4_t move(float16_t value) { return vmov_n_f16(value); }
 template <> [[gnu::always_inline]] nce float16x8_t move(float16_t value) { return vmovq_n_f16(value); }
-template <> [[gnu::always_inline]] inline bfloat16x4x3_t load1_x3(bfloat16_t const *ptr) { return vld1_bf16_x3(ptr); }
-template <> [[gnu::always_inline]] inline bfloat16x8x3_t load1_x3(bfloat16_t const *ptr) { return vld1q_bf16_x3(ptr); }
 [[gnu::always_inline]] nce float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32x2_t c) { return vfma_f32(a, b, c);}
 [[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32x2_t c) { return vfms_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmaq_f32(a, b, c);}

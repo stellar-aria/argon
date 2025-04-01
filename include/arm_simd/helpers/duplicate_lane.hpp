@@ -5,13 +5,11 @@
 #include "arm_simd.hpp"
 
 #ifdef __ARM_NEON
-#include <arm_neon.h>
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
-#include <arm_mve.h>
+#elifdef __ARM_FEATURE_MVE
 #define simd helium
-#endif
+#else
+#define simd neon
 #endif
 
 
