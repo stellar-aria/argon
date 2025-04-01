@@ -87,6 +87,11 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      - name: Use GCC 14
+        run: |
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+
       - name: Configure
         run: cmake -B build -DARGON_BUILD_TESTING=YES
 
