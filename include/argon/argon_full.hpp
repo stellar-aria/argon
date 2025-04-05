@@ -7,10 +7,10 @@
 
 #ifdef __ARM_NEON
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
+#elifdef __ARM_FEATURE_MVE
 #define simd helium
-#endif
+#else
+#define simd neon
 #endif
 
 #ifdef __clang__
@@ -32,7 +32,7 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Argon() : T(){};
+  ace Argon() = default;
   ace Argon(vector_type vector) : T{vector} {};
   ace Argon(scalar_type scalar) : T{scalar} {};
   // ace Argon(scalar_type const* ptr) : T{ptr} {};

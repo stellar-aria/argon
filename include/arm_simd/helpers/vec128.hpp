@@ -5,12 +5,15 @@
 #ifdef __ARM_NEON
 #include <arm_neon.h>
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
+#elifdef __ARM_FEATURE_MVE
 #include <arm_mve.h>
 #define simd helium
+#else
+#define SIMDE_ENABLE_NATIVE_ALIASES
+#include <arm/neon.h>
+#define simd neon
 #endif
-#endif
+
 
 namespace simd {
 // clang-format off

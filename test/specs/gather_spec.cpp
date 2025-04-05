@@ -2,7 +2,7 @@
 #include "cppspec.hpp"
 
 // clang-format off
-auto gather_spec = describe("gather", ${
+auto gather = describe("gather", ${
   std::array<int, 25> data;
   before_each([&]() { std::iota(data.begin(), data.end(), 0); });
 
@@ -18,4 +18,4 @@ auto gather_spec = describe("gather", ${
   });
 });
 
-CPPSPEC_MAIN(gather_spec);
+CPPSPEC_MAIN(gather);

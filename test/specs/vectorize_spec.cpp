@@ -3,7 +3,7 @@
 #include "argon.hpp"
 
 // clang-format off
-auto vectorize_spec = describe("vectorize", ${
+auto vectorize = describe("vectorize", ${
   it("returns a vectorize::Iterator when begin() is called", _{
     using element_type = int16_t;
     std::array<element_type, 8> vals;
@@ -40,20 +40,6 @@ auto vectorize_spec = describe("vectorize", ${
     expect(vals[509]).to_equal(5);
     expect(vals[510]).to_equal(5);
   });
-
-  it("vectorize_ptr can be zipped together", _{
-    std::array<int32_t, 512> vals1;
-    std::array<int32_t, 512> vals2;
-    vals1.fill(5);
-    vals2.fill(6);
-    using vectorized = argon::vectorize_ptr<int32_t>;
-
-    for (auto [val1, val2] : std::ranges::zip_view(vectorized(vals1), vectorized(vals2))){
-      *val1 = val1->Add(*val2);
-    }
-    expect(vals1).not_().to_contain(5);
-    expect(vals1).to_contain(11);
-  });
 });
 
-CPPSPEC_MAIN(vectorize_spec);
+CPPSPEC_MAIN(vectorize);

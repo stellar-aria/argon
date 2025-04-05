@@ -76,8 +76,9 @@ constexpr platform target = platform::MOCK;
 }
 #define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
-#define ARGON_HAS_HALF_FLOAT true
+#define ARGON_HAS_HALF_FLOAT false
 #define ARGON_HAS_SINGLE_FLOAT true
+#define ARGON_HAS_DOUBLE_FLOAT false
 #endif
 
 /*

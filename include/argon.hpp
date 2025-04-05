@@ -14,10 +14,10 @@
 
 #ifdef __ARM_NEON
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
+#elifdef __ARM_FEATURE_MVE
 #define simd helium
-#endif
+#else
+#define simd neon
 #endif
 
 #ifdef __clang__
@@ -102,6 +102,77 @@ template <typename ValueType, typename CondType>
            std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_result_type>
 ace Argon<ValueType> ternary(Argon<CondType> condition, ValueType true_value, ValueType false_value) {
   return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
+}
+
+template <typename CondType, typename ScalarType>
+  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
+class CondMonad : public std::pair<CondType, Argon<ScalarType>> {
+  using ArgonType = Argon<ScalarType>;
+
+ public:
+  using PairType = std::pair<CondType, ArgonType>;
+  using PairType::PairType;
+
+  constexpr CondType condition() const { return this->first; }
+  constexpr ArgonType value() const { return this->second; }
+
+  CondMonad else_if_(CondType new_condition, ArgonType new_value) const {
+    CondType exclusive_condition = new_condition & ~condition();
+    if constexpr (std::is_same_v<CondType, ArgonType>) {
+      // if condition and value are the same type, we can just use the value directly
+      new_value = (exclusive_condition & new_value) | (~exclusive_condition & value());
+    } else {
+      new_value = ((exclusive_condition & new_value.template As<typename CondType::scalar_type>()) |
+                   (~exclusive_condition & value().template As<typename CondType::scalar_type>()))
+                      .template As<typename ArgonType::scalar_type>();
+    }
+    return CondMonad{condition() | new_condition, new_value};
+  }
+
+  template <typename FunctionType>
+  CondMonad else_if_(CondType condition, FunctionType func) const {
+    return else_if_(condition, func());
+  }
+
+  CondMonad else_if_(CondType condition, ScalarType value) const { return else_if_(condition, ArgonType{value}); }
+
+  ArgonType else_(ArgonType new_value) const {
+    if constexpr (std::is_same_v<CondType, ArgonType>) {
+      // if condition and value are the same type, we can just use the value directly
+      return (condition() & new_value) | (~condition() & value());
+    } else {
+      // negate mask to get what's left, and select those lanes from the input
+      return ((~condition() & new_value.template As<typename CondType::scalar_type>()) |
+              (condition() & value().template As<typename CondType::scalar_type>()))
+          .template As<typename ArgonType::scalar_type>();
+    }
+  }
+
+  template <typename FunctionType>
+  ArgonType else_(FunctionType func) const {
+    return else_(func());
+  }
+
+  ArgonType else_(ScalarType value) const { return else_(ArgonType{value}); }
+};
+
+template <typename ScalarType, typename CondType>
+  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
+ace CondMonad<CondType, ScalarType> if_(CondType condition, Argon<ScalarType> value) {
+  return {condition, value};
+}
+
+template <typename ScalarType, typename CondType>
+  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
+ace CondMonad<CondType, ScalarType> if_(CondType condition, ScalarType value) {
+  return {condition, value};
+}
+
+template <typename FunctionType, typename CondType>
+  requires std::is_arithmetic_v<decltype(std::declval<FunctionType>()())> &&
+           std::is_same_v<CondType, decltype(std::declval<FunctionType>()())>
+ace CondMonad<CondType, decltype(std::declval<FunctionType>()())> if_(CondType condition, FunctionType func) {
+  return {condition, func()};
 }
 
 }  // namespace argon

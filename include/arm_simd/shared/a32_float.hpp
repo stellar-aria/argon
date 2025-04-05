@@ -3,10 +3,10 @@
 
 #ifdef __ARM_NEON
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
+#elifdef __ARM_FEATURE_MVE
 #define simd helium
-#endif
+#else
+#define simd neon
 #endif
 
 #ifdef __cplusplus

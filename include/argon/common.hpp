@@ -16,10 +16,10 @@
 
 #ifdef __ARM_NEON
 #define simd neon
-#else
-#ifdef __ARM_FEATURE_MVE
+#elifdef __ARM_FEATURE_MVE
 #define simd helium
-#endif
+#else
+#define simd neon
 #endif
 
 #ifdef __clang__
@@ -49,7 +49,7 @@ class Common {
 
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
-  constexpr Common() : vec_{0} {};
+  constexpr Common() = default;
   constexpr Common(vector_type vector) : vec_{vector} {};
   ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
   // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
@@ -135,9 +135,12 @@ class Common {
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
-  ace std::array<scalar_type, lanes> to_array() {
-    std::array<scalar_type, lanes> out;
-    StoreTo(out.data());
+#ifndef __clang__
+  ace
+#endif
+  std::array<scalar_type, lanes> to_array() {
+    std::array<scalar_type, lanes> out= {0};
+    simd::store1(&out[0], vec_);
     return out;
   }
 
@@ -431,7 +434,7 @@ class Common {
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
-    std::array<argon_type, stride> multi;
+    std::array<argon_type, stride> multi{};
     constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       offset_type lane_val = simd::get_lane<i>(offset_vector);
       multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
@@ -454,8 +457,6 @@ class Common {
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
     static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
-    using multivec_type = MultiVec_t<vector_type, n>;
-    using array_type = std::array<argon_type, n>;
 
     if constexpr (n == 2) {
       return argon::to_array(simd::load1_x2(ptr).val);
@@ -675,17 +676,17 @@ class Lane {
       return vec_;
     } else if constexpr (simd::is_quadword_v<vector_type>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec);
+        return simd::get_high(vec());
       } else {
-        return simd::get_low(vec);
+        return simd::get_low(vec());
       }
     }
   }
-  ace const int lane() {
+  ace int lane() {
     if constexpr (simd::is_doubleword_v<vector_type>) {
       return lane_;
     } else if constexpr (simd::is_quadword_v<vector_type>) {
-      if (lane >= ArgonHalf<scalar_type>::lanes) {
+      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return (lane_ - ArgonHalf<scalar_type>::lanes);
       } else {
         return lane_;

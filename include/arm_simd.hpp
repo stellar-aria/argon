@@ -32,6 +32,5 @@
 #endif  // __ARM_ARCH
 
 #if !defined(__ARM_NEON) && !defined(__ARM_FEATURE_MVE)
-// mock
-
+#include "arm_simd/neon/vfpv3.hpp"
 #endif

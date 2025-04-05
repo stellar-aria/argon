@@ -123,6 +123,7 @@ template <typename T> nce T load2_duplicate(poly64_t const *ptr);
 template <typename T> nce T load3_duplicate(poly64_t const *ptr);
 template <typename T> nce T load4_duplicate(poly64_t const *ptr);
 template <typename T> nce T load1_x2(bfloat16_t const *ptr);
+template <typename T> nce T load1_x3(bfloat16_t const *ptr);
 template <typename T> nce T load1_x4(bfloat16_t const *ptr);
 template <typename T> nce T store1(bfloat16_t *ptr, bfloat16x4_t val);
 template <typename T> nce T store1(bfloat16_t *ptr, bfloat16x8_t val);
@@ -633,6 +634,8 @@ template <int lane>[[gnu::always_inline]] nce bfloat16x4x4_t load4_lane(bfloat16
 template <int lane>[[gnu::always_inline]] nce bfloat16x8x4_t load4_lane(bfloat16_t const *ptr, bfloat16x8x4_t src) { return vld4q_lane_bf16(ptr, src, lane); }
 template <> [[gnu::always_inline]] inline bfloat16x4x2_t load1_x2(bfloat16_t const *ptr) { return vld1_bf16_x2(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x8x2_t load1_x2(bfloat16_t const *ptr) { return vld1q_bf16_x2(ptr); }
+template <> [[gnu::always_inline]] inline bfloat16x4x3_t load1_x3(bfloat16_t const *ptr) { return vld1_bf16_x3(ptr); }
+template <> [[gnu::always_inline]] inline bfloat16x8x3_t load1_x3(bfloat16_t const *ptr) { return vld1q_bf16_x3(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x4x4_t load1_x4(bfloat16_t const *ptr) { return vld1_bf16_x4(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x8x4_t load1_x4(bfloat16_t const *ptr) { return vld1q_bf16_x4(ptr); }
 template <> [[gnu::always_inline]] inline void store1(bfloat16_t *ptr, bfloat16x4_t val) { return vst1_bf16(ptr, val); }
