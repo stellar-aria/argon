@@ -27,6 +27,7 @@ auto vectorize_store = describe("vectorize_store", ${
       val = { counter, counter + 1, counter + 2, counter + 3 };
       counter += 4;
     }
+    expect(counter).to_equal(512);
 
     for (size_t i = 0; i < vals.size(); ++i) {
       expect(vals[i]).to_equal(i);

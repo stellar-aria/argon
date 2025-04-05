@@ -16,6 +16,8 @@ target_sources(argon PUBLIC
 
 option(ARGON_ENABLE_TESTING "Build Argon tests" OFF)
 if(ARGON_ENABLE_TESTING)
+  enable_testing()
+  include(CTest)
   add_subdirectory(test)
 endif(ARGON_ENABLE_TESTING)
 

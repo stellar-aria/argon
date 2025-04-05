@@ -11,11 +11,13 @@
 
 namespace argon {
 
-template <size_t stride, typename scalar_type>
-struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_interleaved<stride, scalar_type>> {
+template <typename scalar_type, size_t stride = 2>
+struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_interleaved<scalar_type, stride>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
+  static_assert(stride > 1 && stride < 5, "Interleaving Loads can only be performed with a stride of 2, 3, or 4");
 
  public:
   struct LoadInterleavedIterator {
@@ -27,15 +29,17 @@ struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_i
     LoadInterleavedIterator() = default;
     LoadInterleavedIterator(scalar_type* ptr) : ptr_{ptr} {}
 
-    value_type operator*() const { return Argon<scalar_type>::template LoadInterleaved<stride>(ptr_); }
+    std::array<Argon<scalar_type>, stride> operator*() const {
+      return Argon<scalar_type>::template LoadInterleaved<stride>(ptr_);
+    }
 
     LoadInterleavedIterator& operator+=(int n) {
-      ptr_ += n * lanes;
+      ptr_ += n * lanes * stride;
       return *this;
     }
 
     LoadInterleavedIterator& operator-=(int n) {
-      ptr_ -= n * lanes;
+      ptr_ -= n * lanes * stride;
       return *this;
     }
 
@@ -46,7 +50,7 @@ struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_i
     }
 
     LoadInterleavedIterator& operator++() {
-      ptr_ += lanes;
+      ptr_ += lanes * stride;
       return *this;
     }
 
@@ -57,7 +61,7 @@ struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_i
     }
 
     LoadInterleavedIterator& operator--() {
-      ptr_ -= lanes;
+      ptr_ -= lanes * stride;
       return *this;
     }
 
@@ -77,11 +81,17 @@ struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_i
 
     difference_type operator-(const LoadInterleavedIterator& other) const { return ptr_ - other.ptr_; }
 
-    friend bool operator==(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) { return a.ptr_ == b.ptr_; }
+    friend bool operator==(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) {
+      return a.ptr_ == b.ptr_;
+    }
     friend bool operator==(const LoadInterleavedIterator& a, const scalar_type* ptr) { return a.ptr_ == ptr; }
-    friend bool operator!=(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) { return a.ptr_ != b.ptr_; }
+    friend bool operator!=(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) {
+      return a.ptr_ != b.ptr_;
+    }
     friend bool operator!=(const LoadInterleavedIterator& a, const scalar_type* ptr) { return a.ptr_ != ptr; }
-    friend auto operator<=>(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) { return a.ptr_ <=> b.ptr_; }
+    friend auto operator<=>(const LoadInterleavedIterator& a, const LoadInterleavedIterator& b) {
+      return a.ptr_ <=> b.ptr_;
+    }
 
     friend LoadInterleavedIterator operator+(const int n, const LoadInterleavedIterator& it) { return it + n; }
 
@@ -96,18 +106,22 @@ struct vectorize_load_interleaved : std::ranges::view_interface<vectorize_load_i
 
   iterator begin() { return start_; }
   scalar_type* end() { return start_ + size_; }
-  size_t size() const { return size_ / lanes; }
+  size_t size() const { return size_ / (lanes * stride); }
 
   template <std::ranges::contiguous_range R>
-  vectorize_load_interleaved(R&& r) : start_{std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {} {}
+  vectorize_load_interleaved(R&& r)
+      : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
   scalar_type* start_;
   size_t size_;
 };
 
-static_assert(std::ranges::range<vectorize_load_interleaved<2, int32_t>>);
-static_assert(std::ranges::view<vectorize_load_interleaved<2, int32_t>>);
+static_assert(std::ranges::range<vectorize_load_interleaved<int32_t, 2>>);
+static_assert(std::ranges::view<vectorize_load_interleaved<int32_t, 2>>);
+
+template <std::ranges::contiguous_range R, size_t stride = 2>
+vectorize_load_interleaved(R&& r) -> vectorize_load_interleaved<std::ranges::range_value_t<R>, stride>;
 
 }  // namespace argon
 #undef simd

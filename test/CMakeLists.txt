@@ -23,6 +23,4 @@ add_library(simde INTERFACE ${simde_SOURCE_DIR}/simde)
 target_include_directories(simde INTERFACE ${simde_SOURCE_DIR}/simde)
 target_compile_options(simde INTERFACE -Wno-macro-redefined)
 
-enable_testing()
 add_subdirectory(specs)
-include(CTest)

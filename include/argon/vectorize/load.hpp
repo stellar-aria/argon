@@ -16,6 +16,7 @@ struct vectorize_load : std::ranges::view_interface<vectorize_load<scalar_type>>
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+
  public:
   struct LoadIterator {
     using iterator_category = std::bidirectional_iterator_tag;
