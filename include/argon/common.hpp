@@ -135,7 +135,7 @@ class Common {
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
-#ifndef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
   ace
 #endif
   std::array<scalar_type, lanes> to_array() {

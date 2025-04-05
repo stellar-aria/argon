@@ -5,7 +5,7 @@ namespace argon {
 enum class platform {
   NEON,
   MVE,
-  MOCK,
+  SIMDe,
 };
 }
 
@@ -13,6 +13,7 @@ enum class platform {
 namespace argon {
 constexpr platform target = platform::NEON;
 }
+#define ARGON_PLATFORM_NEON true
 #define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 
@@ -58,6 +59,7 @@ constexpr platform target = platform::NEON;
 namespace argon {
 constexpr platform target = platform::MVE;
 }
+#define ARGON_PLATFORM_MVE true
 #define ARGON_HAS_DWORD false
 
 #if (__ARM_FEATURE_MVE & 2)
@@ -72,8 +74,9 @@ constexpr platform target = platform::MVE;
 
 #else
 namespace argon {
-constexpr platform target = platform::MOCK;
+constexpr platform target = platform::SIMDe;
 }
+#define ARGON_PLATFORM_SIMDE true
 #define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 #define ARGON_HAS_HALF_FLOAT false
