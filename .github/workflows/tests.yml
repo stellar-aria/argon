@@ -40,7 +40,9 @@ jobs:
         if: always()
         with:
           name: Test Results ARM64
-          path: build/test/specs/results/**/*.xml
+          path: |
+            build/test/specs/results/*.xml
+            build/test/specs/results/**/*.xml
 
   test-build-qemu:
     name: Run tests (ARMv7/QEMU)
@@ -79,7 +81,9 @@ jobs:
         if: always()
         with:
           name: Test Results ARMv7
-          path: build/test/specs/results/**/*.xml
+          path: |
+            build/test/specs/results/*.xml
+            build/test/specs/results/**/*.xml
 
   test-build-x86_64-linux:
     name: Run tests (x86_64 Linux)
@@ -121,7 +125,9 @@ jobs:
         if: always()
         with:
           name: Test Results x86 Linux
-          path: build/test/specs/results/**/*.xml
+          path: |
+            build/test/specs/results/*.xml
+            build/test/specs/results/**/*.xml
 
 
   test-build-x86_64-windows:
@@ -148,7 +154,9 @@ jobs:
         if: always()
         with:
           name: Test Results x86 Windows
-          path: build/test/specs/results/**/*.xml
+          path: |
+            build/test/specs/results/*.xml
+            build/test/specs/results/**/*.xml
 
   publish-test-results:
     name: "Publish Tests Results"
