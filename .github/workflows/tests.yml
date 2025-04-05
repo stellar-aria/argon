@@ -120,7 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results x86
+          name: Test Results x86 Linux
           path: build/test/specs/results/**/*.xml
 
 
@@ -147,7 +147,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results x86
+          name: Test Results x86 Windows
           path: build/test/specs/results/**/*.xml
 
   publish-test-results:
