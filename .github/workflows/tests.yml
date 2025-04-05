@@ -81,9 +81,13 @@ jobs:
           name: Test Results ARMv7
           path: build/test/specs/results/**/*.xml
 
-  test-build-x86_64:
-    name: Run tests (x86_64)
+  test-build-x86_64-linux:
+    name: Run tests (x86_64 Linux)
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -93,8 +97,15 @@ jobs:
 
       - name: Use GCC 14
         run: |
-          echo "CC=gcc-14" >> $GITHUB_ENV
-          echo "CXX=g++-14" >> $GITHUB_ENV
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+        if: matrix.compiler == 'gcc'
+
+      - name: Use Clang
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+        if: matrix.compiler == 'clang'
 
       - name: Configure
         run: cmake -B build -DARGON_ENABLE_TESTING=YES
@@ -113,12 +124,39 @@ jobs:
           path: build/test/specs/results/**/*.xml
 
 
+  test-build-x86_64-windows:
+    name: Run tests (x86_64 Windows)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Configure
+        run: cmake -G "Visual Studio 17 2022" -A x64 -T clang-cl -B build -DARGON_ENABLE_TESTING=YES -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Run build
+        run: cmake --build build
+
+      - name: Run CTest
+        run: ctest --output-on-failure --test-dir build/test/specs
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test Results x86
+          path: build/test/specs/results/**/*.xml
+
   publish-test-results:
     name: "Publish Tests Results"
     needs:
       - test-build-arm
       - test-build-qemu
-      - test-build-x86_64
+      - test-build-x86_64-linux
+      - test-build-x86_64-windows
     runs-on: ubuntu-latest
     permissions:
       checks: write
