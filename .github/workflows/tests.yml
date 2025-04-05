@@ -97,8 +97,8 @@ jobs:
 
       - name: Use GCC 14
         run: |
-          echo "CC=gcc" >> $GITHUB_ENV
-          echo "CXX=g++" >> $GITHUB_ENV
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
         if: matrix.compiler == 'gcc'
 
       - name: Use Clang
