@@ -151,10 +151,10 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Configure
-        run: cmake -G "Visual Studio 17 2022" -A x64 -T ClangCL -B build -DARGON_ENABLE_TESTING=YES -DCMAKE_BUILD_TYPE=Release
+        run: cmake -G "Visual Studio 17 2022" -A x64 -T ClangCL -B build -DARGON_ENABLE_TESTING=YES
 
       - name: Run build
-        run: cmake --build build
+        run: cmake --build build --config Release
 
       - name: Run CTest
         run: ctest --output-on-failure --test-dir build/test/specs -C Release
