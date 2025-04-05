@@ -6,19 +6,20 @@
 #include "helpers/multivec.hpp"
 
 
-#ifdef __ARM_NEON
-#define simd neon
-#elifdef __ARM_FEATURE_MVE
+#ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
 #define simd neon
 #endif
 
-#ifdef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
+#define ace
+#elifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
 #else
 #define ace [[gnu::always_inline]] inline
 #endif
+
 namespace argon {
 template <size_t stride, typename scalar_type, typename intrinsic_type>
 ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {

@@ -1,7 +1,9 @@
 #pragma once
 #include "common.hpp"
 
-#ifdef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
+#define ace
+#elifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
 #else
 #define ace [[gnu::always_inline]] inline

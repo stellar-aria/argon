@@ -4,16 +4,16 @@
 #include "vec64.hpp"
 #include "arm_simd.hpp"
 
-#ifdef __ARM_NEON
-#define simd neon
-#elifdef __ARM_FEATURE_MVE
+#ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
 #define simd neon
 #endif
 
 
-#ifdef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
+#define nce
+#elifdef __clang__
 #define nce [[gnu::always_inline]] constexpr
 #else
 #define nce [[gnu::always_inline]] inline
