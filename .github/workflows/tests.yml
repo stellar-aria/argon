@@ -14,6 +14,9 @@ jobs:
   test-build-arm:
     name: Run tests (ARM64)
     runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,6 +28,13 @@ jobs:
         run: |
           echo "CC=gcc-14" >> $GITHUB_ENV
           echo "CXX=g++-14" >> $GITHUB_ENV
+        if: matrix.compiler == 'gcc'
+
+      - name: Use Clang
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+        if: matrix.compiler == 'clang'
 
       - name: Configure
         run: cmake -B build -DARGON_ENABLE_TESTING=YES
@@ -39,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results (ARM64)
+          name: Test Results (ARM64 ${{ matrix.compiler }})
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
@@ -124,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results (x86/Linux/${{ matrix.compiler }})
+          name: Test Results (x86 Linux ${{ matrix.compiler }})
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
@@ -147,13 +157,13 @@ jobs:
         run: cmake --build build
 
       - name: Run CTest
-        run: ctest --output-on-failure --test-dir build/test/specs
+        run: ctest --output-on-failure --test-dir build/test/specs -C Release
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results (x86/Windows)
+          name: Test Results (x86 Windows)
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
