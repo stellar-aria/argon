@@ -135,7 +135,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Configure
-        run: cmake -G "Visual Studio 17 2022" -A x64 -T clang-cl -B build -DARGON_ENABLE_TESTING=YES -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+        run: cmake -G "Visual Studio 17 2022" -A x64 -T clang-cl -B build -DARGON_ENABLE_TESTING=YES -DCMAKE_BUILD_TYPE=Release
 
       - name: Run build
         run: cmake --build build
