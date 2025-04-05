@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results ARM64
+          name: Test Results (ARM64)
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results ARMv7
+          name: Test Results (ARMv7)
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
@@ -124,7 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results x86 Linux
+          name: Test Results (x86/Linux/${{ matrix.compiler }})
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
@@ -153,7 +153,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results x86 Windows
+          name: Test Results (x86/Windows)
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml
