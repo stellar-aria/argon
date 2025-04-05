@@ -8,9 +8,7 @@
 #include "argon.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
-#ifdef __ARM_NEON
-#define simd neon
-#elifdef __ARM_FEATURE_MVE
+#ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
 #define simd neon

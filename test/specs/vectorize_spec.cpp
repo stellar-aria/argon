@@ -1,4 +1,5 @@
 #include "argon/vectorize.hpp"
+#include "argon/vectorize/ptr.hpp"
 #include "cppspec.hpp"
 #include "argon.hpp"
 
@@ -39,6 +40,20 @@ auto vectorize = describe("vectorize", ${
     expect(vals[508]).to_equal(5);
     expect(vals[509]).to_equal(5);
     expect(vals[510]).to_equal(5);
+  });
+
+  it("vectorize_ptr can be zipped together", _{
+    std::array<int32_t, 512> vals1;
+    std::array<int32_t, 512> vals2;
+    vals1.fill(5);
+    vals2.fill(6);
+    using vectorized = argon::vectorize_ptr<int32_t>;
+
+    for (auto&& [val1, val2] : std::ranges::zip_view(vectorized(vals1), vectorized(vals2))){
+      *val1 = val1->Add(*val2);
+    }
+    expect(vals1).not_().to_contain(5);
+    expect(vals1).to_contain(11);
   });
 });
 

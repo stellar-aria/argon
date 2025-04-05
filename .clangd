@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: [-isystem, C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt, -isystem, C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.43.34808\include\]
+  #Remove: [-isystem, --target=aarch64-unknown-linux-gnu]
+  #Add: [-mfloat-abi=hard, --target=armv7-none-unknown-eabihf, -mfpu=neon, -fno-exceptions, -fno-rtti, -std=c++23]
+  #Add: [-mfloat-abi=hard, --target=thumbv8.1m.main-unknown-none-eabihf, -mcpu=cortex-m85+nopacbti, -mfpu=fp-armv8-fullfp16-d16, -fno-exceptions, -fno-rtti, -std=c++23]

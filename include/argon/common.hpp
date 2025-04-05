@@ -1,7 +1,6 @@
 #pragma once
 #include <array>
 #include <functional>
-#include <span>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -14,15 +13,15 @@
 #include "helpers/result.hpp"
 #include "helpers/to_array.hpp"
 
-#ifdef __ARM_NEON
-#define simd neon
-#elifdef __ARM_FEATURE_MVE
+#ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
 #define simd neon
 #endif
 
-#ifdef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
+#define ace
+#elifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
 #else
 #define ace [[gnu::always_inline]] inline
@@ -52,8 +51,6 @@ class Common {
   constexpr Common() = default;
   constexpr Common(vector_type vector) : vec_{vector} {};
   ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
-  // ace Common(const scalar_type* ptr) : vec_(Load(ptr)) {};
-  // ace Common(std::span<scalar_type> slice) : vec_(Load(slice.data())) {};
 
   template <simd::is_vector_type intrinsic_type>
     requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
@@ -135,11 +132,8 @@ class Common {
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
-#ifdef ARGON_PLATFORM_SIMDE
-  ace
-#endif
-  std::array<scalar_type, lanes> to_array() {
-    std::array<scalar_type, lanes> out= {0};
+  ace std::array<scalar_type, lanes> to_array() {
+    std::array<scalar_type, lanes> out = {0};
     simd::store1(&out[0], vec_);
     return out;
   }

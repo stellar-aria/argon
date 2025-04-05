@@ -14,7 +14,9 @@
 #define simd neon
 #endif
 
-#ifdef __clang__
+#ifdef ARGON_PLATFORM_SIMDE
+#define nce
+#elifdef __clang__
 #define nce [[gnu::always_inline]] constexpr
 #else
 #define nce [[gnu::always_inline]] inline
