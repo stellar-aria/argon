@@ -31,4 +31,4 @@ auto vectorize_load = describe("vectorize_load", ${
   });
 });
 
-CPPSPEC_SPEC(vectorize_load);
+CPPSPEC_MAIN(vectorize_load);

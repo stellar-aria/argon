@@ -14,10 +14,10 @@ target_sources(argon PUBLIC
   ${sources_GLOB}
 )
 
-option(ARGON_BUILD_TESTING "Build Argon tests" OFF)
-if(ARGON_BUILD_TESTING)
+option(ARGON_ENABLE_TESTING "Build Argon tests" OFF)
+if(ARGON_ENABLE_TESTING)
   add_subdirectory(test)
-endif(ARGON_BUILD_TESTING)
+endif(ARGON_ENABLE_TESTING)
 
 if(ARGON_BUILD_DOCS)
   find_package(Doxygen

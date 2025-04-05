@@ -135,9 +135,12 @@ class Common {
 
   [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
 
-  ace std::array<scalar_type, lanes> to_array() {
-    std::array<scalar_type, lanes> out{};
-    StoreTo(out.data());
+#ifndef __clang__
+  ace
+#endif
+  std::array<scalar_type, lanes> to_array() {
+    std::array<scalar_type, lanes> out= {0};
+    simd::store1(&out[0], vec_);
     return out;
   }
 

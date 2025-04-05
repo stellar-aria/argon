@@ -34,4 +34,4 @@ auto vectorize_store = describe("vectorize_store", ${
   });
 });
 
-CPPSPEC_SPEC(vectorize_store);
+CPPSPEC_MAIN(vectorize_store);

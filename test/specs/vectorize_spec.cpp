@@ -42,4 +42,4 @@ auto vectorize = describe("vectorize", ${
   });
 });
 
-CPPSPEC_SPEC(vectorize);
+CPPSPEC_MAIN(vectorize);

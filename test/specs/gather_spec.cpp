@@ -18,4 +18,4 @@ auto gather = describe("gather", ${
   });
 });
 
-CPPSPEC_SPEC(gather);
+CPPSPEC_MAIN(gather);
