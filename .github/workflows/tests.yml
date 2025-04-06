@@ -234,6 +234,7 @@ jobs:
       - test-build-qemu
       - test-build-x86_64-linux
       - test-build-x86_64-windows
+      - test-build-macos
     runs-on: ubuntu-latest
     permissions:
       checks: write

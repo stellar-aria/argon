@@ -550,7 +550,7 @@ template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, po
 [[gnu::always_inline]] nce uint32_t sha1_fixed_rotate(uint32_t hash_e) { return vsha1h_u32(hash_e); }
 [[gnu::always_inline]] nce poly128_t multiply_long(poly64_t a, poly64_t b) { return vmull_p64(a, b); }
 [[gnu::always_inline]] nce poly128_t multiply_long_high(poly64x2_t a, poly64x2_t b) { return vmull_high_p64(a, b); }
-#ifdef __ARM_FEATURE_CRC32
+#if defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint8_t b) { return __crc32b(a, b); }
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint16_t b) { return __crc32h(a, b); }
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint32_t b) { return __crc32w(a, b); }
@@ -560,7 +560,7 @@ template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, po
 [[gnu::always_inline]] nce uint32_t crc32_castagnoli(uint32_t a, uint32_t b) { return __crc32cw(a, b); }
 [[gnu::always_inline]] nce uint32_t crc32_castagnoli(uint32_t a, uint64_t b) { return __crc32cd(a, b); }
 #endif
-#ifdef __ARM_FEATURE_FP16_SCALAR_ARITHMETIC
+#if defined(__ARM_ACLE) && defined(__ARM_FEATURE_FP16_SCALAR_ARITHMETIC)
 [[gnu::always_inline]] nce float16_t absolute(float16_t a) { return vabsh_f16(a); }
 [[gnu::always_inline]] nce float16_t round(float16_t a) { return vrndh_f16(a); }
 [[gnu::always_inline]] nce float16_t round_to_nearest_with_ties_away_from_zero(float16_t a) { return vrndah_f16(a); }
@@ -572,8 +572,8 @@ template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, po
 [[gnu::always_inline]] nce float16_t square_root(float16_t a) { return vsqrth_f16(a); }
 [[gnu::always_inline]] nce float16_t add(float16_t a, float16_t b) { return vaddh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t divide(float16_t a, float16_t b) { return vdivh_f16(a, b); }
-[[gnu::always_inline]] nce float16_t max(float16_t a, float16_t b) { return vmaxnmh_f16(a, b); }
-[[gnu::always_inline]] nce float16_t min(float16_t a, float16_t b) { return vminnmh_f16(a, b); }
+[[gnu::always_inline]] nce float16_t max_strict(float16_t a, float16_t b) { return vmaxnmh_f16(a, b); }
+[[gnu::always_inline]] nce float16_t min_strict(float16_t a, float16_t b) { return vminnmh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t multiply(float16_t a, float16_t b) { return vmulh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t multiply_add_fused(float16_t a, float16_t b, float16_t c) { return vfmah_f16(a, b, c); }
 [[gnu::always_inline]] nce float16_t multiply_subtract_fused(float16_t a, float16_t b, float16_t c) { return vfmsh_f16(a, b, c); }
