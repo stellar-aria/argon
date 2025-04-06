@@ -3,7 +3,7 @@
 #include "../arm_simd.hpp"
 
 #include <type_traits>
-namespace argon::impl {
+namespace argon::helpers {
 // clang-format off
 
 template <typename T>
@@ -79,4 +79,4 @@ constexpr void constexpr_for(F&& f) {
 }
 
 // clang-format on
-}  // namespace argon::impl
+}  // namespace argon::helpers

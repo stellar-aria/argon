@@ -2,7 +2,9 @@
 #include <array>
 #include <cstddef>
 #include <type_traits>
+#include <ranges>
 #include "arm_simd/helpers/concepts.hpp"
+#include "arm_simd/helpers/scalar.hpp"
 #include "helpers/multivec.hpp"
 
 
@@ -22,7 +24,7 @@
 
 namespace argon {
 template <size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {
+ace void store_interleaved(scalar_type* ptr, helpers::MultiVec_t<intrinsic_type, stride> multi_vec) {
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
   if constexpr (stride == 2) {
     simd::store2(ptr, multi_vec);
@@ -36,7 +38,7 @@ ace void store_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, st
 template <size_t stride, typename scalar_type, typename argon_type>
 ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
   using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
+  using multivec_type = helpers::MultiVec_t<intrinsic_type, stride>;
   using array_type = std::array<argon_type, stride>;
 
   // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
@@ -55,13 +57,13 @@ ace void store_interleaved(scalar_type* ptr, argon_types... vecs) {
 }
 
 template <typename scalar_type, typename argon_type>
-  requires std::is_same_v<scalar_type, simd::NonVec_t<typename argon_type::vector_type>>
+  requires std::is_same_v<scalar_type, simd::Scalar_t<typename argon_type::vector_type>>
 ace void store(scalar_type* ptr, argon_type vector) {
   simd::store1(ptr, vector);
 }
 
 template <typename scalar_type, simd::is_vector_type intrinsic_type>
-  requires std::is_same_v<scalar_type, typename simd::NonVec<intrinsic_type>::type>
+  requires std::is_same_v<scalar_type, typename simd::Scalar<intrinsic_type>::type>
 ace void store(scalar_type* ptr, intrinsic_type vector) {
   simd::store1(ptr, vector);
 }
@@ -77,7 +79,7 @@ ace void store(scalar_type* ptr, intrinsic_type vector) {
  *          This function will attempt to store all vectors possible but WILL NOT STORE ANY REMAINDER.
  */
 template <size_t stride = 1, typename scalar_type, typename... intrinsic_types>
-  requires(std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_types>> && ...)
+  requires(std::is_same_v<scalar_type, simd::Scalar_t<intrinsic_types>> && ...)
 ace void store(scalar_type* ptr, intrinsic_types... vectors) {
   // TODO: C++26 change to `typename intrinsic_types...[0]`
   using intrinsic_type = typename std::tuple_element<0, std::tuple<intrinsic_types...>>::type;
@@ -95,17 +97,17 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
 #pragma unroll
     for (auto v : vec_array | std::views::chunk(4)) {
       if (v.size() == 4) {  // 4-element chunks
-        using multi_type = impl::MultiVec<intrinsic_type, 4>::type;
+        using multi_type = helpers::MultiVec<intrinsic_type, 4>::type;
         simd::store1_x4(ptr, *(multi_type*)v.begin());
         ptr += (sizeof(intrinsic_type) / sizeof(*ptr)) * 4;  // increment output pointer
       } else {
         if constexpr (tail_size == 1) {  // 1-element tail
           simd::store1(ptr, v.begin());
         } else if constexpr (tail_size == 2) {
-          using tail_multi_type = impl::MultiVec<intrinsic_type, 2>::type;
+          using tail_multi_type = helpers::MultiVec<intrinsic_type, 2>::type;
           simd::store1_x2(ptr, *(tail_multi_type*)v.begin());
         } else if constexpr (tail_size == 3) {
-          using tail_multi_type = impl::MultiVec<intrinsic_type, 3>::type;
+          using tail_multi_type = helpers::MultiVec<intrinsic_type, 3>::type;
           simd::store1_x3(ptr, *(tail_multi_type*)v.begin());
         }
       }
@@ -126,7 +128,7 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
 }
 
 template <size_t stride = 1, typename scalar_type, typename... argon_types>
-  requires(std::is_same_v<scalar_type, simd::NonVec_t<typename argon_types::vector_type>> && ...)
+  requires(std::is_same_v<scalar_type, simd::Scalar_t<typename argon_types::vector_type>> && ...)
 ace void store(scalar_type* ptr, argon_types... vectors) {
   store<stride>(ptr, std::forward<typename argon_types::vector_type>(vectors)...);
 }
@@ -135,7 +137,7 @@ ace void store(scalar_type* ptr, argon_types... vectors) {
 template <int lane, size_t stride, typename scalar_type, typename argon_type>
 ace void store_lane_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
   using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = impl::MultiVec_t<intrinsic_type, stride>;
+  using multivec_type = helpers::MultiVec_t<intrinsic_type, stride>;
   using array_type = std::array<argon_type, 2>;
 
   // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
@@ -149,7 +151,7 @@ ace void store_lane_interleaved(scalar_type* ptr, std::array<argon_type, stride>
 }
 
 template <int lane, size_t stride, typename scalar_type, typename intrinsic_type>
-ace void store_lane_interleaved(scalar_type* ptr, impl::MultiVec_t<intrinsic_type, stride> multi_vec) {
+ace void store_lane_interleaved(scalar_type* ptr, helpers::MultiVec_t<intrinsic_type, stride> multi_vec) {
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
   if constexpr (stride == 2) {
     simd::store2_lane<lane>(ptr, multi_vec);

@@ -6,11 +6,11 @@
 #include <type_traits>
 #include "argon/argon_full.hpp"
 #include "argon/argon_half.hpp"
-#include "argon/common.hpp"
+#include "argon/vector.hpp"
 #include "argon/helpers/multivec.hpp"
 #include "argon/store.hpp"
 #include "argon/vectorize.hpp"
-#include "arm_simd/helpers/nonvec.hpp"
+#include "arm_simd/helpers/scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -29,7 +29,7 @@
 namespace argon {
 
 template <typename T, typename V>
-ace auto reinterpret(impl::Common<V> in) {
+ace auto reinterpret(Vector<V> in) {
   if constexpr (simd::is_quadword_v<V>) {
     return Argon<T>{simd::reinterpret<typename Argon<T>::vector_type>(in.vec())};
   } else if constexpr (simd::is_doubleword_v<V>) {
@@ -45,7 +45,7 @@ ace argon_type reinterpret(V in) {
 
 template <size_t lane, size_t stride, typename argon_type>
 ace static std::array<argon_type, stride> load_interleaved_to_lane(
-    impl::MultiVec_t<typename argon_type::vector_type, stride> multi,
+    helpers::MultiVec_t<typename argon_type::vector_type, stride> multi,
     typename argon_type::scalar_type const* ptr) {
   return argon_type::load_interleaved_to_lane(multi, ptr);
 }

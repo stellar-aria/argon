@@ -1,7 +1,7 @@
 #pragma once
 #include <type_traits>
 #include "arm_simd/helpers/concepts.hpp"
-#include "arm_simd/helpers/nonvec.hpp"
+#include "arm_simd/helpers/scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -14,26 +14,31 @@ class ArgonHalf;
 template <typename T>
 class Argon;
 
-namespace argon::impl {
+namespace argon::helpers {
 
+/// @brief Helper template to get the Argon type for a given vector type.
+/// @tparam T The vector type to get the Argon type for.
+/// @details This template is specialized for either quadword or doubleword types.
 template <typename T>
 struct ArgonFor;
 
-template <simd::is_vector_type T>
-  requires simd::is_quadword<T>
+/// @cond EXCLUDE
+template <simd::is_quadword T>
 struct ArgonFor<T> {
-  using type = Argon<typename simd::NonVec<T>::type>;
+  using type = Argon<simd::Scalar_t<T>>;
 };
 
 #if ARGON_HAS_DWORD
-template <simd::is_vector_type T>
-  requires simd::is_doubleword<T>
+template <simd::is_doubleword T>
 struct ArgonFor<T> {
-  using type = ArgonHalf<typename simd::NonVec<T>::type>;
+  using type = ArgonHalf<simd::Scalar_t<T>>;
 };
 #endif
+/// @endcond
 
+/// @brief Helper alias to get the Argon type for a given vector type.
+/// @tparam T The vector type to get the Argon type for.
 template <typename T>
 using ArgonFor_t = typename ArgonFor<std::remove_cv_t<T>>::type;
-}  // namespace argon::impl
+}  // namespace argon::helpers
 #undef simd

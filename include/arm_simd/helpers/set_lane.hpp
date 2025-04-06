@@ -1,5 +1,5 @@
 #pragma once
-#include "nonvec.hpp"
+#include "scalar.hpp"
 #include "../../arm_simd.hpp"
 
 #ifdef __ARM_NEON
@@ -25,7 +25,7 @@
 namespace simd {
 
 template <typename T>
-nce T set_lane(T vec, const int i, typename NonVec<T>::type a);
+nce T set_lane(T vec, const int i, typename Scalar<T>::type a);
 
 template <>
 nce uint8x16_t set_lane(uint8x16_t vec, const int i, uint8_t a) {

@@ -1,16 +1,17 @@
 #pragma once
 #include <array>
+#include <bit>
 #include <functional>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include "arm_simd/helpers.hpp"
-#include "arm_simd/helpers/nonvec.hpp"
+#include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/multivec.hpp"
-#include "helpers/result.hpp"
+#include "helpers/bool.hpp"
 #include "helpers/to_array.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -27,7 +28,7 @@
 #define ace [[gnu::always_inline]] inline
 #endif
 
-namespace argon::impl {
+namespace argon {
 template <typename T>
 concept arithmetic = std::is_arithmetic_v<T>;
 
@@ -38,23 +39,23 @@ template <typename vector_type>
 class Lane;
 
 template <typename vector_type>
-class Common {
+class Vector {
  public:
-  using scalar_type = simd::NonVec_t<vector_type>;
+  using scalar_type = simd::Scalar_t<vector_type>;
   using lane_type = Lane<vector_type>;
-  using result_type = Result_t<vector_type>;
-  using argon_result_type = ArgonFor_t<result_type>;
-  using argon_type = ArgonFor_t<vector_type>;
+  using vector_bool_type = Bool_t<vector_type>;
+  using argon_bool_type = helpers::ArgonFor_t<vector_bool_type>;
+  using argon_type = helpers::ArgonFor_t<vector_type>;
 
   static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
 
-  constexpr Common() = default;
-  constexpr Common(vector_type vector) : vec_{vector} {};
-  ace Common(scalar_type scalar) : vec_(FromScalar(scalar)) {};
+  constexpr Vector() = default;
+  constexpr Vector(vector_type vector) : vec_{vector} {};
+  ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
   template <simd::is_vector_type intrinsic_type>
-    requires std::is_same_v<scalar_type, simd::NonVec_t<intrinsic_type>>
-  ace Common(argon::impl::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+    requires std::is_same_v<scalar_type, simd::Scalar_t<intrinsic_type>>
+  ace Vector(argon::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
 
   ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 
@@ -67,7 +68,7 @@ class Common {
   }
 
   template <simd::is_vector_type intrinsic_type>
-  ace static argon_type FromLane(argon::impl::Lane<intrinsic_type> lane)
+  ace static argon_type FromLane(argon::Lane<intrinsic_type> lane)
     requires simd::is_quadword<vector_type>
   {
     return simd::duplicate_lane_quad(lane.vec(), lane.lane());
@@ -75,7 +76,7 @@ class Common {
 
 #if ARGON_HAS_DWORD
   template <simd::is_vector_type intrinsic_type>
-  ace static argon_type FromLane(argon::impl::Lane<intrinsic_type> lane)
+  ace static argon_type FromLane(argon::Lane<intrinsic_type> lane)
     requires simd::is_doubleword<vector_type>
   {
     return simd::duplicate_lane(lane.vec(), lane.lane());
@@ -117,12 +118,12 @@ class Common {
   ace argon_type operator*(argon_type b) const { return Multiply(b); }
   ace argon_type operator/(argon_type b) const { return Divide(b); }
 
-  ace argon_result_type operator==(argon_type b) const { return Equal(b); }
-  ace argon_result_type operator!=(argon_type b) const { return ~Equal(b); }
-  ace argon_result_type operator<(argon_type b) const { return LessThan(b); }
-  ace argon_result_type operator>(argon_type b) const { return GreaterThan(b); }
-  ace argon_result_type operator<=(argon_type b) const { return LessThanOrEqual(b); }
-  ace argon_result_type operator>=(argon_type b) const { return GreaterThanOrEqual(b); }
+  ace argon_bool_type operator==(argon_type b) const { return Equal(b); }
+  ace argon_bool_type operator!=(argon_type b) const { return ~Equal(b); }
+  ace argon_bool_type operator<(argon_type b) const { return LessThan(b); }
+  ace argon_bool_type operator>(argon_type b) const { return GreaterThan(b); }
+  ace argon_bool_type operator<=(argon_type b) const { return LessThanOrEqual(b); }
+  ace argon_bool_type operator>=(argon_type b) const { return GreaterThanOrEqual(b); }
 
   ace argon_type operator++() const { return Add(1); }
   ace argon_type operator--() const { return Subtract(1); }
@@ -258,15 +259,15 @@ class Common {
   ace argon_type Max(argon_type b) const { return simd::max(vec_, b); }
   ace argon_type Min(argon_type b) const { return simd::min(vec_, b); }
 
-  ace argon_result_type Equal(argon_type b) const { return simd::equal(vec_, b); }
-  ace argon_result_type GreaterThanOrEqual(argon_type b) const { return simd::greater_than_or_equal(vec_, b); }
-  ace argon_result_type LessThanOrEqual(argon_type b) const { return simd::less_than_or_equal(vec_, b); }
-  ace argon_result_type GreaterThan(argon_type b) const { return simd::greater_than(vec_, b); }
-  ace argon_result_type LessThan(argon_type b) const { return simd::less_than(vec_, b); }
+  ace argon_bool_type Equal(argon_type b) const { return simd::equal(vec_, b); }
+  ace argon_bool_type GreaterThanOrEqual(argon_type b) const { return simd::greater_than_or_equal(vec_, b); }
+  ace argon_bool_type LessThanOrEqual(argon_type b) const { return simd::less_than_or_equal(vec_, b); }
+  ace argon_bool_type GreaterThan(argon_type b) const { return simd::greater_than(vec_, b); }
+  ace argon_bool_type LessThan(argon_type b) const { return simd::less_than(vec_, b); }
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, typename ArgonFor<simd::make_signed_t<vector_type>>::type>)
+             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<vector_type>>::type>)
   ace argon_type ShiftLeft(signed_vector b) const
     requires std::is_integral_v<scalar_type>
   {
@@ -280,7 +281,7 @@ class Common {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, typename ArgonFor<simd::make_signed_t<vector_type>>::type>)
+             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<vector_type>>::type>)
   ace argon_type ShiftLeftSaturate(signed_vector b) const {
     return simd::shift_left_saturate(vec_, b);
   }
@@ -332,7 +333,7 @@ class Common {
    */
   template <simd::is_vector_type intrinsic_type>
   ace static argon_type LoadGather(const scalar_type* base, intrinsic_type offset_vector) {
-    using offset_type = simd::NonVec_t<intrinsic_type>;
+    using offset_type = simd::Scalar_t<intrinsic_type>;
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
@@ -362,7 +363,7 @@ class Common {
   ace static std::array<argon_type, stride> LoadCopyInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = MultiVec<vector_type, stride>::type;
+    using multivec_type = helpers::MultiVec<vector_type, stride>::type;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2_duplicate<multivec_type>(ptr).val);
@@ -376,7 +377,7 @@ class Common {
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = MultiVec_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVec_t<vector_type, stride>;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2<multivec_type>(ptr).val);
@@ -388,7 +389,7 @@ class Common {
   }
 
   template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadToLaneInterleaved(MultiVec_t<vector_type, stride> multi,
+  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVec_t<vector_type, stride> multi,
                                                                   const scalar_type* ptr) {
     if constexpr (stride == 2) {
       if constexpr (simd::is_quadword_v<vector_type>) {
@@ -414,7 +415,7 @@ class Common {
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadToLaneInterleaved(std::array<argon_type, stride> multi,
                                                                   const scalar_type* ptr) {
-    using multivec_type = MultiVec_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVec_t<vector_type, stride>;
     return LoadToLaneInterleaved<lane, stride>(*(multivec_type*)multi.data(), ptr);
   }
 
@@ -431,7 +432,7 @@ class Common {
   template <size_t stride, simd::is_vector_type intrinsic_type>
   ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
                                                                   intrinsic_type offset_vector) {
-    using offset_type = simd::NonVec_t<intrinsic_type>;
+    using offset_type = simd::Scalar_t<intrinsic_type>;
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
@@ -517,7 +518,7 @@ class Common {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, ArgonFor_t<simd::make_signed_t<vector_type>>>)
+             std::is_same_v<signed_vector, helpers::ArgonFor_t<simd::make_signed_t<vector_type>>>)
   ace signed_vector CountLeadingSignBits() const {
     return simd::count_leading_sign_bits(vec_);
   }
@@ -676,9 +677,9 @@ class Common {
 
 template <typename vector_type>
 class Lane {
-  using scalar_type = simd::NonVec_t<vector_type>;
+  using scalar_type = simd::Scalar_t<vector_type>;
   using type = Lane<vector_type>;
-  using argon_type = ArgonFor_t<vector_type>;
+  using argon_type = helpers::ArgonFor_t<vector_type>;
 
  public:
   ace Lane(vector_type& vec, const int lane) : vec_{vec}, lane_{lane} {}
@@ -720,21 +721,21 @@ class Lane {
   int lane_;
 };
 
-}  // namespace argon::impl
+}  // namespace argon::helpers
 
 /**
  * Lane deconstruction feature
  */
 namespace std {
 template <typename T>
-struct tuple_size<argon::impl::Common<T>> {
-  static constexpr size_t value = argon::impl::Common<T>::lanes;
+struct tuple_size<argon::Vector<T>> {
+  static constexpr size_t value = argon::Vector<T>::lanes;
 };
 
 template <size_t Index, typename T>
-struct tuple_element<Index, argon::impl::Common<T>> {
-  static_assert(Index < argon::impl::Common<T>::lanes);
-  using type = argon::impl::Common<T>::lane_type;
+struct tuple_element<Index, argon::Vector<T>> {
+  static_assert(Index < argon::Vector<T>::lanes);
+  using type = argon::Vector<T>::lane_type;
 };
 }  // namespace std
 

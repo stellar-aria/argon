@@ -1,6 +1,6 @@
 #pragma once
 #include "concepts.hpp"
-#include "nonvec.hpp"
+#include "scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -18,9 +18,9 @@
 
 #define make_lane_helper_dword_1arg(lane_func)             \
   template <is_vector_type T, is_doubleword U>             \
-    requires std::is_same_v<NonVec_t<T>, NonVec_t<U>>      \
+    requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
   nce T lane_func(T a, U vec, const int lane) {          \
-    constexpr int lanes = sizeof(U) / sizeof(NonVec_t<U>); \
+    constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
@@ -69,9 +69,9 @@
 
 #define make_lane_helper_dword_2arg(lane_func)             \
   template <is_vector_type T, is_doubleword U>             \
-    requires std::is_same_v<NonVec_t<T>, NonVec_t<U>>      \
+    requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
   nce T lane_func(T a, T b, U vec, const int lane) {     \
-    constexpr int lanes = sizeof(U) / sizeof(NonVec_t<U>); \
+    constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
@@ -120,9 +120,9 @@
 
 #define make_lane_helper_qword_1arg(lane_func)             \
   template <is_vector_type T, is_vector_type U>            \
-    requires std::is_same_v<NonVec_t<T>, NonVec_t<U>>      \
+    requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
   nce T lane_func(T a, U vec, const int lane) {          \
-    constexpr int lanes = sizeof(U) / sizeof(NonVec_t<U>); \
+    constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
@@ -208,9 +208,9 @@
 
 #define make_lane_helper_qword_2arg(lane_func)             \
   template <is_vector_type T, is_vector_type U>            \
-    requires std::is_same_v<NonVec_t<T>, NonVec_t<U>>      \
+    requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
   nce T lane_func(T a, T b, U vec, const int lane) {     \
-    constexpr int lanes = sizeof(U) / sizeof(NonVec_t<U>); \
+    constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \

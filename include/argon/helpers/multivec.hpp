@@ -1,10 +1,19 @@
 #pragma once
 #include <cstddef>
-#include "arm_simd.hpp"
 #include "argon/features.h"
+#include "arm_simd.hpp"
 
-namespace argon::impl {
-template <typename T, size_t size> struct MultiVec;
+
+namespace argon::helpers {
+
+/// @brief  Helper template for multi-vector types of different SIMD types and sizes.
+/// @tparam T The SIMD type (e.g., int8x16_t, float32x4_t).
+/// @tparam size The number of vectors to be packed together (e.g., 2, 3, 4).
+template <typename T, size_t size>
+struct MultiVec;
+
+// clang-format off
+/// @cond EXCLUDE
 template <> struct MultiVec<int8x16_t, 2> { using type = int8x16x2_t; };
 template <> struct MultiVec<uint8x16_t, 2> { using type = uint8x16x2_t; };
 template <> struct MultiVec<int16x8_t, 2> { using type = int16x8x2_t; };
@@ -51,6 +60,14 @@ template <> struct MultiVec<float32x4_t, 4> { using type = float32x4x4_t; };
 template <> struct MultiVec<poly8x8_t, 4> { using type = poly8x8x4_t; };
 template <> struct MultiVec<poly16x4_t, 4> { using type = poly16x4x4_t; };
 
+
+#if ARGON_HAS_HALF_FLOAT
+template <> struct MultiVec<float16x8_t, 2> { using type = float16x8x2_t; };
+template <> struct MultiVec<float16x8_t, 3> { using type = float16x8x3_t; };
+template <> struct MultiVec<float16x8_t, 4> { using type = float16x8x4_t; };
+#endif
+
+
 #if ARGON_HAS_DWORD
 template <> struct MultiVec<int8x8_t, 2> { using type = int8x8x2_t; };
 template <> struct MultiVec<uint8x8_t, 2> { using type = uint8x8x2_t; };
@@ -78,8 +95,18 @@ template <> struct MultiVec<int32x2_t, 4> { using type = int32x2x4_t; };
 template <> struct MultiVec<uint32x2_t, 4> { using type = uint32x2x4_t; };
 template <> struct MultiVec<int64x1_t, 4> { using type = int64x1x4_t; };
 template <> struct MultiVec<uint64x1_t, 4> { using type = uint64x1x4_t; };
-#endif
 
+#if ARGON_HAS_HALF_FLOAT
+template <> struct MultiVec<float16x4_t, 2> { using type = float16x4x2_t; };
+template <> struct MultiVec<float16x4_t, 3> { using type = float16x4x3_t; };
+template <> struct MultiVec<float16x4_t, 4> { using type = float16x4x4_t; };
+#endif
+#endif
+/// @endcond // EXCLUDE
+
+/// @brief  Helper alias for multi-vector types of different SIMD types and sizes.
+/// @tparam T The SIMD type (e.g., int8x16_t, float32x4_t).
+/// @tparam size The number of vectors to be packed together (e.g., 2, 3, 4).
 template <typename T, size_t size>
 using MultiVec_t = MultiVec<T, size>::type;
 }

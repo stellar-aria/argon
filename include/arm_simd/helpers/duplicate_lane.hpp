@@ -1,6 +1,6 @@
 #pragma once
 #include "argon/features.h"
-#include "nonvec.hpp"
+#include "scalar.hpp"
 #include "vec64.hpp"
 #include "arm_simd.hpp"
 
@@ -23,7 +23,7 @@
 namespace simd {
 #if ARGON_HAS_DWORD
 template <typename T>
-nce T duplicate_lane(typename Vec64<NonVec_t<T>>::type vec, const int i);
+nce T duplicate_lane(typename Vec64<Scalar_t<T>>::type vec, const int i);
 
 template <>
 nce uint8x8_t duplicate_lane(uint8x8_t vec, const int i) {
