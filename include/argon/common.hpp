@@ -82,6 +82,14 @@ class Common {
   }
 #endif
 
+  ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
+    vector_type out;
+    for (size_t i = 0; i < lanes; ++i) {
+      out[i] = start + i;
+    }
+    return out;
+  }
+
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type()>>
   ace static argon_type Generate(FuncType body) {

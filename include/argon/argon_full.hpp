@@ -33,10 +33,8 @@ class Argon : public argon::impl::Common<simd::Vec128_t<scalar_type>> {
   ace Argon() = default;
   ace Argon(vector_type vector) : T{vector} {};
   ace Argon(scalar_type scalar) : T{scalar} {};
-  // ace Argon(scalar_type const* ptr) : T{ptr} {};
   ace Argon(T&& in) : T(in){};
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
-  // ace Argon(std::span<scalar_type> slice) : T{slice} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
 
   template <typename... arg_types>

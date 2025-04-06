@@ -29,20 +29,71 @@ and capabilities.
 
 - A library of commonly used algorithms optimized in NEON.
 
+## Examples
+
+### Object-oriented Argon interface
+
+```cpp
+#include <argon/argon.hpp>
+#include <iostream>
+
+Argon<float> triangle(Argon<float> phase) {
+  phase = argon::ternary(phase > 0.5f, 1.f, 0.f) - phase;
+  return Argon{-1.f}.MultiplyAdd(phase.Absolute(), 4.f);
+}
+
+int main() {
+  float frequency = 440.f;
+  float phase_increment = frequency / 44100.f;
+  Argon<float> phase = Argon{0}.MultiplyAdd(phase_increment, Argon<float>::Iota(0))
+  Argon<float> wave = triangle(phase);
+
+  // Print the result
+  for (size_t i = 0; i < result.size(); ++i) {
+    std::cout << "Result[" << i << "]: " << result[i] << std::endl;
+  }
+}
+```
+
+### Low-level NEON interface
+
+```cpp
+#include <argon/arm_simd.hpp>
+#include <iostream>
+
+int main() {
+  // Example: Multiply-add two vectors using NEON
+  float32x4_t a = {1.0f, 2.0f, 3.0f, 4.0f};
+  float32x4_t b = {5.0f, 6.0f, 7.0f, 8.0f};
+  float32x4_t c = {9.0f, 10.0f, 11.0f, 12.0f};
+
+  // Perform vector multiply-add
+  float32x4_t result = neon::multiply_add(a, b, c);
+
+  // Print the result
+  for (size_t i = 0; i < result.size(); ++i) {
+    std::cout << "Result[" << i << "]: " << result[i] << std::endl;
+  }
+
+  return 0;
+}
+```
+
 ## Backend Support:
 
-| Backend                        | Architectures            | Status | Notes                                      |
-| ------------------------------ | ------------------------ | ------ | ------------------------------------------ |
-| [ARM NEON (ARMv7)][arm-neon]   | VFPv3, VFPv3-FP16, VFPv4 | ✅     | Primary target, optimized for performance. |
-| [ARM NEON (ARMv8+)][arm-neon]  | AArch32, AArch64         | ✅     | Primary target, optimized for performance. |
-| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | ⚠️     | No testing target                          |
-| [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | ✅     | Fallback, used for portability and testing |
+| Backend                        | Architectures            | Status             | Notes                                      |
+| ------------------------------ | ------------------------ | ------------------ | ------------------------------------------ |
+| [ARM NEON (ARMv7)][arm-neon]   | VFPv3, VFPv3-FP16, VFPv4 | :white_check_mark: | Primary target, optimized for performance. |
+| [ARM NEON (ARMv8+)][arm-neon]  | AArch32, AArch64         | :white_check_mark: | Primary target, optimized for performance. |
+| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | :warning:          | No testing target                          |
+| [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | :white_check_mark: | Fallback, used for portability and testing |
 
 ## Compatibility
 
 Argon can be compiled using the following tool sets:
 
 Compilers:
+
 - GCC 14.2 or later
 - LLVM Embedded Toolchain for ARM 19 or later (ARMv7-A)
 - LLVM/Clang 20.1 or later (AArch32/AArch64)
@@ -58,19 +109,18 @@ Testing is currently done across a range of platforms and compilers, including:
 | Clang    | :x:                | :heavy_check_mark: | (TBD)     | :heavy_check_mark: |
 | MSVC     | :x:                | (TBD)              | :x:       | :heavy_check_mark: |
 
-### ABI:
+### Target ABI:
 
 | Compiler | Bare-metal         | Linux              | macOS              | Windows            |
 | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
-| GCC      | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :warning:*          |
-| Clang    | :warning:*          | :heavy_check_mark: | :warning:** | :heavy_check_mark: |
+| GCC      | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :warning:\*        |
+| Clang    | :warning:\*        | :heavy_check_mark: | :warning:\*\*      | :heavy_check_mark: |
 | MSVC     | :x:                | :x:                | :x:                | :heavy_check_mark: |
 
-*: Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regulary but not
+\*: Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regulary but not
 tested via CI.
 
-**: In order to compile with Clang on macOS, you'll need to use the brew-bundled versions of libc++, as Apple's system libraries do not support required C++23 features. 
-
+\*\*: In order to compile with Clang on macOS, you'll need to use the brew-bundled versions of libc++, as Apple's system libraries do not support required C++23 features.
 
 ### Host Platform:
 
@@ -78,8 +128,7 @@ tested via CI.
 | ------- | --------- | ------------------ | ------------------ |
 | Linux   | :warning: | :heavy_check_mark: | :heavy_check_mark: |
 | macOS   | :x:       | :heavy_check_mark: | :heavy_check_mark: |
-| Windows | :x:       | (TBD)          | :heavy_check_mark: |
-
+| Windows | :x:       | (TBD)              | :heavy_check_mark: |
 
 [arm-neon]: https://developer.arm.com/Architectures/Neon
 [arm-helium]: https://developer.arm.com/Architectures/Helium
