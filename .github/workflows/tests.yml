@@ -12,11 +12,11 @@ on:
 
 jobs:
   test-build-arm:
-    name: Run tests (ARM64)
-    runs-on: ubuntu-24.04-arm
+    name: Run tests (ARM64 Linux)
     strategy:
       matrix:
         compiler: [gcc, clang]
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -101,7 +101,6 @@ jobs:
     strategy:
       matrix:
         compiler: [gcc, clang]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -140,9 +139,13 @@ jobs:
             build/test/specs/results/**/*.xml
 
 
-  test-build-x86_64-windows:
-    name: Run tests (x86_64 Windows)
-    runs-on: windows-latest
+  test-build-macos:
+    name: Run tests (macOS)
+    strategy:
+      matrix:
+        os: [macos-15, macos-13]
+        compiler: [gcc, clang]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -150,8 +153,57 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      - name: Use GCC 14
+        run: |
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+        if: matrix.compiler == 'gcc'
+
+      - name: Use Clang
+        run: |
+          echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
+        if: matrix.compiler == 'clang'
+
       - name: Configure
+        run: cmake -B build -DARGON_ENABLE_TESTING=YES
+
+      - name: Run build
+        run: cmake --build build
+
+      - name: Run CTest
+        run: ctest --output-on-failure --test-dir build/test/specs
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test Results (${{ matrix.os }} ${{ matrix.compiler }})
+          path: |
+            build/test/specs/results/*.xml
+            build/test/specs/results/**/*.xml
+
+
+  test-build-x86_64-windows:
+    name: Run tests (x86_64 Windows)
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        compiler: [clang, msvc]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Configure ClangCL
         run: cmake -G "Visual Studio 17 2022" -A x64 -T ClangCL -B build -DARGON_ENABLE_TESTING=YES
+        if: matrix.compiler == 'clang'
+
+      - name: Configure MSVC
+        run: cmake -G "Visual Studio 17 2022" -A x64 -B build -DARGON_ENABLE_TESTING=YES
+        if: matrix.compiler == 'msvc'
 
       - name: Run build
         run: cmake --build build --config Release
@@ -163,7 +215,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results (x86 Windows)
+          name: Test Results (x86 Windows ${{ matrix.compiler }})
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml

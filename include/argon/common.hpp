@@ -451,7 +451,7 @@ class Common {
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
     static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
-
+#if defined(__clang__) || (__GNUC__ > 13)
     if constexpr (n == 2) {
       return argon::to_array(simd::load1_x2(ptr).val);
     } else if constexpr (n == 3) {
@@ -459,6 +459,24 @@ class Common {
     } else if constexpr (n == 4) {
       return argon::to_array(simd::load1_x4(ptr).val);
     }
+#else
+    if constexpr (n == 2) {
+      auto a = simd::load1(ptr);
+      auto b = simd::load1(ptr + lanes);
+      return {a, b};
+    } else if constexpr (n == 3) {
+      auto a = simd::load1(ptr);
+      auto b = simd::load1(ptr + lanes);
+      auto c = simd::load1(ptr + 2 * lanes);
+      return {a, b, c};
+    } else if constexpr (n == 4) {
+      auto a = simd::load1(ptr);
+      auto b = simd::load1(ptr + lanes);
+      auto c = simd::load1(ptr + 2 * lanes);
+      auto d = simd::load1(ptr + 3 * lanes);
+      return {a, b, c, d};
+    }
+#endif
   }
 
   ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }

@@ -28,7 +28,7 @@
         case 1:                                            \
           return lane_func<1>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
@@ -41,7 +41,7 @@
         case 3:                                            \
           return lane_func<3>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
@@ -62,7 +62,7 @@
         case 7:                                            \
           return lane_func<7>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     }                                                      \
   }
@@ -79,7 +79,7 @@
         case 1:                                            \
           return lane_func<1>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
@@ -92,7 +92,7 @@
         case 3:                                            \
           return lane_func<3>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
@@ -113,7 +113,7 @@
         case 7:                                            \
           return lane_func<7>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     }                                                      \
   }
@@ -130,7 +130,7 @@
         case 1:                                            \
           return lane_func<1>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
@@ -143,7 +143,7 @@
         case 3:                                            \
           return lane_func<3>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
@@ -164,7 +164,7 @@
         case 7:                                            \
           return lane_func<7>(a, vec);                   \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 16) {                    \
       switch (lane) {                                      \
@@ -201,7 +201,7 @@
         case 15:                                           \
           return lane_func<15>(a, vec);                  \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     }                                                      \
   }
@@ -218,7 +218,7 @@
         case 1:                                            \
           return lane_func<1>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
@@ -231,7 +231,7 @@
         case 3:                                            \
           return lane_func<3>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
@@ -252,7 +252,7 @@
         case 7:                                            \
           return lane_func<7>(a, b, vec);                \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     } else if constexpr (lanes == 16) {                    \
       switch (lane) {                                      \
@@ -289,7 +289,7 @@
         case 15:                                           \
           return lane_func<15>(a, b, vec);               \
         default:                                           \
-          __builtin_unreachable();                         \
+          std::unreachable();                         \
       }                                                    \
     }                                                      \
   }

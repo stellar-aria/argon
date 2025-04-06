@@ -63,7 +63,7 @@ nce uint8x16_t load1_lane(uint8x16_t vec, const int i, uint8_t const *ptr) {
     case 15:
       return simd::load1_lane_quad<15>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -103,7 +103,7 @@ nce int8x16_t load1_lane(int8x16_t vec, const int i, int8_t const *ptr) {
     case 15:
       return simd::load1_lane_quad<15>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -127,7 +127,7 @@ nce uint16x8_t load1_lane(uint16x8_t vec, const int i, uint16_t const *ptr) {
     case 7:
       return simd::load1_lane_quad<7>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -151,7 +151,7 @@ nce int16x8_t load1_lane(int16x8_t vec, const int i, int16_t const *ptr) {
     case 7:
       return simd::load1_lane_quad<7>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -167,7 +167,7 @@ nce uint32x4_t load1_lane(uint32x4_t vec, const int i, uint32_t const *ptr) {
     case 3:
       return simd::load1_lane_quad<3>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -183,7 +183,7 @@ nce int32x4_t load1_lane(int32x4_t vec, const int i, int32_t const *ptr) {
     case 3:
       return simd::load1_lane_quad<3>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -199,7 +199,7 @@ nce float32x4_t load1_lane(float32x4_t vec, const int i, float const *ptr) {
     case 3:
       return simd::load1_lane_quad<3>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -211,7 +211,7 @@ nce uint64x2_t load1_lane(uint64x2_t vec, const int i, uint64_t const *ptr) {
     case 1:
       return simd::load1_lane_quad<1>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -223,7 +223,7 @@ nce int64x2_t load1_lane(int64x2_t vec, const int i, int64_t const *ptr) {
     case 1:
       return simd::load1_lane_quad<1>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #if ARGON_HAS_DWORD
@@ -248,7 +248,7 @@ nce uint8x8_t load1_lane(uint8x8_t vec, const int i, uint8_t const *ptr) {
     case 7:
       return simd::load1_lane<7>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -272,7 +272,7 @@ nce int8x8_t load1_lane(int8x8_t vec, const int i, int8_t const *ptr) {
     case 7:
       return simd::load1_lane<7>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -288,7 +288,7 @@ nce uint16x4_t load1_lane(uint16x4_t vec, const int i, uint16_t const *ptr) {
     case 3:
       return simd::load1_lane<3>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -304,7 +304,7 @@ nce int16x4_t load1_lane(int16x4_t vec, const int i, int16_t const *ptr) {
     case 3:
       return simd::load1_lane<3>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -316,7 +316,7 @@ nce uint32x2_t load1_lane(uint32x2_t vec, const int i, uint32_t const *ptr) {
     case 1:
       return simd::load1_lane<1>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -328,7 +328,7 @@ nce int32x2_t load1_lane(int32x2_t vec, const int i, int32_t const *ptr) {
     case 1:
       return simd::load1_lane<1>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -340,7 +340,7 @@ nce float32x2_t load1_lane(float32x2_t vec, const int i, float32_t const *ptr) {
     case 1:
       return simd::load1_lane<1>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -350,7 +350,7 @@ nce uint64x1_t load1_lane(uint64x1_t vec, const int i, uint64_t const *ptr) {
     case 0:
       return simd::load1_lane<0>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -360,7 +360,7 @@ nce int64x1_t load1_lane(int64x1_t vec, const int i, int64_t const *ptr) {
     case 0:
       return simd::load1_lane<0>(ptr, vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif

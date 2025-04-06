@@ -45,7 +45,7 @@ nce uint8x8_t duplicate_lane(uint8x8_t vec, const int i) {
     case 7:
       return simd::duplicate_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -69,7 +69,7 @@ nce uint8x16_t duplicate_lane(uint8x8_t vec, const int i) {
     case 7:
       return simd::duplicate_lane_quad<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -93,7 +93,7 @@ nce int8x8_t duplicate_lane(int8x8_t vec, const int i) {
     case 7:
       return simd::duplicate_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -117,7 +117,7 @@ nce int8x16_t duplicate_lane(int8x8_t vec, const int i) {
     case 7:
       return simd::duplicate_lane_quad<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -133,7 +133,7 @@ nce uint16x4_t duplicate_lane(uint16x4_t vec, const int i) {
     case 3:
       return simd::duplicate_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -149,7 +149,7 @@ nce uint16x8_t duplicate_lane(uint16x4_t vec, const int i) {
     case 3:
       return simd::duplicate_lane_quad<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -165,7 +165,7 @@ nce int16x4_t duplicate_lane(int16x4_t vec, const int i) {
     case 3:
       return simd::duplicate_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -181,7 +181,7 @@ nce int16x8_t duplicate_lane(int16x4_t vec, const int i) {
     case 3:
       return simd::duplicate_lane_quad<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -193,7 +193,7 @@ nce uint32x2_t duplicate_lane(uint32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -205,7 +205,7 @@ nce uint32x4_t duplicate_lane(uint32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane_quad<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -217,7 +217,7 @@ nce int32x2_t duplicate_lane(int32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -229,7 +229,7 @@ nce int32x4_t duplicate_lane(int32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane_quad<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -239,7 +239,7 @@ nce uint64x2_t duplicate_lane(uint64x1_t vec, const int i) {
     case 0:
       return simd::duplicate_lane_quad<0>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -252,7 +252,7 @@ nce float32x2_t duplicate_lane(float32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -264,7 +264,7 @@ nce float32x4_t duplicate_lane(float32x2_t vec, const int i) {
     case 1:
       return simd::duplicate_lane_quad<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif

@@ -64,7 +64,7 @@ nce auto get_lane(uint8x16_t vec, const int i) {
     case 15:
       return simd::get_lane<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -104,7 +104,7 @@ nce auto get_lane(int8x16_t vec, const int i) {
     case 15:
       return simd::get_lane<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -128,7 +128,7 @@ nce auto get_lane(uint16x8_t vec, const int i) {
     case 7:
       return simd::get_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -152,7 +152,7 @@ nce auto get_lane(int16x8_t vec, const int i) {
     case 7:
       return simd::get_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -168,7 +168,7 @@ nce auto get_lane(uint32x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -184,7 +184,7 @@ nce auto get_lane(int32x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -196,7 +196,7 @@ nce auto get_lane(uint64x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -208,7 +208,7 @@ nce auto get_lane(int64x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -225,7 +225,7 @@ nce auto get_lane(float32x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
@@ -251,7 +251,7 @@ nce auto get_lane(float16x8_t vec, const int i) {
     case 7:
       return simd::get_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
@@ -265,7 +265,7 @@ nce auto get_lane(float64x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
  }
 }
 #endif
@@ -291,7 +291,7 @@ nce auto get_lane(uint8x8_t vec, const int i) {
     case 7:
       return simd::get_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -315,7 +315,7 @@ nce auto get_lane(int8x8_t vec, const int i) {
     case 7:
       return simd::get_lane<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -331,7 +331,7 @@ nce auto get_lane(uint16x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -347,7 +347,7 @@ nce auto get_lane(int16x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -359,7 +359,7 @@ nce auto get_lane(uint32x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -371,7 +371,7 @@ nce auto get_lane(int32x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -381,7 +381,7 @@ nce auto get_lane(uint64x1_t vec, const int i) {
     case 0:
       return simd::get_lane<0>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -391,7 +391,7 @@ nce auto get_lane(int64x1_t vec, const int i) {
     case 0:
       return simd::get_lane<0>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -405,7 +405,7 @@ nce auto get_lane(float32x2_t vec, const int i) {
     case 1:
       return simd::get_lane<1>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
@@ -423,7 +423,7 @@ nce auto get_lane(float16x4_t vec, const int i) {
     case 3:
       return simd::get_lane<3>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
@@ -435,7 +435,7 @@ nce auto get_lane(float64x1_t vec, const int i) {
     case 0:
       return simd::get_lane<0>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
