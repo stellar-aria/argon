@@ -2,6 +2,10 @@
 #include "vfpv4.hpp"
 #include "arm_simd/shared/a32_float.hpp"
 
+#ifdef __ARM_ACLE
+#include <arm_acle.h>
+#endif
+
 #ifdef __cplusplus
 #ifdef __clang__
 #define nce constexpr
