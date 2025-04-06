@@ -38,7 +38,15 @@ and capabilities.
 | [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | ⚠️     | No testing target                          |
 | [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | ✅     | Fallback, used for portability and testing |
 
-## Target support
+## Compatibility
+
+Argon can be compiled using the following tool sets:
+
+Compilers:
+- GCC 14.2 or later
+- LLVM Embedded Toolchain for ARM 19 or later (ARMv7-A)
+- LLVM/Clang 20.1 or later (AArch32/AArch64)
+- MSVC 19.44 or later
 
 Testing is currently done across a range of platforms and compilers, including:
 
@@ -55,11 +63,14 @@ Testing is currently done across a range of platforms and compilers, including:
 | Compiler | Bare-metal         | Linux              | macOS              | Windows            |
 | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
 | GCC      | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :warning:*          |
-| Clang    | :warning:*          | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| Clang    | :warning:*          | :heavy_check_mark: | :warning:** | :heavy_check_mark: |
 | MSVC     | :x:                | :x:                | :x:                | :heavy_check_mark: |
 
-*Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regulary but not
+*: Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regulary but not
 tested via CI.
+
+**: In order to compile with Clang on macOS, you'll need to use the brew-bundled versions of libc++, as Apple's system libraries do not support required C++23 features. 
+
 
 ### Host Platform:
 
