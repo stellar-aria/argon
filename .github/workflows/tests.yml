@@ -165,6 +165,7 @@ jobs:
       - name: Install Clang/LLVM 20
         run: |
           brew update
+          brew link --force llvm@20
           brew install llvm@20
         if: matrix.compiler == 'clang'
 
