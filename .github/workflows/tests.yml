@@ -173,6 +173,8 @@ jobs:
         run: |
           echo "CC=$(brew --prefix llvm@20)/bin/clang" >> $GITHUB_ENV
           echo "CXX=$(brew --prefix llvm@20)/bin/clang" >> $GITHUB_ENV
+          echo "LDFLAGS="-L/opt/homewrew/opt/llvm/lib -L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib/unwind -lunwind" >> $GITHUB_ENV
+          echo "CPPFLAGS="-I/opt/homebrew/opt/llvm/include -I/opt/homebrew/opt/llvm/include/c++ -I/opt/homebrew/opt/llvm/include/c++/v1" >> $GITHUB_ENV
         if: matrix.compiler == 'clang'
 
       - name: Configure
