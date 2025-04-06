@@ -50,11 +50,11 @@ jobs:
         git checkout --track origin/gh-pages || git checkout -b gh-pages
 
         # Remove old files and copy new documentation
-        rm -rf docs || true
+        git rm -rf docs || true
         mv build/html/ docs
         touch docs/.nojekyll
 
         # Commit and push changes
-        git add docs
-        git commit -m "Update Doxygen documentation"
+        git add docs || true
+        git commit -m "Update Doxygen documentation" || true
         git push origin gh-pages --force
