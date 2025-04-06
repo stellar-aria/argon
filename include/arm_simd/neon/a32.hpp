@@ -555,7 +555,7 @@ template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, po
 [[gnu::always_inline]] nce uint32_t sha1_fixed_rotate(uint32_t hash_e) { return vsha1h_u32(hash_e); }
 [[gnu::always_inline]] nce poly128_t multiply_long(poly64_t a, poly64_t b) { return vmull_p64(a, b); }
 [[gnu::always_inline]] nce poly128_t multiply_long_high(poly64x2_t a, poly64x2_t b) { return vmull_high_p64(a, b); }
-#ifdef __ARM_FEATURE_CRC32
+#if defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint8_t b) { return __crc32b(a, b); }
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint16_t b) { return __crc32h(a, b); }
 [[gnu::always_inline]] nce uint32_t crc32(uint32_t a, uint32_t b) { return __crc32w(a, b); }
