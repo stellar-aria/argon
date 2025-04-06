@@ -148,9 +148,6 @@ jobs:
       matrix:
         os: [macos-15, macos-13]
         compiler: [gcc, clang]
-        exclude:
-          - os: macos-13
-            compiler: clang
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -165,10 +162,14 @@ jobs:
           echo "CXX=g++-14" >> $GITHUB_ENV
         if: matrix.compiler == 'gcc'
 
+      - name: Install Clang/LLVM 20
+        run: brew install llvm@20
+        if: matrix.compiler == 'clang'
+
       - name: Use Clang
         run: |
-          echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
-          echo "CXX=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
+          echo "CC=$(brew --prefix llvm@20)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@20)/bin/clang" >> $GITHUB_ENV
         if: matrix.compiler == 'clang'
 
       - name: Configure

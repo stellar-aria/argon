@@ -9,6 +9,7 @@
 
 #ifdef __cplusplus
 namespace neon {
+// clang-format off
 template <typename T> nce T max(float64x1_t a, float64x1_t b);
 template <typename T> nce T max(float64x2_t a, float64x2_t b);
 template <typename T> nce T min(float64x1_t a, float64x1_t b);
@@ -1686,8 +1687,7 @@ template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_r
 template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_round_saturate_high_lane(int16_t a, int16_t b, int16x8_t v) { return vqrdmlshh_laneq_s16(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x2_t v) { return vqrdmlshs_lane_s32(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x4_t v) { return vqrdmlshs_laneq_s32(a, b, v, lane); }
-
-#ifdef __ARM_FEATURE_FP16_VECTOR_ARITHMETIC
+#if defined(__ARM_ACLE) && defined(__ARM_FEATURE_FP16_VECTOR_ARITHMETIC)
 [[gnu::always_inline]] nce float16_t absolute_difference(float16_t a, float16_t b) { return vabdh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t reciprocal_estimate(float16_t a) { return vrecpeh_f16(a); }
 [[gnu::always_inline]] nce float16_t reciprocal_exponent(float16_t a) { return vrecpxh_f16(a); }
@@ -1759,8 +1759,6 @@ template <int lane1, int lane2>[[gnu::always_inline]] nce bfloat16x4_t copy_lane
 template <int lane1, int lane2>[[gnu::always_inline]] nce bfloat16x8_t copy_lane(bfloat16x8_t a, bfloat16x8_t b) { return vcopyq_laneq_bf16(a, lane1, b, lane2); }
 template <> [[gnu::always_inline]] nce float64x1_t reinterpret(bfloat16x4_t a) { return vreinterpret_f64_bf16(a); }
 template <> [[gnu::always_inline]] nce float64x2_t reinterpret(bfloat16x8_t a) { return vreinterpretq_f64_bf16(a); }
-
-
 
 }
 #endif // __cplusplus
