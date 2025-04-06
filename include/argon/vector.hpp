@@ -338,7 +338,7 @@ class Vector {
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
     argon_type destination;
-    constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+    helpers::consteval_for<0, lanes, 1>([&]<int i>() {  //<
       offset_type lane_val = simd::get_lane<i>(offset_vector);
       destination = destination.template LoadToLane<i>(base + lane_val);
     });
@@ -438,7 +438,7 @@ class Vector {
     static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
     std::array<argon_type, stride> multi{};
-    constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+    helpers::consteval_for<0, lanes, 1>([&]<int i>() {  //<
       offset_type lane_val = simd::get_lane<i>(offset_vector);
       multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
     });

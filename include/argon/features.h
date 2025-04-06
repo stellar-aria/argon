@@ -1,6 +1,9 @@
 #pragma once
 #include <stdbool.h>
 
+/// @file features.h
+/// @brief Header file for SIMD features and platform detection.
+
 namespace argon {
 enum class platform {
   NEON,

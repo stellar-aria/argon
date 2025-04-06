@@ -2,6 +2,9 @@
 #include <array>
 #include "argon_for.hpp"
 
+/// @file to_array.hpp
+/// Helper functions to convert C-style arrays to std::array of Argon types, mimicking std::to_array
+
 namespace argon {
 namespace detail {
 template <class T, std::size_t N, std::size_t... I>
