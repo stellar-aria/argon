@@ -46,10 +46,10 @@ jobs:
 
         # Remove old files and copy new documentation
         git rm -rf doxygen || true
-        mv build/html doxygen
-        touch doxygen/.nojekyll
+        mv build/html docs
+        touch docs/.nojekyll
 
         # Commit and push changes
-        git add doxygen
+        git add docs
         git commit -m "Update Doxygen documentation"
         git push origin gh-pages --force
