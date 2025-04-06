@@ -41,7 +41,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         # Create or switch to gh-pages branch
-        git fetch origin gh-pages
+        git fetch origin gh-pages || true
         git checkout --track origin/gh-pages || git checkout -b gh-pages
 
         # Remove old files and copy new documentation
