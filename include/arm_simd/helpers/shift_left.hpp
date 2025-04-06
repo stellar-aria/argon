@@ -154,7 +154,7 @@ nce auto shift_left(uint64x2_t vec, const int i) {
     case 63:
       return shift_left<63>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(int64x2_t vec, const int i) {
@@ -286,7 +286,7 @@ nce auto shift_left(int64x2_t vec, const int i) {
     case 63:
       return shift_left<63>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(uint32x4_t vec, const int i) {
@@ -354,7 +354,7 @@ nce auto shift_left(uint32x4_t vec, const int i) {
     case 31:
       return shift_left<31>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(int32x4_t vec, const int i) {
@@ -422,7 +422,7 @@ nce auto shift_left(int32x4_t vec, const int i) {
     case 31:
       return shift_left<31>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(uint16x8_t vec, const int i) {
@@ -458,7 +458,7 @@ nce auto shift_left(uint16x8_t vec, const int i) {
     case 15:
       return shift_left<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(int16x8_t vec, const int i) {
@@ -494,7 +494,7 @@ nce auto shift_left(int16x8_t vec, const int i) {
     case 15:
       return shift_left<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(uint8x16_t vec, const int i) {
@@ -514,7 +514,7 @@ nce auto shift_left(uint8x16_t vec, const int i) {
     case 7:
       return shift_left<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 nce auto shift_left(int8x16_t vec, const int i) {
@@ -534,7 +534,7 @@ nce auto shift_left(int8x16_t vec, const int i) {
     case 7:
       return shift_left<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif
@@ -668,7 +668,7 @@ nce auto shift_left(uint64x1_t vec, const int i) {
     case 63:
       return shift_left<63>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -737,7 +737,7 @@ nce auto shift_left(uint32x2_t vec, const int i) {
     case 31:
       return shift_left<31>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -774,7 +774,7 @@ nce auto shift_left(uint16x4_t vec, const int i) {
     case 15:
       return shift_left<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -795,7 +795,7 @@ nce auto shift_left(uint8x8_t vec, const int i) {
     case 7:
       return shift_left<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -928,7 +928,7 @@ nce auto shift_left(int64x1_t vec, const int i) {
     case 63:
       return shift_left<63>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -997,7 +997,7 @@ nce auto shift_left(int32x2_t vec, const int i) {
     case 31:
       return shift_left<31>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -1034,7 +1034,7 @@ nce auto shift_left(int16x4_t vec, const int i) {
     case 15:
       return shift_left<15>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 
@@ -1055,7 +1055,7 @@ nce auto shift_left(int8x8_t vec, const int i) {
     case 7:
       return shift_left<7>(vec);
     default:
-      __builtin_unreachable();
+      std::unreachable();
   }
 }
 #endif

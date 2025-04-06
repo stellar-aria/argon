@@ -21,6 +21,9 @@ FetchContent_MakeAvailable(simde)
 
 add_library(simde INTERFACE ${simde_SOURCE_DIR}/simde)
 target_include_directories(simde INTERFACE ${simde_SOURCE_DIR}/simde)
-target_compile_options(simde INTERFACE -Wno-macro-redefined)
+
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_options(simde INTERFACE -Wno-macro-redefined)
+endif()
 
 add_subdirectory(specs)

@@ -77,7 +77,7 @@ template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_positive_
 template <> [[gnu::always_inline]] nce int32x4_t convert_round_toward_negative_infinity(float32x4_t a) { return vcvtmq_s32_f32(a); }
 template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_negative_infinity(float32x4_t a) { return vcvtmq_u32_f32(a); }
 // clang-format on
-}
+}  // namespace simd
 #endif
 #undef nce
 #undef simd
