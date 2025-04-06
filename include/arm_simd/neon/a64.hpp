@@ -1,6 +1,7 @@
 #pragma once
 #include "a32.hpp"
 
+
 #ifdef __clang__
 #define nce constexpr
 #else
@@ -1687,7 +1688,7 @@ template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_r
 template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_round_saturate_high_lane(int16_t a, int16_t b, int16x8_t v) { return vqrdmlshh_laneq_s16(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x2_t v) { return vqrdmlshs_lane_s32(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x4_t v) { return vqrdmlshs_laneq_s32(a, b, v, lane); }
-#if defined(__ARM_ACLE) && defined(__ARM_FEATURE_FP16_VECTOR_ARITHMETIC)
+#ifdef __ARM_FEATURE_FP16_VECTOR_ARITHMETIC
 [[gnu::always_inline]] nce float16_t absolute_difference(float16_t a, float16_t b) { return vabdh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t reciprocal_estimate(float16_t a) { return vrecpeh_f16(a); }
 [[gnu::always_inline]] nce float16_t reciprocal_exponent(float16_t a) { return vrecpxh_f16(a); }
