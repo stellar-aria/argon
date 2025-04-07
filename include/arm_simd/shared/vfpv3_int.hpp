@@ -7,8 +7,9 @@
 #define simd helium
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
-#include <cmath>
 #include <arm/neon.h>
+#include <cmath>
+
 #define simd neon
 #endif
 
@@ -310,7 +311,7 @@ template <int lane>[[gnu::always_inline]] nce int64x2_t set_lane(int64_t a, int6
 [[gnu::always_inline]] inline void store1(uint16_t *ptr, uint16x8_t val) { return vst1q_u16(ptr, val); }
 [[gnu::always_inline]] inline void store1(uint32_t *ptr, uint32x4_t val) { return vst1q_u32(ptr, val); }
 // clang-format on
-}
+}  // namespace simd
 #endif
 #undef nce
 #undef simd

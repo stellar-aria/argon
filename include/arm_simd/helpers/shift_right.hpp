@@ -1,6 +1,6 @@
 #pragma once
-#include "scalar.hpp"
 #include "arm_simd.hpp"
+#include "scalar.hpp"
 
 #ifdef __ARM_NEON
 #include <arm_neon.h>
@@ -229,7 +229,6 @@ nce auto shift_right(uint32x4_t vec, const int i) {
   }
 }
 
-
 nce auto shift_right(uint16x8_t vec, const int i) {
   switch (i) {
     case 1:
@@ -266,7 +265,6 @@ nce auto shift_right(uint16x8_t vec, const int i) {
       std::unreachable();
   }
 }
-
 
 nce auto shift_right(uint8x16_t vec, const int i) {
   switch (i) {
@@ -492,7 +490,6 @@ nce auto shift_right(int32x4_t vec, const int i) {
       std::unreachable();
   }
 }
-
 
 nce auto shift_right(int16x8_t vec, const int i) {
   switch (i) {
@@ -756,8 +753,6 @@ nce auto shift_right(uint32x2_t vec, const int i) {
   }
 }
 
-
-
 nce auto shift_right(uint16x4_t vec, const int i) {
   switch (i) {
     case 1:
@@ -794,7 +789,6 @@ nce auto shift_right(uint16x4_t vec, const int i) {
       std::unreachable();
   }
 }
-
 
 nce auto shift_right(uint8x8_t vec, const int i) {
   switch (i) {

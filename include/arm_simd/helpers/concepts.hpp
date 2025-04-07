@@ -50,7 +50,6 @@ constexpr bool is_quadword_v =
     ;
 // clang-format on
 
-
 /// @brief Concept to check if a type is a quad-word SIMD vector type.
 /// @tparam T The type to check.
 /// @note This concept is used to constrain template parameters to only accept quad-word SIMD vector types.
@@ -92,7 +91,6 @@ constexpr bool is_doubleword_v =
 #endif
 ;
 // clang-format on
-
 
 /// @brief Concept to check if a type is a double-word SIMD vector type.
 /// @tparam T The type to check.

@@ -6,7 +6,6 @@
 #include "scalar.hpp"
 #include "vec64.hpp"
 
-
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
@@ -125,6 +124,6 @@ nce VectorType duplicate_lane(Vec64_t<Scalar_t<VectorType>> vec, const int i) {
   }
 }
 #endif
-}
+}  // namespace simd
 #undef simd
 #undef nce

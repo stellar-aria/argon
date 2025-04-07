@@ -22,7 +22,7 @@ class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace ArgonHalf() : T(){};
+  ace ArgonHalf() : T() {};
   ace ArgonHalf(vector_type vector) : T{vector} {};
   ace ArgonHalf(scalar_type scalar) : T{scalar} {};
   // ace ArgonHalf(scalar_type const* ptr) : T(ptr) {};
@@ -31,11 +31,11 @@ class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
   // ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
 
   template <neon::is_vector_type intrinsic_type>
-  ace ArgonHalf(argon::Lane<intrinsic_type> b) : T(b){};
+  ace ArgonHalf(argon::Lane<intrinsic_type> b) : T(b) {};
 
   template <typename... arg_types>
-  requires (sizeof...(arg_types) > 1)
-  ace ArgonHalf(arg_types ...args) : T{vector_type{args...}} {}
+    requires(sizeof...(arg_types) > 1)
+  ace ArgonHalf(arg_types... args) : T{vector_type{args...}} {}
 
   ace static ArgonHalf<scalar_type> Create(uint64_t a) { return neon::create<vector_type>(a); }
 
@@ -175,14 +175,12 @@ class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
 
   ace Argon<scalar_type> CombineWith(ArgonHalf<scalar_type> high) const { return neon::combine(this->vec_, high); }
 
-  ace ArgonHalf<scalar_type> Reverse() const {
-    return this->Reverse64bit();
-  }
+  ace ArgonHalf<scalar_type> Reverse() const { return this->Reverse64bit(); }
 };
 
 template <class... arg_types>
   requires(sizeof...(arg_types) > 1)
-//ArgonHalf(arg_types...) -> ArgonHalf<arg_types...[0]>;
+// ArgonHalf(arg_types...) -> ArgonHalf<arg_types...[0]>;
 ArgonHalf(arg_types...) -> ArgonHalf<std::tuple_element_t<0, std::tuple<arg_types...>>>;
 
 template <typename V>

@@ -3,7 +3,6 @@
 #include "argon/features.h"
 #include "arm_simd.hpp"
 
-
 namespace argon::helpers {
 
 /// @brief  Helper template for multi-vector types of different SIMD types and sizes.

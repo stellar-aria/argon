@@ -10,8 +10,8 @@
 #include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers.hpp"
-#include "helpers/multivec.hpp"
 #include "helpers/bool.hpp"
+#include "helpers/multivec.hpp"
 #include "helpers/to_array.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -721,7 +721,7 @@ class Lane {
   int lane_;
 };
 
-}  // namespace argon::helpers
+}  // namespace argon
 
 /**
  * Lane deconstruction feature

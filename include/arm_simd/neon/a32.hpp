@@ -1,5 +1,6 @@
 #pragma once
 #include "vfpv4.hpp"
+
 #include "arm_simd/shared/a32_float.hpp"
 
 #ifdef __ARM_ACLE
@@ -660,5 +661,4 @@ template <> [[gnu::always_inline]] nce float32x4_t convert_high(bfloat16x8_t a) 
 // clang-format on
 }  // namespace neon
 #undef nce
-#endif // __cplusplus
-
+#endif  // __cplusplus

@@ -54,7 +54,7 @@ template <int lane>[[gnu::always_inline]] nce float32x4_t set_lane(float32_t a, 
 [[gnu::always_inline]] inline void store1(float32_t *ptr, float32x4_t val) { return vst1q_f32(ptr, val); }
 
 // clang-format on
-}
+}  // namespace simd
 #endif
 #undef nce
 #undef simd

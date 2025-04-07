@@ -47,5 +47,5 @@ template <> struct Bool<float16x4_t> { using type = uint16x4_t; };
 template <typename T>
 using Bool_t = Bool<T>::type;
 // clang-format on
-}  // namespace argon::helpers
+}  // namespace argon
 #undef simd

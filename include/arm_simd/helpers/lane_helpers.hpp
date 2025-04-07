@@ -3,7 +3,6 @@
 #include "concepts.hpp"
 #include "scalar.hpp"
 
-
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else

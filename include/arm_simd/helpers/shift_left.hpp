@@ -2,7 +2,6 @@
 #include "arm_simd.hpp"
 #include "scalar.hpp"
 
-
 #ifdef __ARM_NEON
 #include <arm_neon.h>
 #define simd neon

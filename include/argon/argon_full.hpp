@@ -2,9 +2,9 @@
 #include <array>
 #include <type_traits>
 #include "arm_simd.hpp"
+#include "helpers.hpp"
 #include "helpers/argon_for.hpp"
 #include "vector.hpp"
-#include "helpers.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -34,7 +34,7 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
   ace Argon() = default;
   ace Argon(vector_type vector) : T{vector} {};
   ace Argon(scalar_type scalar) : T{scalar} {};
-  ace Argon(T&& in) : T(in){};
+  ace Argon(T&& in) : T(in) {};
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
 
@@ -253,11 +253,11 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
 
 template <typename... arg_types>
   requires(sizeof...(arg_types) > 1)
-//Argon(arg_types...) -> Argon<arg_types...[0]>;
+// Argon(arg_types...) -> Argon<arg_types...[0]>;
 Argon(arg_types...) -> Argon<std::tuple_element_t<0, std::tuple<arg_types...>>>;
 
 template <typename ScalarType>
-requires std::is_scalar_v<ScalarType>
+  requires std::is_scalar_v<ScalarType>
 Argon(ScalarType) -> Argon<ScalarType>;
 
 template <typename V>

@@ -1,5 +1,6 @@
 #pragma once
 #include "arm_simd/shared/vfpv3_int.hpp"
+
 #include "arm_simd/shared/vfpv3_float.hpp"
 
 #ifdef __cplusplus
@@ -1999,4 +2000,4 @@ template <int lane>[[gnu::always_inline]] nce void store4_lane(poly16_t *ptr, po
 }  // namespace neon
 #undef nce
 
-#endif // __cplusplus
+#endif  // __cplusplus

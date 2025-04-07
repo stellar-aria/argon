@@ -1,7 +1,6 @@
 #pragma once
 #include "a32.hpp"
 
-
 #ifdef __clang__
 #define nce constexpr
 #else

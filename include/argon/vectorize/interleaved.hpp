@@ -4,8 +4,8 @@
 #include <iterator>
 #include <ranges>
 #include <span>
-#include "argon/vectorize.hpp"
 #include "argon.hpp"
+#include "argon/vectorize.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE

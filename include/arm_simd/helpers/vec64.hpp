@@ -13,7 +13,6 @@
 #define simd neon
 #endif
 
-
 namespace simd {
 // clang-format off
 #if ARGON_HAS_DWORD

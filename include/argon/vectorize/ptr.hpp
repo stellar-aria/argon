@@ -19,7 +19,6 @@
 #define simd neon
 #endif
 
-
 // Smart pointer for argon type
 template <typename scalar_type>
 struct ArgonPtr {

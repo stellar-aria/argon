@@ -1,5 +1,6 @@
 #pragma once
 #include "vfpv3.hpp"
+
 #include "arm_simd/shared/vfpv4_float.hpp"
 
 #ifdef __cplusplus
@@ -172,4 +173,4 @@ template <> [[gnu::always_inline]] nce float16x8_t move(float16_t value) { retur
 // clang-format on
 }  // namespace neon
 #undef nce
-#endif // __cplusplus
+#endif  // __cplusplus

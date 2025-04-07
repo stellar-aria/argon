@@ -6,9 +6,9 @@
 #include <type_traits>
 #include "argon/argon_full.hpp"
 #include "argon/argon_half.hpp"
-#include "argon/vector.hpp"
 #include "argon/helpers/multivec.hpp"
 #include "argon/store.hpp"
+#include "argon/vector.hpp"
 #include "argon/vectorize.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 
@@ -99,7 +99,6 @@ ace std::array<argon_type, 2> unzip(argon_type a, argon_type b) {
   return argon::to_array(simd::unzip(a, b).val);
 }
 
-
 /// @brief Treats the lanes of its inputs as elements of a 2x2 matrix and transposes the matrices
 /// @tparam argon_type The type of the vectors to transpose
 /// @param a The first vector
@@ -150,8 +149,8 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 /// @return The new vector
 /// @warning This function does not short-circuit. It will evaluate both branches regardless of the condition.
 /// Due to the way the NEON pipeline works (i.e. without conditional execution flags the way that VFP has),
-/// we're required to execute _both_ branches of the conditional and then select the lanes we want, _even if_ one of the branches is
-/// completely unused.
+/// we're required to execute _both_ branches of the conditional and then select the lanes we want, _even if_ one of the
+/// branches is completely unused.
 template <typename BranchType, typename CondType>
   requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_result_type>
 ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_value, Argon<BranchType> false_value) {

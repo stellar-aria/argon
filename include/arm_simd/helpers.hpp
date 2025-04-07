@@ -12,4 +12,3 @@
 #include "helpers/shift_right.hpp"
 #include "helpers/vec128.hpp"
 #include "helpers/vec64.hpp"
-

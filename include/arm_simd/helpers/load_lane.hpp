@@ -4,7 +4,6 @@
 #include "concepts.hpp"
 #include "scalar.hpp"
 
-
 #ifdef __ARM_NEON
 #include <arm_neon.h>
 #define simd neon

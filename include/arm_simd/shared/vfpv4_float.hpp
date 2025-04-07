@@ -49,7 +49,7 @@ template <> [[gnu::always_inline]] nce float16x8_t reinterpret(int64x2_t a) { re
 template <int lane>[[gnu::always_inline]] nce float16_t get_lane(float16x8_t v) { return vgetq_lane_f16(v, lane); }
 template <int lane>[[gnu::always_inline]] nce float16x8_t set_lane(float16_t a, float16x8_t v) { return vsetq_lane_f16(a, v, lane); }
 // clang-format on
-}
+}  // namespace simd
 #endif  // __cplusplus
 #undef nce
 #undef simd
