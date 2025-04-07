@@ -9,7 +9,6 @@
 #include "argon/helpers/multivector.hpp"
 #include "argon/store.hpp"
 #include "argon/vector.hpp"
-#include "argon/vectorize.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE

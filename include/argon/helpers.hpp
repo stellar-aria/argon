@@ -1,8 +1,7 @@
 #pragma once
+#include <type_traits>
 #include "../arm_simd.hpp"
 #include "features.h"
-
-#include <type_traits>
 
 /// @file helpers.hpp
 /// @brief Provides utility templates and concepts for type traits and compile-time iteration.
@@ -26,6 +25,7 @@ constexpr bool has_smaller_v =
     || std::is_same_v<T, double>
 #if ARGON_HAS_HALF_FLOAT
     || std::is_same_v<T, float>
+    || std::is_same_v<T, float32_t>
 #endif
     ;
 
@@ -41,7 +41,7 @@ constexpr bool has_larger_v =
     || std::is_same_v<T, int32_t>
     || std::is_same_v<T, float>
 #if ARGON_HAS_HALF_FLOAT
-    || std::is_same_v<T, float16_t>
+    || std::is_same_v<T, std::float16_t>
 #endif
     ;
 

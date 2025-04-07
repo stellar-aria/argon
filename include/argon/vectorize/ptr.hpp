@@ -68,10 +68,10 @@ struct ArgonPtr {
   bool dirty_ = false;
 };
 
-namespace argon {
+namespace argon::vectorize {
 
 template <typename scalar_type>
-struct vectorize_ptr : std::ranges::view_interface<vectorize_ptr<scalar_type>> {
+struct ptr : std::ranges::view_interface<ptr<scalar_type>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
@@ -108,19 +108,19 @@ struct vectorize_ptr : std::ranges::view_interface<vectorize_ptr<scalar_type>> {
   size_t size() const { return size_ / lanes; }
 
   template <std::ranges::contiguous_range R>
-  vectorize_ptr(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+  ptr(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
   scalar_type* start_;
   size_t size_;
 };
 template <std::ranges::contiguous_range R>
-vectorize_ptr(R&& r) -> vectorize_ptr<std::ranges::range_value_t<R>>;
+ptr(R&& r) -> ptr<std::ranges::range_value_t<R>>;
 
-static_assert(std::ranges::range<vectorize_ptr<int32_t>>);
-static_assert(std::ranges::view<vectorize_ptr<int32_t>>);
-static_assert(std::movable<vectorize_ptr<int32_t>>);
-static_assert(std::ranges::viewable_range<vectorize_ptr<int32_t>>);
+static_assert(std::ranges::range<ptr<int32_t>>);
+static_assert(std::ranges::view<ptr<int32_t>>);
+static_assert(std::movable<ptr<int32_t>>);
+static_assert(std::ranges::viewable_range<ptr<int32_t>>);
 
-}  // namespace argon
+}  // namespace argon::vectorize
 #undef simd
