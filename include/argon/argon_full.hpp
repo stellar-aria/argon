@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <numeric>
 #include <type_traits>
 #include "arm_simd.hpp"
 #include "helpers.hpp"
@@ -244,7 +245,8 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
 #ifdef __aarch64__
     return simd::reduce_min(this->vec_);
 #else
-    return this->Reduce([](auto a, auto b) { return std::min(a, b); });
+    auto arr = this->to_array();
+    return std::reduce(arr.begin(), arr.end(), arr[0], [](auto a, auto b) { return std::min(a, b); });
 #endif
   }
 

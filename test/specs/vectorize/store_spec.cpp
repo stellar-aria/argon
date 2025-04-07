@@ -1,4 +1,5 @@
 #include "argon.hpp"
+#include "argon/vectorize/load.hpp"
 #include "argon/vectorize/store.hpp"
 #include "cppspec.hpp"
 

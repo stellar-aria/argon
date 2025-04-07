@@ -55,7 +55,7 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
     /// @brief Dereferences the iterator to get the SIMD vector.
     /// @return The SIMD vector loaded from the data.
     /// @note This function `Load`s the data from the pointer and returns it as an Argon vector.
-    Argon<ScalarType> operator*() const { return value_type::Load(ptr_); }
+    const Argon<ScalarType> operator*() const { return value_type::Load(ptr_); }
 
     /// @brief Increments the iterator by a number of steps
     /// @param n The number of steps to increment.
@@ -131,6 +131,12 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
     /// @return The difference between the two iterators.
     difference_type operator-(const LoadIterator& other) const { return ptr_ - other.ptr_; }
 
+    /// @brief Adds an integer to the iterator and returns a new iterator.
+    /// @param n The number of steps to add.
+    /// @param it The iterator to add to.
+    /// @return The updated iterator.
+    friend LoadIterator operator+(const int n, const LoadIterator& it) { return it + n; }
+
     /// @brief Compares LoadIterators for equality.
     friend bool operator==(const LoadIterator& a, const LoadIterator& b) { return a.ptr_ == b.ptr_; }
 
@@ -145,12 +151,6 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
 
     /// @brief Compares LoadIterators
     friend auto operator<=>(const LoadIterator& a, const LoadIterator& b) { return a.ptr_ <=> b.ptr_; }
-
-    /// @brief Adds an integer to the iterator and returns a new iterator.
-    /// @param n The number of steps to add.
-    /// @param it The iterator to add to.
-    /// @return The updated iterator.
-    friend LoadIterator operator+(const int n, const LoadIterator& it) { return it + n; }
 
    private:
     ScalarType* ptr_;

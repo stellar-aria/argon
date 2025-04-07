@@ -2,9 +2,9 @@
 
 The Argon library provides several vectorized views for processing data using SIMD operations. These views work with contiguous ranges and provide iterator-based access to the vectorized data.
 
-## Loading Data (vectorize::load)
+## Vectorized read (vectorize::load)
 
-The `load` view presents a read-only view of a contiguous set of data. `Load` occurs
+The `load` view presents a read-only view of a contiguous set of data (i.e. a `std::ranges::input_range`). `Load` is lazy, and occurs only on dereference (and on every dereference, as it is not memoized).
 
 ```cpp
 #include <argon/vectorize/load.hpp>
@@ -22,9 +22,9 @@ int main() {
 }
 ```
 
-## Storing Data (vectorize::store)
+## Vectorized write (vectorize::store)
 
-The `store` view is optimized for writing data:
+The `store` presents a write-only view of a contiguous set of data (i.e. a `std::ranges::output_range`). `StoreTo` is lazy, and occurs _only_ on incrementing or decrementing the iterator.
 
 ```cpp
 #include <argon/vectorize/store.hpp>
@@ -41,10 +41,12 @@ int main() {
 }
 ```
 
-## Basic (Load/Store) Vectorization (vectorize::load_store)
+## Vectorized In-place Read/Write (vectorize::load_store)
 
-The basic `load_store` view allows you to process data using SIMD operations. Internally,
+The `load_store` view allows you to process data in-place using SIMD operations. Internally,
 a vector is stored in the iterator that is loaded on creation, and then stored on increment, before the next element is loaded. Dereferencing accesses the internal stored vector, and will not `Load` again without a manual `.reload()` call.
+
+Note: If you do not need _both_ read _and_ write on the same range, use either `vectorize::load` or `vectorize::store` instead, as `vectorize::load_store` incurs the read latency and writeback penalty of them combined.
 
 ```cpp
 #include <argon/vectorize.hpp>
