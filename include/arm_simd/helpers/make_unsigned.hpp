@@ -15,7 +15,12 @@
 
 namespace simd {
 // clang-format off
+
+/// @brief Helper template to get the unsigned type of a SIMD vector type.
+/// @tparam T The SIMD vector type (e.g., int8x16_t, float32x4_t).
 template <typename T> struct make_unsigned;
+
+/// @cond EXCLUDE
 template <> struct make_unsigned<int8x16_t> { using type = uint8x16_t; };
 template <> struct make_unsigned<uint8x16_t> { using type = uint8x16_t; };
 template <> struct make_unsigned<int16x8_t> { using type = uint16x8_t; };
@@ -35,7 +40,10 @@ template <> struct make_unsigned<uint32x2_t> { using type = uint32x2_t; };
 template <> struct make_unsigned<int64x1_t> { using type = uint64x1_t; };
 template <> struct make_unsigned<uint64x1_t> { using type = uint64x1_t; };
 #endif
+/// @endcond
 
+/// @brief Helper alias to get the unsigned type of a SIMD vector type.
+/// @tparam T The SIMD vector type (e.g., int8x16_t, float32x4_t).
 template <typename T> using make_unsigned_t = typename make_unsigned<T>::type;
 // clang-format on
 }  // namespace simd

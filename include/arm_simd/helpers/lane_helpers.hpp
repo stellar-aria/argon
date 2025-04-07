@@ -1,6 +1,8 @@
 #pragma once
+#include <utility>
 #include "concepts.hpp"
 #include "scalar.hpp"
+
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -19,50 +21,50 @@
 #define make_lane_helper_dword_1arg(lane_func)             \
   template <is_vector_type T, is_doubleword U>             \
     requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
-  nce T lane_func(T a, U vec, const int lane) {          \
+  nce T lane_func(T a, U vec, const int lane) {            \
     constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         case 2:                                            \
-          return lane_func<2>(a, vec);                   \
+          return lane_func<2>(a, vec);                     \
         case 3:                                            \
-          return lane_func<3>(a, vec);                   \
+          return lane_func<3>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         case 2:                                            \
-          return lane_func<2>(a, vec);                   \
+          return lane_func<2>(a, vec);                     \
         case 3:                                            \
-          return lane_func<3>(a, vec);                   \
+          return lane_func<3>(a, vec);                     \
         case 4:                                            \
-          return lane_func<4>(a, vec);                   \
+          return lane_func<4>(a, vec);                     \
         case 5:                                            \
-          return lane_func<5>(a, vec);                   \
+          return lane_func<5>(a, vec);                     \
         case 6:                                            \
-          return lane_func<6>(a, vec);                   \
+          return lane_func<6>(a, vec);                     \
         case 7:                                            \
-          return lane_func<7>(a, vec);                   \
+          return lane_func<7>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     }                                                      \
   }
@@ -70,50 +72,50 @@
 #define make_lane_helper_dword_2arg(lane_func)             \
   template <is_vector_type T, is_doubleword U>             \
     requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
-  nce T lane_func(T a, T b, U vec, const int lane) {     \
+  nce T lane_func(T a, T b, U vec, const int lane) {       \
     constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         case 2:                                            \
-          return lane_func<2>(a, b, vec);                \
+          return lane_func<2>(a, b, vec);                  \
         case 3:                                            \
-          return lane_func<3>(a, b, vec);                \
+          return lane_func<3>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         case 2:                                            \
-          return lane_func<2>(a, b, vec);                \
+          return lane_func<2>(a, b, vec);                  \
         case 3:                                            \
-          return lane_func<3>(a, b, vec);                \
+          return lane_func<3>(a, b, vec);                  \
         case 4:                                            \
-          return lane_func<4>(a, b, vec);                \
+          return lane_func<4>(a, b, vec);                  \
         case 5:                                            \
-          return lane_func<5>(a, b, vec);                \
+          return lane_func<5>(a, b, vec);                  \
         case 6:                                            \
-          return lane_func<6>(a, b, vec);                \
+          return lane_func<6>(a, b, vec);                  \
         case 7:                                            \
-          return lane_func<7>(a, b, vec);                \
+          return lane_func<7>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     }                                                      \
   }
@@ -121,87 +123,87 @@
 #define make_lane_helper_qword_1arg(lane_func)             \
   template <is_vector_type T, is_vector_type U>            \
     requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
-  nce T lane_func(T a, U vec, const int lane) {          \
+  nce T lane_func(T a, U vec, const int lane) {            \
     constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         case 2:                                            \
-          return lane_func<2>(a, vec);                   \
+          return lane_func<2>(a, vec);                     \
         case 3:                                            \
-          return lane_func<3>(a, vec);                   \
+          return lane_func<3>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         case 2:                                            \
-          return lane_func<2>(a, vec);                   \
+          return lane_func<2>(a, vec);                     \
         case 3:                                            \
-          return lane_func<3>(a, vec);                   \
+          return lane_func<3>(a, vec);                     \
         case 4:                                            \
-          return lane_func<4>(a, vec);                   \
+          return lane_func<4>(a, vec);                     \
         case 5:                                            \
-          return lane_func<5>(a, vec);                   \
+          return lane_func<5>(a, vec);                     \
         case 6:                                            \
-          return lane_func<6>(a, vec);                   \
+          return lane_func<6>(a, vec);                     \
         case 7:                                            \
-          return lane_func<7>(a, vec);                   \
+          return lane_func<7>(a, vec);                     \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 16) {                    \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, vec);                   \
+          return lane_func<0>(a, vec);                     \
         case 1:                                            \
-          return lane_func<1>(a, vec);                   \
+          return lane_func<1>(a, vec);                     \
         case 2:                                            \
-          return lane_func<2>(a, vec);                   \
+          return lane_func<2>(a, vec);                     \
         case 3:                                            \
-          return lane_func<3>(a, vec);                   \
+          return lane_func<3>(a, vec);                     \
         case 4:                                            \
-          return lane_func<4>(a, vec);                   \
+          return lane_func<4>(a, vec);                     \
         case 5:                                            \
-          return lane_func<5>(a, vec);                   \
+          return lane_func<5>(a, vec);                     \
         case 6:                                            \
-          return lane_func<6>(a, vec);                   \
+          return lane_func<6>(a, vec);                     \
         case 7:                                            \
-          return lane_func<7>(a, vec);                   \
+          return lane_func<7>(a, vec);                     \
         case 8:                                            \
-          return lane_func<8>(a, vec);                   \
+          return lane_func<8>(a, vec);                     \
         case 9:                                            \
-          return lane_func<9>(a, vec);                   \
+          return lane_func<9>(a, vec);                     \
         case 10:                                           \
-          return lane_func<10>(a, vec);                  \
+          return lane_func<10>(a, vec);                    \
         case 11:                                           \
-          return lane_func<11>(a, vec);                  \
+          return lane_func<11>(a, vec);                    \
         case 12:                                           \
-          return lane_func<12>(a, vec);                  \
+          return lane_func<12>(a, vec);                    \
         case 13:                                           \
-          return lane_func<13>(a, vec);                  \
+          return lane_func<13>(a, vec);                    \
         case 14:                                           \
-          return lane_func<14>(a, vec);                  \
+          return lane_func<14>(a, vec);                    \
         case 15:                                           \
-          return lane_func<15>(a, vec);                  \
+          return lane_func<15>(a, vec);                    \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     }                                                      \
   }
@@ -209,87 +211,87 @@
 #define make_lane_helper_qword_2arg(lane_func)             \
   template <is_vector_type T, is_vector_type U>            \
     requires std::is_same_v<Scalar_t<T>, Scalar_t<U>>      \
-  nce T lane_func(T a, T b, U vec, const int lane) {     \
+  nce T lane_func(T a, T b, U vec, const int lane) {       \
     constexpr int lanes = sizeof(U) / sizeof(Scalar_t<U>); \
     if constexpr (lanes == 2) {                            \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 4) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         case 2:                                            \
-          return lane_func<2>(a, b, vec);                \
+          return lane_func<2>(a, b, vec);                  \
         case 3:                                            \
-          return lane_func<3>(a, b, vec);                \
+          return lane_func<3>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 8) {                     \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         case 2:                                            \
-          return lane_func<2>(a, b, vec);                \
+          return lane_func<2>(a, b, vec);                  \
         case 3:                                            \
-          return lane_func<3>(a, b, vec);                \
+          return lane_func<3>(a, b, vec);                  \
         case 4:                                            \
-          return lane_func<4>(a, b, vec);                \
+          return lane_func<4>(a, b, vec);                  \
         case 5:                                            \
-          return lane_func<5>(a, b, vec);                \
+          return lane_func<5>(a, b, vec);                  \
         case 6:                                            \
-          return lane_func<6>(a, b, vec);                \
+          return lane_func<6>(a, b, vec);                  \
         case 7:                                            \
-          return lane_func<7>(a, b, vec);                \
+          return lane_func<7>(a, b, vec);                  \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     } else if constexpr (lanes == 16) {                    \
       switch (lane) {                                      \
         case 0:                                            \
-          return lane_func<0>(a, b, vec);                \
+          return lane_func<0>(a, b, vec);                  \
         case 1:                                            \
-          return lane_func<1>(a, b, vec);                \
+          return lane_func<1>(a, b, vec);                  \
         case 2:                                            \
-          return lane_func<2>(a, b, vec);                \
+          return lane_func<2>(a, b, vec);                  \
         case 3:                                            \
-          return lane_func<3>(a, b, vec);                \
+          return lane_func<3>(a, b, vec);                  \
         case 4:                                            \
-          return lane_func<4>(a, b, vec);                \
+          return lane_func<4>(a, b, vec);                  \
         case 5:                                            \
-          return lane_func<5>(a, b, vec);                \
+          return lane_func<5>(a, b, vec);                  \
         case 6:                                            \
-          return lane_func<6>(a, b, vec);                \
+          return lane_func<6>(a, b, vec);                  \
         case 7:                                            \
-          return lane_func<7>(a, b, vec);                \
+          return lane_func<7>(a, b, vec);                  \
         case 8:                                            \
-          return lane_func<8>(a, b, vec);                \
+          return lane_func<8>(a, b, vec);                  \
         case 9:                                            \
-          return lane_func<9>(a, b, vec);                \
+          return lane_func<9>(a, b, vec);                  \
         case 10:                                           \
-          return lane_func<10>(a, b, vec);               \
+          return lane_func<10>(a, b, vec);                 \
         case 11:                                           \
-          return lane_func<11>(a, b, vec);               \
+          return lane_func<11>(a, b, vec);                 \
         case 12:                                           \
-          return lane_func<12>(a, b, vec);               \
+          return lane_func<12>(a, b, vec);                 \
         case 13:                                           \
-          return lane_func<13>(a, b, vec);               \
+          return lane_func<13>(a, b, vec);                 \
         case 14:                                           \
-          return lane_func<14>(a, b, vec);               \
+          return lane_func<14>(a, b, vec);                 \
         case 15:                                           \
-          return lane_func<15>(a, b, vec);               \
+          return lane_func<15>(a, b, vec);                 \
         default:                                           \
-          std::unreachable();                         \
+          std::unreachable();                              \
       }                                                    \
     }                                                      \
   }
