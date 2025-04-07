@@ -1,6 +1,9 @@
 #pragma once
 #include <stdbool.h>
 
+/// @file features.h
+/// @brief Header file for SIMD features and platform detection.
+
 namespace argon {
 enum class platform {
   NEON,
@@ -35,23 +38,9 @@ constexpr platform target = platform::NEON;
 
 #else
 
-#if (__ARM_NEON_FP & 2)
-#define ARGON_HAS_HALF_FLOAT true
-#else
-#define ARGON_HAS_HALF_FLOAT false
-#endif
-
-#if (__ARM_NEON_FP & 4)
-#define ARGON_HAS_SINGLE_FLOAT true
-#else
-#define ARGON_HAS_SINGLE_FLOAT false
-#endif
-
-#if (__ARM_NEON_FP & 8)
-#define ARGON_HAS_DOUBLE_FLOAT true
-#else
-#define ARGON_HAS_DOUBLE_FLOAT false
-#endif
+#define ARGON_HAS_HALF_FLOAT (__ARM_NEON_FP & 2)
+#define ARGON_HAS_SINGLE_FLOAT (__ARM_NEON_FP & 4)
+#define ARGON_HAS_DOUBLE_FLOAT (__ARM_NEON_FP & 8)
 
 #endif
 

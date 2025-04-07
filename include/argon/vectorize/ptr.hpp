@@ -9,7 +9,7 @@
 #include <iterator>
 #include <ranges>
 #include "argon/argon_full.hpp"
-#include "arm_simd/helpers/nonvec.hpp"
+#include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 #include "store.hpp"
 

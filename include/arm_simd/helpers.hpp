@@ -6,7 +6,7 @@
 #include "helpers/load_lane.hpp"
 #include "helpers/make_signed.hpp"
 #include "helpers/make_unsigned.hpp"
-#include "helpers/nonvec.hpp"
+#include "helpers/scalar.hpp"
 #include "helpers/set_lane.hpp"
 #include "helpers/shift_left.hpp"
 #include "helpers/shift_right.hpp"

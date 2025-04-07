@@ -1,6 +1,8 @@
 #pragma once
-#include "nonvec.hpp"
-#include "../../arm_simd.hpp"
+#include <utility>
+#include "arm_simd.hpp"
+#include "scalar.hpp"
+
 
 #ifdef __ARM_NEON
 #include <arm_neon.h>
@@ -24,346 +26,101 @@
 
 namespace simd {
 
+/// @brief Set the lane of a SIMD vector to a specified value.
+/// @tparam T  The SIMD vector type (e.g., int8x16_t, float32x4_t).
+/// @param vec  The SIMD vector to modify.
+/// @param i The index of the lane to set (0-based).
+/// @param a  The value to set the lane to.
+/// @return  The modified SIMD vector with the specified lane set to the given value.
 template <typename T>
-nce T set_lane(T vec, const int i, typename NonVec<T>::type a);
-
-template <>
-nce uint8x16_t set_lane(uint8x16_t vec, const int i, uint8_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    case 8:
-      return simd::set_lane<8>(a, vec);
-    case 9:
-      return simd::set_lane<9>(a, vec);
-    case 10:
-      return simd::set_lane<10>(a, vec);
-    case 11:
-      return simd::set_lane<11>(a, vec);
-    case 12:
-      return simd::set_lane<12>(a, vec);
-    case 13:
-      return simd::set_lane<13>(a, vec);
-    case 14:
-      return simd::set_lane<14>(a, vec);
-    case 15:
-      return simd::set_lane<15>(a, vec);
-    default:
-      std::unreachable();
+nce T set_lane(T vec, const int i, Scalar_t<T> a) {
+  constexpr size_t lanes = sizeof(T) / sizeof(Scalar_t<T>);
+  if constexpr (lanes == 1) {
+    return simd::set_lane<0>(vec, a);
+  } else if constexpr (lanes == 2) {
+    switch (i) {
+      case 0:
+        return simd::set_lane<0>(vec, a);
+      case 1:
+        return simd::set_lane<1>(vec, a);
+      default:
+        std::unreachable();
+    }
+  } else if constexpr (lanes == 4) {
+    switch (i) {
+      case 0:
+        return simd::set_lane<0>(vec, a);
+      case 1:
+        return simd::set_lane<1>(vec, a);
+      case 2:
+        return simd::set_lane<2>(vec, a);
+      case 3:
+        return simd::set_lane<3>(vec, a);
+      default:
+        std::unreachable();
+    }
+  } else if constexpr (lanes == 8) {
+    switch (i) {
+      case 0:
+        return simd::set_lane<0>(vec, a);
+      case 1:
+        return simd::set_lane<1>(vec, a);
+      case 2:
+        return simd::set_lane<2>(vec, a);
+      case 3:
+        return simd::set_lane<3>(vec, a);
+      case 4:
+        return simd::set_lane<4>(vec, a);
+      case 5:
+        return simd::set_lane<5>(vec, a);
+      case 6:
+        return simd::set_lane<6>(vec, a);
+      case 7:
+        return simd::set_lane<7>(vec, a);
+      default:
+        std::unreachable();
+    }
+  } else if constexpr (lanes == 16) {
+    switch (i) {
+      case 0:
+        return simd::set_lane<0>(vec, a);
+      case 1:
+        return simd::set_lane<1>(vec, a);
+      case 2:
+        return simd::set_lane<2>(vec, a);
+      case 3:
+        return simd::set_lane<3>(vec, a);
+      case 4:
+        return simd::set_lane<4>(vec, a);
+      case 5:
+        return simd::set_lane<5>(vec, a);
+      case 6:
+        return simd::set_lane<6>(vec, a);
+      case 7:
+        return simd::set_lane<7>(vec, a);
+      case 8:
+        return simd::set_lane<8>(vec, a);
+      case 9:
+        return simd::set_lane<9>(vec, a);
+      case 10:
+        return simd::set_lane<10>(vec, a);
+      case 11:
+        return simd::set_lane<11>(vec, a);
+      case 12:
+        return simd::set_lane<12>(vec, a);
+      case 13:
+        return simd::set_lane<13>(vec, a);
+      case 14:
+        return simd::set_lane<14>(vec, a);
+      case 15:
+        return simd::set_lane<15>(vec, a);
+      default:
+        std::unreachable();
+    }
+  } else {
+    std::unreachable();
   }
 }
-
-template <>
-nce int8x16_t set_lane(int8x16_t vec, const int i, int8_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    case 8:
-      return simd::set_lane<8>(a, vec);
-    case 9:
-      return simd::set_lane<9>(a, vec);
-    case 10:
-      return simd::set_lane<10>(a, vec);
-    case 11:
-      return simd::set_lane<11>(a, vec);
-    case 12:
-      return simd::set_lane<12>(a, vec);
-    case 13:
-      return simd::set_lane<13>(a, vec);
-    case 14:
-      return simd::set_lane<14>(a, vec);
-    case 15:
-      return simd::set_lane<15>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint16x8_t set_lane(uint16x8_t vec, const int i, uint16_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int16x8_t set_lane(int16x8_t vec, const int i, int16_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint32x4_t set_lane(uint32x4_t vec, const int i, uint32_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int32x4_t set_lane(int32x4_t vec, const int i, int32_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce float32x4_t set_lane(float32x4_t vec, const int i, float a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint64x2_t set_lane(uint64x2_t vec, const int i, uint64_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int64x2_t set_lane(int64x2_t vec, const int i, int64_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-#if ARGON_HAS_DWORD
-
-template <>
-nce uint8x8_t set_lane(uint8x8_t vec, const int i, uint8_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int8x8_t set_lane(int8x8_t vec, const int i, int8_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    case 4:
-      return simd::set_lane<4>(a, vec);
-    case 5:
-      return simd::set_lane<5>(a, vec);
-    case 6:
-      return simd::set_lane<6>(a, vec);
-    case 7:
-      return simd::set_lane<7>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint16x4_t set_lane(uint16x4_t vec, const int i, uint16_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int16x4_t set_lane(int16x4_t vec, const int i, int16_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    case 2:
-      return simd::set_lane<2>(a, vec);
-    case 3:
-      return simd::set_lane<3>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint32x2_t set_lane(uint32x2_t vec, const int i, uint32_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int32x2_t set_lane(int32x2_t vec, const int i, int32_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce float32x2_t set_lane(float32x2_t vec, const int i, float32_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    case 1:
-      return simd::set_lane<1>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint64x1_t set_lane(uint64x1_t vec, const int i, uint64_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int64x1_t set_lane(int64x1_t vec, const int i, int64_t a) {
-  switch (i) {
-    case 0:
-      return simd::set_lane<0>(a, vec);
-    default:
-      std::unreachable();
-  }
-}
-#endif
 
 }  // namespace simd
 #undef simd

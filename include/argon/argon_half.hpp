@@ -1,5 +1,5 @@
 #pragma once
-#include "common.hpp"
+#include "vector.hpp"
 
 #ifdef ARGON_PLATFORM_SIMDE
 #define ace
@@ -10,12 +10,12 @@
 #endif
 
 template <typename scalar_type>
-class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
-  using T = argon::impl::Common<neon::Vec64_t<scalar_type>>;
+class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
+  using T = argon::Vector<neon::Vec64_t<scalar_type>>;
 
  public:
   using vector_type = neon::Vec64_t<scalar_type>;
-  using lane_type = const argon::impl::Lane<vector_type>;
+  using lane_type = const argon::Lane<vector_type>;
 
   static_assert(neon::is_doubleword_v<vector_type>);
 
@@ -31,7 +31,7 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   // ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
 
   template <neon::is_vector_type intrinsic_type>
-  ace ArgonHalf(argon::impl::Lane<intrinsic_type> b) : T(b){};
+  ace ArgonHalf(argon::Lane<intrinsic_type> b) : T(b){};
 
   template <typename... arg_types>
   requires (sizeof...(arg_types) > 1)
@@ -45,25 +45,25 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> AddLong(ArgonHalf<scalar_type> b) const {
     return neon::add_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> MultiplyLong(ArgonHalf<scalar_type> b) const {
     return neon::multiply_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> MultiplyLong(scalar_type b) const {
     return neon::multiply_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> MultiplyLong(lane_type b) const {
     return neon::multiply_long_lane(this->vec_, b.vec(), b.lane());
   }
@@ -87,44 +87,44 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> SubtractLong(ArgonHalf<scalar_type> b) const {
     return neon::subtract_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> SubtractAbsoluteLong(ArgonHalf<scalar_type> b) const {
     return neon::subtract_absolute_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> PairwiseAddLong() const {
     return neon::pairwise_add_long(this->vec_);
   }
 
   template <typename U>
-    requires argon::impl::has_smaller_v<scalar_type>
-  ace Argon<U> PairwiseAddLong(ArgonHalf<typename argon::impl::NextSmaller<scalar_type>> b) const {
+    requires argon::helpers::has_smaller_v<scalar_type>
+  ace Argon<U> PairwiseAddLong(ArgonHalf<typename argon::helpers::NextSmaller<scalar_type>> b) const {
     return neon::pairwise_add_long(this->vec_, b);
   }
 
   template <typename U>
-    requires argon::impl::has_larger_v<scalar_type>
+    requires argon::helpers::has_larger_v<scalar_type>
   ace Argon<U> Widen() const {
     return neon::move_long(this->vec_);
   }
 
   template <size_t n>
-  ace Argon<argon::impl::NextLarger_t<scalar_type>> ShiftLeftLong()
-    requires argon::impl::has_larger_v<scalar_type>
+  ace Argon<argon::helpers::NextLarger_t<scalar_type>> ShiftLeftLong()
+    requires argon::helpers::has_larger_v<scalar_type>
   {
     return neon::shift_left_long<n>(this->vec_);
   }
 
-  ace Argon<argon::impl::NextLarger_t<scalar_type>> MultiplyDoubleSaturateLong(ArgonHalf<scalar_type> b)
-    requires argon::impl::has_larger_v<scalar_type>
+  ace Argon<argon::helpers::NextLarger_t<scalar_type>> MultiplyDoubleSaturateLong(ArgonHalf<scalar_type> b)
+    requires argon::helpers::has_larger_v<scalar_type>
   {
     return neon::multiply_double_saturate_long(this->vec_, b);
   }
@@ -144,7 +144,7 @@ class ArgonHalf : public argon::impl::Common<neon::Vec64_t<scalar_type>> {
   ace ArgonHalf<scalar_type> TableExtension(vector_type* b, ArgonHalf<scalar_type> idx) {
     static_assert(num_tables > 1 && num_tables < 5, "Table Extension can only be performed with 1, 2, 3, or 4 tables");
 
-    using multivec_type = argon::impl::MultiVec<vector_type, num_tables>::type;
+    using multivec_type = argon::helpers::MultiVec<vector_type, num_tables>::type;
 
     multivec_type multivec = *(multivec_type*)b;
 
@@ -217,7 +217,7 @@ struct tuple_size<ArgonHalf<T>> {
 template <size_t Index, typename T>
 struct tuple_element<Index, ArgonHalf<T>> {
   static_assert(Index < ArgonHalf<T>::lanes);
-  using type = argon::impl::Lane<typename ArgonHalf<T>::vector_type>;
+  using type = argon::Lane<typename ArgonHalf<T>::vector_type>;
 };
 }  // namespace std
 

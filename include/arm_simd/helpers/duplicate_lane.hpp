@@ -1,15 +1,17 @@
 #pragma once
+#include <utility>
 #include "argon/features.h"
-#include "nonvec.hpp"
-#include "vec64.hpp"
 #include "arm_simd.hpp"
+#include "concepts.hpp"
+#include "scalar.hpp"
+#include "vec64.hpp"
+
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
 #define simd neon
 #endif
-
 
 #ifdef ARGON_PLATFORM_SIMDE
 #define nce
@@ -19,255 +21,109 @@
 #define nce [[gnu::always_inline]] inline
 #endif
 
-
 namespace simd {
 #if ARGON_HAS_DWORD
-template <typename T>
-nce T duplicate_lane(typename Vec64<NonVec_t<T>>::type vec, const int i);
-
-template <>
-nce uint8x8_t duplicate_lane(uint8x8_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    case 2:
-      return simd::duplicate_lane<2>(vec);
-    case 3:
-      return simd::duplicate_lane<3>(vec);
-    case 4:
-      return simd::duplicate_lane<4>(vec);
-    case 5:
-      return simd::duplicate_lane<5>(vec);
-    case 6:
-      return simd::duplicate_lane<6>(vec);
-    case 7:
-      return simd::duplicate_lane<7>(vec);
-    default:
+template <typename VectorType>
+nce VectorType duplicate_lane(Vec64_t<Scalar_t<VectorType>> vec, const int i) {
+  constexpr int lanes = sizeof(VectorType) / sizeof(Scalar_t<VectorType>);
+  constexpr bool is_quadword = is_quadword_v<VectorType>;
+  if constexpr (is_quadword) {
+    if constexpr (lanes == 2) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane_quad<0>(vec);
+        case 1:
+          return simd::duplicate_lane_quad<1>(vec);
+        default:
+          std::unreachable();
+      }
+    } else if constexpr (lanes == 4) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane_quad<0>(vec);
+        case 1:
+          return simd::duplicate_lane_quad<1>(vec);
+        case 2:
+          return simd::duplicate_lane_quad<2>(vec);
+        case 3:
+          return simd::duplicate_lane_quad<3>(vec);
+        default:
+          std::unreachable();
+      }
+    } else if constexpr (lanes == 8) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane_quad<0>(vec);
+        case 1:
+          return simd::duplicate_lane_quad<1>(vec);
+        case 2:
+          return simd::duplicate_lane_quad<2>(vec);
+        case 3:
+          return simd::duplicate_lane_quad<3>(vec);
+        case 4:
+          return simd::duplicate_lane_quad<4>(vec);
+        case 5:
+          return simd::duplicate_lane_quad<5>(vec);
+        case 6:
+          return simd::duplicate_lane_quad<6>(vec);
+        case 7:
+          return simd::duplicate_lane_quad<7>(vec);
+        default:
+          std::unreachable();
+      }
+    } else {
       std::unreachable();
+    }
+
+  } else {
+    if constexpr (lanes == 2) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane<0>(vec);
+        case 1:
+          return simd::duplicate_lane<1>(vec);
+        default:
+          std::unreachable();
+      }
+    } else if constexpr (lanes == 4) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane<0>(vec);
+        case 1:
+          return simd::duplicate_lane<1>(vec);
+        case 2:
+          return simd::duplicate_lane<2>(vec);
+        case 3:
+          return simd::duplicate_lane<3>(vec);
+        default:
+          std::unreachable();
+      }
+    } else if constexpr (lanes == 8) {
+      switch (i) {
+        case 0:
+          return simd::duplicate_lane<0>(vec);
+        case 1:
+          return simd::duplicate_lane<1>(vec);
+        case 2:
+          return simd::duplicate_lane<2>(vec);
+        case 3:
+          return simd::duplicate_lane<3>(vec);
+        case 4:
+          return simd::duplicate_lane<4>(vec);
+        case 5:
+          return simd::duplicate_lane<5>(vec);
+        case 6:
+          return simd::duplicate_lane<6>(vec);
+        case 7:
+          return simd::duplicate_lane<7>(vec);
+        default:
+          std::unreachable();
+      }
+    } else {
+      std::unreachable();
+    }
   }
 }
-
-template <>
-nce uint8x16_t duplicate_lane(uint8x8_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    case 2:
-      return simd::duplicate_lane_quad<2>(vec);
-    case 3:
-      return simd::duplicate_lane_quad<3>(vec);
-    case 4:
-      return simd::duplicate_lane_quad<4>(vec);
-    case 5:
-      return simd::duplicate_lane_quad<5>(vec);
-    case 6:
-      return simd::duplicate_lane_quad<6>(vec);
-    case 7:
-      return simd::duplicate_lane_quad<7>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int8x8_t duplicate_lane(int8x8_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    case 2:
-      return simd::duplicate_lane<2>(vec);
-    case 3:
-      return simd::duplicate_lane<3>(vec);
-    case 4:
-      return simd::duplicate_lane<4>(vec);
-    case 5:
-      return simd::duplicate_lane<5>(vec);
-    case 6:
-      return simd::duplicate_lane<6>(vec);
-    case 7:
-      return simd::duplicate_lane<7>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int8x16_t duplicate_lane(int8x8_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    case 2:
-      return simd::duplicate_lane_quad<2>(vec);
-    case 3:
-      return simd::duplicate_lane_quad<3>(vec);
-    case 4:
-      return simd::duplicate_lane_quad<4>(vec);
-    case 5:
-      return simd::duplicate_lane_quad<5>(vec);
-    case 6:
-      return simd::duplicate_lane_quad<6>(vec);
-    case 7:
-      return simd::duplicate_lane_quad<7>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint16x4_t duplicate_lane(uint16x4_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    case 2:
-      return simd::duplicate_lane<2>(vec);
-    case 3:
-      return simd::duplicate_lane<3>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint16x8_t duplicate_lane(uint16x4_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    case 2:
-      return simd::duplicate_lane_quad<2>(vec);
-    case 3:
-      return simd::duplicate_lane_quad<3>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int16x4_t duplicate_lane(int16x4_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    case 2:
-      return simd::duplicate_lane<2>(vec);
-    case 3:
-      return simd::duplicate_lane<3>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int16x8_t duplicate_lane(int16x4_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    case 2:
-      return simd::duplicate_lane_quad<2>(vec);
-    case 3:
-      return simd::duplicate_lane_quad<3>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint32x2_t duplicate_lane(uint32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint32x4_t duplicate_lane(uint32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int32x2_t duplicate_lane(int32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce int32x4_t duplicate_lane(int32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce uint64x2_t duplicate_lane(uint64x1_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-#if ARGON_HAS_SINGLE_FLOAT
-template <>
-nce float32x2_t duplicate_lane(float32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane<0>(vec);
-    case 1:
-      return simd::duplicate_lane<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-
-template <>
-nce float32x4_t duplicate_lane(float32x2_t vec, const int i) {
-  switch (i) {
-    case 0:
-      return simd::duplicate_lane_quad<0>(vec);
-    case 1:
-      return simd::duplicate_lane_quad<1>(vec);
-    default:
-      std::unreachable();
-  }
-}
-#endif
 #endif
 }
 #undef simd

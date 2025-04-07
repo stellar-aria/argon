@@ -14,10 +14,14 @@
 #define simd neon
 #endif
 
-
 namespace simd {
 // clang-format off
-template <typename type> struct Vec128;
+
+/// @brief  Helper template to get the SIMD quad-word vector type for a given scalar type.
+/// @tparam T The scalar type to get the SIMD vector type for.
+template <typename T> struct Vec128;
+
+/// @cond EXCLUDE
 template <> struct Vec128<int8_t>  {using type = int8x16_t; };
 template <> struct Vec128<uint8_t>  {using type = uint8x16_t; };
 template <> struct Vec128<int16_t>  {using type = int16x8_t; };
@@ -38,7 +42,10 @@ template <> struct Vec128<float>  {using type = float32x4_t; };
 #if ARGON_HAS_DOUBLE_FLOAT
 template <> struct Vec128<double> {using type = float64x2_t; };
 #endif
+/// @endcond
 
+/// @brief  Helper template to get the SIMD vector type for a given scalar type.
+/// @tparam type The scalar type to get the SIMD vector type for.
 template <typename T>
 using Vec128_t = typename Vec128<T>::type;
 

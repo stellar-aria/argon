@@ -1,6 +1,6 @@
 #pragma once
-#include "nonvec.hpp"
-#include "../../arm_simd.hpp"
+#include "scalar.hpp"
+#include "arm_simd.hpp"
 
 #ifdef __ARM_NEON
 #include <arm_neon.h>

@@ -1,11 +1,20 @@
 #pragma once
-#include "features.h"
 #include "../arm_simd.hpp"
+#include "features.h"
 
 #include <type_traits>
-namespace argon::impl {
+
+/// @file helpers.hpp
+/// @brief Provides utility templates and concepts for type traits and compile-time iteration.
+/// This header defines a set of utilities for working with type traits, including determining
+/// the next larger or smaller type for a given type, as well as compile-time iteration.
+
+/// @brief Contains helper templates and concepts for type manipulation and compile-time utilities.
+namespace argon::helpers {
 // clang-format off
 
+/// @brief Helper template to determine if a type has a smaller corresponding type.
+/// @tparam T The type to check.
 template <typename T>
 constexpr bool has_smaller_v =
     std::is_same_v<T, uint16_t>
@@ -20,6 +29,8 @@ constexpr bool has_smaller_v =
 #endif
     ;
 
+/// @brief Helper template to determine if a type has a larger corresponding type.
+/// @tparam T The type to check.
 template <typename T>
 constexpr bool has_larger_v =
     std::is_same_v<T, uint8_t>
@@ -34,12 +45,16 @@ constexpr bool has_larger_v =
 #endif
     ;
 
+/// @brief Concept to check if a type has a smaller corresponding type.
 template <typename T>
 concept has_smaller = has_smaller_v<T>;
 
+//// @brief Concept to check if a type has a larger corresponding type.
 template <typename T>
 concept has_larger = has_larger_v<T>;
 
+/// @brief Helper template to determine the next larger type for a given type.
+/// @tparam T The type to determine the next larger type for.
 template <typename T> struct NextLarger;
 template <> struct NextLarger<int8_t> { using type = int16_t; };
 template <> struct NextLarger<uint8_t> { using type = uint16_t; };
@@ -52,9 +67,13 @@ template <> struct NextLarger<float> { using type = double; };
 template <> struct NextLarger<float16_t> { using type = float; };
 #endif
 
+/// @brief Helper alias to get the next larger type for a given type.
+/// @tparam T  The type to determine the next larger type for.
 template <typename T>
 using NextLarger_t = NextLarger<T>::type;
 
+/// @brief Helper template to determine the next smaller type for a given type.
+/// @tparam T The type to determine the next smaller type for.
 template <typename T> struct NextSmaller;
 template <> struct NextSmaller<int16_t> { using type = int8_t; };
 template <> struct NextSmaller<uint16_t> { using type = uint8_t; };
@@ -67,16 +86,24 @@ template <> struct NextSmaller<double> { using type = float; };
 template <> struct NextSmaller<float> { using type = float16_t; };
 #endif
 
+/// @brief Helper alias to get the next smaller type for a given type.
+/// @tparam T The type to determine the next smaller type for.
 template <typename T>
 using NextSmaller_t = NextSmaller<T>::type;
 
-template <auto Start, auto End, auto Inc, class F>
-constexpr void constexpr_for(F&& f) {
+/// @brief A constexpr function template for compile-time iteration. Used to unroll loops at compile time.
+/// @tparam Start The starting value of the iteration.
+/// @tparam End The ending value of the iteration.
+/// @tparam Increment The increment value for each iteration step.
+/// @tparam FunctionType The callable type to be invoked during each iteration step.
+/// @param f The callable object to be invoked with the current iteration value.
+template <auto Start, auto End, auto Increment, class FunctionType>
+constexpr void consteval_for(FunctionType&& f) {
 	if constexpr (Start < End) {
 		f.template operator()<Start>();
-		constexpr_for<Start + Inc, End, Inc>(f);
+		consteval_for<Start + Increment, End, Increment>(f);
 	}
 }
 
 // clang-format on
-}  // namespace argon::impl
+}  // namespace argon::helpers
