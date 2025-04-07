@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pairwiseadd_0',['PairwiseAdd',['../classargon_1_1impl_1_1Common.html#a2cea31df9b23dc9a6aac6a3a4b437134',1,'argon::impl::Common']]]
+  ['pairwiseadd_0',['PairwiseAdd',['../classargon_1_1Vector.html#aa2c3fa1c841646a9cbf13abbc9b76047',1,'argon::Vector']]]
 ];

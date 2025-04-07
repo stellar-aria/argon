@@ -7,11 +7,10 @@ var dir_8f55dd3ded7944f08d54613532a6a0e1 =
     [ "load_lane.hpp", "load__lane_8hpp_source.html", null ],
     [ "make_signed.hpp", "make__signed_8hpp_source.html", null ],
     [ "make_unsigned.hpp", "make__unsigned_8hpp_source.html", null ],
-    [ "nonvec.hpp", "nonvec_8hpp_source.html", null ],
+    [ "scalar.hpp", "scalar_8hpp_source.html", null ],
     [ "set_lane.hpp", "set__lane_8hpp_source.html", null ],
     [ "shift_left.hpp", "shift__left_8hpp_source.html", null ],
     [ "shift_right.hpp", "shift__right_8hpp_source.html", null ],
-    [ "template.hpp", "template_8hpp_source.html", null ],
     [ "vec128.hpp", "vec128_8hpp_source.html", null ],
     [ "vec64.hpp", "vec64_8hpp_source.html", null ]
 ];

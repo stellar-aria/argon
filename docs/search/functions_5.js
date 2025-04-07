@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['multiply_0',['Multiply',['../classargon_1_1impl_1_1Common.html#a615b54e96b303106d85a52428badf6ab',1,'argon::impl::Common']]],
-  ['multiplyadd_1',['MultiplyAdd',['../classargon_1_1impl_1_1Common.html#ac2ffb6b4f9d50284b1db9404b9120fdf',1,'argon::impl::Common']]],
-  ['multiplyaddfixedpoint_2',['MultiplyAddFixedPoint',['../classargon_1_1impl_1_1Common.html#acbed53a3a8956973c303b79e6f53b5d5',1,'argon::impl::Common']]],
-  ['multiplyfixedpoint_3',['MultiplyFixedPoint',['../classargon_1_1impl_1_1Common.html#a7c03a65bc8bfa0c2c3ad0e484869889c',1,'argon::impl::Common']]],
-  ['multiplyroundaddfixedpoint_4',['MultiplyRoundAddFixedPoint',['../classargon_1_1impl_1_1Common.html#ad272fbeb1aab510f144d18fc2c447a8d',1,'argon::impl::Common']]],
-  ['multiplyroundfixedpoint_5',['MultiplyRoundFixedPoint',['../classargon_1_1impl_1_1Common.html#aaf73d88baa56688fe2140cda6b47a041',1,'argon::impl::Common']]],
-  ['multiplysubtract_6',['MultiplySubtract',['../classargon_1_1impl_1_1Common.html#a668822c0d4b5bb7783db27b20562b2b8',1,'argon::impl::Common']]]
+  ['multiply_0',['Multiply',['../classargon_1_1Vector.html#aac62b15b38305c086b0bc55cd62595d8',1,'argon::Vector']]],
+  ['multiplyadd_1',['MultiplyAdd',['../classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f',1,'argon::Vector']]],
+  ['multiplyaddfixedpoint_2',['MultiplyAddFixedPoint',['../classargon_1_1Vector.html#a79fe3acd6adf07e88168f7148f3c6e12',1,'argon::Vector']]],
+  ['multiplyfixedpoint_3',['MultiplyFixedPoint',['../classargon_1_1Vector.html#a919bf5da1e9b6e8ecdb73ce36ab76fcb',1,'argon::Vector']]],
+  ['multiplyroundaddfixedpoint_4',['MultiplyRoundAddFixedPoint',['../classargon_1_1Vector.html#a8268e1710f8d49ccc413f085c6b8d8a8',1,'argon::Vector']]],
+  ['multiplyroundfixedpoint_5',['MultiplyRoundFixedPoint',['../classargon_1_1Vector.html#a757267fbead7c57adabec06a29996dd1',1,'argon::Vector']]],
+  ['multiplysubtract_6',['MultiplySubtract',['../classargon_1_1Vector.html#af2af7b9024040dea18fc96d6c730b0e8',1,'argon::Vector']]]
 ];

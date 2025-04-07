@@ -127,13 +127,13 @@ Object-oriented Argon interface</h2>
 <div class="line"> </div>
 <div class="line"><a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> triangle(<a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase) {</div>
 <div class="line">  phase = argon::ternary(phase &gt; 0.5f, 1.f, 0.f) - phase;</div>
-<div class="line">  <span class="keywordflow">return</span> <a class="code hl_class" href="classArgon.html">Argon</a>{-1.f}.<a class="code hl_function" href="classargon_1_1impl_1_1Common.html#ac2ffb6b4f9d50284b1db9404b9120fdf">MultiplyAdd</a>(phase.Absolute(), 4.f);</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code hl_class" href="classArgon.html">Argon</a>{-1.f}.<a class="code hl_function" href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">MultiplyAdd</a>(phase.Absolute(), 4.f);</div>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="keywordtype">float</span> frequency = 440.f;</div>
 <div class="line">  <span class="keywordtype">float</span> phase_increment = frequency / 44100.f;</div>
-<div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase = <a class="code hl_class" href="classArgon.html">Argon</a>{0}.<a class="code hl_function" href="classargon_1_1impl_1_1Common.html#ac2ffb6b4f9d50284b1db9404b9120fdf">MultiplyAdd</a>(phase_increment, Argon&lt;float&gt;::Iota(0))</div>
+<div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase = <a class="code hl_class" href="classArgon.html">Argon</a>{0}.<a class="code hl_function" href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">MultiplyAdd</a>(phase_increment, Argon&lt;float&gt;::Iota(0))</div>
 <div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> wave = triangle(phase);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Print the result</span></div>
@@ -141,8 +141,8 @@ Object-oriented Argon interface</h2>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Result[&quot;</span> &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot;]: &quot;</span> &lt;&lt; result[i] &lt;&lt; std::endl;</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:21</div></div>
-<div class="ttc" id="aclassargon_1_1impl_1_1Common_html_ac2ffb6b4f9d50284b1db9404b9120fdf"><div class="ttname"><a href="classargon_1_1impl_1_1Common.html#ac2ffb6b4f9d50284b1db9404b9120fdf">argon::impl::Common::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdef"><b>Definition</b> common.hpp:177</div></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:22</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_ab0947e4526aebd0582573897b66fd22f"><div class="ttname"><a href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">argon::Vector::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdef"><b>Definition</b> vector.hpp:178</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
 Low-level NEON interface</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/arm_simd.hpp&gt;</span></div>

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['loadgather_0',['LoadGather',['../classargon_1_1impl_1_1Common.html#a83edc98f04144c1d7e9a5b4811aeed55',1,'argon::impl::Common']]],
-  ['loadgatherinterleaved_1',['LoadGatherInterleaved',['../classargon_1_1impl_1_1Common.html#a925dab8b7a6c21f95d8e6d357efb3ec0',1,'argon::impl::Common']]],
-  ['loadmulti_2',['LoadMulti',['../classargon_1_1impl_1_1Common.html#a351eb24037410c519fa5f0f47d973038',1,'argon::impl::Common']]]
+  ['loadgather_0',['LoadGather',['../classargon_1_1Vector.html#a90f84fb09a7f42425eea090eb42bca98',1,'argon::Vector']]],
+  ['loadgatherinterleaved_1',['LoadGatherInterleaved',['../classargon_1_1Vector.html#adce2f0a5a1259c20fbdda1497178637d',1,'argon::Vector']]],
+  ['loadmulti_2',['LoadMulti',['../classargon_1_1Vector.html#acc5e43af8488becc9faa4555806b84f7',1,'argon::Vector']]]
 ];

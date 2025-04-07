@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Argon: include/arm_simd/neon/extensions/scalar.hpp Source File</title>
+<title>Argon: include/arm_simd/helpers/scalar.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -100,13 +100,84 @@ $(function(){initNavTree('scalar_8hpp_source.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">scalar.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="features_8h.html">argon/features.h</a>&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#ifdef __ARM_NEON</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;arm_neon.h&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define simd neon</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#elifdef __ARM_FEATURE_MVE</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;arm_mve.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd helium</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#define SIMDE_ENABLE_NATIVE_ALIASES</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;arm/neon.h&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#define simd neon</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>simd {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// clang-format off</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structsimd_1_1Scalar.html">   22</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Scalar.html">Scalar</a>;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Scalar.html">Scalar</a>&lt;int8x16_t&gt;   { <span class="keyword">using </span>type = int8_t; };</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Scalar.html">Scalar</a>&lt;uint8x16_t&gt;  { <span class="keyword">using </span>type = uint8_t; };</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int16x8_t&gt;   { <span class="keyword">using </span>type = int16_t; };</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint16x8_t&gt;  { <span class="keyword">using </span>type = uint16_t; };</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int32x4_t&gt;   { <span class="keyword">using </span>type = int32_t; };</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint32x4_t&gt;  { <span class="keyword">using </span>type = uint32_t; };</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int64x2_t&gt;   { <span class="keyword">using </span>type = int64_t; };</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint64x2_t&gt;  { <span class="keyword">using </span>type = uint64_t; };</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#if ARGON_HAS_SINGLE_FLOAT</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float32x4_t&gt; { <span class="keyword">using </span>type = float; };</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#if ARGON_HAS_HALF_FLOAT</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float16x8_t&gt; { <span class="keyword">using </span>type = float16_t; };</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#if ARGON_HAS_DOUBLE_FLOAT</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float64x2_t&gt; { <span class="keyword">using </span>type = double; };</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int8x8_t&gt; { <span class="keyword">using </span>type = int8_t; };</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint8x8_t&gt; { <span class="keyword">using </span>type = uint8_t; };</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int16x4_t&gt; { <span class="keyword">using </span>type = int16_t; };</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint16x4_t&gt; { <span class="keyword">using </span>type = uint16_t; };</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int32x2_t&gt; { <span class="keyword">using </span>type = int32_t; };</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint32x2_t&gt; { <span class="keyword">using </span>type = uint32_t; };</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;int64x1_t&gt; { <span class="keyword">using </span>type = int64_t; };</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;uint64x1_t&gt; { <span class="keyword">using </span>type = uint64_t; };</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#if ARGON_HAS_SINGLE_FLOAT</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float32x2_t&gt; { <span class="keyword">using </span>type = float; };</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#if ARGON_HAS_HALF_FLOAT</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float16x4_t&gt; { <span class="keyword">using </span>type = float16_t; };</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#if ARGON_HAS_DOUBLE_FLOAT</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Scalar&lt;float64x1_t&gt; { <span class="keyword">using </span>type = double; };</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">using </span>Scalar_t = <span class="keyword">typename</span> Scalar&lt;std::remove_cv_t&lt;T&gt;&gt;::type;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">// clang-format on</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}  <span class="comment">// namespace simd</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#undef simd</span></div>
+<div class="ttc" id="afeatures_8h_html"><div class="ttname"><a href="features_8h.html">features.h</a></div><div class="ttdoc">Header file for SIMD features and platform detection.</div></div>
+<div class="ttc" id="astructsimd_1_1Scalar_html"><div class="ttname"><a href="structsimd_1_1Scalar.html">simd::Scalar</a></div><div class="ttdoc">Helper template to get the scalar type of a SIMD vector type.</div><div class="ttdef"><b>Definition</b> scalar.hpp:22</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_1a01907a2c462380a3529bb25c98b1e0.html">arm_simd</a></li><li class="navelem"><a class="el" href="dir_8fddf527d317245bdb28af605230e344.html">neon</a></li><li class="navelem"><a class="el" href="dir_0262c3b71c3b8cf6c7a777769e72a961.html">extensions</a></li><li class="navelem"><b>scalar.hpp</b></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_1a01907a2c462380a3529bb25c98b1e0.html">arm_simd</a></li><li class="navelem"><a class="el" href="dir_8f55dd3ded7944f08d54613532a6a0e1.html">helpers</a></li><li class="navelem"><b>scalar.hpp</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -101,7 +101,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;vector.hpp&quot;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifdef ARGON_PLATFORM_SIMDE</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#define ace</span></div>
@@ -113,12 +113,12 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> scalar_type&gt;</div>
 <div class="foldopen" id="foldopen00013" data-start="{" data-end="};">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classArgonHalf.html">   13</a></span><span class="keyword">class </span>ArgonHalf : <span class="keyword">public</span> <a class="code hl_class" href="classargon_1_1impl_1_1Common.html">argon::impl::Common</a>&lt;neon::Vec64_t&lt;scalar_type&gt;&gt; {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">using </span>T = <a class="code hl_class" href="classargon_1_1impl_1_1Common.html">argon::impl::Common&lt;neon::Vec64_t&lt;scalar_type&gt;</a>&gt;;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classArgonHalf.html">   13</a></span><span class="keyword">class </span>ArgonHalf : <span class="keyword">public</span> <a class="code hl_class" href="classargon_1_1Vector.html">argon::Vector</a>&lt;neon::Vec64_t&lt;scalar_type&gt;&gt; {</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">using </span>T = <a class="code hl_class" href="classargon_1_1Vector.html">argon::Vector&lt;neon::Vec64_t&lt;scalar_type&gt;</a>&gt;;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> <span class="keyword">public</span>:</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">using </span>vector_type = neon::Vec64_t&lt;scalar_type&gt;;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keyword">using </span>lane_type = <span class="keyword">const</span> <a class="code hl_class" href="classargon_1_1impl_1_1Lane.html">argon::impl::Lane&lt;vector_type&gt;</a>;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keyword">using </span>lane_type = <span class="keyword">const</span> <a class="code hl_class" href="classargon_1_1Lane.html">argon::Lane&lt;vector_type&gt;</a>;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keyword">static_assert</span>(neon::is_doubleword_v&lt;vector_type&gt;);</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
@@ -134,7 +134,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="comment">// ace ArgonHalf(std::span&lt;scalar_type&gt; slice) : T(slice) {};</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">template</span> &lt;neon::is_vector_type <span class="keywordtype">int</span>rinsic_type&gt;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  ace ArgonHalf(<a class="code hl_class" href="classargon_1_1impl_1_1Lane.html">argon::impl::Lane&lt;intrinsic_type&gt;</a> b) : T(b){};</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  ace ArgonHalf(<a class="code hl_class" href="classargon_1_1Lane.html">argon::Lane&lt;intrinsic_type&gt;</a> b) : T(b){};</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... arg_types&gt;</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keyword">requires</span> (<span class="keyword">sizeof</span>...(arg_types) &gt; 1)</div>
@@ -148,25 +148,25 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  }</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> AddLong(ArgonHalf&lt;scalar_type&gt; b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> neon::add_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  }</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> MultiplyLong(ArgonHalf&lt;scalar_type&gt; b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">return</span> neon::multiply_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  }</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> MultiplyLong(scalar_type b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">return</span> neon::multiply_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  }</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> MultiplyLong(lane_type b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">return</span> neon::multiply_long_lane(this-&gt;vec_, b.vec(), b.lane());</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  }</div>
@@ -190,44 +190,44 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  }</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> SubtractLong(ArgonHalf&lt;scalar_type&gt; b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">return</span> neon::subtract_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  }</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> SubtractAbsoluteLong(ArgonHalf&lt;scalar_type&gt; b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">return</span> neon::subtract_absolute_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  }</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> PairwiseAddLong()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">return</span> neon::pairwise_add_long(this-&gt;vec_);</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  }</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">requires</span> argon::impl::has_smaller_v&lt;scalar_type&gt;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> PairwiseAddLong(ArgonHalf&lt;<span class="keyword">typename</span> <a class="code hl_struct" href="structargon_1_1impl_1_1NextSmaller.html">argon::impl::NextSmaller&lt;scalar_type&gt;</a>&gt; b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">argon::helpers::has_smaller_v&lt;scalar_type&gt;</a></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> PairwiseAddLong(ArgonHalf&lt;<span class="keyword">typename</span> <a class="code hl_struct" href="structargon_1_1helpers_1_1NextSmaller.html">argon::helpers::NextSmaller&lt;scalar_type&gt;</a>&gt; b)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keywordflow">return</span> neon::pairwise_add_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  }</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;U&gt;</a> Widen()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">return</span> neon::move_long(this-&gt;vec_);</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  }</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> n&gt;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;argon::impl::NextLarger_t&lt;scalar_type&gt;</a>&gt; ShiftLeftLong()</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;argon::helpers::NextLarger_t&lt;scalar_type&gt;</a>&gt; ShiftLeftLong()</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  {</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordflow">return</span> neon::shift_left_long&lt;n&gt;(this-&gt;vec_);</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  }</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;argon::impl::NextLarger_t&lt;scalar_type&gt;</a>&gt; MultiplyDoubleSaturateLong(ArgonHalf&lt;scalar_type&gt; b)</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keyword">requires</span> argon::impl::has_larger_v&lt;scalar_type&gt;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  ace <a class="code hl_class" href="classArgon.html">Argon&lt;argon::helpers::NextLarger_t&lt;scalar_type&gt;</a>&gt; MultiplyDoubleSaturateLong(ArgonHalf&lt;scalar_type&gt; b)</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keyword">requires</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v&lt;scalar_type&gt;</a></div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  {</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keywordflow">return</span> neon::multiply_double_saturate_long(this-&gt;vec_, b);</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  }</div>
@@ -247,7 +247,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>  ace ArgonHalf&lt;scalar_type&gt; TableExtension(vector_type* b, ArgonHalf&lt;scalar_type&gt; idx) {</div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    <span class="keyword">static_assert</span>(num_tables &gt; 1 &amp;&amp; num_tables &lt; 5, <span class="stringliteral">&quot;Table Extension can only be performed with 1, 2, 3, or 4 tables&quot;</span>);</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="keyword">using </span>multivec_type = <a class="code hl_struct" href="structargon_1_1impl_1_1MultiVec.html">argon::impl::MultiVec&lt;vector_type, num_tables&gt;::type</a>;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="keyword">using </span>multivec_type = <a class="code hl_struct" href="structargon_1_1helpers_1_1MultiVec.html">argon::helpers::MultiVec&lt;vector_type, num_tables&gt;::type</a>;</div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    multivec_type multivec = *(multivec_type*)b;</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
@@ -304,7 +304,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> V&gt;</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>  <span class="keyword">requires</span> std::is_scalar_v&lt;V&gt;</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>ace <a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;V&gt;</a> operator*(<span class="keyword">const</span> V a, <span class="keyword">const</span> <a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;V&gt;</a> b) {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  <span class="keywordflow">return</span> b.<a class="code hl_function" href="classargon_1_1impl_1_1Common.html#a615b54e96b303106d85a52428badf6ab">Multiply</a>(a);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  <span class="keywordflow">return</span> b.<a class="code hl_function" href="classargon_1_1Vector.html#aac62b15b38305c086b0bc55cd62595d8">Multiply</a>(a);</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>}</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> V&gt;</div>
@@ -324,20 +324,22 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="foldopen" id="foldopen00218" data-start="{" data-end="};">
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno"><a class="line" href="structstd_1_1tuple__element_3_01Index_00_01ArgonHalf_3_01T_01_4_01_4.html">  218</a></span><span class="keyword">struct </span>tuple_element&lt;Index, <a class="code hl_class" href="classArgonHalf.html">ArgonHalf</a>&lt;T&gt;&gt; {</div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>  <span class="keyword">static_assert</span>(Index &lt; ArgonHalf&lt;T&gt;::lanes);</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>  <span class="keyword">using </span>type = <a class="code hl_class" href="classargon_1_1impl_1_1Lane.html">argon::impl::Lane&lt;typename ArgonHalf&lt;T&gt;::vector_type</a>&gt;;</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>  <span class="keyword">using </span>type = <a class="code hl_class" href="classargon_1_1Lane.html">argon::Lane&lt;typename ArgonHalf&lt;T&gt;::vector_type</a>&gt;;</div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>};</div>
 </div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>}  <span class="comment">// namespace std</span></div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
 <div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="preprocessor">#undef ace</span></div>
 <div class="ttc" id="aclassArgonHalf_html"><div class="ttname"><a href="classArgonHalf.html">ArgonHalf</a></div><div class="ttdef"><b>Definition</b> argon_half.hpp:13</div></div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:21</div></div>
-<div class="ttc" id="aclassargon_1_1impl_1_1Common_html"><div class="ttname"><a href="classargon_1_1impl_1_1Common.html">argon::impl::Common</a></div><div class="ttdef"><b>Definition</b> common.hpp:41</div></div>
-<div class="ttc" id="aclassargon_1_1impl_1_1Common_html_a615b54e96b303106d85a52428badf6ab"><div class="ttname"><a href="classargon_1_1impl_1_1Common.html#a615b54e96b303106d85a52428badf6ab">argon::impl::Common::Multiply</a></div><div class="ttdeci">ace argon_type Multiply(argon_type b) const</div><div class="ttdef"><b>Definition</b> common.hpp:172</div></div>
-<div class="ttc" id="aclassargon_1_1impl_1_1Lane_html"><div class="ttname"><a href="classargon_1_1impl_1_1Lane.html">argon::impl::Lane</a></div><div class="ttdef"><b>Definition</b> common.hpp:678</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:286</div></div>
-<div class="ttc" id="astructargon_1_1impl_1_1MultiVec_html"><div class="ttname"><a href="structargon_1_1impl_1_1MultiVec.html">argon::impl::MultiVec</a></div><div class="ttdef"><b>Definition</b> multivec.hpp:7</div></div>
-<div class="ttc" id="astructargon_1_1impl_1_1NextSmaller_html"><div class="ttname"><a href="structargon_1_1impl_1_1NextSmaller.html">argon::impl::NextSmaller</a></div><div class="ttdef"><b>Definition</b> helpers.hpp:58</div></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:22</div></div>
+<div class="ttc" id="aclassargon_1_1Lane_html"><div class="ttname"><a href="classargon_1_1Lane.html">argon::Lane</a></div><div class="ttdef"><b>Definition</b> vector.hpp:679</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html"><div class="ttname"><a href="classargon_1_1Vector.html">argon::Vector</a></div><div class="ttdef"><b>Definition</b> vector.hpp:42</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_aac62b15b38305c086b0bc55cd62595d8"><div class="ttname"><a href="classargon_1_1Vector.html#aac62b15b38305c086b0bc55cd62595d8">argon::Vector::Multiply</a></div><div class="ttdeci">ace argon_type Multiply(argon_type b) const</div><div class="ttdef"><b>Definition</b> vector.hpp:173</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_a496aa311ea4aaaa0489be3c5c10d6c6b"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v</a></div><div class="ttdeci">constexpr bool has_larger_v</div><div class="ttdoc">Helper template to determine if a type has a larger corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:35</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_ab9bfd386df4fd913b4da78380d195aaa"><div class="ttname"><a href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">argon::helpers::has_smaller_v</a></div><div class="ttdeci">constexpr bool has_smaller_v</div><div class="ttdoc">Helper template to determine if a type has a smaller corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:19</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:287</div></div>
+<div class="ttc" id="astructargon_1_1helpers_1_1MultiVec_html"><div class="ttname"><a href="structargon_1_1helpers_1_1MultiVec.html">argon::helpers::MultiVec</a></div><div class="ttdoc">Helper template for multi-vector types of different SIMD types and sizes.</div><div class="ttdef"><b>Definition</b> multivec.hpp:13</div></div>
+<div class="ttc" id="astructargon_1_1helpers_1_1NextSmaller_html"><div class="ttname"><a href="structargon_1_1helpers_1_1NextSmaller.html">argon::helpers::NextSmaller</a></div><div class="ttdoc">Helper template to determine the next smaller type for a given type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:77</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
