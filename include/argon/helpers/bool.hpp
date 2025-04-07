@@ -1,4 +1,5 @@
 #pragma once
+#include "argon/features.h"
 #include "arm_simd/helpers/make_unsigned.hpp"
 
 #ifdef __ARM_FEATURE_MVE

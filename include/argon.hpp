@@ -6,7 +6,7 @@
 #include <type_traits>
 #include "argon/argon_full.hpp"
 #include "argon/argon_half.hpp"
-#include "argon/helpers/multivec.hpp"
+#include "argon/helpers/multivector.hpp"
 #include "argon/store.hpp"
 #include "argon/vector.hpp"
 #include "argon/vectorize.hpp"
@@ -62,7 +62,7 @@ ace argon_type reinterpret(V in) {
 /// @return The altered array of vectors
 template <size_t lane, size_t stride, typename argon_type>
 ace static std::array<argon_type, stride> load_to_lane_interleaved(
-    helpers::MultiVec_t<typename argon_type::vector_type, stride> multi,
+    helpers::MultiVector_t<typename argon_type::vector_type, stride> multi,
     typename argon_type::scalar_type const* ptr) {
   return argon_type::LoadToLaneInterleaved(multi, ptr);
 }

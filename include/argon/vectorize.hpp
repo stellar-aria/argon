@@ -114,27 +114,5 @@ static_assert(std::ranges::view<vectorize<int32_t>>);
 static_assert(std::movable<vectorize<int32_t>>);
 static_assert(std::ranges::viewable_range<vectorize<int32_t>>);
 
-/// @brief Split a span into two spans, one aligned to the vector size and one not
-namespace split {
-
-/// @brief Split a span into two spans, with the first span aligned to the vector size
-/// @param span The span to split
-/// @return A pair of spans, the first divisible by the vector size and the second containing any remaining elements
-template <typename scalar_type>
-std::pair<std::span<scalar_type>, std::span<scalar_type>> head_aligned(std::span<scalar_type> span) {
-  constexpr size_t lanes = sizeof(simd::Vec128_t<scalar_type>) / sizeof(scalar_type);
-  return {span.first(span.size() & ~(lanes - 1)), span.last(span.size() & (lanes - 1))};
-}
-
-/// @brief Split a span into two spans, with the second span aligned to the vector size
-/// @param span The span to split
-/// @return A pair of spans, the first containing any remaining elements and the second divisible by the vector size
-template <typename scalar_type>
-std::pair<std::span<scalar_type>, std::span<scalar_type>> tail_aligned(std::span<scalar_type> span) {
-  constexpr size_t lanes = sizeof(simd::Vec128_t<scalar_type>) / sizeof(scalar_type);
-  return {span.first(span.size() & (lanes - 1)), span.last(span.size() & ~(lanes - 1))};
-}
-
-}  // namespace split
 }  // namespace argon
 #undef simd

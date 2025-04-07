@@ -144,16 +144,16 @@ class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
   ace ArgonHalf<scalar_type> TableExtension(vector_type* b, ArgonHalf<scalar_type> idx) {
     static_assert(num_tables > 1 && num_tables < 5, "Table Extension can only be performed with 1, 2, 3, or 4 tables");
 
-    using multivec_type = argon::helpers::MultiVec<vector_type, num_tables>::type;
+    using multivec_type = argon::helpers::MultiVector<vector_type, num_tables>::type;
 
-    multivec_type multivec = *(multivec_type*)b;
+    multivec_type multivector = *(multivec_type*)b;
 
     if constexpr (num_tables == 2) {
-      return neon::table_extension2(this->vec_, multivec, idx);
+      return neon::table_extension2(this->vec_, multivector, idx);
     } else if constexpr (num_tables == 3) {
-      return neon::table_extension3(this->vec_, multivec, idx);
+      return neon::table_extension3(this->vec_, multivector, idx);
     } else if constexpr (num_tables == 4) {
-      return neon::table_extension4(this->vec_, multivec, idx);
+      return neon::table_extension4(this->vec_, multivector, idx);
     }
   }
 

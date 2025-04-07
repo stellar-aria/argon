@@ -1,5 +1,6 @@
 #pragma once
 #include <type_traits>
+#include "argon/features.h"
 #include "arm_simd/helpers/concepts.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 

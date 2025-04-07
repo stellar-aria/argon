@@ -11,7 +11,7 @@
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/bool.hpp"
-#include "helpers/multivec.hpp"
+#include "helpers/multivector.hpp"
 #include "helpers/to_array.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -363,7 +363,7 @@ class Vector {
   ace static std::array<argon_type, stride> LoadCopyInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVec<vector_type, stride>::type;
+    using multivec_type = helpers::MultiVector<vector_type, stride>::type;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2_duplicate<multivec_type>(ptr).val);
@@ -377,7 +377,7 @@ class Vector {
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVec_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVector_t<vector_type, stride>;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2<multivec_type>(ptr).val);
@@ -389,7 +389,7 @@ class Vector {
   }
 
   template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVec_t<vector_type, stride> multi,
+  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVector_t<vector_type, stride> multi,
                                                                   const scalar_type* ptr) {
     if constexpr (stride == 2) {
       if constexpr (simd::is_quadword_v<vector_type>) {
@@ -415,7 +415,7 @@ class Vector {
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadToLaneInterleaved(std::array<argon_type, stride> multi,
                                                                   const scalar_type* ptr) {
-    using multivec_type = helpers::MultiVec_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVector_t<vector_type, stride>;
     return LoadToLaneInterleaved<lane, stride>(*(multivec_type*)multi.data(), ptr);
   }
 

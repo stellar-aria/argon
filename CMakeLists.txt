@@ -15,6 +15,7 @@ target_sources(argon PUBLIC
 )
 
 option(ARGON_ENABLE_TESTING "Build Argon tests" OFF)
+
 if(ARGON_ENABLE_TESTING)
   enable_testing()
   include(CTest)
@@ -55,6 +56,12 @@ if(ARGON_BUILD_DOCS)
     set(DOXYGEN_HTML_EXTRA_STYLESHEET "${doxygen-awesome-css_SOURCE_DIR}/doxygen-awesome.css")
 
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+
+    set(DOXYGEN_PREDEFINED
+      \"ARGON_HAS_DWORD=1\"
+      \"ARGON_HAS_HALF_FLOAT=1\"
+      \"ARGON_HAS_DOUBLE_FLOAT=1\"
+    )
 
     file(GLOB markdown_SOURCES *.md)
 

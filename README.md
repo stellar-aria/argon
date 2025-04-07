@@ -1,6 +1,6 @@
 # Argon
 
-[![License](https://img.shields.io/github/license/stellar-aria/argon.svg?style=flat-square&color=FF0000&label=License)](LICENSE)
+[![License](https://img.shields.io/github/license/stellar-aria/argon.svg?style=flat-square&color=FF0000&label=License)](https://choosealicense.com/licenses/mit/)
 ![Archs](https://img.shields.io/badge/ARM-v7%20|%20v8+-orange.svg?style=flat-square)
 [![C++ Version](https://img.shields.io/badge/C++-23-yellow.svg?style=flat-square)](https://en.wikipedia.org/wiki/C%2B%2B23)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/stellar-aria/argon/tests.yml?style=flat-square&label=Build)](https://github.com/stellar-aria/argon/actions)

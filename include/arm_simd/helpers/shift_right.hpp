@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+#include "argon/features.h"
 #include "arm_simd.hpp"
 #include "scalar.hpp"
 

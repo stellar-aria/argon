@@ -56,6 +56,7 @@ concept has_larger = has_larger_v<T>;
 /// @brief Helper template to determine the next larger type for a given type.
 /// @tparam T The type to determine the next larger type for.
 template <typename T> struct NextLarger;
+/// @cond EXCLUDE
 template <> struct NextLarger<int8_t> { using type = int16_t; };
 template <> struct NextLarger<uint8_t> { using type = uint16_t; };
 template <> struct NextLarger<int16_t> { using type = int32_t; };
@@ -66,6 +67,7 @@ template <> struct NextLarger<float> { using type = double; };
 #if ARGON_HAS_HALF_FLOAT
 template <> struct NextLarger<float16_t> { using type = float; };
 #endif
+/// @endcond
 
 /// @brief Helper alias to get the next larger type for a given type.
 /// @tparam T  The type to determine the next larger type for.
@@ -75,6 +77,8 @@ using NextLarger_t = NextLarger<T>::type;
 /// @brief Helper template to determine the next smaller type for a given type.
 /// @tparam T The type to determine the next smaller type for.
 template <typename T> struct NextSmaller;
+
+/// @cond EXCLUDE
 template <> struct NextSmaller<int16_t> { using type = int8_t; };
 template <> struct NextSmaller<uint16_t> { using type = uint8_t; };
 template <> struct NextSmaller<int32_t> { using type = int16_t; };
@@ -85,6 +89,7 @@ template <> struct NextSmaller<double> { using type = float; };
 #if ARGON_HAS_HALF_FLOAT
 template <> struct NextSmaller<float> { using type = float16_t; };
 #endif
+/// @endcond
 
 /// @brief Helper alias to get the next smaller type for a given type.
 /// @tparam T The type to determine the next smaller type for.
