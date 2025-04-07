@@ -26,15 +26,16 @@ var NAVTREE =
 [
   [ "Argon", "index.html", [
     [ "Why?", "index.html#autotoc_md1", null ],
-    [ "Examples", "index.html#autotoc_md4", [
-      [ "Object-oriented Argon interface", "index.html#autotoc_md5", null ],
-      [ "Low-level NEON interface", "index.html#autotoc_md6", null ]
+    [ "API Documentation", "index.html#autotoc_md4", null ],
+    [ "Examples", "index.html#autotoc_md5", [
+      [ "Object-oriented Argon interface", "index.html#autotoc_md6", null ],
+      [ "Low-level NEON interface", "index.html#autotoc_md7", null ]
     ] ],
-    [ "Backend Support:", "index.html#autotoc_md7", null ],
-    [ "Compatibility", "index.html#autotoc_md8", [
-      [ "Architectures:", "index.html#autotoc_md9", null ],
-      [ "Target ABI:", "index.html#autotoc_md10", null ],
-      [ "Host Platform:", "index.html#autotoc_md11", null ]
+    [ "Backend Support:", "index.html#autotoc_md8", null ],
+    [ "Compatibility", "index.html#autotoc_md9", [
+      [ "Architectures:", "index.html#autotoc_md10", null ],
+      [ "Target ABI:", "index.html#autotoc_md11", null ],
+      [ "Host Platform:", "index.html#autotoc_md12", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
