@@ -7,9 +7,9 @@
 #define simd helium
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
-#include <arm/neon.h>
 #include <cmath>
 
+#include <arm/neon.h>
 #define simd neon
 #endif
 
