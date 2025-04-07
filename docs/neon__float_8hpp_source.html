@@ -139,7 +139,7 @@ $(function(){initNavTree('neon__float_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>[[gnu::always_inline]] <span class="keyword">inline</span> float32x4_t load1(float32_t <span class="keyword">const</span> *ptr) { <span class="keywordflow">return</span> vld1q_f32(ptr); }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>[[gnu::always_inline]] <span class="keyword">inline</span> <span class="keywordtype">void</span> store1(float16_t *ptr, float16x8_t val) { <span class="keywordflow">return</span> vst1q_f16(ptr, val); }</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}  <span class="comment">// namespace helium</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#undef nce</span></div>
 </div><!-- fragment --></div><!-- contents -->

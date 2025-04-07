@@ -104,9 +104,9 @@ $(function(){initNavTree('argon__full_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;arm_simd.hpp&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;helpers/argon_for.hpp&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;vector.hpp&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="argon_2helpers_8hpp.html">helpers.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="argon_2helpers_8hpp.html">helpers.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;helpers/argon_for.hpp&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;vector.hpp&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd helium</span></div>
@@ -137,7 +137,7 @@ $(function(){initNavTree('argon__full_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  ace Argon() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  ace Argon(vector_type vector) : T{vector} {};</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  ace Argon(scalar_type scalar) : T{scalar} {};</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  ace Argon(T&amp;&amp; in) : T(in){};</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  ace Argon(T&amp;&amp; in) : T(in) {};</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  ace Argon(std::array&lt;scalar_type, 4&gt; value_list) : T{T::Load(value_list.data())} {};</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  ace Argon(<a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;scalar_type&gt;</a> low, <a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;scalar_type&gt;</a> high) : T{Combine(low, high)} {};</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
@@ -357,11 +357,11 @@ $(function(){initNavTree('argon__full_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span>... arg_types&gt;</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>  <span class="keyword">requires</span>(<span class="keyword">sizeof</span>...(arg_types) &gt; 1)</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment">//Argon(arg_types...) -&gt; Argon&lt;arg_types...[0]&gt;;</span></div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment">// Argon(arg_types...) -&gt; Argon&lt;arg_types...[0]&gt;;</span></div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><a class="code hl_class" href="classArgon.html">Argon</a>(arg_types...) -&gt; <a class="code hl_class" href="classArgon.html">Argon</a>&lt;std::tuple_element_t&lt;0, std::tuple&lt;arg_types...&gt;&gt;&gt;;</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> ScalarType&gt;</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="keyword">requires</span> std::is_scalar_v&lt;ScalarType&gt;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>  <span class="keyword">requires</span> std::is_scalar_v&lt;ScalarType&gt;</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><a class="code hl_class" href="classArgon.html">Argon</a>(ScalarType) -&gt; <a class="code hl_class" href="classArgon.html">Argon&lt;ScalarType&gt;</a>;</div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> V&gt;</div>
