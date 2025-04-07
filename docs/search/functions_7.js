@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reciprocalestimate_0',['ReciprocalEstimate',['../classargon_1_1Vector.html#a497030ef839bb0613344b2ca0e1bb377',1,'argon::Vector']]]
+  ['to_5farray_0',['to_array',['../to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be',1,'argon::to_array(T(&amp;a)[N])'],['../to__array_8hpp.html#abd910c56341554adf4728e2f405bc192',1,'argon::to_array(T(&amp;&amp;a)[N])']]]
 ];

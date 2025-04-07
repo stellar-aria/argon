@@ -9,6 +9,7 @@ var concepts =
     ] ],
     [ "simd", null, [
       [ "is_quadword", "conceptsimd_1_1is__quadword.html", null ],
+      [ "is_doubleword", "conceptsimd_1_1is__doubleword.html", null ],
       [ "is_vector_type", "conceptsimd_1_1is__vector__type.html", null ]
     ] ]
 ];

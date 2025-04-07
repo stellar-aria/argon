@@ -2,10 +2,6 @@ var namespaces_dup =
 [
     [ "argon", null, [
       [ "helpers", "namespaceargon_1_1helpers.html", "namespaceargon_1_1helpers" ],
-      [ "split", "namespaceargon_1_1split.html", [
-        [ "head_aligned", "namespaceargon_1_1split.html#a8105db698a4c835ecd53e224f6f3843d", null ],
-        [ "tail_aligned", "namespaceargon_1_1split.html#ac9c3fa012b43833a9a7393ac435d5906", null ]
-      ] ],
       [ "Bool", "structargon_1_1Bool.html", null ],
       [ "CondMonad", "classargon_1_1CondMonad.html", null ],
       [ "Lane", "classargon_1_1Lane.html", null ],

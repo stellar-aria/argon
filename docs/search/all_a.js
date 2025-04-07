@@ -9,6 +9,6 @@ var searchData=
   ['multiplyroundaddfixedpoint_6',['MultiplyRoundAddFixedPoint',['../classargon_1_1Vector.html#a8268e1710f8d49ccc413f085c6b8d8a8',1,'argon::Vector']]],
   ['multiplyroundfixedpoint_7',['MultiplyRoundFixedPoint',['../classargon_1_1Vector.html#a757267fbead7c57adabec06a29996dd1',1,'argon::Vector']]],
   ['multiplysubtract_8',['MultiplySubtract',['../classargon_1_1Vector.html#af2af7b9024040dea18fc96d6c730b0e8',1,'argon::Vector']]],
-  ['multivec_9',['MultiVec',['../structargon_1_1helpers_1_1MultiVec.html',1,'argon::helpers']]],
-  ['multivec_5ft_10',['MultiVec_t',['../namespaceargon_1_1helpers.html#a67c2d3909656dc6ad84305577de11d01',1,'argon::helpers']]]
+  ['multivector_9',['MultiVector',['../structargon_1_1helpers_1_1MultiVector.html',1,'argon::helpers']]],
+  ['multivector_5ft_10',['MultiVector_t',['../namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61',1,'argon::helpers']]]
 ];

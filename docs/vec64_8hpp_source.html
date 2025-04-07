@@ -119,10 +119,10 @@ $(function(){initNavTree('vec64_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// clang-format off</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>Vec64;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structsimd_1_1Vec64.html">   22</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Vec64.html">Vec64</a>;</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Vec64&lt;int8_t&gt; { <span class="keyword">using </span>type = int8x8_t; };</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Vec64&lt;uint8_t&gt; { <span class="keyword">using </span>type = uint8x8_t; };</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Vec64.html">Vec64</a>&lt;int8_t&gt; { <span class="keyword">using </span>type = int8x8_t; };</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structsimd_1_1Vec64.html">Vec64</a>&lt;uint8_t&gt; { <span class="keyword">using </span>type = uint8x8_t; };</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Vec64&lt;int16_t&gt; { <span class="keyword">using </span>type = int16x4_t; };</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Vec64&lt;uint16_t&gt; { <span class="keyword">using </span>type = uint16x4_t; };</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>Vec64&lt;int32_t&gt; { <span class="keyword">using </span>type = int32x2_t; };</div>
@@ -150,6 +150,7 @@ $(function(){initNavTree('vec64_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}  <span class="comment">// namespace simd</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#undef simd</span></div>
 <div class="ttc" id="afeatures_8h_html"><div class="ttname"><a href="features_8h.html">features.h</a></div><div class="ttdoc">Header file for SIMD features and platform detection.</div></div>
+<div class="ttc" id="astructsimd_1_1Vec64_html"><div class="ttname"><a href="structsimd_1_1Vec64.html">simd::Vec64</a></div><div class="ttdoc">Helper template to get the SIMD double-word vector type for a given scalar type.</div><div class="ttdef"><b>Definition</b> vec64.hpp:22</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

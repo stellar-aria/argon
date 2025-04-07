@@ -3,23 +3,9 @@ var annotated_dup =
     [ "argon", null, [
       [ "helpers", "namespaceargon_1_1helpers.html", [
         [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ],
-        [ "MultiVec", "structargon_1_1helpers_1_1MultiVec.html", null ],
+        [ "MultiVector", "structargon_1_1helpers_1_1MultiVector.html", null ],
         [ "NextLarger", "structargon_1_1helpers_1_1NextLarger.html", null ],
-        [ "NextLarger< float >", "structargon_1_1helpers_1_1NextLarger_3_01float_01_4.html", null ],
-        [ "NextLarger< int16_t >", "structargon_1_1helpers_1_1NextLarger_3_01int16__t_01_4.html", null ],
-        [ "NextLarger< int32_t >", "structargon_1_1helpers_1_1NextLarger_3_01int32__t_01_4.html", null ],
-        [ "NextLarger< int8_t >", "structargon_1_1helpers_1_1NextLarger_3_01int8__t_01_4.html", null ],
-        [ "NextLarger< uint16_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint16__t_01_4.html", null ],
-        [ "NextLarger< uint32_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint32__t_01_4.html", null ],
-        [ "NextLarger< uint8_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint8__t_01_4.html", null ],
-        [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ],
-        [ "NextSmaller< double >", "structargon_1_1helpers_1_1NextSmaller_3_01double_01_4.html", null ],
-        [ "NextSmaller< int16_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int16__t_01_4.html", null ],
-        [ "NextSmaller< int32_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int32__t_01_4.html", null ],
-        [ "NextSmaller< int64_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int64__t_01_4.html", null ],
-        [ "NextSmaller< uint16_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint16__t_01_4.html", null ],
-        [ "NextSmaller< uint32_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint32__t_01_4.html", null ],
-        [ "NextSmaller< uint64_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint64__t_01_4.html", null ]
+        [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ]
       ] ],
       [ "Bool", "structargon_1_1Bool.html", null ],
       [ "CondMonad", "classargon_1_1CondMonad.html", null ],
@@ -37,7 +23,8 @@ var annotated_dup =
       [ "make_signed", "structsimd_1_1make__signed.html", null ],
       [ "make_unsigned", "structsimd_1_1make__unsigned.html", null ],
       [ "Scalar", "structsimd_1_1Scalar.html", null ],
-      [ "Vec128", "structsimd_1_1Vec128.html", null ]
+      [ "Vec128", "structsimd_1_1Vec128.html", null ],
+      [ "Vec64", "structsimd_1_1Vec64.html", null ]
     ] ],
     [ "std", "namespacestd.html", [
       [ "tuple_element< Index, argon::Vector< T > >", "structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],

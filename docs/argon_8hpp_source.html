@@ -108,7 +108,7 @@ $(function(){initNavTree('argon_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;argon/argon_full.hpp&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;argon/argon_half.hpp&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;argon/helpers/multivec.hpp&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;argon/helpers/multivector.hpp&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;argon/store.hpp&quot;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;argon/vector.hpp&quot;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;argon/vectorize.hpp&quot;</span></div>
@@ -147,7 +147,7 @@ $(function(){initNavTree('argon_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> lane, <span class="keywordtype">size_t</span> str<span class="keywordtype">id</span>e, <span class="keyword">typename</span> argon_type&gt;</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>ace <span class="keyword">static</span> std::array&lt;argon_type, stride&gt; load_to_lane_interleaved(</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a67c2d3909656dc6ad84305577de11d01">helpers::MultiVec_t&lt;typename argon_type::vector_type, stride&gt;</a> multi,</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">helpers::MultiVector_t&lt;typename argon_type::vector_type, stride&gt;</a> multi,</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">typename</span> argon_type::scalar_type <span class="keyword">const</span>* ptr) {</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keywordflow">return</span> argon_type::LoadToLaneInterleaved(multi, ptr);</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}</div>
@@ -287,7 +287,7 @@ $(function(){initNavTree('argon_8hpp_source.html',''); initResizable(true); });
 <div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:22</div></div>
 <div class="ttc" id="aclassargon_1_1CondMonad_html"><div class="ttname"><a href="classargon_1_1CondMonad.html">argon::CondMonad</a></div><div class="ttdef"><b>Definition</b> argon.hpp:175</div></div>
 <div class="ttc" id="aclassargon_1_1Vector_html"><div class="ttname"><a href="classargon_1_1Vector.html">argon::Vector</a></div><div class="ttdef"><b>Definition</b> vector.hpp:42</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a67c2d3909656dc6ad84305577de11d01"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a67c2d3909656dc6ad84305577de11d01">argon::helpers::MultiVec_t</a></div><div class="ttdeci">MultiVec&lt; T, size &gt;::type MultiVec_t</div><div class="ttdoc">Helper alias for multi-vector types of different SIMD types and sizes.</div><div class="ttdef"><b>Definition</b> multivec.hpp:110</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_a1b91cd89c8f53ae7792649404cb95f61"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">argon::helpers::MultiVector_t</a></div><div class="ttdeci">MultiVector&lt; T, size &gt;::type MultiVector_t</div><div class="ttdoc">Helper alias for multi-vector types of different SIMD types and sizes.</div><div class="ttdef"><b>Definition</b> multivector.hpp:110</div></div>
 <div class="ttc" id="ato__array_8hpp_html_adc56e0d4e158f60f7b34510bd49e10be"><div class="ttname"><a href="to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be">argon::to_array</a></div><div class="ttdeci">constexpr std::array&lt; helpers::ArgonFor_t&lt; T &gt;, N &gt; to_array(T(&amp;a)[N])</div><div class="ttdoc">Convert a C-style array of vector types to a std::array of Argon types.</div><div class="ttdef"><b>Definition</b> to_array.hpp:29</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

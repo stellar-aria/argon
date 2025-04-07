@@ -504,6 +504,11 @@ template&lt;<a class="el" href="conceptsimd_1_1is__vector__type.html">simd::is_v
 requires <a class="el" href="conceptsimd_1_1is__quadword.html">simd::is_quadword</a>&lt;vector_type&gt;</td></tr>
 <tr class="memitem:a676f1a3f83a50e1fe7492ba637751356"><td class="memTemplItemLeft" align="right" valign="top">static ace argon_type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>FromLane</b> (<a class="el" href="classargon_1_1Lane.html">argon::Lane</a>&lt; intrinsic_type &gt; lane)</td></tr>
 <tr class="separator:a676f1a3f83a50e1fe7492ba637751356"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac542d6418308c8ac05e943ec8492b71" id="r_aac542d6418308c8ac05e943ec8492b71"><td class="memTemplParams" colspan="2"><a id="aac542d6418308c8ac05e943ec8492b71" name="aac542d6418308c8ac05e943ec8492b71"></a>
+template&lt;<a class="el" href="conceptsimd_1_1is__vector__type.html">simd::is_vector_type</a> intrinsic_type&gt; <br />
+requires <a class="el" href="conceptsimd_1_1is__doubleword.html">simd::is_doubleword</a>&lt;vector_type&gt;</td></tr>
+<tr class="memitem:aac542d6418308c8ac05e943ec8492b71"><td class="memTemplItemLeft" align="right" valign="top">static ace argon_type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>FromLane</b> (<a class="el" href="classargon_1_1Lane.html">argon::Lane</a>&lt; intrinsic_type &gt; lane)</td></tr>
+<tr class="separator:aac542d6418308c8ac05e943ec8492b71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18ef70da56d166deac60ffc161c310e8" id="r_a18ef70da56d166deac60ffc161c310e8"><td class="memItemLeft" align="right" valign="top"><a id="a18ef70da56d166deac60ffc161c310e8" name="a18ef70da56d166deac60ffc161c310e8"></a>
 static ace argon_type&#160;</td><td class="memItemRight" valign="bottom"><b>Iota</b> (scalar_type start, scalar_type step=1)</td></tr>
 <tr class="separator:a18ef70da56d166deac60ffc161c310e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -536,10 +541,10 @@ template&lt;size_t stride&gt; </td></tr>
 template&lt;size_t stride&gt; </td></tr>
 <tr class="memitem:a84999334e16e2abfc117913de4717619"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; argon_type, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>LoadInterleaved</b> (const scalar_type *ptr)</td></tr>
 <tr class="separator:a84999334e16e2abfc117913de4717619"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7a5953042404012c51f27bf1d95a63d" id="r_aa7a5953042404012c51f27bf1d95a63d"><td class="memTemplParams" colspan="2"><a id="aa7a5953042404012c51f27bf1d95a63d" name="aa7a5953042404012c51f27bf1d95a63d"></a>
+<tr class="memitem:a4d9949e59ad32bcff4ab99b1af1f1b1b" id="r_a4d9949e59ad32bcff4ab99b1af1f1b1b"><td class="memTemplParams" colspan="2"><a id="a4d9949e59ad32bcff4ab99b1af1f1b1b" name="a4d9949e59ad32bcff4ab99b1af1f1b1b"></a>
 template&lt;size_t lane, size_t stride&gt; </td></tr>
-<tr class="memitem:aa7a5953042404012c51f27bf1d95a63d"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; argon_type, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>LoadToLaneInterleaved</b> (<a class="el" href="namespaceargon_1_1helpers.html#a67c2d3909656dc6ad84305577de11d01">helpers::MultiVec_t</a>&lt; vector_type, stride &gt; multi, const scalar_type *ptr)</td></tr>
-<tr class="separator:aa7a5953042404012c51f27bf1d95a63d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d9949e59ad32bcff4ab99b1af1f1b1b"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; argon_type, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>LoadToLaneInterleaved</b> (<a class="el" href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">helpers::MultiVector_t</a>&lt; vector_type, stride &gt; multi, const scalar_type *ptr)</td></tr>
+<tr class="separator:a4d9949e59ad32bcff4ab99b1af1f1b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40f51b263fec6bcf15759587eb9ed04f" id="r_a40f51b263fec6bcf15759587eb9ed04f"><td class="memTemplParams" colspan="2"><a id="a40f51b263fec6bcf15759587eb9ed04f" name="a40f51b263fec6bcf15759587eb9ed04f"></a>
 template&lt;size_t lane, size_t stride&gt; </td></tr>
 <tr class="memitem:a40f51b263fec6bcf15759587eb9ed04f"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; argon_type, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>LoadToLaneInterleaved</b> (std::array&lt; argon_type, stride &gt; multi, const scalar_type *ptr)</td></tr>

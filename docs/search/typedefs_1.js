@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['multivec_5ft_0',['MultiVec_t',['../namespaceargon_1_1helpers.html#a67c2d3909656dc6ad84305577de11d01',1,'argon::helpers']]]
+  ['multivector_5ft_0',['MultiVector_t',['../namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61',1,'argon::helpers']]]
 ];

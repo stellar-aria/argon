@@ -13,23 +13,9 @@ var hierarchy =
     [ "argon::vectorize_load< scalar_type >::LoadIterator", "structargon_1_1vectorize__load_1_1LoadIterator.html", null ],
     [ "simd::make_signed< T >", "structsimd_1_1make__signed.html", null ],
     [ "simd::make_unsigned< T >", "structsimd_1_1make__unsigned.html", null ],
-    [ "argon::helpers::MultiVec< T, size >", "structargon_1_1helpers_1_1MultiVec.html", null ],
+    [ "argon::helpers::MultiVector< T, size >", "structargon_1_1helpers_1_1MultiVector.html", null ],
     [ "argon::helpers::NextLarger< T >", "structargon_1_1helpers_1_1NextLarger.html", null ],
-    [ "argon::helpers::NextLarger< float >", "structargon_1_1helpers_1_1NextLarger_3_01float_01_4.html", null ],
-    [ "argon::helpers::NextLarger< int16_t >", "structargon_1_1helpers_1_1NextLarger_3_01int16__t_01_4.html", null ],
-    [ "argon::helpers::NextLarger< int32_t >", "structargon_1_1helpers_1_1NextLarger_3_01int32__t_01_4.html", null ],
-    [ "argon::helpers::NextLarger< int8_t >", "structargon_1_1helpers_1_1NextLarger_3_01int8__t_01_4.html", null ],
-    [ "argon::helpers::NextLarger< uint16_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint16__t_01_4.html", null ],
-    [ "argon::helpers::NextLarger< uint32_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint32__t_01_4.html", null ],
-    [ "argon::helpers::NextLarger< uint8_t >", "structargon_1_1helpers_1_1NextLarger_3_01uint8__t_01_4.html", null ],
     [ "argon::helpers::NextSmaller< T >", "structargon_1_1helpers_1_1NextSmaller.html", null ],
-    [ "argon::helpers::NextSmaller< double >", "structargon_1_1helpers_1_1NextSmaller_3_01double_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< int16_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int16__t_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< int32_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int32__t_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< int64_t >", "structargon_1_1helpers_1_1NextSmaller_3_01int64__t_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< uint16_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint16__t_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< uint32_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint32__t_01_4.html", null ],
-    [ "argon::helpers::NextSmaller< uint64_t >", "structargon_1_1helpers_1_1NextSmaller_3_01uint64__t_01_4.html", null ],
     [ "std::pair", null, [
       [ "argon::CondMonad< CondType, ScalarType >", "classargon_1_1CondMonad.html", null ]
     ] ],
@@ -43,6 +29,7 @@ var hierarchy =
     [ "std::tuple_size< Argon< T > >", "structstd_1_1tuple__size_3_01Argon_3_01T_01_4_01_4.html", null ],
     [ "std::tuple_size< ArgonHalf< T > >", "structstd_1_1tuple__size_3_01ArgonHalf_3_01T_01_4_01_4.html", null ],
     [ "simd::Vec128< T >", "structsimd_1_1Vec128.html", null ],
+    [ "simd::Vec64< T >", "structsimd_1_1Vec64.html", null ],
     [ "argon::Vector< vector_type >", "classargon_1_1Vector.html", [
       [ "Argon< ScalarType >", "classArgon.html", null ]
     ] ],
