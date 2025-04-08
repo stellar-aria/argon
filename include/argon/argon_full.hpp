@@ -32,16 +32,9 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Argon() = default;
-  ace Argon(vector_type vector) : T{vector} {};
-  ace Argon(scalar_type scalar) : T{scalar} {};
-  ace Argon(T&& in) : T(in) {};
+  using T::T;
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
-
-  template <typename... arg_types>
-    requires(sizeof...(arg_types) > 1)
-  ace Argon(arg_types... args) : T{vector_type{args...}} {}
 
   template <simd::is_vector_type intrinsic_type>
   ace Argon(argon::Lane<intrinsic_type> b) : T{b} {};

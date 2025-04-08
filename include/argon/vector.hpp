@@ -96,6 +96,10 @@ class Vector {
   template <size_t LaneIndex>
   ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
 
+  template <typename... ArgTypes>
+    requires(sizeof...(ArgTypes) > 1)
+  ace Vector(ArgTypes... args) : vec_{std::forward<ArgTypes>(args)...} {}
+
   /// @brief Constructs a Vector from a scalar pointer.
   /// @param ptr The pointer to the scalar value to construct from.
   /// @details This constructor loads the scalar value from the pointer and duplicates it

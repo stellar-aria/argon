@@ -22,13 +22,7 @@ class ArgonHalf : public argon::Vector<neon::Vec64_t<scalar_type>> {
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace ArgonHalf() : T() {};
-  ace ArgonHalf(vector_type vector) : T{vector} {};
-  ace ArgonHalf(scalar_type scalar) : T{scalar} {};
-  // ace ArgonHalf(scalar_type const* ptr) : T(ptr) {};
-  ace ArgonHalf(T&& in) : T{in} {};
-  ace ArgonHalf(std::array<scalar_type, 2> value_list) : T{T::Load(value_list.data())} {};
-  // ace ArgonHalf(std::span<scalar_type> slice) : T(slice) {};
+  using T::T;
 
   template <neon::is_vector_type intrinsic_type>
   ace ArgonHalf(argon::Lane<intrinsic_type> b) : T(b) {};
