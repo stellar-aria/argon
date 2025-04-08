@@ -709,6 +709,17 @@ class Vector {
     return destination;
   }
 
+  /// @copydoc LoadGather
+  ace static argon_type LoadGather(const scalar_type* base,
+                                   helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+    argon_type destination;
+    helpers::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      auto lane_val = simd::get_lane<i>(offset_vector);
+      destination = destination.template LoadToLane<i>(base + lane_val);
+    });
+    return destination;
+  }
+
   /// @brief Load a lane from a pointer
   /// @param ptr The pointer to load from
   /// @return The new vector
