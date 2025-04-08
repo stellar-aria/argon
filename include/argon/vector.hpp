@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <bit>
+#include <cmath>
 #include <functional>
 #include <tuple>
 #include <type_traits>
