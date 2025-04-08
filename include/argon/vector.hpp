@@ -823,25 +823,30 @@ class Vector {
    * @param offset_vector a vector of offset values that are added to base_ptr to get the address to load
    * @return std::array<argon_type, stride> An array of vectors from the resulting interleaved loads
    */
-  template <size_t stride, simd::is_vector_type IntrinsicType>
-  ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
-                                                                  IntrinsicType offset_vector) {
-    using offset_type = simd::Scalar_t<IntrinsicType>;
+  template <size_t stride>
+  ace static std::array<argon_type, stride> LoadGatherInterleaved(
+      const scalar_type* base_ptr,
+      helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> offset_vector) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
-    static_assert((sizeof(IntrinsicType) / sizeof(offset_type)) == lanes,
-                  "Number of elements in offset vector must match number of elements in destination vector");
     std::array<argon_type, stride> multi{};
     helpers::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      offset_type lane_val = simd::get_lane<i>(offset_vector);
+      auto lane_val = simd::get_lane<i>(offset_vector);
       multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
     });
     return multi;
   }
 
-  template <size_t stride, typename T>
-  ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr, T offset_vector) {
-    return argon_type::template LoadGatherInterleaved<stride, typename T::VectorType>(base_ptr, offset_vector);
+  template <size_t stride>
+  ace static std::array<argon_type, stride> LoadGatherInterleaved(
+      const scalar_type* base_ptr,
+      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+    static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
+    std::array<argon_type, stride> multi{};
+    helpers::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      auto lane_val = simd::get_lane<i>(offset_vector);
+      multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
+    });
+    return multi;
   }
 
   /**
