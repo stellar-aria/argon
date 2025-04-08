@@ -92,11 +92,15 @@ constexpr bool is_doubleword_v =
 ;
 // clang-format on
 
+#else
+template <typename T>
+constexpr bool is_doubleword_v = false;
+#endif
+
 /// @brief Concept to check if a type is a double-word SIMD vector type.
 /// @tparam T The type to check.
 template <typename T>
 concept is_doubleword = is_doubleword_v<T>;
-#endif
 
 /// @concept is_vector_type
 /// @brief Concept to check if a type is a vector type (either double-word or quad-word).

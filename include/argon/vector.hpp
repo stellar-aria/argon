@@ -49,7 +49,7 @@ class Lane;
 /// @tparam VectorType The type of the SIMD vector.
 /// @tparam LaneIndex The index of the lane in the SIMD vector.
 /// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
-template <typename VectorType, size_t LaneIndex>
+template <size_t LaneIndex, typename VectorType>
 class ConstLane;
 
 /// @brief Represents a SIMD vector with various operations.
@@ -84,17 +84,14 @@ class Vector {
   /// @brief Constructs a Vector from a Lane object.
   /// @param lane The Lane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
-  template <simd::is_vector_type IntrinsicType>
-    requires std::is_same_v<scalar_type, simd::Scalar_t<IntrinsicType>>
-  ace Vector(argon::Lane<IntrinsicType> lane) : vec_(FromLane(lane)) {};
+  ace Vector(argon::Lane<VectorType> lane) : vec_(FromLane(lane)) {};
 
   /// @brief Constructs a Vector from a ConstLane object.
   /// @param lane The ConstLane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
   /// @param lane The ConstLane object to construct from.
-  template <simd::is_vector_type IntrinsicType, size_t Lane>
-    requires std::is_same_v<scalar_type, simd::Scalar_t<IntrinsicType>>
-  ace Vector(argon::ConstLane<IntrinsicType, Lane> lane) : vec_(FromLane(lane)) {};
+  template <size_t LaneIndex>
+  ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
 
   /// @brief Constructs a Vector from a scalar pointer.
   /// @param ptr The pointer to the scalar value to construct from.
@@ -122,9 +119,9 @@ class Vector {
   /// @param lane The ConstLane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
   /// @return The constructed SIMD vector.
-  template <simd::is_vector_type IntrinsicType, size_t Lane>
-  ace static argon_type FromLane(argon::ConstLane<IntrinsicType, Lane> lane) {
-    if constexpr (simd::is_quadword_v<IntrinsicType>) {
+  template <size_t LaneIndex>
+  ace static argon_type FromLane(argon::ConstLane<LaneIndex, VectorType> lane) {
+    if constexpr (simd::is_quadword_v<VectorType>) {
       return simd::duplicate_lane_quad<Lane>(lane.vec());
     } else {
       return simd::duplicate_lane<Lane>(lane.vec());
@@ -138,14 +135,14 @@ class Vector {
   /// @details This constructor creates a SIMD vector with lanes containing values from start to start + (lanes - 1) *
   /// step.
   ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
-    if constexpr {
+    if consteval {
       VectorType out;
       helpers::consteval_for<0, lanes, 1>([&](size_t i) {  //
         out[i] = start + i * step;
       });
       return out;
     } else {
-      VectorType return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
+      return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
     }
   }
 
@@ -201,42 +198,97 @@ class Vector {
   /// @brief Compare two vectors for inequality.
   /// @param b The vector to compare against.
   ace argon_bool_type operator!=(argon_type b) const { return ~Equal(b); }
+
+  /// @brief Compare two vectors, checking if this vector is less than the other.
   ace argon_bool_type operator<(argon_type b) const { return LessThan(b); }
+
+  /// @brief Compare two vectors, checking if this vector is greater than the other.
   ace argon_bool_type operator>(argon_type b) const { return GreaterThan(b); }
+
+  /// @brief Compare two vectors, checking if this vector is less than or equal to the other.
   ace argon_bool_type operator<=(argon_type b) const { return LessThanOrEqual(b); }
+
+  /// @brief Compare two vectors, checking if this vector is greater than or equal to the other.
   ace argon_bool_type operator>=(argon_type b) const { return GreaterThanOrEqual(b); }
 
+  /// @brief Increment the vector by 1 and return the result.
   ace argon_type operator++() const { return Add(1); }
+
+  /// @brief Decrement the vector by 1 and return the result.
   ace argon_type operator--() const { return Subtract(1); }
 
+  /// @brief Bitwise AND two vectors and return the result.
   ace argon_type operator&(argon_type b) const { return BitwiseAnd(b); }
+
+  /// @brief Bitwise OR two vectors and return the result.
   ace argon_type operator|(argon_type b) const { return BitwiseOr(b); }
+
+  /// @brief Bitwise XOR two vectors and return the result.
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
+
+  /// @brief Bitwise NOT the vector and return the result.
   ace argon_type operator~() const { return BitwiseNot(); }
 
+  /// @brief Access a lane of the vector by index.
   ace Lane<const VectorType> operator[](const size_t i) const { return {vec_, static_cast<int>(i)}; }
-  ace lane_type operator[](const size_t i) { return lane_type{vec_, static_cast<int>(i)}; }
 
+  /// @brief Access a lane of the vector by index.
+  ace lane_type operator[](const size_t i) { return {vec_, static_cast<int>(i)}; }
+
+  /// @brief Shift the elements of the vector to the right by a specified number of bits.
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
+
+  /// @brief Shift the elements of the vector to the left by a specified number of bits.
   ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
 
+  /// @brief Get the underlying SIMD vector.
+  [[gnu::always_inline]] constexpr VectorType vec() const { return vec_; }
+
+  /// @brief Convert the vector to the underlying SIMD vector type.
   [[gnu::always_inline]] constexpr operator VectorType() const { return vec_; }
 
+  /// @brief Convert the vector to an array of scalar values.
+  /// @return An array of scalar values representing the vector.
   ace std::array<scalar_type, lanes> to_array() {
-    std::array<scalar_type, lanes> out = {0};
+    std::array<scalar_type, lanes> out;
     simd::store1(&out[0], vec_);
     return out;
   }
 
-  ace VectorType vec() const { return vec_; }
+  /// @brief Get a single lane of the vector by index.
+  /// @param i The index of the lane to get.
+  /// @return The value of the specified lane in the SIMD vector.
+  /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
+  ace scalar_type GetLane(const size_t i) const { return GetLane(static_cast<int>(i)); }
 
+  /// @brief Get a single lane of the vector by index.
+  /// @param i The index of the lane to get.
+  /// @return The value of the specified lane in the SIMD vector.
   ace scalar_type GetLane(const int i) const { return simd::get_lane(vec_, i); }
-  ace scalar_type GetLane(const size_t i) const { return simd::get_lane(vec_, static_cast<int>(i)); }
+
+  /// @brief Get a single lane of the vector by index.
+  /// @tparam LaneIndex The index of the lane to get.
+  /// @return The value of the specified lane in the SIMD vector.
+  template <size_t LaneIndex>
+  ace scalar_type GetLane() const {
+    if constexpr (LaneIndex < lanes) {
+      return simd::get_lane<LaneIndex>(vec_, LaneIndex);
+    } else {
+      return 0;
+    }
+  }
+
+  /// @brief Get the last lane of the vector.
+  /// @return The last lane of the vector.
   ace lane_type LastLane() { return lane_type{vec_, lanes - 1}; }
 
+  /// @brief Shift the elements of the vector to the right by a specified number of bits.
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
+
+  /// @brief Shift the elements of the vector to the left by a specified number of bits.
   ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
 
+  /// @brief Bitwise negate the vector and return the result.
   ace argon_type Negate() const { return simd::negate(vec_); }
 
   ace argon_type Add(argon_type b) const { return simd::add(vec_, b); }
@@ -275,9 +327,9 @@ class Vector {
    * Multiply two fixed-point vectors, returning a fixed-point product
    * This is equivalent to (a * b) >> 31
    */
-  ace argon_type MultiplyFixedPoint(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
-  ace argon_type MultiplyFixedPoint(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
-  ace argon_type MultiplyFixedPoint(lane_type l) const {
+  ace argon_type MultiplyQ31(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
+  ace argon_type MultiplyQ31(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+  ace argon_type MultiplyQ31(lane_type l) const {
     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 
@@ -285,13 +337,9 @@ class Vector {
    * Multiply two fixed-point vectors, returning a fixed-point product
    * This is equivalent to round(a * b) >> 31
    */
-  ace argon_type MultiplyRoundFixedPoint(argon_type v) const {
-    return simd::multiply_double_round_saturate_high(vec_, v);
-  }
-  ace argon_type MultiplyRoundFixedPoint(scalar_type s) const {
-    return simd::multiply_double_round_saturate_high(vec_, s);
-  }
-  ace argon_type MultiplyRoundFixedPoint(lane_type l) const {
+  ace argon_type MultiplyRoundQ31(argon_type v) const { return simd::multiply_double_round_saturate_high(vec_, v); }
+  ace argon_type MultiplyRoundQ31(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
+  ace argon_type MultiplyRoundQ31(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 
@@ -312,8 +360,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyAddFixedPoint(argon_type b, arg_type c) const {
-    return Add(b.MultiplyFixedPoint(c));
+  ace argon_type MultiplyAddQ31(argon_type b, arg_type c) const {
+    return Add(b.MultiplyQ31(c));
   }
 
   /**
@@ -323,8 +371,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyRoundAddFixedPoint(argon_type b, arg_type c) const {
-    return Add(b.MultiplyRoundFixedPoint(c));
+  ace argon_type MultiplyRoundAddQ31(argon_type b, arg_type c) const {
+    return Add(b.MultiplyRoundQ31(c));
   }
 
   ace argon_type Divide(argon_type b) const
@@ -756,34 +804,34 @@ class Vector {
   VectorType vec_;
 };
 
-template <size_t Lane, typename VectorType>
+template <size_t LaneIndex, typename VectorType>
 class ConstLane {
   using scalar_type = simd::Scalar_t<VectorType>;
-  using type = ConstLane<Lane, VectorType>;
+  using type = ConstLane<LaneIndex, VectorType>;
   using argon_type = helpers::ArgonFor_t<VectorType>;
 
  public:
   ace ConstLane(VectorType& vec) : vec_{vec} {}
-  ace operator scalar_type() const { return simd::get_lane<Lane>(vec_); }
+  ace operator scalar_type() const { return simd::get_lane<LaneIndex>(vec_); }
   ace argon_type operator=(const scalar_type b) { return Set(b); }
   ace argon_type Load(scalar_type* ptr) {
     if constexpr (simd::is_quadword_v<VectorType>) {
-      return vec_ = simd::load1_lane_quad<Lane>(vec_, ptr);
+      return vec_ = simd::load1_lane_quad<LaneIndex>(vec_, ptr);
     } else {
-      return vec_ = simd::load1_lane<Lane>(vec_, ptr);
+      return vec_ = simd::load1_lane<LaneIndex>(vec_, ptr);
     }
   }
-  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane<Lane>(vec_, b); }
+  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane<LaneIndex>(vec_, b); }
 
 #if __ARM_ARCH >= 8
   ace VectorType& vec() { return vec_; }
-  ace const int lane() { return lane_; }
+  ace const int lane() { return LaneIndex; }
 #else
   ace VectorType& vec() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
     } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
+      if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
         return simd::get_high(vec());
       } else {
         return simd::get_low(vec());
@@ -792,12 +840,12 @@ class ConstLane {
   }
   ace int lane() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
-      return lane_;
+      return LaneIndex;
     } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return (lane_ - ArgonHalf<scalar_type>::lanes);
+      if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
+        return (LaneIndex - ArgonHalf<scalar_type>::lanes);
       } else {
-        return lane_;
+        return LaneIndex;
       }
     }
   }
