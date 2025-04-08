@@ -153,11 +153,10 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 template <typename BranchType, typename CondType>
   requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_result_type>
 ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_value, Argon<BranchType> false_value) {
-  if constexpr (std::is_same_v<CondType, BranchType>) {
-    return ((condition & true_value) | (~condition & false_value));
+  if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    return condition ? true_value.vec() : false_value.vec();
   } else {
-    return ((condition & true_value.template As<CondType>()) | (~condition & false_value.template As<CondType>()))
-        .template As<BranchType>();
+    return condition.Select(true_value, false_value);
   }
 }
 
@@ -166,7 +165,11 @@ template <typename ValueType, typename CondType>
   requires std::is_arithmetic_v<ValueType> &&
            std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_result_type>
 ace Argon<ValueType> ternary(Argon<CondType> condition, ValueType true_value, ValueType false_value) {
-  return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
+  if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    return condition ? true_value : false_value;
+  } else {
+    return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
+  }
 }
 
 template <typename CondType, typename ScalarType>

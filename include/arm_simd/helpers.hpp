@@ -8,7 +8,5 @@
 #include "helpers/make_unsigned.hpp"
 #include "helpers/scalar.hpp"
 #include "helpers/set_lane.hpp"
-#include "helpers/shift_left.hpp"
-#include "helpers/shift_right.hpp"
 #include "helpers/vec128.hpp"
 #include "helpers/vec64.hpp"

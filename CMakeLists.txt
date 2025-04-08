@@ -65,6 +65,8 @@ if(ARGON_BUILD_DOCS)
       \"ARGON_HAS_DOUBLE_FLOAT=1\"
     )
 
+    set(DOXYGEN_JAVADOC_AUTOBRIEF YES)
+
     file(GLOB markdown_SOURCES *.md)
 
     doxygen_add_docs(doxygen ${markdown_SOURCES} include docs)

@@ -103,10 +103,10 @@ using NextSmaller_t = NextSmaller<T>::type;
 /// @tparam FunctionType The callable type to be invoked during each iteration step.
 /// @param f The callable object to be invoked with the current iteration value.
 template <auto Start, auto End, auto Increment, class FunctionType>
-consteval void consteval_for(FunctionType&& f) {
+constexpr void constexpr_for(FunctionType&& f) {
 	if constexpr (Start < End) {
 		f.template operator()<Start>();
-		consteval_for<Start + Increment, End, Increment>(f);
+		constexpr_for<Start + Increment, End, Increment>(f);
 	}
 }
 
