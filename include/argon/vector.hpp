@@ -32,93 +32,174 @@ namespace argon {
 template <typename T>
 concept arithmetic = std::is_arithmetic_v<T>;
 
+/// @brief Helper template to check if a type is one of the specified types.
+/// @tparam T The type to check.
+/// @tparam Ts The types to check against.
+/// @details This template uses a variadic template to check if T is one of the types in Ts.
 template <typename T, typename... Ts>
 inline constexpr bool is_one_of = std::disjunction_v<std::is_same<T, Ts>...>;
 
-template <typename vector_type>
+/// @brief Represents a single lane of a SIMD vector.
+/// @tparam VectorType The type of the SIMD vector.
+/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
+template <typename VectorType>
 class Lane;
 
-template <typename vector_type>
+/// @brief Represents a single lane of a SIMD vector, where the lane's index is known at compile time.
+/// @tparam VectorType The type of the SIMD vector.
+/// @tparam LaneIndex The index of the lane in the SIMD vector.
+/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
+template <typename VectorType, size_t LaneIndex>
+class ConstLane;
+
+/// @brief Represents a SIMD vector with various operations.
+/// @tparam VectorType The type of the SIMD vector. (e.g. int32x4_t, float32x4_t)
+/// @details This class provides a wrapper around SIMD vector types, allowing for object-oriented operations on the
+/// vector.
+template <typename VectorType>
 class Vector {
  public:
-  using scalar_type = simd::Scalar_t<vector_type>;
-  using lane_type = Lane<vector_type>;
-  using vector_bool_type = Bool_t<vector_type>;
-  using argon_bool_type = helpers::ArgonFor_t<vector_bool_type>;
-  using argon_type = helpers::ArgonFor_t<vector_type>;
+  using scalar_type = simd::Scalar_t<VectorType>;                 ///< The scalar type of the SIMD vector.
+  using lane_type = Lane<VectorType>;                             ///< The type of a single lane of the SIMD vector.
+  using vector_type = VectorType;                                 ///< The SIMD vector type.
+  using argon_type = helpers::ArgonFor_t<VectorType>;             ///< The Argon type for the SIMD vector.
+  using vector_bool_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
+  using argon_bool_type = helpers::ArgonFor_t<vector_bool_type>;  ///< The Argon type for the boolean vector.
 
-  static constexpr size_t lanes = (simd::is_quadword_v<vector_type> ? 16 : 8) / sizeof(scalar_type);
+  /// @brief The number of lanes in the SIMD vector.
+  static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
 
+  /// @brief The default constructor for the Vector class.
   constexpr Vector() = default;
-  constexpr Vector(vector_type vector) : vec_{vector} {};
+
+  /// @brief Constructs a Vector from a SIMD vector type.
+  /// @param vector The SIMD vector to construct from.
+  constexpr Vector(VectorType vector) : vec_{std::move(vector)} {};
+
+  /// @brief Constructs a Vector from a scalar value.
+  /// @param scalar The scalar value to construct from.
+  /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
   ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
-  template <simd::is_vector_type intrinsic_type>
-    requires std::is_same_v<scalar_type, simd::Scalar_t<intrinsic_type>>
-  ace Vector(argon::Lane<intrinsic_type> lane) : vec_(FromLane(lane)) {};
+  /// @brief Constructs a Vector from a Lane object.
+  /// @param lane The Lane object to construct from.
+  /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
+  template <simd::is_vector_type IntrinsicType>
+    requires std::is_same_v<scalar_type, simd::Scalar_t<IntrinsicType>>
+  ace Vector(argon::Lane<IntrinsicType> lane) : vec_(FromLane(lane)) {};
 
-  ace static argon_type FromScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
+  /// @brief Constructs a Vector from a ConstLane object.
+  /// @param lane The ConstLane object to construct from.
+  /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
+  /// @param lane The ConstLane object to construct from.
+  template <simd::is_vector_type IntrinsicType, size_t Lane>
+    requires std::is_same_v<scalar_type, simd::Scalar_t<IntrinsicType>>
+  ace Vector(argon::ConstLane<IntrinsicType, Lane> lane) : vec_(FromLane(lane)) {};
 
-  ace static argon_type FromScalar(scalar_type scalar) {
-#if ARGON_HAS_DWORD
-    return simd::duplicate<vector_type>(scalar);
-#else
-    return simd::duplicate(scalar);
-#endif
-  }
+  /// @brief Constructs a Vector from a scalar pointer.
+  /// @param ptr The pointer to the scalar value to construct from.
+  /// @details This constructor loads the scalar value from the pointer and duplicates it
+  /// across all lanes of the SIMD vector.
+  /// @return The constructed SIMD vector.
+  ace static argon_type LoadScalar(scalar_type* ptr) { return simd::load1_duplicate(ptr); }
 
-  template <simd::is_vector_type intrinsic_type>
-  ace static argon_type FromLane(argon::Lane<intrinsic_type> lane)
-    requires simd::is_quadword<vector_type>
-  {
-    return simd::duplicate_lane_quad(lane.vec(), lane.lane());
-  }
+  /// @brief Constructs a Vector from a scalar value.
+  /// @param scalar The scalar value to construct from.
+  /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
+  /// @return The constructed SIMD vector.
+  ace static argon_type FromScalar(scalar_type scalar) { return simd::duplicate<VectorType>(scalar); }
 
-#if ARGON_HAS_DWORD
-  template <simd::is_vector_type intrinsic_type>
-  ace static argon_type FromLane(argon::Lane<intrinsic_type> lane)
-    requires simd::is_doubleword<vector_type>
-  {
+  /// @brief Constructs a Vector from a Lane object.
+  /// @param lane The Lane object to construct from.
+  /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
+  /// @return The constructed SIMD vector.
+  template <simd::is_vector_type IntrinsicType>
+  ace static argon_type FromLane(argon::Lane<IntrinsicType> lane) {
     return simd::duplicate_lane(lane.vec(), lane.lane());
   }
-#endif
 
-  ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
-    vector_type out;
-    for (size_t i = 0; i < lanes; ++i) {
-      out[i] = start + i;
+  /// @brief Constructs a Vector from a ConstLane object.
+  /// @param lane The ConstLane object to construct from.
+  /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
+  /// @return The constructed SIMD vector.
+  template <simd::is_vector_type IntrinsicType, size_t Lane>
+  ace static argon_type FromLane(argon::ConstLane<IntrinsicType, Lane> lane) {
+    if constexpr (simd::is_quadword_v<IntrinsicType>) {
+      return simd::duplicate_lane_quad<Lane>(lane.vec());
+    } else {
+      return simd::duplicate_lane<Lane>(lane.vec());
     }
-    return out;
   }
 
+  /// @brief Constructs a Vector from an incrementing sequence.
+  /// @param start The starting value of the sequence.
+  /// @param step The step size of the sequence.
+  /// @return The constructed SIMD vector.
+  /// @details This constructor creates a SIMD vector with lanes containing values from start to start + (lanes - 1) *
+  /// step.
+  ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
+    if constexpr {
+      VectorType out;
+      helpers::consteval_for<0, lanes, 1>([&](size_t i) {  //
+        out[i] = start + i * step;
+      });
+      return out;
+    } else {
+      VectorType return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
+    }
+  }
+
+  /// @brief Constructs a Vector from a function that generates values.
+  /// @param body The function that generates the values.
+  /// @details This constructor creates a SIMD vector with lanes containing values generated by the function.
+  /// @return The constructed SIMD vector.
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type()>>
   ace static argon_type Generate(FuncType body) {
-    vector_type out;
-    for (size_t i = 0; i < lanes; ++i) {
+    VectorType out;
+    helpers::consteval_for<0, lanes, 1>([&](size_t i) {  //
       out[i] = body();
-    }
+    });
     return out;
   }
 
+  /// @brief Constructs a Vector from a function that generates values with an index.
+  /// @param body The function that generates the values.
+  /// @details This constructor creates a SIMD vector with lanes containing values generated by the function using the
+  /// index.
+  /// @return The constructed SIMD vector.
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace static argon_type GenerateWithIndex(FuncType body) {
-    vector_type out;
-    for (size_t i = 0; i < lanes; ++i) {
+    VectorType out;
+    helpers::consteval_for<0, lanes, 1>([&](size_t i) {  //
       out[i] = body(i);
-    }
+    });
     return out;
   }
 
+  /// @brief Negate the SIMD vector and return the result.
+  /// @return The negated SIMD vector.
   ace argon_type operator-() const { return Negate(); }
 
+  /// @brief Add a vector and return the result.
   ace argon_type operator+(argon_type b) const { return Add(b); }
+
+  /// @brief Subtract a vector and return the result.
   ace argon_type operator-(argon_type b) const { return Subtract(b); }
+
+  /// @brief Multiply a vector and return the result.
   ace argon_type operator*(argon_type b) const { return Multiply(b); }
+
+  /// @brief Divide a vector and return the result.
   ace argon_type operator/(argon_type b) const { return Divide(b); }
 
+  /// @brief Compare two vectors for equality.
+  /// @param b The vector to compare against.
   ace argon_bool_type operator==(argon_type b) const { return Equal(b); }
+
+  /// @brief Compare two vectors for inequality.
+  /// @param b The vector to compare against.
   ace argon_bool_type operator!=(argon_type b) const { return ~Equal(b); }
   ace argon_bool_type operator<(argon_type b) const { return LessThan(b); }
   ace argon_bool_type operator>(argon_type b) const { return GreaterThan(b); }
@@ -133,13 +214,13 @@ class Vector {
   ace argon_type operator^(argon_type b) const { return BitwiseXor(b); }
   ace argon_type operator~() const { return BitwiseNot(); }
 
-  ace Lane<const vector_type> operator[](const size_t i) const { return {vec_, static_cast<int>(i)}; }
+  ace Lane<const VectorType> operator[](const size_t i) const { return {vec_, static_cast<int>(i)}; }
   ace lane_type operator[](const size_t i) { return lane_type{vec_, static_cast<int>(i)}; }
 
   ace argon_type operator>>(const int i) const { return ShiftRight(i); }
   ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
 
-  [[gnu::always_inline]] constexpr operator vector_type() const { return vec_; }
+  [[gnu::always_inline]] constexpr operator VectorType() const { return vec_; }
 
   ace std::array<scalar_type, lanes> to_array() {
     std::array<scalar_type, lanes> out = {0};
@@ -147,7 +228,7 @@ class Vector {
     return out;
   }
 
-  ace vector_type vec() const { return vec_; }
+  ace VectorType vec() const { return vec_; }
 
   ace scalar_type GetLane(const int i) const { return simd::get_lane(vec_, i); }
   ace scalar_type GetLane(const size_t i) const { return simd::get_lane(vec_, static_cast<int>(i)); }
@@ -267,7 +348,7 @@ class Vector {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<vector_type>>::type>)
+             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<VectorType>>::type>)
   ace argon_type ShiftLeft(signed_vector b) const
     requires std::is_integral_v<scalar_type>
   {
@@ -281,7 +362,7 @@ class Vector {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<vector_type>>::type>)
+             std::is_same_v<signed_vector, typename helpers::ArgonFor<simd::make_signed_t<VectorType>>::type>)
   ace argon_type ShiftLeftSaturate(signed_vector b) const {
     return simd::shift_left_saturate(vec_, b);
   }
@@ -319,8 +400,8 @@ class Vector {
     return simd::shift_right_insert<n>(vec_, b);
   }
 
-  ace static argon_type Load(const scalar_type* ptr) { return simd::load1<vector_type>(ptr); }
-  ace static argon_type LoadCopy(const scalar_type* ptr) { return simd::load1_duplicate<vector_type>(ptr); }
+  ace static argon_type Load(const scalar_type* ptr) { return simd::load1<VectorType>(ptr); }
+  ace static argon_type LoadCopy(const scalar_type* ptr) { return simd::load1_duplicate<VectorType>(ptr); }
 
   /**
    * @brief Using a base address and a vector of offset indices and a base pointer, create a new vector
@@ -331,11 +412,11 @@ class Vector {
    * @param offset_vector A vector of offset indices
    * @return A new vector constructed from the various indices
    */
-  template <simd::is_vector_type intrinsic_type>
-  ace static argon_type LoadGather(const scalar_type* base, intrinsic_type offset_vector) {
-    using offset_type = simd::Scalar_t<intrinsic_type>;
+  template <simd::is_vector_type IntrinsicType>
+  ace static argon_type LoadGather(const scalar_type* base, IntrinsicType offset_vector) {
+    using offset_type = simd::Scalar_t<IntrinsicType>;
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
-    static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
+    static_assert((sizeof(IntrinsicType) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
     argon_type destination;
     helpers::consteval_for<0, lanes, 1>([&]<int i>() {  //<
@@ -347,12 +428,12 @@ class Vector {
 
   template <typename T>
   ace static argon_type LoadGather(const scalar_type* base, T offset_vector) {
-    return argon_type::template LoadGather<typename T::vector_type>(base, offset_vector);
+    return argon_type::template LoadGather<typename T::VectorType>(base, offset_vector);
   }
 
   template <size_t lane>
   ace argon_type LoadToLane(const scalar_type* ptr) {
-    if constexpr (simd::is_quadword_v<vector_type>) {
+    if constexpr (simd::is_quadword_v<VectorType>) {
       return simd::load1_lane_quad<lane>(ptr, vec_);
     } else {
       return simd::load1_lane<lane>(ptr, vec_);
@@ -363,7 +444,7 @@ class Vector {
   ace static std::array<argon_type, stride> LoadCopyInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVector<vector_type, stride>::type;
+    using multivec_type = helpers::MultiVector<VectorType, stride>::type;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2_duplicate<multivec_type>(ptr).val);
@@ -377,7 +458,7 @@ class Vector {
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVector_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVector_t<VectorType, stride>;
 
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2<multivec_type>(ptr).val);
@@ -389,22 +470,22 @@ class Vector {
   }
 
   template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVector_t<vector_type, stride> multi,
+  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVector_t<VectorType, stride> multi,
                                                                   const scalar_type* ptr) {
     if constexpr (stride == 2) {
-      if constexpr (simd::is_quadword_v<vector_type>) {
+      if constexpr (simd::is_quadword_v<VectorType>) {
         return argon::to_array(simd::load2_lane_quad<lane>(ptr, multi).val);
       } else {
         return argon::to_array(simd::load2_lane<lane>(ptr, multi).val);
       }
     } else if constexpr (stride == 3) {
-      if constexpr (simd::is_quadword_v<vector_type>) {
+      if constexpr (simd::is_quadword_v<VectorType>) {
         return argon::to_array(simd::load3_lane_quad<lane>(ptr, multi).val);
       } else {
         return argon::to_array(simd::load3_lane<lane>(ptr, multi).val);
       }
     } else if constexpr (stride == 4) {
-      if constexpr (simd::is_quadword_v<vector_type>) {
+      if constexpr (simd::is_quadword_v<VectorType>) {
         return argon::to_array(simd::load4_lane_quad<lane>(ptr, multi).val);
       } else {
         return argon::to_array(simd::load4_lane<lane>(ptr, multi).val);
@@ -415,7 +496,7 @@ class Vector {
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadToLaneInterleaved(std::array<argon_type, stride> multi,
                                                                   const scalar_type* ptr) {
-    using multivec_type = helpers::MultiVector_t<vector_type, stride>;
+    using multivec_type = helpers::MultiVector_t<VectorType, stride>;
     return LoadToLaneInterleaved<lane, stride>(*(multivec_type*)multi.data(), ptr);
   }
 
@@ -429,13 +510,13 @@ class Vector {
    * @param offset_vector a vector of offset values that are added to base_ptr to get the address to load
    * @return std::array<argon_type, stride> An array of vectors from the resulting interleaved loads
    */
-  template <size_t stride, simd::is_vector_type intrinsic_type>
+  template <size_t stride, simd::is_vector_type IntrinsicType>
   ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr,
-                                                                  intrinsic_type offset_vector) {
-    using offset_type = simd::Scalar_t<intrinsic_type>;
+                                                                  IntrinsicType offset_vector) {
+    using offset_type = simd::Scalar_t<IntrinsicType>;
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     static_assert(std::is_unsigned_v<offset_type>, "Offset elements must be unsigned values");
-    static_assert((sizeof(intrinsic_type) / sizeof(offset_type)) == lanes,
+    static_assert((sizeof(IntrinsicType) / sizeof(offset_type)) == lanes,
                   "Number of elements in offset vector must match number of elements in destination vector");
     std::array<argon_type, stride> multi{};
     helpers::consteval_for<0, lanes, 1>([&]<int i>() {  //<
@@ -447,7 +528,7 @@ class Vector {
 
   template <size_t stride, typename T>
   ace static std::array<argon_type, stride> LoadGatherInterleaved(const scalar_type* base_ptr, T offset_vector) {
-    return argon_type::template LoadGatherInterleaved<stride, typename T::vector_type>(base_ptr, offset_vector);
+    return argon_type::template LoadGatherInterleaved<stride, typename T::VectorType>(base_ptr, offset_vector);
   }
 
   /**
@@ -518,7 +599,7 @@ class Vector {
 
   template <typename signed_vector>
     requires(std::is_integral_v<scalar_type> &&
-             std::is_same_v<signed_vector, helpers::ArgonFor_t<simd::make_signed_t<vector_type>>>)
+             std::is_same_v<signed_vector, helpers::ArgonFor_t<simd::make_signed_t<VectorType>>>)
   ace signed_vector CountLeadingSignBits() const {
     return simd::count_leading_sign_bits(vec_);
   }
@@ -555,7 +636,7 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace argon_type map(FuncType body) const {
-    vector_type out;
+    VectorType out;
     for (size_t i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i]);
     }
@@ -565,7 +646,7 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, int)>>
   ace argon_type map_with_index(FuncType body) const {
-    vector_type out;
+    VectorType out;
     for (size_t i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i], i);
     }
@@ -575,7 +656,7 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, scalar_type)>>
   ace argon_type map2(argon_type other, FuncType body) const {
-    vector_type out;
+    VectorType out;
     for (size_t i = 0; i < lanes; ++i) {
       out[i] = body(vec_[i], other.vec_[i]);
     }
@@ -585,7 +666,7 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&)>>
   ace argon_type each_lane(FuncType body) {
-    vector_type out = vec_;
+    VectorType out = vec_;
     for (size_t i = 0; i < lanes; ++i) {
       body(out[i]);
     }
@@ -595,7 +676,7 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(scalar_type&, int)>>
   ace argon_type each_lane_with_index(FuncType body) {
-    vector_type out = vec_;
+    VectorType out = vec_;
     for (size_t i = 0; i < lanes; ++i) {
       body(out[i], i);
     }
@@ -672,30 +753,36 @@ class Vector {
   }
 
  protected:
-  vector_type vec_;
+  VectorType vec_;
 };
 
-template <typename vector_type>
-class Lane {
-  using scalar_type = simd::Scalar_t<vector_type>;
-  using type = Lane<vector_type>;
-  using argon_type = helpers::ArgonFor_t<vector_type>;
+template <size_t Lane, typename VectorType>
+class ConstLane {
+  using scalar_type = simd::Scalar_t<VectorType>;
+  using type = ConstLane<Lane, VectorType>;
+  using argon_type = helpers::ArgonFor_t<VectorType>;
 
  public:
-  ace Lane(vector_type& vec, const int lane) : vec_{vec}, lane_{lane} {}
-  ace operator scalar_type() const { return simd::get_lane(vec_, lane_); }
+  ace ConstLane(VectorType& vec) : vec_{vec} {}
+  ace operator scalar_type() const { return simd::get_lane<Lane>(vec_); }
   ace argon_type operator=(const scalar_type b) { return Set(b); }
-  ace argon_type Load(scalar_type* ptr) { return vec_ = simd::load1_lane(vec_, lane_, ptr); }
-  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
+  ace argon_type Load(scalar_type* ptr) {
+    if constexpr (simd::is_quadword_v<VectorType>) {
+      return vec_ = simd::load1_lane_quad<Lane>(vec_, ptr);
+    } else {
+      return vec_ = simd::load1_lane<Lane>(vec_, ptr);
+    }
+  }
+  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane<Lane>(vec_, b); }
 
 #if __ARM_ARCH >= 8
-  ace vector_type& vec() { return vec_; }
+  ace VectorType& vec() { return vec_; }
   ace const int lane() { return lane_; }
 #else
-  ace vector_type& vec() {
-    if constexpr (simd::is_doubleword_v<vector_type>) {
+  ace VectorType& vec() {
+    if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
-    } else if constexpr (simd::is_quadword_v<vector_type>) {
+    } else if constexpr (simd::is_quadword_v<VectorType>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return simd::get_high(vec());
       } else {
@@ -704,9 +791,53 @@ class Lane {
     }
   }
   ace int lane() {
-    if constexpr (simd::is_doubleword_v<vector_type>) {
+    if constexpr (simd::is_doubleword_v<VectorType>) {
       return lane_;
-    } else if constexpr (simd::is_quadword_v<vector_type>) {
+    } else if constexpr (simd::is_quadword_v<VectorType>) {
+      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
+        return (lane_ - ArgonHalf<scalar_type>::lanes);
+      } else {
+        return lane_;
+      }
+    }
+  }
+#endif
+ private:
+  VectorType& vec_;
+};
+
+template <typename VectorType>
+class Lane {
+  using scalar_type = simd::Scalar_t<VectorType>;
+  using type = Lane<VectorType>;
+  using argon_type = helpers::ArgonFor_t<VectorType>;
+
+ public:
+  ace Lane(VectorType& vec, const int lane) : vec_{vec}, lane_{lane} {}
+  ace operator scalar_type() const { return simd::get_lane(vec_, lane_); }
+  ace argon_type operator=(const scalar_type b) { return Set(b); }
+  ace argon_type Load(scalar_type* ptr) { return vec_ = simd::load1_lane(vec_, lane_, ptr); }
+  ace argon_type Set(const scalar_type b) { return vec_ = simd::set_lane(vec_, lane_, b); }
+
+#if __ARM_ARCH >= 8
+  ace VectorType& vec() { return vec_; }
+  ace const int lane() { return lane_; }
+#else
+  ace VectorType& vec() {
+    if constexpr (simd::is_doubleword_v<VectorType>) {
+      return vec_;
+    } else if constexpr (simd::is_quadword_v<VectorType>) {
+      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
+        return simd::get_high(vec());
+      } else {
+        return simd::get_low(vec());
+      }
+    }
+  }
+  ace int lane() {
+    if constexpr (simd::is_doubleword_v<VectorType>) {
+      return lane_;
+    } else if constexpr (simd::is_quadword_v<VectorType>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return (lane_ - ArgonHalf<scalar_type>::lanes);
       } else {
@@ -717,7 +848,7 @@ class Lane {
 #endif
 
  private:
-  vector_type& vec_;
+  VectorType& vec_;
   int lane_;
 };
 

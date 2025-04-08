@@ -41,7 +41,7 @@ constexpr bool has_larger_v =
     || std::is_same_v<T, int32_t>
     || std::is_same_v<T, float>
 #if ARGON_HAS_HALF_FLOAT
-    || std::is_same_v<T, std::float16_t>
+    || std::is_same_v<T, float16_t>
 #endif
     ;
 
@@ -103,7 +103,7 @@ using NextSmaller_t = NextSmaller<T>::type;
 /// @tparam FunctionType The callable type to be invoked during each iteration step.
 /// @param f The callable object to be invoked with the current iteration value.
 template <auto Start, auto End, auto Increment, class FunctionType>
-constexpr void consteval_for(FunctionType&& f) {
+consteval void consteval_for(FunctionType&& f) {
 	if constexpr (Start < End) {
 		f.template operator()<Start>();
 		consteval_for<Start + Increment, End, Increment>(f);
