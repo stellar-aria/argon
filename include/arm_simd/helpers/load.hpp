@@ -6,14 +6,9 @@
 #include "scalar.hpp"
 #include "vec128.hpp"
 
-#ifdef __ARM_NEON
-#include <arm_neon.h
-#define simd neon
-#elifdef __ARM_FEATURE_MVE
+#ifdef __ARM_FEATURE_MVE
 #define simd helium
 #else
-#define SIMDE_ENABLE_NATIVE_ALIASES
-#include <arm/neon.h>
 #define simd neon
 #endif
 
