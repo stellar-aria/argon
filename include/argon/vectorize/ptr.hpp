@@ -20,17 +20,17 @@
 #endif
 
 // Smart pointer for argon type
-template <typename scalar_type>
+template <typename ScalarType>
 struct ArgonPtr {
-  using intrinsic_type = simd::Vec128_t<scalar_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  using intrinsic_type = simd::Vec128_t<ScalarType>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(ScalarType);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
 
   using difference_type = std::ptrdiff_t;
-  using value_type = Argon<scalar_type>;
-  using pointer = Argon<scalar_type>*;
+  using value_type = Argon<ScalarType>;
+  using pointer = Argon<ScalarType>*;
 
-  ArgonPtr(scalar_type* ptr) : ptr_{ptr}, vec_{Argon<scalar_type>::Load(ptr_)} {}
+  ArgonPtr(ScalarType* ptr) : ptr_{ptr}, vec_{Argon<ScalarType>::Load(ptr_)} {}
   ArgonPtr(const ArgonPtr&) = default;
   ArgonPtr& operator=(const ArgonPtr&) = default;
   ArgonPtr(ArgonPtr&&) = default;
@@ -58,12 +58,12 @@ struct ArgonPtr {
   void reload() { vec_ = value_type::Load(ptr_); }
 
   friend bool operator==(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ == b.ptr_; }
-  friend bool operator==(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ == ptr; }
+  friend bool operator==(const ArgonPtr& a, const ScalarType* ptr) { return a.ptr_ == ptr; }
   friend bool operator!=(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ != b.ptr_; }
-  friend bool operator!=(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ != ptr; }
+  friend bool operator!=(const ArgonPtr& a, const ScalarType* ptr) { return a.ptr_ != ptr; }
 
  private:
-  scalar_type* ptr_;
+  ScalarType* ptr_;
   value_type vec_;
   bool dirty_ = false;
 };
@@ -81,23 +81,23 @@ struct ptr : std::ranges::view_interface<ptr<ScalarType>> {
     using difference_type = std::ptrdiff_t;
     using value_type = ArgonPtr<ScalarType>;
 
-    Iterator(ScalarType* ptr) : ptr{ptr} {}
+    Iterator(ScalarType* pointer) : ptr_{pointer} {}
 
-    ArgonPtr<ScalarType> operator*() const { return ptr; }
+    ArgonPtr<ScalarType> operator*() const { return ptr_; }
 
     Iterator& operator++() {
-      ptr = ptr + lanes;
+      ptr_ += lanes;
       return *this;
     }
 
     void operator++(int) { ++*this; }
-    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
-    friend bool operator==(const Iterator& a, const ScalarType* ptr) { return a.ptr == ptr; }
-    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
-    friend bool operator!=(const Iterator& a, const ScalarType* ptr) { return a.ptr != ptr; }
+    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr_ == b.ptr_; }
+    friend bool operator==(const Iterator& a, const ScalarType* pointer) { return a.ptr_ == pointer; }
+    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; }
+    friend bool operator!=(const Iterator& a, const ScalarType* pointer) { return a.ptr_ != pointer; }
 
    private:
-    ScalarType* ptr = nullptr;
+    ScalarType* ptr_ = nullptr;
   };
   static_assert(std::input_iterator<Iterator>);
 
