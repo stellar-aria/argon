@@ -198,7 +198,7 @@ jobs:
 
   test-build-x86_64-windows:
     name: Run tests (x86_64 Windows)
-    runs-on: windows-2025
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:

@@ -142,6 +142,8 @@ class Vector {
   /// @details This constructor creates a SIMD vector with lanes containing values from start to start + (lanes - 1) *
   /// step.
   ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
+    // TODO: Remove this once MSVC 19.44 is released.
+#if __cpp_if_consteval >= 202106L
     if consteval {
       VectorType out;
       helpers::constexpr_for<0, lanes, 1>([&](size_t i) {  //
@@ -151,6 +153,9 @@ class Vector {
     } else {
       return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
     }
+#else
+    return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
+#endif
   }
 
   /// @brief Constructs a Vector from a function that generates values.
