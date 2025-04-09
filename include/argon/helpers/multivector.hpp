@@ -21,14 +21,9 @@ template <> struct MultiVector<int32x4_t, 2> { using type = int32x4x2_t; };
 template <> struct MultiVector<uint32x4_t, 2> { using type = uint32x4x2_t; };
 template <> struct MultiVector<int64x2_t, 2> { using type = int64x2x2_t; };
 template <> struct MultiVector<uint64x2_t, 2> { using type = uint64x2x2_t; };
-
-template <> struct MultiVector<float32x2_t, 2> { using type = float32x2x2_t; };
 template <> struct MultiVector<float32x4_t, 2> { using type = float32x4x2_t; };
 
-template <> struct MultiVector<poly8x8_t, 2> { using type = poly8x8x2_t; };
-template <> struct MultiVector<poly16x4_t, 2> { using type = poly16x4x2_t; };
-
-
+#ifndef ARGON_PLATFORM_MVE
 template <> struct MultiVector<int8x16_t, 3> { using type = int8x16x3_t; };
 template <> struct MultiVector<uint8x16_t, 3> { using type = uint8x16x3_t; };
 template <> struct MultiVector<int16x8_t, 3> { using type = int16x8x3_t; };
@@ -37,12 +32,8 @@ template <> struct MultiVector<int32x4_t, 3> { using type = int32x4x3_t; };
 template <> struct MultiVector<uint32x4_t, 3> { using type = uint32x4x3_t; };
 template <> struct MultiVector<int64x2_t, 3> { using type = int64x2x3_t; };
 template <> struct MultiVector<uint64x2_t, 3> { using type = uint64x2x3_t; };
-
-template <> struct MultiVector<float32x2_t, 3> { using type = float32x2x3_t; };
 template <> struct MultiVector<float32x4_t, 3> { using type = float32x4x3_t; };
-
-template <> struct MultiVector<poly8x8_t, 3> { using type = poly8x8x3_t; };
-template <> struct MultiVector<poly16x4_t, 3> { using type = poly16x4x3_t; };
+#endif
 
 template <> struct MultiVector<int8x16_t, 4> { using type = int8x16x4_t; };
 template <> struct MultiVector<uint8x16_t, 4> { using type = uint8x16x4_t; };
@@ -52,17 +43,29 @@ template <> struct MultiVector<int32x4_t, 4> { using type = int32x4x4_t; };
 template <> struct MultiVector<uint32x4_t, 4> { using type = uint32x4x4_t; };
 template <> struct MultiVector<int64x2_t, 4> { using type = int64x2x4_t; };
 template <> struct MultiVector<uint64x2_t, 4> { using type = uint64x2x4_t; };
-
-template <> struct MultiVector<float32x2_t, 4> { using type = float32x2x4_t; };
 template <> struct MultiVector<float32x4_t, 4> { using type = float32x4x4_t; };
 
+#if ARGON_HAS_DWORD
+template <> struct MultiVector<float32x2_t, 2> { using type = float32x2x2_t; };
+template <> struct MultiVector<poly8x8_t, 2> { using type = poly8x8x2_t; };
+template <> struct MultiVector<poly16x4_t, 2> { using type = poly16x4x2_t; };
+
+template <> struct MultiVector<float32x2_t, 3> { using type = float32x2x3_t; };
+template <> struct MultiVector<poly8x8_t, 3> { using type = poly8x8x3_t; };
+template <> struct MultiVector<poly16x4_t, 3> { using type = poly16x4x3_t; };
+
+template <> struct MultiVector<float32x2_t, 4> { using type = float32x2x4_t; };
 template <> struct MultiVector<poly8x8_t, 4> { using type = poly8x8x4_t; };
 template <> struct MultiVector<poly16x4_t, 4> { using type = poly16x4x4_t; };
-
+#endif
 
 #if ARGON_HAS_HALF_FLOAT
 template <> struct MultiVector<float16x8_t, 2> { using type = float16x8x2_t; };
+
+#ifndef ARGON_PLATFORM_MVE
 template <> struct MultiVector<float16x8_t, 3> { using type = float16x8x3_t; };
+#endif
+
 template <> struct MultiVector<float16x8_t, 4> { using type = float16x8x4_t; };
 #endif
 

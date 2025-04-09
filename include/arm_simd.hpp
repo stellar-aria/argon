@@ -1,6 +1,11 @@
 #pragma once
 
-#if (__ARM_ARCH >= 8)     // ARMv8
+#ifdef __ARM_NEON
+#pragma message("NEON detected")
+
+#if (__ARM_ARCH >= 8)  // ARMv8
+#pragma message("ARMv8 detected")
+
 #ifdef __ARM_64BIT_STATE  // A64
 #include "arm_simd/neon/a64.hpp"
 #else  // A32
@@ -8,8 +13,7 @@
 #endif
 
 #else  // __ARM_ARCH < 8
-
-#ifdef __ARM_NEON
+#pragma message("ARMv7 detected")
 
 // ARMv7
 #ifdef __ARM_FEATURE_FMA
@@ -19,7 +23,10 @@
 #endif
 
 #endif
-#ifdef __ARM_FEATURE_MVE
+
+#elifdef __ARM_FEATURE_MVE
+
+#pragma message("MVE detected")
 
 #if (__ARM_FEATURE_MVE & 2)
 #include "arm_simd/helium/float.hpp"
@@ -27,10 +34,8 @@
 #include "arm_simd/helium/int.hpp"
 #endif
 
-#endif  // __ARM_FEATURE_MVE
+#else
 
-#endif  // __ARM_ARCH
-
-#if !defined(__ARM_NEON) && !defined(__ARM_FEATURE_MVE)
+#pragma message("Using SIMDe fallback")
 #include "arm_simd/neon/vfpv3.hpp"
 #endif

@@ -14,7 +14,7 @@ enum class Platform {
 
 #ifdef __ARM_NEON
 namespace argon {
-constexpr Platform target = Platform::NEON;
+constexpr Platform platform = Platform::NEON;
 }
 #define ARGON_PLATFORM_NEON true
 #define ARGON_HAS_DWORD true
@@ -46,7 +46,7 @@ constexpr Platform target = Platform::NEON;
 
 #elifdef __ARM_FEATURE_MVE
 namespace argon {
-constexpr Platform target = Platform::MVE;
+constexpr Platform platform = Platform::MVE;
 }
 #define ARGON_PLATFORM_MVE true
 #define ARGON_HAS_DWORD false
@@ -63,7 +63,7 @@ constexpr Platform target = Platform::MVE;
 
 #else
 namespace argon {
-constexpr Platform target = Platform::SIMDe;
+constexpr Platform platform = Platform::SIMDe;
 }
 #define ARGON_PLATFORM_SIMDE true
 #define ARGON_HAS_DWORD true

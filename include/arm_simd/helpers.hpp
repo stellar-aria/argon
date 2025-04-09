@@ -3,7 +3,7 @@
 #include "helpers/duplicate_lane.hpp"
 #include "helpers/get_lane.hpp"
 #include "helpers/lane_helpers.hpp"
-#include "helpers/load_lane.hpp"
+#include "helpers/load.hpp"
 #include "helpers/make_signed.hpp"
 #include "helpers/make_unsigned.hpp"
 #include "helpers/scalar.hpp"
