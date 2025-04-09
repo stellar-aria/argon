@@ -33,6 +33,7 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
   using T::T;
+  ace Argon(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
 

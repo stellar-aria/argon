@@ -14,6 +14,7 @@
 #include "helpers/bool.hpp"
 #include "helpers/multivector.hpp"
 #include "helpers/to_array.hpp"
+#include "lane.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd helium
@@ -74,6 +75,11 @@ class Vector {
 
   /// @brief The default constructor for the Vector class.
   constexpr Vector() = default;
+
+  constexpr Vector(Vector&& other) = default;                  ///< Move constructor for the Vector class.
+  constexpr Vector(const Vector& other) = default;             ///< Copy constructor for the Vector class.
+  constexpr Vector& operator=(Vector&& other) = default;       ///< Move assignment operator for the Vector class.
+  constexpr Vector& operator=(const Vector& other) = default;  ///< Copy assignment operator for the Vector class.
 
   /// @brief Constructs a Vector from a SIMD vector type.
   /// @param vector The SIMD vector to construct from.
@@ -282,19 +288,26 @@ class Vector {
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
-  ace lane_type GetLane(const size_t i) const { return {vec_, static_cast<int>(i)}; }
+  ace const lane_type GetLane(const size_t i) const { return {vec_, static_cast<int>(i)}; }
+  ace lane_type GetLane(const size_t i) { return {vec_, static_cast<int>(i)}; }
 
   /// @brief Get a single lane of the vector by index.
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
-  ace lane_type GetLane(const int i) const { return {vec_, i}; }
+  ace const lane_type GetLane(const int i) const { return {vec_, i}; }
+  ace lane_type GetLane(const int i) { return {vec_, i}; }
 
   /// @brief Get a single lane of the vector by index.
   /// @tparam LaneIndex The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   template <size_t LaneIndex>
-  ace const_lane_type<LaneIndex> GetLane() const {
-    return {vec_, LaneIndex};
+  ace const const_lane_type<LaneIndex> GetLane() const {
+    return vec_;
+  }
+
+  template <size_t LaneIndex>
+  ace const_lane_type<LaneIndex> GetLane() {
+    return vec_;
   }
 
   /// Get the last lane of the vector.
@@ -754,7 +767,7 @@ class Vector {
   template <size_t lane>
   ace argon_type LoadToLane(const scalar_type* ptr) {
     argon_type new_argon = *this;
-    return new_argon.template GetLane<lane>().Load(*ptr);
+    return new_argon.template GetLane<lane>().Load(ptr);
   }
 
   /// @brief Load multiple vectors from a pointer, de-interleaving
@@ -1195,116 +1208,6 @@ class Vector {
 
  protected:
   VectorType vec_;
-};
-
-template <size_t LaneIndex, typename VectorType>
-class ConstLane {
-  using scalar_type = simd::Scalar_t<VectorType>;
-  using type = ConstLane<LaneIndex, VectorType>;
-  using argon_type = helpers::ArgonFor_t<VectorType>;
-
- public:
-  ace ConstLane(VectorType& vec) : vec_{vec} {}
-  ace operator scalar_type() const { return Get(); }
-  ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
-  ace argon_type Load(scalar_type* ptr) {
-    if constexpr (platform == Platform::MVE) {
-      Set(*ptr);
-    } else {
-      if constexpr (simd::is_quadword_v<VectorType>) {
-        return simd::load1_lane_quad<LaneIndex>(vec_, ptr);
-      } else {
-        return simd::load1_lane<LaneIndex>(vec_, ptr);
-      }
-    }
-  }
-  ace argon_type Set(const scalar_type b) { return simd::set_lane<LaneIndex>(vec_, b); }
-  ace scalar_type Get() const { return simd::get_lane<LaneIndex>(vec_); }
-
-#if __ARM_ARCH >= 8
-  ace VectorType& vec() { return vec_; }
-  ace const int lane() { return LaneIndex; }
-#else
-  ace VectorType& vec() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
-      return vec_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec());
-      } else {
-        return simd::get_low(vec());
-      }
-    }
-  }
-  ace int lane() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
-      return LaneIndex;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
-        return (LaneIndex - ArgonHalf<scalar_type>::lanes);
-      } else {
-        return LaneIndex;
-      }
-    }
-  }
-#endif
- private:
-  VectorType& vec_;
-};
-
-template <typename VectorType>
-class Lane {
-  using scalar_type = simd::Scalar_t<VectorType>;
-  using type = Lane<VectorType>;
-  using argon_type = helpers::ArgonFor_t<VectorType>;
-
- public:
-  ace Lane(VectorType& vec, const int lane) : vec_{vec}, lane_{lane} {}
-  ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
-  ace argon_type Load(scalar_type* ptr) {
-    if constexpr (platform == Platform::MVE) {
-      Set(*ptr);
-    } else {
-      return simd::load1_lane(vec_, lane_, ptr);
-    }
-  }
-  ace argon_type Set(const scalar_type b) { return simd::set_lane(vec_, lane_, b); }
-  ace scalar_type Get() const { return simd::get_lane(vec_, lane_); }
-  ace operator scalar_type() const { return Get(); }
-
-#if __ARM_ARCH >= 8
-  ace VectorType& vec() { return vec_; }
-  ace const int lane() { return lane_; }
-#else
-  ace VectorType& vec() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
-      return vec_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec());
-      } else {
-        return simd::get_low(vec());
-      }
-    }
-  }
-  ace int lane() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
-      return lane_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return (lane_ - ArgonHalf<scalar_type>::lanes);
-      } else {
-        return lane_;
-      }
-    }
-  }
-#endif
-
- private:
-  VectorType& vec_;
-  int lane_;
-
-  friend class Vector<VectorType>;
 };
 
 }  // namespace argon

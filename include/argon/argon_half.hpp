@@ -27,6 +27,11 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   static constexpr size_t lanes = bytes / sizeof(ScalarType);
 
   using T::T;
+  ace ArgonHalf(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
+  ace ArgonHalf(const ArgonHalf&) = default;
+  ace ArgonHalf(ArgonHalf&&) = default;
+  ace ArgonHalf& operator=(const ArgonHalf&) = default;
+  ace ArgonHalf& operator=(ArgonHalf&&) = default;
 
   /// @brief Create a new ArgonHalf from a raw 64-bit value
   /// @param a The raw 64-bit value to create the ArgonHalf from
