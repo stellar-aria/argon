@@ -70,48 +70,48 @@ struct ArgonPtr {
 
 namespace argon::vectorize {
 
-template <typename scalar_type>
-struct ptr : std::ranges::view_interface<ptr<scalar_type>> {
-  using intrinsic_type = simd::Vec128_t<scalar_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+template <typename ScalarType>
+struct ptr : std::ranges::view_interface<ptr<ScalarType>> {
+  using intrinsic_type = simd::Vec128_t<ScalarType>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(ScalarType);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
 
  public:
   struct Iterator {
     using difference_type = std::ptrdiff_t;
-    using value_type = ArgonPtr<scalar_type>;
+    using value_type = ArgonPtr<ScalarType>;
 
-    Iterator(scalar_type* ptr) : ptr{ptr} {}
+    Iterator(ScalarType* ptr) : ptr{ptr} {}
 
-    value_type operator*() const { return value_type{ptr}; }
+    ArgonPtr<ScalarType> operator*() const { return ptr; }
 
     Iterator& operator++() {
-      ptr += lanes;
+      ptr = ptr + lanes;
       return *this;
     }
 
     void operator++(int) { ++*this; }
     friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
-    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
+    friend bool operator==(const Iterator& a, const ScalarType* ptr) { return a.ptr == ptr; }
     friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
-    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
+    friend bool operator!=(const Iterator& a, const ScalarType* ptr) { return a.ptr != ptr; }
 
    private:
-    scalar_type* ptr = nullptr;
+    ScalarType* ptr = nullptr;
   };
   static_assert(std::input_iterator<Iterator>);
 
   using iterator = Iterator;
 
   iterator begin() { return start_; }
-  scalar_type* end() { return start_ + size_; }
+  ScalarType* end() { return start_ + size_; }
   size_t size() const { return size_ / lanes; }
 
   template <std::ranges::contiguous_range R>
   ptr(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
-  scalar_type* start_;
+  ScalarType* start_;
   size_t size_;
 };
 template <std::ranges::contiguous_range R>

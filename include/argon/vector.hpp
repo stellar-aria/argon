@@ -841,6 +841,7 @@ class Vector {
     return multi;
   }
 
+  /// @copydoc LoadGatherInterleaved
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadGatherInterleaved(
       const scalar_type* base_ptr,
@@ -892,8 +893,13 @@ class Vector {
 #endif
   }
 
+  /// @brief Store the vector to a pointer
+  /// @param ptr The pointer to store to
   ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
 
+  /// @brief Store a lane of the vector to a pointer
+  /// @param ptr The pointer to store to
+  /// @tparam lane The lane to store
   template <int lane>
   ace void StoreLaneTo(scalar_type* ptr) {
     simd::store1_lane<lane>(ptr, vec_);
