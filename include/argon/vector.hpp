@@ -1036,19 +1036,27 @@ class Vector {
   ace argon_type Reverse32bit() const { return simd::reverse_32bit(vec_); }
   ace argon_type Reverse16bit() const { return simd::reverse_16bit(vec_); }
 
+  /// @brief Zip two vectors together, returning two vectors of pairs
+  /// @details Given a pair of vector {a0, a1, a2, a3} and {b0, b1, b2, b3},
+  /// the result is {{a0, b0, a1, b1}, {a2, b2, a3, b3}}
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
     return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
+  /// @brief Unzip two vectors, returning two vectors of pairs
+  /// @details Given a pair of vector {a0, b0, a1, b1} and {a2, b2, a3, b3},
+  /// the result is {{a0, a1, a2, a3}, {b0, b1, b2, b3}}
   std::array<argon_type, 2> UnzipWith(argon_type b) {
     return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
   }
 
+  /// @brief Perform a matrix transpose on two vectors, returning two vectors of pairs
   std::tuple<argon_type, argon_type> TransposeWith(argon_type b) const {
     auto result = simd::transpose(vec_, b.vec());
     return std::tuple<argon_type, argon_type>(result.val[0], result.val[1]);
   }
 
+  /// Get the number of elements
   ace static int size() { return lanes; }
 
   template <typename FuncType>

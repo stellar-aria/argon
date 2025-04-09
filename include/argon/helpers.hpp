@@ -13,7 +13,7 @@ namespace argon::helpers {
 // clang-format off
 
 /// @brief Helper template to determine if a type has a smaller corresponding type.
-/// @tparam T The type to check.
+/// @tparam T The scalar type to check.
 template <typename T>
 constexpr bool has_smaller_v =
     std::is_same_v<T, uint16_t>
@@ -30,7 +30,7 @@ constexpr bool has_smaller_v =
     ;
 
 /// @brief Helper template to determine if a type has a larger corresponding type.
-/// @tparam T The type to check.
+/// @tparam T The scalar type to check.
 template <typename T>
 constexpr bool has_larger_v =
     std::is_same_v<T, uint8_t>
@@ -54,7 +54,7 @@ template <typename T>
 concept has_larger = has_larger_v<T>;
 
 /// @brief Helper template to determine the next larger type for a given type.
-/// @tparam T The type to determine the next larger type for.
+/// @tparam T The scalar type to determine the next larger type for.
 template <typename T> struct NextLarger;
 /// @cond EXCLUDE
 template <> struct NextLarger<int8_t> { using type = int16_t; };
@@ -70,12 +70,12 @@ template <> struct NextLarger<float16_t> { using type = float; };
 /// @endcond
 
 /// @brief Helper alias to get the next larger type for a given type.
-/// @tparam T  The type to determine the next larger type for.
+/// @tparam T  The scalar type to determine the next larger type for.
 template <typename T>
 using NextLarger_t = NextLarger<T>::type;
 
 /// @brief Helper template to determine the next smaller type for a given type.
-/// @tparam T The type to determine the next smaller type for.
+/// @tparam T The scalar type to determine the next smaller type for.
 template <typename T> struct NextSmaller;
 
 /// @cond EXCLUDE
@@ -92,7 +92,7 @@ template <> struct NextSmaller<float> { using type = float16_t; };
 /// @endcond
 
 /// @brief Helper alias to get the next smaller type for a given type.
-/// @tparam T The type to determine the next smaller type for.
+/// @tparam T The scalar type to determine the next smaller type for.
 template <typename T>
 using NextSmaller_t = NextSmaller<T>::type;
 
