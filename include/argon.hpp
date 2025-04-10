@@ -185,16 +185,10 @@ class CondMonad : public std::pair<CondType, Argon<ScalarType>> {
   constexpr ArgonType value() const { return this->second; }
 
   CondMonad else_if_(CondType new_condition, ArgonType new_value) const {
-    CondType exclusive_condition = new_condition & ~condition();
-    if constexpr (std::is_same_v<CondType, ArgonType>) {
-      // if condition and value are the same type, we can just use the value directly
-      new_value = (exclusive_condition & new_value) | (~exclusive_condition & value());
-    } else {
-      new_value = ((exclusive_condition & new_value.template As<typename CondType::scalar_type>()) |
-                   (~exclusive_condition & value().template As<typename CondType::scalar_type>()))
-                      .template As<typename ArgonType::scalar_type>();
-    }
-    return CondMonad{condition() | new_condition, new_value};
+    return {
+        new_condition | condition(),
+        (new_condition & ~condition()).Select(new_value, value()),
+    };
   }
 
   template <typename FunctionType>
@@ -204,17 +198,7 @@ class CondMonad : public std::pair<CondType, Argon<ScalarType>> {
 
   CondMonad else_if_(CondType condition, ScalarType value) const { return else_if_(condition, ArgonType{value}); }
 
-  ArgonType else_(ArgonType new_value) const {
-    if constexpr (std::is_same_v<CondType, ArgonType>) {
-      // if condition and value are the same type, we can just use the value directly
-      return (condition() & new_value) | (~condition() & value());
-    } else {
-      // negate mask to get what's left, and select those lanes from the input
-      return ((~condition() & new_value.template As<typename CondType::scalar_type>()) |
-              (condition() & value().template As<typename CondType::scalar_type>()))
-          .template As<typename ArgonType::scalar_type>();
-    }
-  }
+  ArgonType else_(ArgonType new_value) const { return condition().Select(new_value, value()); }
 
   template <typename FunctionType>
   ArgonType else_(FunctionType func) const {
