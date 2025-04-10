@@ -5,7 +5,7 @@
 
 #define nce [[gnu::always_inline]] inline
 
-namespace helium {
+namespace mve {
 // clang-format off
 template <int n>[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a) { return vcvtq_n_f32_s32(a, n); }
 template <int n>[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a) { return vcvtq_n_f32_u32(a, n); }
@@ -37,6 +37,6 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { r
 [[gnu::always_inline]] inline float32x4_t load1(float32_t const *ptr) { return vld1q_f32(ptr); }
 [[gnu::always_inline]] inline void store1(float16_t *ptr, float16x8_t val) { return vst1q_f16(ptr, val); }
 // clang-format on
-}  // namespace helium
+}  // namespace mve
 #endif
 #undef nce

@@ -5,7 +5,7 @@
 /// @brief Header file for SIMD features and platform detection.
 
 namespace argon {
-enum class platform {
+enum class Platform {
   NEON,
   MVE,
   SIMDe,
@@ -14,10 +14,9 @@ enum class platform {
 
 #ifdef __ARM_NEON
 namespace argon {
-constexpr platform target = platform::NEON;
+constexpr Platform platform = Platform::NEON;
 }
 #define ARGON_PLATFORM_NEON true
-#define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 
 #if (__ARM_ARCH >= 8)
@@ -46,10 +45,9 @@ constexpr platform target = platform::NEON;
 
 #elifdef __ARM_FEATURE_MVE
 namespace argon {
-constexpr platform target = platform::MVE;
+constexpr Platform platform = Platform::MVE;
 }
 #define ARGON_PLATFORM_MVE true
-#define ARGON_HAS_DWORD false
 
 #if (__ARM_FEATURE_MVE & 2)
 #define ARGON_HAS_FLOAT true
@@ -63,14 +61,21 @@ constexpr platform target = platform::MVE;
 
 #else
 namespace argon {
-constexpr platform target = platform::SIMDe;
+constexpr Platform platform = Platform::SIMDe;
 }
 #define ARGON_PLATFORM_SIMDE true
-#define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 #define ARGON_HAS_HALF_FLOAT false
 #define ARGON_HAS_SINGLE_FLOAT true
 #define ARGON_HAS_DOUBLE_FLOAT false
+#endif
+
+#ifndef ARGON_USE_COMPILER_EXTENSIONS
+#if !defined(_MSC_VER) || defined(__clang__)
+#define ARGON_USE_COMPILER_EXTENSIONS 1
+#else
+#define ARGON_USE_COMPILER_EXTENSIONS 0
+#endif
 #endif
 
 /*

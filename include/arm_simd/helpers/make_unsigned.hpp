@@ -6,7 +6,7 @@
 #define simd neon
 #elifdef __ARM_FEATURE_MVE
 #include <arm_mve.h>
-#define simd helium
+#define simd mve
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
 #include <arm/neon.h>
@@ -30,7 +30,7 @@ template <> struct make_unsigned<uint32x4_t> { using type = uint32x4_t; };
 template <> struct make_unsigned<int64x2_t> { using type = uint64x2_t; };
 template <> struct make_unsigned<uint64x2_t> { using type = uint64x2_t; };
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <> struct make_unsigned<int8x8_t> { using type = uint8x8_t; };
 template <> struct make_unsigned<uint8x8_t> { using type = uint8x8_t; };
 template <> struct make_unsigned<int16x4_t> { using type = uint16x4_t; };

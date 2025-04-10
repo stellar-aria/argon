@@ -5,7 +5,7 @@
 #include "arm_simd/helpers/scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -29,7 +29,7 @@ struct ArgonFor<T> {
   using type = Argon<simd::Scalar_t<T>>;
 };
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <simd::is_doubleword T>
 struct ArgonFor<T> {
   using type = ArgonHalf<simd::Scalar_t<T>>;

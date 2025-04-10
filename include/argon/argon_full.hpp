@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <numeric>
 #include <type_traits>
 #include "arm_simd.hpp"
 #include "helpers.hpp"
@@ -7,7 +8,7 @@
 #include "vector.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -31,16 +32,10 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(scalar_type);
 
-  ace Argon() = default;
-  ace Argon(vector_type vector) : T{vector} {};
-  ace Argon(scalar_type scalar) : T{scalar} {};
-  ace Argon(T&& in) : T(in) {};
+  using T::T;
+  ace Argon(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
   ace Argon(std::array<scalar_type, 4> value_list) : T{T::Load(value_list.data())} {};
   ace Argon(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) : T{Combine(low, high)} {};
-
-  template <typename... arg_types>
-    requires(sizeof...(arg_types) > 1)
-  ace Argon(arg_types... args) : T{vector_type{args...}} {}
 
   template <simd::is_vector_type intrinsic_type>
   ace Argon(argon::Lane<intrinsic_type> b) : T{b} {};
@@ -244,7 +239,8 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
 #ifdef __aarch64__
     return simd::reduce_min(this->vec_);
 #else
-    return this->Reduce([](auto a, auto b) { return std::min(a, b); });
+    auto arr = this->to_array();
+    return std::reduce(arr.begin(), arr.end(), arr[0], [](auto a, auto b) { return std::min(a, b); });
 #endif
   }
 

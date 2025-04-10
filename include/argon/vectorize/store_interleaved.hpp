@@ -4,15 +4,15 @@
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
 
-namespace argon {
+namespace argon::vectorize {
 
 template <typename scalar_type, size_t stride = 2>
-struct vectorize_store_interleaved : std::ranges::view_interface<vectorize_store_interleaved<scalar_type, stride>> {
+struct store_interleaved : std::ranges::view_interface<store_interleaved<scalar_type, stride>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
@@ -82,19 +82,18 @@ struct vectorize_store_interleaved : std::ranges::view_interface<vectorize_store
   size_t size() const { return size_ / (lanes * stride); }
 
   template <std::ranges::contiguous_range R>
-  vectorize_store_interleaved(R&& r)
-      : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+  store_interleaved(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
   scalar_type* start_;
   size_t size_;
 };
 
-static_assert(std::ranges::range<vectorize_store_interleaved<int32_t, 2>>);
-static_assert(std::ranges::view<vectorize_store_interleaved<int32_t, 2>>);
+static_assert(std::ranges::range<store_interleaved<int32_t, 2>>);
+static_assert(std::ranges::view<store_interleaved<int32_t, 2>>);
 
 template <std::ranges::contiguous_range R, size_t stride = 2>
-vectorize_store_interleaved(R&& r) -> vectorize_store_interleaved<std::ranges::range_value_t<R>, stride>;
+store_interleaved(R&& r) -> store_interleaved<std::ranges::range_value_t<R>, stride>;
 
-}  // namespace argon
+}  // namespace argon::vectorize
 #undef simd

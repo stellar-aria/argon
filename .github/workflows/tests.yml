@@ -58,6 +58,12 @@ jobs:
   test-build-qemu:
     name: Run tests (ARMv7/QEMU)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cpu: [A9, M55]
+        exclude:
+          - cpu: M55
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -79,7 +85,7 @@ jobs:
         run: sudo ln -s /usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
 
       - name: Configure
-        run: cmake -B build -G Ninja -DARGON_ENABLE_TESTING=YES -DARGON_TEST_QEMU=YES
+        run: cmake -B build -G Ninja -DARGON_ENABLE_TESTING=YES -DARGON_TEST_CPU=${{ matrix.cpu }}
 
       - name: Run build
         run: cmake --build build
@@ -91,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test Results (ARMv7)
+          name: Test Results (Cortex-${{ matrix.cpu }} QEMU)
           path: |
             build/test/specs/results/*.xml
             build/test/specs/results/**/*.xml

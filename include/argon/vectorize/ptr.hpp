@@ -14,23 +14,23 @@
 #include "store.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
 
 // Smart pointer for argon type
-template <typename scalar_type>
+template <typename ScalarType>
 struct ArgonPtr {
-  using intrinsic_type = simd::Vec128_t<scalar_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+  using intrinsic_type = simd::Vec128_t<ScalarType>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(ScalarType);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
 
   using difference_type = std::ptrdiff_t;
-  using value_type = Argon<scalar_type>;
-  using pointer = Argon<scalar_type>*;
+  using value_type = Argon<ScalarType>;
+  using pointer = Argon<ScalarType>*;
 
-  ArgonPtr(scalar_type* ptr) : ptr_{ptr}, vec_{Argon<scalar_type>::Load(ptr_)} {}
+  ArgonPtr(ScalarType* ptr) : ptr_{ptr}, vec_{Argon<ScalarType>::Load(ptr_)} {}
   ArgonPtr(const ArgonPtr&) = default;
   ArgonPtr& operator=(const ArgonPtr&) = default;
   ArgonPtr(ArgonPtr&&) = default;
@@ -58,69 +58,69 @@ struct ArgonPtr {
   void reload() { vec_ = value_type::Load(ptr_); }
 
   friend bool operator==(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ == b.ptr_; }
-  friend bool operator==(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ == ptr; }
+  friend bool operator==(const ArgonPtr& a, const ScalarType* ptr) { return a.ptr_ == ptr; }
   friend bool operator!=(const ArgonPtr& a, const ArgonPtr& b) { return a.ptr_ != b.ptr_; }
-  friend bool operator!=(const ArgonPtr& a, const scalar_type* ptr) { return a.ptr_ != ptr; }
+  friend bool operator!=(const ArgonPtr& a, const ScalarType* ptr) { return a.ptr_ != ptr; }
 
  private:
-  scalar_type* ptr_;
+  ScalarType* ptr_;
   value_type vec_;
   bool dirty_ = false;
 };
 
-namespace argon {
+namespace argon::vectorize {
 
-template <typename scalar_type>
-struct vectorize_ptr : std::ranges::view_interface<vectorize_ptr<scalar_type>> {
-  using intrinsic_type = simd::Vec128_t<scalar_type>;
-  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
+template <typename ScalarType>
+struct ptr : std::ranges::view_interface<ptr<ScalarType>> {
+  using intrinsic_type = simd::Vec128_t<ScalarType>;
+  static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(ScalarType);
   static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
 
  public:
   struct Iterator {
     using difference_type = std::ptrdiff_t;
-    using value_type = ArgonPtr<scalar_type>;
+    using value_type = ArgonPtr<ScalarType>;
 
-    Iterator(scalar_type* ptr) : ptr{ptr} {}
+    Iterator(ScalarType* pointer) : ptr_{pointer} {}
 
-    value_type operator*() const { return value_type{ptr}; }
+    ArgonPtr<ScalarType> operator*() const { return ptr_; }
 
     Iterator& operator++() {
-      ptr += lanes;
+      ptr_ += lanes;
       return *this;
     }
 
     void operator++(int) { ++*this; }
-    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
-    friend bool operator==(const Iterator& a, const scalar_type* ptr) { return a.ptr == ptr; }
-    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
-    friend bool operator!=(const Iterator& a, const scalar_type* ptr) { return a.ptr != ptr; }
+    friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr_ == b.ptr_; }
+    friend bool operator==(const Iterator& a, const ScalarType* pointer) { return a.ptr_ == pointer; }
+    friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; }
+    friend bool operator!=(const Iterator& a, const ScalarType* pointer) { return a.ptr_ != pointer; }
 
    private:
-    scalar_type* ptr = nullptr;
+    ScalarType* ptr_ = nullptr;
   };
   static_assert(std::input_iterator<Iterator>);
 
   using iterator = Iterator;
 
   iterator begin() { return start_; }
-  scalar_type* end() { return start_ + size_; }
+  ScalarType* end() { return start_ + size_; }
   size_t size() const { return size_ / lanes; }
 
   template <std::ranges::contiguous_range R>
-  vectorize_ptr(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+  ptr(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
-  scalar_type* start_;
+  ScalarType* start_;
   size_t size_;
 };
 template <std::ranges::contiguous_range R>
-vectorize_ptr(R&& r) -> vectorize_ptr<std::ranges::range_value_t<R>>;
+ptr(R&& r) -> ptr<std::ranges::range_value_t<R>>;
 
-static_assert(std::ranges::range<vectorize_ptr<int32_t>>);
-static_assert(std::ranges::view<vectorize_ptr<int32_t>>);
-static_assert(std::movable<vectorize_ptr<int32_t>>);
-static_assert(std::ranges::viewable_range<vectorize_ptr<int32_t>>);
+static_assert(std::ranges::range<ptr<int32_t>>);
+static_assert(std::ranges::view<ptr<int32_t>>);
+static_assert(std::movable<ptr<int32_t>>);
+static_assert(std::ranges::viewable_range<ptr<int32_t>>);
 
-}  // namespace argon
+}  // namespace argon::vectorize
 #undef simd
