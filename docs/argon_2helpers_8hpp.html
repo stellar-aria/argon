@@ -101,42 +101,41 @@ $(function(){initNavTree('argon_2helpers_8hpp.html',''); initResizable(true); })
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">helpers.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Provides utility templates and concepts for type traits and compile-time iteration. This header defines a set of utilities for working with type traits, including determining the next larger or smaller type for a given type, as well as compile-time iteration.  
+<p>Provides utility templates and concepts for type traits and compile-time iteration.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;../arm_simd.hpp&quot;</code><br />
+<div class="textblock"><code>#include &lt;type_traits&gt;</code><br />
+<code>#include &quot;../arm_simd.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="features_8h_source.html">features.h</a>&quot;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for helpers.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="argon_2helpers_8hpp__incl.png" border="0" usemap="#ainclude_2argon_2helpers_8hpp" alt=""/></div>
 <map name="ainclude_2argon_2helpers_8hpp" id="ainclude_2argon_2helpers_8hpp">
-<area shape="rect" title="Provides utility templates and concepts for type traits and compile&#45;time iteration...." alt="" coords="159,5,350,31"/>
-<area shape="rect" href="arm__simd_8hpp_source.html" title=" " alt="" coords="53,79,179,104"/>
-<area shape="poly" title=" " alt="" coords="234,33,152,75,150,70,231,28"/>
-<area shape="rect" href="features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="211,79,299,104"/>
-<area shape="poly" title=" " alt="" coords="257,31,257,65,252,65,252,31"/>
-<area shape="rect" title=" " alt="" coords="323,79,415,104"/>
-<area shape="poly" title=" " alt="" coords="274,28,340,69,338,74,272,33"/>
-<area shape="rect" href="vfpv3_8hpp_source.html" title=" " alt="" coords="5,152,197,177"/>
-<area shape="poly" title=" " alt="" coords="116,105,109,139,104,138,111,104"/>
-<area shape="rect" href="vfpv3__int_8hpp_source.html" title=" " alt="" coords="13,313,189,353"/>
-<area shape="poly" title=" " alt="" coords="93,179,78,200,67,226,63,245,67,265,83,301,78,303,61,266,58,245,61,225,74,198,89,176"/>
-<area shape="rect" href="vfpv3__float_8hpp_source.html" title=" " alt="" coords="76,225,252,265"/>
-<area shape="poly" title=" " alt="" coords="113,176,142,213,138,216,109,179"/>
-<area shape="rect" title=" " alt="" coords="18,401,81,427"/>
-<area shape="poly" title=" " alt="" coords="91,355,67,391,62,388,87,352"/>
-<area shape="rect" title=" " alt="" coords="105,401,201,427"/>
-<area shape="poly" title=" " alt="" coords="116,352,140,388,136,391,112,355"/>
-<area shape="poly" title=" " alt="" coords="152,267,125,304,121,301,148,264"/>
-<area shape="rect" title=" " alt="" coords="221,152,304,177"/>
-<area shape="poly" title=" " alt="" coords="259,104,263,138,257,139,253,105"/>
+<area shape="rect" title="Provides utility templates and concepts for type traits and compile&#45;time iteration." alt="" coords="89,5,280,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,97,104"/>
+<area shape="poly" title=" " alt="" coords="164,33,86,74,84,70,162,28"/>
+<area shape="rect" href="arm__simd_8hpp_source.html" title=" " alt="" coords="121,79,248,104"/>
+<area shape="poly" title=" " alt="" coords="187,31,187,65,182,65,182,31"/>
+<area shape="rect" href="features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="287,79,375,104"/>
+<area shape="poly" title=" " alt="" coords="209,28,296,70,294,75,207,33"/>
+<area shape="rect" href="vfpv3_8hpp_source.html" title=" " alt="" coords="81,152,273,177"/>
+<area shape="poly" title=" " alt="" coords="186,105,182,139,177,138,181,104"/>
+<area shape="rect" href="vfpv3__int_8hpp_source.html" title=" " alt="" coords="89,313,265,353"/>
+<area shape="poly" title=" " alt="" coords="169,179,154,200,142,226,138,245,142,265,158,301,153,303,137,266,133,245,137,225,149,198,164,176"/>
+<area shape="rect" href="vfpv3__float_8hpp_source.html" title=" " alt="" coords="151,225,327,265"/>
+<area shape="poly" title=" " alt="" coords="188,176,218,213,213,216,184,179"/>
+<area shape="rect" title=" " alt="" coords="93,401,156,427"/>
+<area shape="poly" title=" " alt="" coords="166,355,142,391,138,388,162,352"/>
+<area shape="rect" title=" " alt="" coords="181,401,277,427"/>
+<area shape="poly" title=" " alt="" coords="191,352,216,388,211,391,187,355"/>
+<area shape="poly" title=" " alt="" coords="228,267,201,304,196,301,223,264"/>
+<area shape="rect" title=" " alt="" coords="297,152,379,177"/>
+<area shape="poly" title=" " alt="" coords="335,104,338,138,333,139,330,105"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -144,35 +143,34 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="argon_2helpers_8hpp__dep__incl.png" border="0" usemap="#ainclude_2argon_2helpers_8hppdep" alt=""/></div>
 <map name="ainclude_2argon_2helpers_8hppdep" id="ainclude_2argon_2helpers_8hppdep">
-<area shape="rect" title="Provides utility templates and concepts for type traits and compile&#45;time iteration...." alt="" coords="575,5,765,31"/>
-<area shape="rect" href="argon__full_8hpp_source.html" title=" " alt="" coords="508,152,659,192"/>
-<area shape="poly" title=" " alt="" coords="659,44,596,153,592,150,654,41"/>
-<area shape="rect" href="vector_8hpp_source.html" title=" " alt="" coords="655,79,837,104"/>
-<area shape="poly" title=" " alt="" coords="694,38,735,76,732,80,690,42"/>
-<area shape="rect" href="argon_8hpp_source.html" title=" " alt="" coords="850,335,989,361"/>
-<area shape="poly" title=" " alt="" coords="673,183,787,205,836,220,870,238,891,261,905,288,920,335,915,336,900,290,887,264,867,242,834,225,786,211,672,188"/>
-<area shape="rect" href="vectorize_8hpp_source.html" title=" " alt="" coords="654,247,857,273"/>
-<area shape="poly" title=" " alt="" coords="634,196,734,245,731,250,632,200"/>
-<area shape="rect" href="load_8hpp_source.html" title=" " alt="" coords="5,240,180,280"/>
-<area shape="poly" title=" " alt="" coords="495,191,192,243,181,245,180,239,191,237,494,185"/>
-<area shape="rect" href="load__interleaved_8hpp_source.html" title=" " alt="" coords="204,240,379,280"/>
-<area shape="poly" title=" " alt="" coords="507,198,356,243,355,237,506,193"/>
-<area shape="rect" href="ptr_8hpp_source.html" title=" " alt="" coords="392,328,567,368"/>
-<area shape="poly" title=" " alt="" coords="497,199,467,217,444,241,438,263,442,285,453,307,465,326,461,329,448,310,437,287,433,262,440,239,464,213,494,194"/>
-<area shape="rect" href="vectorize_2store_8hpp_source.html" title=" " alt="" coords="455,240,629,280"/>
-<area shape="poly" title=" " alt="" coords="571,206,554,241,549,239,566,203"/>
-<area shape="rect" href="interleaved_8hpp_source.html" title=" " alt="" coords="668,416,843,456"/>
-<area shape="poly" title=" " alt="" coords="886,370,793,418,790,413,884,365"/>
-<area shape="rect" href="store__interleaved_8hpp_source.html" title=" " alt="" coords="867,416,1041,456"/>
-<area shape="poly" title=" " alt="" coords="932,372,949,415,944,417,927,374"/>
-<area shape="poly" title=" " alt="" coords="791,277,898,333,896,337,788,281"/>
-<area shape="poly" title=" " alt="" coords="758,286,758,416,753,416,753,286"/>
-<area shape="poly" title=" " alt="" coords="522,293,495,329,491,326,518,290"/>
-<area shape="poly" title=" " alt="" coords="711,112,624,154,622,149,709,107"/>
-<area shape="poly" title=" " alt="" coords="852,102,895,120,914,134,931,150,944,173,951,199,953,226,951,252,940,301,927,336,922,334,935,300,946,252,948,226,946,200,939,176,927,154,911,138,892,125,850,107"/>
-<area shape="rect" href="argon__half_8hpp_source.html" title=" " alt="" coords="765,152,916,192"/>
-<area shape="poly" title=" " alt="" coords="772,111,820,150,816,154,769,115"/>
-<area shape="poly" title=" " alt="" coords="882,199,901,217,915,239,923,265,926,291,924,335,919,335,921,292,918,266,910,241,896,220,879,202"/>
+<area shape="rect" title="Provides utility templates and concepts for type traits and compile&#45;time iteration." alt="" coords="521,5,712,31"/>
+<area shape="rect" href="argon__full_8hpp_source.html" title=" " alt="" coords="629,152,780,192"/>
+<area shape="poly" title=" " alt="" coords="634,41,658,77,697,150,693,153,653,80,630,44"/>
+<area shape="rect" href="vector_8hpp_source.html" title=" " alt="" coords="461,79,644,104"/>
+<area shape="poly" title=" " alt="" coords="599,43,565,80,561,77,595,39"/>
+<area shape="rect" href="argon_8hpp_source.html" title=" " alt="" coords="350,247,489,273"/>
+<area shape="poly" title=" " alt="" coords="630,198,458,250,457,245,628,193"/>
+<area shape="rect" href="vectorize_2store_8hpp_source.html" title=" " alt="" coords="403,328,577,368"/>
+<area shape="poly" title=" " alt="" coords="659,201,598,242,548,288,508,330,504,326,544,284,595,238,656,197"/>
+<area shape="rect" href="ptr_8hpp_source.html" title=" " alt="" coords="465,416,640,456"/>
+<area shape="poly" title=" " alt="" coords="675,203,643,242,625,275,614,303,606,333,591,369,566,417,561,414,586,367,601,331,609,302,620,273,638,238,671,200"/>
+<area shape="rect" href="argon_2vectorize_2load_8hpp_source.html" title=" " alt="" coords="653,240,828,280"/>
+<area shape="poly" title=" " alt="" coords="720,204,735,239,730,241,715,206"/>
+<area shape="rect" href="load__interleaved_8hpp_source.html" title=" " alt="" coords="852,240,1027,280"/>
+<area shape="poly" title=" " alt="" coords="770,194,889,237,887,242,768,199"/>
+<area shape="rect" href="load__store_8hpp_source.html" title=" " alt="" coords="1051,240,1225,280"/>
+<area shape="poly" title=" " alt="" coords="794,188,1051,239,1050,244,793,193"/>
+<area shape="rect" href="interleaved_8hpp_source.html" title=" " alt="" coords="5,328,180,368"/>
+<area shape="poly" title=" " alt="" coords="363,279,165,331,164,325,362,274"/>
+<area shape="poly" title=" " alt="" coords="440,282,476,326,472,329,435,285"/>
+<area shape="rect" href="store__interleaved_8hpp_source.html" title=" " alt="" coords="204,328,379,368"/>
+<area shape="poly" title=" " alt="" coords="392,283,321,330,318,326,389,278"/>
+<area shape="poly" title=" " alt="" coords="514,378,541,414,537,417,510,381"/>
+<area shape="poly" title=" " alt="" coords="589,108,669,149,667,154,586,113"/>
+<area shape="poly" title=" " alt="" coords="502,112,470,129,444,154,432,177,425,203,421,247,416,247,419,202,427,175,440,150,467,125,500,107"/>
+<area shape="rect" href="argon__half_8hpp_source.html" title=" " alt="" coords="455,152,605,192"/>
+<area shape="poly" title=" " alt="" coords="548,118,538,153,533,151,543,116"/>
+<area shape="poly" title=" " alt="" coords="496,203,436,249,433,245,493,198"/>
 </map>
 </div>
 </div>
@@ -203,13 +201,6 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:a8d075bdf1ee9f3d7bb5988ac4603f5a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper alias to get the next smaller type for a given type.  <br /></td></tr>
 <tr class="separator:a8d075bdf1ee9f3d7bb5988ac4603f5a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a158fcb12778893c084560beb096952f9" id="r_a158fcb12778893c084560beb096952f9"><td class="memTemplParams" colspan="2">template&lt;auto Start, auto End, auto Increment, class FunctionType&gt; </td></tr>
-<tr class="memitem:a158fcb12778893c084560beb096952f9"><td class="memTemplItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9">argon::helpers::consteval_for</a> (FunctionType &amp;&amp;f)</td></tr>
-<tr class="memdesc:a158fcb12778893c084560beb096952f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constexpr function template for compile-time iteration. Used to unroll loops at compile time.  <br /></td></tr>
-<tr class="separator:a158fcb12778893c084560beb096952f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ab9bfd386df4fd913b4da78380d195aaa" id="r_ab9bfd386df4fd913b4da78380d195aaa"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
@@ -222,7 +213,8 @@ Variables</h2></td></tr>
 <tr class="separator:a496aa311ea4aaaa0489be3c5c10d6c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides utility templates and concepts for type traits and compile-time iteration. This header defines a set of utilities for working with type traits, including determining the next larger or smaller type for a given type, as well as compile-time iteration. </p>
+<div class="textblock"><p>Provides utility templates and concepts for type traits and compile-time iteration. </p>
+<p>This header defines a set of utilities for working with type traits, including determining the next larger or smaller type for a given type, as well as compile-time iteration. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

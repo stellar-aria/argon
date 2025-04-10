@@ -10,7 +10,8 @@ var namespaceargon_1_1helpers =
     [ "MultiVector_t", "namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61", null ],
     [ "NextLarger_t", "namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5", null ],
     [ "NextSmaller_t", "namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0", null ],
-    [ "consteval_for", "namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9", null ],
+    [ "vectorizeable_size", "namespaceargon_1_1helpers.html#a4b9e3c8b4b56518879df473c4074abf3", null ],
+    [ "vectorized_size", "namespaceargon_1_1helpers.html#a47936a067ac8c15225edace1002978ab", null ],
     [ "has_larger_v", "namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b", null ],
     [ "has_smaller_v", "namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa", null ]
 ];

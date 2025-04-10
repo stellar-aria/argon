@@ -130,13 +130,13 @@ Object-oriented Argon interface</h2>
 <div class="line"> </div>
 <div class="line"><a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> triangle(<a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase) {</div>
 <div class="line">  phase = argon::ternary(phase &gt; 0.5f, 1.f, 0.f) - phase;</div>
-<div class="line">  <span class="keywordflow">return</span> <a class="code hl_class" href="classArgon.html">Argon</a>{-1.f}.<a class="code hl_function" href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">MultiplyAdd</a>(phase.Absolute(), 4.f);</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code hl_class" href="classArgon.html">Argon</a>{-1.f}.<a class="code hl_function" href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">MultiplyAdd</a>(phase.<a class="code hl_function" href="classargon_1_1Vector.html#ad91da6dc5608aae40cc630ac5b4fb731">Absolute</a>(), 4.f);</div>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
 <div class="line">  <span class="keywordtype">float</span> frequency = 440.f;</div>
 <div class="line">  <span class="keywordtype">float</span> phase_increment = frequency / 44100.f;</div>
-<div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase = <a class="code hl_class" href="classArgon.html">Argon</a>{0}.<a class="code hl_function" href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">MultiplyAdd</a>(phase_increment, Argon&lt;float&gt;::Iota(0))</div>
+<div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase = <a class="code hl_class" href="classArgon.html">Argon</a>{0}.<a class="code hl_function" href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">MultiplyAdd</a>(phase_increment, <a class="code hl_function" href="classargon_1_1Vector.html#a9d08f142487b96d0b10eca211956b51f">Argon&lt;float&gt;::Iota</a>(0))</div>
 <div class="line">  <a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> wave = triangle(phase);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// Print the result</span></div>
@@ -144,8 +144,10 @@ Object-oriented Argon interface</h2>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Result[&quot;</span> &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot;]: &quot;</span> &lt;&lt; result[i] &lt;&lt; std::endl;</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:22</div></div>
-<div class="ttc" id="aclassargon_1_1Vector_html_ab0947e4526aebd0582573897b66fd22f"><div class="ttname"><a href="classargon_1_1Vector.html#ab0947e4526aebd0582573897b66fd22f">argon::Vector::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdef"><b>Definition</b> vector.hpp:178</div></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:23</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_a30eb1bff5f1953844facf92590d1d5ed"><div class="ttname"><a href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">argon::Vector::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdoc">Multiply two vectors and add a third vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:437</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_a9d08f142487b96d0b10eca211956b51f"><div class="ttname"><a href="classargon_1_1Vector.html#a9d08f142487b96d0b10eca211956b51f">argon::Vector&lt; simd::Vec128_t&lt; scalar_type &gt; &gt;::Iota</a></div><div class="ttdeci">static ace argon_type Iota(scalar_type start, scalar_type step=1)</div><div class="ttdef"><b>Definition</b> vector.hpp:154</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_ad91da6dc5608aae40cc630ac5b4fb731"><div class="ttname"><a href="classargon_1_1Vector.html#ad91da6dc5608aae40cc630ac5b4fb731">argon::Vector::Absolute</a></div><div class="ttdeci">ace argon_type Absolute() const</div><div class="ttdoc">Get the absolute value of the vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:549</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
 Low-level NEON interface</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/arm_simd.hpp&gt;</span></div>

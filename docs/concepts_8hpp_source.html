@@ -109,7 +109,7 @@ $(function(){initNavTree('concepts_8hpp_source.html',''); initResizable(true); }
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define simd neon</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#elifdef __ARM_FEATURE_MVE</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;arm_mve.h&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd helium</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd mve</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#define SIMDE_ENABLE_NATIVE_ALIASES</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;arm/neon.h&gt;</span></div>
@@ -153,7 +153,7 @@ $(function(){initNavTree('concepts_8hpp_source.html',''); initResizable(true); }
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="conceptsimd_1_1is__quadword.html">   57</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__quadword.html">is_quadword</a> = is_quadword_v&lt;T&gt;;</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">// clang-format off</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span></div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
@@ -186,24 +186,28 @@ $(function(){initNavTree('concepts_8hpp_source.html',''); initResizable(true); }
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>;</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="conceptsimd_1_1is__doubleword.html">   98</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__doubleword.html">is_doubleword</a> = is_doubleword_v&lt;T&gt;;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="conceptsimd_1_1is__vector__type.html">  106</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__vector__type.html">is_vector_type</a> = <a class="code hl_concept" href="conceptsimd_1_1is__doubleword.html">is_doubleword&lt;T&gt;</a> || <a class="code hl_concept" href="conceptsimd_1_1is__quadword.html">is_quadword&lt;T&gt;</a>;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__vector__type.html">is_vector_type</a> = <a class="code hl_concept" href="conceptsimd_1_1is__quadword.html">is_quadword&lt;T&gt;</a>;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}  <span class="comment">// namespace simd</span></div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="preprocessor">#undef simd</span></div>
-<div class="ttc" id="aconceptsimd_1_1is__doubleword_html"><div class="ttname"><a href="conceptsimd_1_1is__doubleword.html">simd::is_doubleword</a></div><div class="ttdoc">Concept to check if a type is a double-word SIMD vector type.</div><div class="ttdef"><b>Definition</b> concepts.hpp:98</div></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">constexpr</span> <span class="keywordtype">bool</span> is_doubleword_v = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="conceptsimd_1_1is__doubleword.html">  103</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__doubleword.html">is_doubleword</a> = is_doubleword_v&lt;T&gt;;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno"><a class="line" href="conceptsimd_1_1is__vector__type.html">  110</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__vector__type.html">is_vector_type</a> = <a class="code hl_concept" href="conceptsimd_1_1is__doubleword.html">is_doubleword&lt;T&gt;</a> || <a class="code hl_concept" href="conceptsimd_1_1is__quadword.html">is_quadword&lt;T&gt;</a>;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="keyword">concept </span><a class="code hl_concept" href="conceptsimd_1_1is__vector__type.html">is_vector_type</a> = <a class="code hl_concept" href="conceptsimd_1_1is__quadword.html">is_quadword&lt;T&gt;</a>;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}  <span class="comment">// namespace simd</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">#undef simd</span></div>
+<div class="ttc" id="aconceptsimd_1_1is__doubleword_html"><div class="ttname"><a href="conceptsimd_1_1is__doubleword.html">simd::is_doubleword</a></div><div class="ttdoc">Concept to check if a type is a double-word SIMD vector type.</div><div class="ttdef"><b>Definition</b> concepts.hpp:103</div></div>
 <div class="ttc" id="aconceptsimd_1_1is__quadword_html"><div class="ttname"><a href="conceptsimd_1_1is__quadword.html">simd::is_quadword</a></div><div class="ttdoc">Concept to check if a type is a quad-word SIMD vector type.</div><div class="ttdef"><b>Definition</b> concepts.hpp:57</div></div>
-<div class="ttc" id="aconceptsimd_1_1is__vector__type_html"><div class="ttname"><a href="conceptsimd_1_1is__vector__type.html">simd::is_vector_type</a></div><div class="ttdoc">Concept to check if a type is a vector type (either double-word or quad-word).</div><div class="ttdef"><b>Definition</b> concepts.hpp:106</div></div>
+<div class="ttc" id="aconceptsimd_1_1is__vector__type_html"><div class="ttname"><a href="conceptsimd_1_1is__vector__type.html">simd::is_vector_type</a></div><div class="ttdoc">Concept to check if a type is a vector type (either double-word or quad-word).</div><div class="ttdef"><b>Definition</b> concepts.hpp:110</div></div>
 <div class="ttc" id="afeatures_8h_html"><div class="ttname"><a href="features_8h.html">features.h</a></div><div class="ttdoc">Header file for SIMD features and platform detection.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

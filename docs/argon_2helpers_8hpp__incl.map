@@ -1,22 +1,22 @@
 <map id="include/argon/helpers.hpp" name="include/argon/helpers.hpp">
-<area shape="rect" id="Node000001" title="Provides utility templates and concepts for type traits and compile&#45;time iteration...." alt="" coords="159,5,350,31"/>
-<area shape="rect" id="Node000002" href="$arm__simd_8hpp_source.html" title=" " alt="" coords="53,79,179,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,33,152,75,150,70,231,28"/>
-<area shape="rect" id="Node000008" href="$features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="211,79,299,104"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="257,31,257,65,252,65,252,31"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="323,79,415,104"/>
-<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="274,28,340,69,338,74,272,33"/>
-<area shape="rect" id="Node000003" href="$vfpv3_8hpp_source.html" title=" " alt="" coords="5,152,197,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="116,105,109,139,104,138,111,104"/>
-<area shape="rect" id="Node000004" href="$vfpv3__int_8hpp_source.html" title=" " alt="" coords="13,313,189,353"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="93,179,78,200,67,226,63,245,67,265,83,301,78,303,61,266,58,245,61,225,74,198,89,176"/>
-<area shape="rect" id="Node000007" href="$vfpv3__float_8hpp_source.html" title=" " alt="" coords="76,225,252,265"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="113,176,142,213,138,216,109,179"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="18,401,81,427"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="91,355,67,391,62,388,87,352"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="105,401,201,427"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="116,352,140,388,136,391,112,355"/>
-<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="152,267,125,304,121,301,148,264"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="221,152,304,177"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="259,104,263,138,257,139,253,105"/>
+<area shape="rect" id="Node000001" title="Provides utility templates and concepts for type traits and compile&#45;time iteration." alt="" coords="89,5,280,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,97,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,33,86,74,84,70,162,28"/>
+<area shape="rect" id="Node000003" href="$arm__simd_8hpp_source.html" title=" " alt="" coords="121,79,248,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,31,187,65,182,65,182,31"/>
+<area shape="rect" id="Node000009" href="$features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="287,79,375,104"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="209,28,296,70,294,75,207,33"/>
+<area shape="rect" id="Node000004" href="$vfpv3_8hpp_source.html" title=" " alt="" coords="81,152,273,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="186,105,182,139,177,138,181,104"/>
+<area shape="rect" id="Node000005" href="$vfpv3__int_8hpp_source.html" title=" " alt="" coords="89,313,265,353"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="169,179,154,200,142,226,138,245,142,265,158,301,153,303,137,266,133,245,137,225,149,198,164,176"/>
+<area shape="rect" id="Node000008" href="$vfpv3__float_8hpp_source.html" title=" " alt="" coords="151,225,327,265"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="188,176,218,213,213,216,184,179"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="93,401,156,427"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="166,355,142,391,138,388,162,352"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="181,401,277,427"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="191,352,216,388,211,391,187,355"/>
+<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="228,267,201,304,196,301,223,264"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="297,152,379,177"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="335,104,338,138,333,139,330,105"/>
 </map>

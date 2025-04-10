@@ -6,8 +6,9 @@ var dir_55bc6843ac02ee57a5c85e0d6affd9dd =
     [ "argon_half.hpp", "argon__half_8hpp_source.html", null ],
     [ "features.h", "features_8h.html", null ],
     [ "helpers.hpp", "argon_2helpers_8hpp.html", "argon_2helpers_8hpp" ],
+    [ "lane.hpp", "lane_8hpp_source.html", null ],
     [ "split.hpp", "split_8hpp_source.html", null ],
     [ "store.hpp", "store_8hpp_source.html", null ],
-    [ "vector.hpp", "vector_8hpp_source.html", null ],
-    [ "vectorize.hpp", "vectorize_8hpp_source.html", null ]
+    [ "utility.hpp", "utility_8hpp_source.html", null ],
+    [ "vector.hpp", "vector_8hpp_source.html", null ]
 ];

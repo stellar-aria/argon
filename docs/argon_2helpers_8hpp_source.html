@@ -101,27 +101,27 @@ $(function(){initNavTree('argon_2helpers_8hpp_source.html',''); initResizable(tr
 </div><!--header-->
 <div class="contents">
 <a href="argon_2helpers_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;../arm_simd.hpp&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="features_8h.html">features.h</a>&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
-<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html">   13</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon_1_1helpers.html">argon::helpers</a> {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// clang-format off</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">   19</a></span><span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">has_smaller_v</a> =</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    std::is_same_v&lt;T, uint16_t&gt;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    || std::is_same_v&lt;T, uint32_t&gt;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    || std::is_same_v&lt;T, uint64_t&gt;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    || std::is_same_v&lt;T, int16_t&gt;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    || std::is_same_v&lt;T, int32_t&gt;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    || std::is_same_v&lt;T, int64_t&gt;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    || std::is_same_v&lt;T, double&gt;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#if ARGON_HAS_HALF_FLOAT</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    || std::is_same_v&lt;T, float&gt;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;../arm_simd.hpp&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="features_8h.html">features.h</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span></div>
+<div class="foldopen" id="foldopen00012" data-start="{" data-end="}">
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html">   12</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon_1_1helpers.html">argon::helpers</a> {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// clang-format off</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">   18</a></span><span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">has_smaller_v</a> =</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    std::is_same_v&lt;T, uint16_t&gt;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    || std::is_same_v&lt;T, uint32_t&gt;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    || std::is_same_v&lt;T, uint64_t&gt;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    || std::is_same_v&lt;T, int16_t&gt;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    || std::is_same_v&lt;T, int32_t&gt;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    || std::is_same_v&lt;T, int64_t&gt;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    || std::is_same_v&lt;T, double&gt;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#if ARGON_HAS_HALF_FLOAT</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    || std::is_same_v&lt;T, float&gt;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    || std::is_same_v&lt;T, float32_t&gt;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    ;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span></div>
@@ -175,28 +175,17 @@ $(function(){initNavTree('argon_2helpers_8hpp_source.html',''); initResizable(tr
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0">   97</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0">NextSmaller_t</a> = <a class="code hl_struct" href="structargon_1_1helpers_1_1NextSmaller.html">NextSmaller&lt;T&gt;::type</a>;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keyword">template</span> &lt;auto Start, auto End, auto Increment, <span class="keyword">class</span> FunctionType&gt;</div>
-<div class="foldopen" id="foldopen00106" data-start="{" data-end="}">
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9">  106</a></span><span class="keyword">constexpr</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9">consteval_for</a>(FunctionType&amp;&amp; f) {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (Start &lt; End) {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        f.template operator()&lt;Start&gt;();</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_function" href="namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9">consteval_for&lt;Start + Increment, End, Increment&gt;</a>(f);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    }</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
-</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>}  <span class="comment">// namespace argon::helpers</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="comment">// clang-format on</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>}  <span class="comment">// namespace argon::helpers</span></div>
 </div>
 <div class="ttc" id="aconceptargon_1_1helpers_1_1has__larger_html"><div class="ttname"><a href="conceptargon_1_1helpers_1_1has__larger.html">argon::helpers::has_larger</a></div><div class="ttdef"><b>Definition</b> helpers.hpp:54</div></div>
 <div class="ttc" id="aconceptargon_1_1helpers_1_1has__smaller_html"><div class="ttname"><a href="conceptargon_1_1helpers_1_1has__smaller.html">argon::helpers::has_smaller</a></div><div class="ttdoc">Concept to check if a type has a smaller corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:50</div></div>
 <div class="ttc" id="afeatures_8h_html"><div class="ttname"><a href="features_8h.html">features.h</a></div><div class="ttdoc">Header file for SIMD features and platform detection.</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html"><div class="ttname"><a href="namespaceargon_1_1helpers.html">argon::helpers</a></div><div class="ttdoc">Contains helper templates and concepts for type manipulation and compile-time utilities.</div><div class="ttdef"><b>Definition</b> helpers.hpp:13</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a158fcb12778893c084560beb096952f9"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a158fcb12778893c084560beb096952f9">argon::helpers::consteval_for</a></div><div class="ttdeci">constexpr void consteval_for(FunctionType &amp;&amp;f)</div><div class="ttdoc">A constexpr function template for compile-time iteration. Used to unroll loops at compile time.</div><div class="ttdef"><b>Definition</b> helpers.hpp:106</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html"><div class="ttname"><a href="namespaceargon_1_1helpers.html">argon::helpers</a></div><div class="ttdoc">Contains helper templates and concepts for type manipulation and compile-time utilities.</div><div class="ttdef"><b>Definition</b> helpers.hpp:12</div></div>
 <div class="ttc" id="anamespaceargon_1_1helpers_html_a496aa311ea4aaaa0489be3c5c10d6c6b"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b">argon::helpers::has_larger_v</a></div><div class="ttdeci">constexpr bool has_larger_v</div><div class="ttdoc">Helper template to determine if a type has a larger corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:35</div></div>
 <div class="ttc" id="anamespaceargon_1_1helpers_html_a8d075bdf1ee9f3d7bb5988ac4603f5a0"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0">argon::helpers::NextSmaller_t</a></div><div class="ttdeci">NextSmaller&lt; T &gt;::type NextSmaller_t</div><div class="ttdoc">Helper alias to get the next smaller type for a given type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:97</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_ab9bfd386df4fd913b4da78380d195aaa"><div class="ttname"><a href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">argon::helpers::has_smaller_v</a></div><div class="ttdeci">constexpr bool has_smaller_v</div><div class="ttdoc">Helper template to determine if a type has a smaller corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:19</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_ab9bfd386df4fd913b4da78380d195aaa"><div class="ttname"><a href="namespaceargon_1_1helpers.html#ab9bfd386df4fd913b4da78380d195aaa">argon::helpers::has_smaller_v</a></div><div class="ttdeci">constexpr bool has_smaller_v</div><div class="ttdoc">Helper template to determine if a type has a smaller corresponding type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:18</div></div>
 <div class="ttc" id="anamespaceargon_1_1helpers_html_ae7872fcc8769f160ebc61fa2d4bc19e5"><div class="ttname"><a href="namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5">argon::helpers::NextLarger_t</a></div><div class="ttdeci">NextLarger&lt; T &gt;::type NextLarger_t</div><div class="ttdoc">Helper alias to get the next larger type for a given type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:75</div></div>
 <div class="ttc" id="astructargon_1_1Bool_html"><div class="ttname"><a href="structargon_1_1Bool.html">argon::type</a></div></div>
 <div class="ttc" id="astructargon_1_1helpers_1_1NextLarger_html"><div class="ttname"><a href="structargon_1_1helpers_1_1NextLarger.html">argon::helpers::NextLarger</a></div><div class="ttdoc">Helper template to determine the next larger type for a given type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:58</div></div>

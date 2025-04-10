@@ -107,7 +107,7 @@ $(function(){initNavTree('lane__helpers_8hpp_source.html',''); initResizable(tru
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;scalar.hpp&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define simd helium</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define simd mve</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd neon</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#endif</span></div>
@@ -399,7 +399,7 @@ $(function(){initNavTree('lane__helpers_8hpp_source.html',''); initResizable(tru
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="preprocessor">  }</span></div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span><span class="keyword">namespace </span>simd {</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>make_lane_helper_dword_1arg(multiply_lane);</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>make_lane_helper_dword_1arg(multiply_long_lane);</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>make_lane_helper_dword_1arg(multiply_double_saturate_long_lane);</div>

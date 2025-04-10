@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['to_5farray_0',['to_array',['../to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be',1,'argon::to_array(T(&amp;a)[N])'],['../to__array_8hpp.html#abd910c56341554adf4728e2f405bc192',1,'argon::to_array(T(&amp;&amp;a)[N])']]]
+  ['iota_0',['Iota',['../classargon_1_1Vector.html#a9d08f142487b96d0b10eca211956b51f',1,'argon::Vector']]],
+  ['iterator_1',['Iterator',['../structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a4bc12fb89ffcdfc20476d9783bac9834',1,'argon::vectorize::load_store::Iterator']]]
 ];

@@ -154,10 +154,14 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a158fcb12778893c084560beb096952f9" id="r_a158fcb12778893c084560beb096952f9"><td class="memTemplParams" colspan="2">template&lt;auto Start, auto End, auto Increment, class FunctionType&gt; </td></tr>
-<tr class="memitem:a158fcb12778893c084560beb096952f9"><td class="memTemplItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a158fcb12778893c084560beb096952f9">consteval_for</a> (FunctionType &amp;&amp;f)</td></tr>
-<tr class="memdesc:a158fcb12778893c084560beb096952f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constexpr function template for compile-time iteration. Used to unroll loops at compile time.  <br /></td></tr>
-<tr class="separator:a158fcb12778893c084560beb096952f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b9e3c8b4b56518879df473c4074abf3" id="r_a4b9e3c8b4b56518879df473c4074abf3"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a4b9e3c8b4b56518879df473c4074abf3"><td class="memTemplItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4b9e3c8b4b56518879df473c4074abf3">vectorizeable_size</a> (size_t size)</td></tr>
+<tr class="memdesc:a4b9e3c8b4b56518879df473c4074abf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the size of a vectorized range.  <br /></td></tr>
+<tr class="separator:a4b9e3c8b4b56518879df473c4074abf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47936a067ac8c15225edace1002978ab" id="r_a47936a067ac8c15225edace1002978ab"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a47936a067ac8c15225edace1002978ab"><td class="memTemplItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a47936a067ac8c15225edace1002978ab">vectorized_size</a> (size_t size)</td></tr>
+<tr class="memdesc:a47936a067ac8c15225edace1002978ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the number of vectorized elements in a range.  <br /></td></tr>
+<tr class="separator:a47936a067ac8c15225edace1002978ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -239,7 +243,7 @@ template&lt;typename T&gt; </div>
 <p>Helper alias to get the next larger type for a given type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>The type to determine the next larger type for. </td></tr>
+    <tr><td class="paramname">T</td><td>The scalar type to determine the next larger type for. </td></tr>
   </table>
   </dd>
 </dl>
@@ -263,7 +267,7 @@ template&lt;typename T&gt; </div>
 <p>Helper alias to get the next smaller type for a given type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>The type to determine the next smaller type for. </td></tr>
+    <tr><td class="paramname">T</td><td>The scalar type to determine the next smaller type for. </td></tr>
   </table>
   </dd>
 </dl>
@@ -271,21 +275,21 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a158fcb12778893c084560beb096952f9" name="a158fcb12778893c084560beb096952f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a158fcb12778893c084560beb096952f9">&#9670;&#160;</a></span>consteval_for()</h2>
+<a id="a4b9e3c8b4b56518879df473c4074abf3" name="a4b9e3c8b4b56518879df473c4074abf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b9e3c8b4b56518879df473c4074abf3">&#9670;&#160;</a></span>vectorizeable_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;auto Start, auto End, auto Increment, class FunctionType&gt; </div>
+template&lt;typename T&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void argon::helpers::consteval_for </td>
+          <td class="memname">size_t argon::helpers::vectorizeable_size </td>
           <td>(</td>
-          <td class="paramtype">FunctionType &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>f</em></span></td><td>)</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -296,22 +300,62 @@ template&lt;auto Start, auto End, auto Increment, class FunctionType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>A constexpr function template for compile-time iteration. Used to unroll loops at compile time. </p>
+<p>Calculates the size of a vectorized range. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Start</td><td>The starting value of the iteration. </td></tr>
-    <tr><td class="paramname">End</td><td>The ending value of the iteration. </td></tr>
-    <tr><td class="paramname">Increment</td><td>The increment value for each iteration step. </td></tr>
-    <tr><td class="paramname">FunctionType</td><td>The callable type to be invoked during each iteration step. </td></tr>
+    <tr><td class="paramname">T</td><td>The type of the elements in the range. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">f</td><td>The callable object to be invoked with the current iteration value. </td></tr>
+    <tr><td class="paramname">size</td><td>The size of the range. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The size of the vectorized range. </dd></dl>
+
+</div>
+</div>
+<a id="a47936a067ac8c15225edace1002978ab" name="a47936a067ac8c15225edace1002978ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47936a067ac8c15225edace1002978ab">&#9670;&#160;</a></span>vectorized_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t argon::helpers::vectorized_size </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculates the number of vectorized elements in a range. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the elements in the range. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>The size of the range. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of vectorized elements in the range. </dd></dl>
 
 </div>
 </div>
@@ -351,7 +395,7 @@ template&lt;typename T&gt; </div>
 <p>Helper template to determine if a type has a larger corresponding type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>The type to check. </td></tr>
+    <tr><td class="paramname">T</td><td>The scalar type to check. </td></tr>
   </table>
   </dd>
 </dl>
@@ -389,11 +433,12 @@ template&lt;typename T&gt; </div>
 <div class="line">    || std::is_same_v&lt;T, double&gt;</div>
 <div class="line"> </div>
 <div class="line">    || std::is_same_v&lt;T, float&gt;</div>
+<div class="line">    || std::is_same_v&lt;T, float32_t&gt;</div>
 </div><!-- fragment -->
 <p>Helper template to determine if a type has a smaller corresponding type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>The type to check. </td></tr>
+    <tr><td class="paramname">T</td><td>The scalar type to check. </td></tr>
   </table>
   </dd>
 </dl>

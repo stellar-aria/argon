@@ -1,5 +1,5 @@
 <map id="include/argon/helpers/to_array.hpp" name="include/argon/helpers/to_array.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="124,5,287,45"/>
+<area shape="rect" id="Node000001" title="Helper functions to convert C&#45;style arrays to std::array of Argon types, mimicking std::to_array." alt="" coords="124,5,287,45"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="124,93,180,119"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,47,170,83,166,80,190,44"/>
 <area shape="rect" id="Node000003" href="$argon__for_8hpp_source.html" title=" " alt="" coords="205,93,315,119"/>

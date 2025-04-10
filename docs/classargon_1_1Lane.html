@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Argon: argon::Lane&lt; vector_type &gt; Class Template Reference</title>
+<title>Argon: argon::Lane&lt; VectorType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -100,36 +100,54 @@ $(function(){initNavTree('classargon_1_1Lane.html',''); initResizable(true); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classargon_1_1Lane-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">argon::Lane&lt; vector_type &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">argon::Lane&lt; VectorType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents a single lane of a SIMD vector.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="lane_8hpp_source.html">lane.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8e145395c31a61c452dd80c71adb2a41" id="r_a8e145395c31a61c452dd80c71adb2a41"><td class="memItemLeft" align="right" valign="top"><a id="a8e145395c31a61c452dd80c71adb2a41" name="a8e145395c31a61c452dd80c71adb2a41"></a>
-ace&#160;</td><td class="memItemRight" valign="bottom"><b>Lane</b> (vector_type &amp;vec, const int lane)</td></tr>
-<tr class="separator:a8e145395c31a61c452dd80c71adb2a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae52fcbf042d635eeb0950a23705d6829" id="r_ae52fcbf042d635eeb0950a23705d6829"><td class="memItemLeft" align="right" valign="top"><a id="ae52fcbf042d635eeb0950a23705d6829" name="ae52fcbf042d635eeb0950a23705d6829"></a>
-ace&#160;</td><td class="memItemRight" valign="bottom"><b>operator scalar_type</b> () const</td></tr>
-<tr class="separator:ae52fcbf042d635eeb0950a23705d6829"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5fdcff7bcf1d1f732bcfd4c8d114ee2" id="r_ac5fdcff7bcf1d1f732bcfd4c8d114ee2"><td class="memItemLeft" align="right" valign="top"><a id="ac5fdcff7bcf1d1f732bcfd4c8d114ee2" name="ac5fdcff7bcf1d1f732bcfd4c8d114ee2"></a>
+<tr class="memitem:a8706639e08e3fff5a9a5e4736a98249e" id="r_a8706639e08e3fff5a9a5e4736a98249e"><td class="memItemLeft" align="right" valign="top"><a id="a8706639e08e3fff5a9a5e4736a98249e" name="a8706639e08e3fff5a9a5e4736a98249e"></a>
+ace&#160;</td><td class="memItemRight" valign="bottom"><b>Lane</b> (VectorType &amp;vec, const int lane)</td></tr>
+<tr class="separator:a8706639e08e3fff5a9a5e4736a98249e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad13bf0c58d676b976a7eb4c456764710" id="r_ad13bf0c58d676b976a7eb4c456764710"><td class="memItemLeft" align="right" valign="top"><a id="ad13bf0c58d676b976a7eb4c456764710" name="ad13bf0c58d676b976a7eb4c456764710"></a>
 ace argon_type&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const scalar_type b)</td></tr>
-<tr class="separator:ac5fdcff7bcf1d1f732bcfd4c8d114ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9aa10cf411307356394ef1c9d61b4877" id="r_a9aa10cf411307356394ef1c9d61b4877"><td class="memItemLeft" align="right" valign="top"><a id="a9aa10cf411307356394ef1c9d61b4877" name="a9aa10cf411307356394ef1c9d61b4877"></a>
-ace argon_type&#160;</td><td class="memItemRight" valign="bottom"><b>Load</b> (scalar_type *ptr)</td></tr>
-<tr class="separator:a9aa10cf411307356394ef1c9d61b4877"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08c5d702bfbe3d394e4518ff5182a1d1" id="r_a08c5d702bfbe3d394e4518ff5182a1d1"><td class="memItemLeft" align="right" valign="top"><a id="a08c5d702bfbe3d394e4518ff5182a1d1" name="a08c5d702bfbe3d394e4518ff5182a1d1"></a>
+<tr class="separator:ad13bf0c58d676b976a7eb4c456764710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26272e70b22ca02e68127f9cfd6ea7d0" id="r_a26272e70b22ca02e68127f9cfd6ea7d0"><td class="memItemLeft" align="right" valign="top"><a id="a26272e70b22ca02e68127f9cfd6ea7d0" name="a26272e70b22ca02e68127f9cfd6ea7d0"></a>
+ace argon_type&#160;</td><td class="memItemRight" valign="bottom"><b>Load</b> (const scalar_type *ptr)</td></tr>
+<tr class="separator:a26272e70b22ca02e68127f9cfd6ea7d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25a8a868c14718edb5e477c9642658a4" id="r_a25a8a868c14718edb5e477c9642658a4"><td class="memItemLeft" align="right" valign="top"><a id="a25a8a868c14718edb5e477c9642658a4" name="a25a8a868c14718edb5e477c9642658a4"></a>
 ace argon_type&#160;</td><td class="memItemRight" valign="bottom"><b>Set</b> (const scalar_type b)</td></tr>
-<tr class="separator:a08c5d702bfbe3d394e4518ff5182a1d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f3dc09e55353f3d44bf30e247129b84" id="r_a0f3dc09e55353f3d44bf30e247129b84"><td class="memItemLeft" align="right" valign="top"><a id="a0f3dc09e55353f3d44bf30e247129b84" name="a0f3dc09e55353f3d44bf30e247129b84"></a>
-ace vector_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>vec</b> ()</td></tr>
-<tr class="separator:a0f3dc09e55353f3d44bf30e247129b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a272e76803ba22b9c8c69a1126f41593f" id="r_a272e76803ba22b9c8c69a1126f41593f"><td class="memItemLeft" align="right" valign="top"><a id="a272e76803ba22b9c8c69a1126f41593f" name="a272e76803ba22b9c8c69a1126f41593f"></a>
+<tr class="separator:a25a8a868c14718edb5e477c9642658a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfcc61c499a45545f6671472da664e84" id="r_acfcc61c499a45545f6671472da664e84"><td class="memItemLeft" align="right" valign="top"><a id="acfcc61c499a45545f6671472da664e84" name="acfcc61c499a45545f6671472da664e84"></a>
+ace scalar_type&#160;</td><td class="memItemRight" valign="bottom"><b>Get</b> () const</td></tr>
+<tr class="separator:acfcc61c499a45545f6671472da664e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a936dc968af53a4fb5e5c688592cef66a" id="r_a936dc968af53a4fb5e5c688592cef66a"><td class="memItemLeft" align="right" valign="top"><a id="a936dc968af53a4fb5e5c688592cef66a" name="a936dc968af53a4fb5e5c688592cef66a"></a>
+ace&#160;</td><td class="memItemRight" valign="bottom"><b>operator scalar_type</b> () const</td></tr>
+<tr class="separator:a936dc968af53a4fb5e5c688592cef66a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1992e85757bce79f7c86c90c33ee63a" id="r_ad1992e85757bce79f7c86c90c33ee63a"><td class="memItemLeft" align="right" valign="top"><a id="ad1992e85757bce79f7c86c90c33ee63a" name="ad1992e85757bce79f7c86c90c33ee63a"></a>
+ace VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>vec</b> ()</td></tr>
+<tr class="separator:ad1992e85757bce79f7c86c90c33ee63a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cf3f1979d4f2980a235f25fdc1e602d" id="r_a4cf3f1979d4f2980a235f25fdc1e602d"><td class="memItemLeft" align="right" valign="top"><a id="a4cf3f1979d4f2980a235f25fdc1e602d" name="a4cf3f1979d4f2980a235f25fdc1e602d"></a>
 ace int&#160;</td><td class="memItemRight" valign="bottom"><b>lane</b> ()</td></tr>
-<tr class="separator:a272e76803ba22b9c8c69a1126f41593f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a4cf3f1979d4f2980a235f25fdc1e602d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>include/argon/<a class="el" href="vector_8hpp_source.html">vector.hpp</a></li>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename VectorType&gt;<br />
+class argon::Lane&lt; VectorType &gt;</div><p>Represents a single lane of a SIMD vector. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">VectorType</td><td>The type of the SIMD vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This class provides access to a single lane of a SIMD vector, allowing for operations on that lane. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/argon/<a class="el" href="lane_8hpp_source.html">lane.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

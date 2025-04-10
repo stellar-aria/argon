@@ -37,6 +37,18 @@ var NAVTREE =
       [ "Target ABI:", "index.html#autotoc_md11", null ],
       [ "Host Platform:", "index.html#autotoc_md12", null ]
     ] ],
+    [ "Vectorized Views", "md_docs_2vectorize.html", [
+      [ "Vectorized read (vectorize::load)", "md_docs_2vectorize.html#autotoc_md14", null ],
+      [ "Vectorized write (vectorize::store)", "md_docs_2vectorize.html#autotoc_md15", null ],
+      [ "Vectorized In-place Read/Write (vectorize::load_store)", "md_docs_2vectorize.html#autotoc_md16", null ],
+      [ "Interleaved Data Access", "md_docs_2vectorize.html#autotoc_md17", [
+        [ "Loading Interleaved Data", "md_docs_2vectorize.html#autotoc_md18", null ],
+        [ "Storing Interleaved Data", "md_docs_2vectorize.html#autotoc_md19", null ]
+      ] ],
+      [ "Key Features", "md_docs_2vectorize.html#autotoc_md20", null ],
+      [ "Notes", "md_docs_2vectorize.html#autotoc_md21", null ],
+      [ "Error Handling", "md_docs_2vectorize.html#autotoc_md22", null ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -52,8 +64,11 @@ var NAVTREE =
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Typedefs", "functions_type.html", null ],
+        [ "Related Symbols", "functions_rela.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -64,7 +79,9 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"a32_8hpp_source.html"
+"a32_8hpp_source.html",
+"classargon_1_1Vector.html#ae686c3a62137e885333b81a76ac94c10",
+"structsimd_1_1make__signed.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

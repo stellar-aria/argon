@@ -106,16 +106,16 @@ $(function(){initNavTree('store__interleaved_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;arm_simd/helpers/vec128.hpp&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define simd helium</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define simd mve</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define simd neon</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>argon::vectorize {</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> scalar_type, <span class="keywordtype">size_t</span> str<span class="keywordtype">id</span>e = 2&gt;</div>
 <div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize__store__interleaved.html">   15</a></span><span class="keyword">struct </span>vectorize_store_interleaved : std::ranges::view_interface&lt;vectorize_store_interleaved&lt;scalar_type, stride&gt;&gt; {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1store__interleaved.html">   15</a></span><span class="keyword">struct </span>store_interleaved : std::ranges::view_interface&lt;store_interleaved&lt;scalar_type, stride&gt;&gt; {</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keyword">using </span>intrinsic_type = simd::Vec128_t&lt;scalar_type&gt;;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> lanes = <span class="keyword">sizeof</span>(intrinsic_type) / <span class="keyword">sizeof</span>(scalar_type);</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> vectorizeable_size(<span class="keywordtype">size_t</span> size) { <span class="keywordflow">return</span> size &amp; ~(lanes - 1); }</div>
@@ -124,12 +124,12 @@ $(function(){initNavTree('store__interleaved_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> <span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00023" data-start="{" data-end="};">
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize__store__interleaved_1_1StoreInterleavedIterator.html">   23</a></span>  <span class="keyword">struct </span>StoreInterleavedIterator {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html">   23</a></span>  <span class="keyword">struct </span>StoreInterleavedIterator {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">using </span>difference_type = std::ptrdiff_t;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">using </span>reference_type = StoreInterleavedIterator&amp;;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    StoreInterleavedIterator() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    StoreInterleavedIterator(scalar_type* ptr) : ptr_{ptr} {}</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    StoreInterleavedIterator(scalar_type* <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>) : ptr_{<a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>} {}</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    std::array&lt;Argon&lt;scalar_type&gt;, stride&gt;&amp; operator*() { <span class="keywordflow">return</span> vecs_; }</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
@@ -163,11 +163,11 @@ $(function(){initNavTree('store__interleaved_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> StoreInterleavedIterator&amp; b) {</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>      <span class="keywordflow">return</span> a.ptr_ == b.ptr_;</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> scalar_type* ptr) { <span class="keywordflow">return</span> a.ptr_ == ptr; }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> scalar_type* <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>) { <span class="keywordflow">return</span> a.ptr_ == <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>; }</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> StoreInterleavedIterator&amp; b) {</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      <span class="keywordflow">return</span> a.ptr_ != b.ptr_;</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> scalar_type* ptr) { <span class="keywordflow">return</span> a.ptr_ != ptr; }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> scalar_type* <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>) { <span class="keywordflow">return</span> a.ptr_ != <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>; }</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">friend</span> <span class="keyword">auto</span> operator&lt;=&gt;(<span class="keyword">const</span> StoreInterleavedIterator&amp; a, <span class="keyword">const</span> StoreInterleavedIterator&amp; b) {</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>      <span class="keywordflow">return</span> a.ptr_ &lt;=&gt; b.ptr_;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
@@ -180,32 +180,33 @@ $(function(){initNavTree('store__interleaved_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keyword">static_assert</span>(std::sized_sentinel_for&lt;StoreInterleavedIterator, StoreInterleavedIterator&gt;);</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keyword">static_assert</span>(std::output_iterator&lt;StoreInterleavedIterator, std::array&lt;Argon&lt;scalar_type&gt;, stride&gt;&gt;);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keyword">using </span>iterator = <a class="code hl_struct" href="structargon_1_1vectorize__store__interleaved_1_1StoreInterleavedIterator.html">StoreInterleavedIterator</a>;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keyword">using </span>iterator = <a class="code hl_struct" href="structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html">StoreInterleavedIterator</a>;</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  iterator begin() { <span class="keywordflow">return</span> start_; }</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  scalar_type* end() { <span class="keywordflow">return</span> start_ + size_; }</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> size_ / (lanes * stride); }</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  <span class="keyword">template</span> &lt;std::ranges::contiguous_range R&gt;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  vectorize_store_interleaved(R&amp;&amp; r)</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>      : start_{&amp;*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  scalar_type* start_;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <span class="keywordtype">size_t</span> size_;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>};</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  store_interleaved(R&amp;&amp; r) : start_{&amp;*<a class="code hl_namespace" href="namespacestd.html">std</a>::ranges::begin(r)}, size_{vectorizeable_size(<a class="code hl_namespace" href="namespacestd.html">std</a>::ranges::size(r))} {}</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  scalar_type* start_;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keywordtype">size_t</span> size_;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>};</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keyword">static_assert</span>(std::ranges::range&lt;vectorize_store_interleaved&lt;int32_t, 2&gt;&gt;);</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="keyword">static_assert</span>(std::ranges::view&lt;vectorize_store_interleaved&lt;int32_t, 2&gt;&gt;);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">template</span> &lt;std::ranges::contiguous_range R, <span class="keywordtype">size_t</span> str<span class="keywordtype">id</span>e = 2&gt;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><a class="code hl_struct" href="structargon_1_1vectorize__store__interleaved.html">vectorize_store_interleaved</a>(R&amp;&amp; r) -&gt; <a class="code hl_struct" href="structargon_1_1vectorize__store__interleaved.html">vectorize_store_interleaved&lt;std::ranges::range_value_t&lt;R&gt;</a>, stride&gt;;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>}  <span class="comment">// namespace argon</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="preprocessor">#undef simd</span></div>
-<div class="ttc" id="astructargon_1_1vectorize__store__interleaved_1_1StoreInterleavedIterator_html"><div class="ttname"><a href="structargon_1_1vectorize__store__interleaved_1_1StoreInterleavedIterator.html">argon::vectorize_store_interleaved::StoreInterleavedIterator</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:23</div></div>
-<div class="ttc" id="astructargon_1_1vectorize__store__interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize__store__interleaved.html">argon::vectorize_store_interleaved</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:15</div></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="keyword">static_assert</span>(std::ranges::range&lt;store_interleaved&lt;int32_t, 2&gt;&gt;);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keyword">static_assert</span>(std::ranges::view&lt;store_interleaved&lt;int32_t, 2&gt;&gt;);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="keyword">template</span> &lt;std::ranges::contiguous_range R, <span class="keywordtype">size_t</span> str<span class="keywordtype">id</span>e = 2&gt;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><a class="code hl_struct" href="structargon_1_1vectorize_1_1store__interleaved.html">store_interleaved</a>(R&amp;&amp; r) -&gt; <a class="code hl_struct" href="structargon_1_1vectorize_1_1store__interleaved.html">store_interleaved&lt;std::ranges::range_value_t&lt;R&gt;</a>, stride&gt;;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>}  <span class="comment">// namespace argon::vectorize</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="preprocessor">#undef simd</span></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:283</div></div>
+<div class="ttc" id="astructargon_1_1vectorize_1_1ptr_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1ptr.html">argon::vectorize::ptr</a></div><div class="ttdef"><b>Definition</b> ptr.hpp:74</div></div>
+<div class="ttc" id="astructargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html">argon::vectorize::store_interleaved::StoreInterleavedIterator</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:23</div></div>
+<div class="ttc" id="astructargon_1_1vectorize_1_1store__interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1store__interleaved.html">argon::vectorize::store_interleaved</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:15</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -108,7 +108,7 @@ $(function(){initNavTree('make__unsigned_8hpp_source.html',''); initResizable(tr
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#define simd neon</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#elifdef __ARM_FEATURE_MVE</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;arm_mve.h&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define simd helium</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define simd mve</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define SIMDE_ENABLE_NATIVE_ALIASES</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;arm/neon.h&gt;</span></div>
@@ -129,7 +129,7 @@ $(function(){initNavTree('make__unsigned_8hpp_source.html',''); initResizable(tr
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>make_unsigned&lt;int64x2_t&gt; { <span class="keyword">using </span>type = uint64x2_t; };</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>make_unsigned&lt;uint64x2_t&gt; { <span class="keyword">using </span>type = uint64x2_t; };</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#if ARGON_HAS_DWORD</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>make_unsigned&lt;int8x8_t&gt; { <span class="keyword">using </span>type = uint8x8_t; };</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>make_unsigned&lt;uint8x8_t&gt; { <span class="keyword">using </span>type = uint8x8_t; };</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span> &lt;&gt; <span class="keyword">struct </span>make_unsigned&lt;int16x4_t&gt; { <span class="keyword">using </span>type = uint16x4_t; };</div>
