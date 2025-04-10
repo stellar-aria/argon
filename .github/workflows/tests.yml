@@ -75,6 +75,12 @@ jobs:
           release: 'latest'
         if: matrix.cpu == 'M55'
 
+      - name: Set Environment Variables for Arm GNU Toolchain
+        run: |
+          echo "CC=arm-none-eabi-gcc" >> $GITHUB_ENV
+          echo "CXX=arm-none-eabi-g++" >> $GITHUB_ENV
+        if: matrix.cpu == 'M55'
+
       - name: Install cross-compilation toolchain and QEMU
         run: |
           sudo debconf-communicate <<< "set man-db/auto-update false"
@@ -95,7 +101,7 @@ jobs:
         run: cmake -B build -G Ninja -DARGON_ENABLE_TESTING=YES -DARGON_TEST_CPU=${{ matrix.cpu }}
 
       - name: Run build
-        run: cmake --build build
+        run: cmake --build build --verbose
 
       - name: Run CTest
         run: sudo ctest --output-on-failure --test-dir build/test/specs
