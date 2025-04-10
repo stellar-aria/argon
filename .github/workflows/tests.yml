@@ -62,8 +62,6 @@ jobs:
       fail-fast: false
       matrix:
         cpu: [A9, M55]
-        exclude:
-          - cpu: M55
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -71,18 +69,27 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: 'latest'
+        if: matrix.cpu == 'M55'
+
       - name: Install cross-compilation toolchain and QEMU
         run: |
           sudo debconf-communicate <<< "set man-db/auto-update false"
           sudo dpkg-reconfigure man-db
           sudo apt-get update
-          sudo apt-get install -y gcc-14-arm-linux-gnueabihf g++-14-arm-linux-gnueabihf qemu-user binfmt-support qemu-user-static qemu-system-arm
+          sudo apt-get install -y qemu-user binfmt-support qemu-user-static qemu-system-arm
+
+      - name: Install GCC for ARMv7
+        run: |
+          sudo apt-get install -y gcc-14-arm-linux-gnueabihf g++-14-arm-linux-gnueabihf
           echo "CC=arm-linux-gnueabihf-gcc-14" >> $GITHUB_ENV
           echo "CXX=arm-linux-gnueabihf-g++-14" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/usr/arm-linux-gnueabihf/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-
-      - name: Symlink ld-linux
-        run: sudo ln -s /usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
+          sudo ln -s /usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
+        if: matrix.cpu == 'A9'
 
       - name: Configure
         run: cmake -B build -G Ninja -DARGON_ENABLE_TESTING=YES -DARGON_TEST_CPU=${{ matrix.cpu }}
@@ -91,7 +98,7 @@ jobs:
         run: cmake --build build
 
       - name: Run CTest
-        run: ctest --output-on-failure --test-dir build/test/specs
+        run: sudo ctest --output-on-failure --test-dir build/test/specs
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4

@@ -45,6 +45,7 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
     return simd::reinterpret<simd::Vec128_t<new_scalar_type>>(this->vec_);
   }
 
+#ifndef ARGON_PLATFORM_MVE
   ace static Argon<scalar_type> Combine(ArgonHalf<scalar_type> low, ArgonHalf<scalar_type> high) {
     return simd::combine(low, high);
   }
@@ -181,20 +182,22 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
 
   ace ArgonHalf<scalar_type> GetHigh() const { return simd::get_high(this->vec_); }
   ace ArgonHalf<scalar_type> GetLow() const { return simd::get_low(this->vec_); }
+#endif
 
   template <typename U>
   ace Argon<U> ConvertTo() const {
     return simd::convert<typename simd::Vec128<U>::type>(this->vec_);
   }
+
   template <typename U, int fracbits>
     requires(std::is_same_v<U, uint32_t> || std::is_same_v<U, int32_t> || std::is_same_v<U, float>)
   ace Argon<U> ConvertTo() const {
     if constexpr (std::is_same_v<U, float>) {
-      return neon::convert_n<fracbits>(this->vec_);
+      return simd::convert_n<fracbits>(this->vec_);
     } else if constexpr (std::is_unsigned_v<U>) {
-      return neon::convert_n_unsigned<fracbits>(this->vec_);
+      return simd::convert_n_unsigned<fracbits>(this->vec_);
     } else if constexpr (std::is_signed_v<U>) {
-      return neon::convert_n_signed<fracbits>(this->vec_);
+      return simd::convert_n_signed<fracbits>(this->vec_);
     }
   }
 
@@ -244,7 +247,9 @@ class Argon : public argon::Vector<simd::Vec128_t<scalar_type>> {
 #endif
   }
 
+#ifndef ARGON_PLATFORM_MVE
   ace Argon<scalar_type> SwapDoublewords() { return Combine(GetHigh(), GetLow()); }
+#endif
 };
 
 template <typename... arg_types>

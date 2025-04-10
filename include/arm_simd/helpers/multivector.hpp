@@ -1,9 +1,20 @@
 #pragma once
 #include <cstddef>
 #include "argon/features.h"
-#include "arm_simd.hpp"
 
-namespace argon::helpers {
+#ifdef __ARM_NEON
+#include <arm_neon.h>
+#define simd neon
+#elifdef __ARM_FEATURE_MVE
+#include <arm_mve.h>
+#define simd mve
+#else
+#define SIMDE_ENABLE_NATIVE_ALIASES
+#include <arm/neon.h>
+#define simd neon
+#endif
+
+namespace simd {
 
 /// @brief  Helper template for multi-vector types of different SIMD types and sizes.
 /// @tparam T The SIMD type (e.g., int8x16_t, float32x4_t).
