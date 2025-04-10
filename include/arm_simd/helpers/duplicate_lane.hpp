@@ -7,7 +7,7 @@
 #include "vec64.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -21,7 +21,7 @@
 #endif
 
 namespace simd {
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <typename VectorType>
 nce VectorType duplicate_lane(Vec64_t<Scalar_t<VectorType>> vec, const int i) {
   constexpr int lanes = sizeof(VectorType) / sizeof(Scalar_t<VectorType>);

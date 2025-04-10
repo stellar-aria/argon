@@ -21,10 +21,10 @@
 
 #elifdef __ARM_FEATURE_MVE
 
+#include "arm_simd/mve/int.hpp"
+
 #if (__ARM_FEATURE_MVE & 2)
-#include "arm_simd/helium/float.hpp"
-#else
-#include "arm_simd/helium/int.hpp"
+#include "arm_simd/mve/float.hpp"
 #endif
 
 #else

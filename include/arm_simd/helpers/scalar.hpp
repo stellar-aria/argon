@@ -7,7 +7,7 @@
 #define simd neon
 #elifdef __ARM_FEATURE_MVE
 #include <arm_mve.h>
-#define simd helium
+#define simd mve
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
 #include <arm/neon.h>
@@ -43,7 +43,7 @@ template <> struct Scalar<float16x8_t> { using type = float16_t; };
 template <> struct Scalar<float64x2_t> { using type = double; };
 #endif
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <> struct Scalar<int8x8_t> { using type = int8_t; };
 template <> struct Scalar<uint8x8_t> { using type = uint8_t; };
 template <> struct Scalar<int16x4_t> { using type = int16_t; };

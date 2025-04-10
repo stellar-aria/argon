@@ -5,7 +5,7 @@
 #include "scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -297,7 +297,7 @@
   }
 
 namespace simd {
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 make_lane_helper_dword_1arg(multiply_lane);
 make_lane_helper_dword_1arg(multiply_long_lane);
 make_lane_helper_dword_1arg(multiply_double_saturate_long_lane);

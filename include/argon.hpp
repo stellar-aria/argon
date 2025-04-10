@@ -12,7 +12,7 @@
 #include "arm_simd/helpers/scalar.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif

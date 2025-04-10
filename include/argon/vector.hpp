@@ -6,6 +6,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include "arm_simd.hpp"
 #include "arm_simd/helpers.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec64.hpp"
@@ -17,7 +18,7 @@
 #include "lane.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -40,19 +41,6 @@ concept arithmetic = std::is_arithmetic_v<T>;
 /// @details This template uses a variadic template to check if T is one of the types in Ts.
 template <typename T, typename... Ts>
 inline constexpr bool is_one_of = std::disjunction_v<std::is_same<T, Ts>...>;
-
-/// @brief Represents a single lane of a SIMD vector.
-/// @tparam VectorType The type of the SIMD vector.
-/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
-template <typename VectorType>
-class Lane;
-
-/// @brief Represents a single lane of a SIMD vector, where the lane's index is known at compile time.
-/// @tparam VectorType The type of the SIMD vector.
-/// @tparam LaneIndex The index of the lane in the SIMD vector.
-/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
-template <size_t LaneIndex, typename VectorType>
-class ConstLane;
 
 /// @brief Represents a SIMD vector with various operations.
 /// @tparam VectorType The type of the SIMD vector. (e.g. int32x4_t, float32x4_t)
@@ -90,6 +78,7 @@ class Vector {
   /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
   ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
+#ifndef ARGON_PLATFORM_MVE
   /// @brief Constructs a Vector from a Lane object.
   /// @param lane The Lane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
@@ -101,6 +90,7 @@ class Vector {
   /// @param lane The ConstLane object to construct from.
   template <size_t LaneIndex>
   ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
+#endif
 
   template <typename... ArgTypes>
     requires(sizeof...(ArgTypes) > 1)
@@ -288,26 +278,59 @@ class Vector {
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
-  ace const lane_type GetLane(const size_t i) const { return {vec_, static_cast<int>(i)}; }
-  ace lane_type GetLane(const size_t i) { return {vec_, static_cast<int>(i)}; }
+  ace const lane_type GetLane(const size_t i) const {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[i];
+#else
+    return {vec_, static_cast<int>(i)};
+#endif
+  }
+  ace lane_type GetLane(const size_t i) {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[i];
+#else
+    return {vec_, static_cast<int>(i)};
+#endif
+  }
 
   /// @brief Get a single lane of the vector by index.
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
-  ace const lane_type GetLane(const int i) const { return {vec_, i}; }
-  ace lane_type GetLane(const int i) { return {vec_, i}; }
+  ace const lane_type GetLane(const int i) const {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[i];
+#else
+    return {vec_, i};
+#endif
+  }
+
+  ace lane_type GetLane(const int i) {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[i];
+#else
+    return {vec_, i};
+#endif
+  }
 
   /// @brief Get a single lane of the vector by index.
   /// @tparam LaneIndex The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   template <size_t LaneIndex>
   ace const const_lane_type<LaneIndex> GetLane() const {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[LaneIndex];
+#else
     return vec_;
+#endif
   }
 
   template <size_t LaneIndex>
   ace const_lane_type<LaneIndex> GetLane() {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[LaneIndex];
+#else
     return vec_;
+#endif
   }
 
   /// Get the last lane of the vector.
@@ -372,7 +395,13 @@ class Vector {
 
   /// Subtract two vectors, taking the absolute value of the result and adding a third vector.
   /// @details Equivalent to a + |b - c|
-  ace argon_type SubtractAbsAdd(argon_type b, argon_type c) const { return simd::subtract_absolute_add(vec_, b, c); }
+  ace argon_type SubtractAbsAdd(argon_type b, argon_type c) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::add(vec_, mve::subtract_absolute(b, c));
+#else
+    return neon::subtract_absolute_add(vec_, b, c);
+#endif
+  }
 
   /// Multiply two vectors
   ace argon_type Multiply(argon_type b) const {
@@ -392,14 +421,16 @@ class Vector {
     }
   }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Multiply a vector by a lane value
-  ace argon_type Multiply(lane_type b) const { return simd::multiply_lane(vec_, b.vec(), b.lane()); }
+  ace argon_type Multiply(lane_type b) const { return neon::multiply_lane(vec_, b.vec(), b.lane()); }
 
   ///  Multiply a vector by a lane value
   template <size_t LaneIndex>
   ace argon_type Multiply(const_lane_type<LaneIndex> b) const {
-    return simd::multiply_lane<LaneIndex>(vec_, b.vec());
+    return neon::multiply_lane(vec_, b.vec(), b.lane());
   }
+#endif
 
   /// Multiply two vectors and add a third vector
   /// @details Equivalent to a + (b * c).
@@ -425,6 +456,7 @@ class Vector {
   /// @details Equivalent to a + (b * c).
   ace argon_type MultiplyAdd(scalar_type b, argon_type c) const { return MultiplyAdd(c, b); }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Multiply a vector by a lane value and add a third vector
   /// @details Equivalent to a + (b * c).
   ace argon_type MultiplyAdd(argon_type b, lane_type c) const {
@@ -447,36 +479,39 @@ class Vector {
   ace argon_type MultiplyAdd(const_lane_type<LaneIndex> b, argon_type c) const {
     return MultiplyAdd(c, b);
   }
+#endif
 
   /// Multiply two vectors and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
-      return vec_ - b.vec_ * c.vec_;
-    } else {
-      return simd::multiply_subtract(vec_, b, c);
-    }
+#if ARGON_USE_COMPILER_EXTENSIONS
+    return vec_ - b.vec_ * c.vec_;
+#else
+    return simd::multiply_subtract(vec_, b, c);
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
-      return vec_ - b.vec_ * c;
-    } else {
-      return simd::multiply_subtract(vec_, b, c);
-    }
+#if ARGON_USE_COMPILER_EXTENSIONS
+    return vec_ - b.vec_ * c;
+#else
+    return simd::multiply_subtract(vec_, b, c);
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(scalar_type b, argon_type c) const { return MultiplySubtract(c, b); }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Multiply a vector by a lane value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, lane_type c) const {
     return simd::multiply_subtract_lane(vec_, b.vec(), c.vec(), c.lane());
   }
+#endif
 
   /// Multiply two Q31 fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
@@ -486,11 +521,13 @@ class Vector {
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
   ace argon_type MultiplyQ31(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Multiply a Q31 fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
   ace argon_type MultiplyQ31(lane_type l) const {
     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
   }
+#endif
 
   /// Multiply two fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
@@ -500,11 +537,13 @@ class Vector {
   /// @details This is equivalent to round(a * b) >> 31
   ace argon_type MultiplyRoundQ31(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Multiply a fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
   ace argon_type MultiplyRoundQ31(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
+#endif
 
   /// Get the absolute value of the vector.
   ace argon_type Absolute() const { return simd::abs(vec_); }
@@ -514,7 +553,15 @@ class Vector {
   ace argon_type ReciprocalEstimate() const
     requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
   {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
+      std::numeric_limits<uint32_t>::max() / vec_;
+    } else {
+      return 1.f / vec_;
+    }
+#else
     return simd::reciprocal_estimate(vec_);
+#endif
   }
 
   /// Multiply-add three fixed-point vectors, returning a fixed-point sum
@@ -702,7 +749,11 @@ class Vector {
   /// @details Equivalent to a + (b >> n).
   template <int n>
   ace argon_type ShiftRightAccumulate(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ + (b >> n);
+#else
     return simd::shift_right_accumulate<n>(vec_, b);
+#endif
   }
 
   /// Shift the elements of the `b` vector to the right by a specified number of bits, and then add the result to this
@@ -710,7 +761,11 @@ class Vector {
   /// @details Equivalent to a + (b >> n).
   template <int n>
   ace argon_type ShiftRightAccumulateRound(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ + mve::shift_right_round<n>(b);
+#else
     return simd::shift_right_accumulate_round<n>(vec_, b);
+#endif
   }
 
   /// Shift the elements of the vector to the right by a specified number of bits, ORing the result with the vector
@@ -722,17 +777,23 @@ class Vector {
   }
 
   /// Load a vector from a pointer
-  ace static argon_type Load(const scalar_type* ptr) { return simd::load1<VectorType>(ptr); }
+  ace static argon_type Load(const scalar_type* ptr) {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::load1(ptr);
+#else
+    return neon::load1<VectorType>(ptr);
+#endif
+  }
 
   /// Load a vector from a pointer, duplicating the value across all lanes
   ace static argon_type LoadCopy(const scalar_type* ptr) {
-    if constexpr (platform == Platform::MVE) {
-      scalar_type val = *ptr;
-      VectorType vec;
-      utility::constexpr_for<0, lanes, 1>([val, &vec](auto i) { vec[i] = val; });
-    } else {
-      return simd::load1_duplicate<VectorType>(ptr);
-    }
+#ifdef ARGON_PLATFORM_MVE
+    scalar_type val = *ptr;
+    VectorType vec;
+    utility::constexpr_for<0, lanes, 1>([val, &vec](auto i) { vec[i] = val; });
+#else
+    return simd::load1_duplicate<VectorType>(ptr);
+#endif
   }
 
   ///@brief Using a base address and a vector of offset indices and a base pointer, create a new vector
@@ -778,15 +839,25 @@ class Vector {
   /// For example: {r0, g0, b0, r1, g1, b1} will become {{r0, r1}, {g0, g1}, {b0, b1}}
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
+#ifdef ARGON_PLATFORM_MVE
+    static_assert(stride == 2 || stride == 4,
+                  "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
+    if constexpr (stride == 2) {
+      return argon::to_array(mve::load2(ptr).val);
+    } else if constexpr (stride == 4) {
+      return argon::to_array(mve::load4(ptr).val);
+    }
+#else
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     using multivec_type = helpers::MultiVector_t<VectorType, stride>;
     if constexpr (stride == 2) {
-      return argon::to_array(simd::load2<multivec_type>(ptr).val);
+      return argon::to_array(neon::load2<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
-      return argon::to_array(simd::load3<multivec_type>(ptr).val);
+      return argon::to_array(neon::load3<multivec_type>(ptr).val);
     } else if constexpr (stride == 4) {
-      return argon::to_array(simd::load4<multivec_type>(ptr).val);
+      return argon::to_array(neon::load4<multivec_type>(ptr).val);
     }
+#endif
   }
 
   /// @brief Load multiple vectors from a pointer, duplicating the value across all lanes
@@ -796,6 +867,15 @@ class Vector {
   /// Example: {r0, g0, b0, r1, g1, b1} will become {{r0, r0}, {g0, g0}, {b0, b0}}
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadCopyInterleaved(const scalar_type* ptr) {
+#ifdef ARGON_PLATFORM_MVE
+    static_assert(stride == 2 || stride == 4,
+                  "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
+    if constexpr (stride == 2) {
+      return {mve::duplicate(*ptr++), mve::duplicate(*ptr++)};
+    } else if constexpr (stride == 4) {
+      return {mve::duplicate(*ptr++), mve::duplicate(*ptr++), mve::duplicate(*ptr++), mve::duplicate(*ptr)};
+    }
+#else
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
     using multivec_type = helpers::MultiVector<VectorType, stride>::type;
@@ -806,6 +886,7 @@ class Vector {
     } else if constexpr (stride == 4) {
       return argon::to_array(simd::load4_duplicate<multivec_type>(ptr).val);
     }
+#endif
   }
 
   /// @brief Load a value from a pointer into a vector at the lane index `lane`, de-interleaving
@@ -814,28 +895,37 @@ class Vector {
   /// @param multi The multi-vector to load into
   /// @param ptr The pointer to load from
   /// @return The new multi-vector
-  template <size_t lane, size_t stride>
-  ace static std::array<argon_type, stride> LoadToLaneInterleaved(helpers::MultiVector_t<VectorType, stride> multi,
+  template <size_t LaneIndex, size_t Stride>
+  ace static std::array<argon_type, Stride> LoadToLaneInterleaved(helpers::MultiVector_t<VectorType, Stride> multi,
                                                                   const scalar_type* ptr) {
-    if constexpr (stride == 2) {
+    static_assert(Stride > 1 && Stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
+#ifdef ARGON_PLATFORM_MVE
+    auto out = multi;
+    utility::constexpr_for<0, Stride, 1>([&](auto i) {  //<
+      out.val[i][LaneIndex] = *ptr;
+      ptr += lanes;
+    });
+#else
+    if constexpr (Stride == 2) {
       if constexpr (simd::is_quadword_v<VectorType>) {
-        return argon::to_array(simd::load2_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load2_lane_quad<LaneIndex>(ptr, multi).val);
       } else {
-        return argon::to_array(simd::load2_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load2_lane<LaneIndex>(ptr, multi).val);
       }
-    } else if constexpr (stride == 3) {
+    } else if constexpr (Stride == 3) {
       if constexpr (simd::is_quadword_v<VectorType>) {
-        return argon::to_array(simd::load3_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load3_lane_quad<LaneIndex>(ptr, multi).val);
       } else {
-        return argon::to_array(simd::load3_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load3_lane<LaneIndex>(ptr, multi).val);
       }
-    } else if constexpr (stride == 4) {
+    } else if constexpr (Stride == 4) {
       if constexpr (simd::is_quadword_v<VectorType>) {
-        return argon::to_array(simd::load4_lane_quad<lane>(ptr, multi).val);
+        return argon::to_array(simd::load4_lane_quad<LaneIndex>(ptr, multi).val);
       } else {
-        return argon::to_array(simd::load4_lane<lane>(ptr, multi).val);
+        return argon::to_array(simd::load4_lane<LaneIndex>(ptr, multi).val);
       }
     }
+#endif
   }
 
   /// @copydoc LoadToLaneInterleaved
@@ -893,6 +983,13 @@ class Vector {
   template <size_t n>
   ace static std::array<argon_type, n> LoadMulti(const scalar_type* ptr) {
     static_assert(n > 1 && n < 5, "LoadMulti can only be performed with a size of 2, 3, or 4");
+#ifdef ARGON_PLATFORM_MVE
+    std::array<argon_type, n> multi{};
+    utility::constexpr_for<0, n, 1>([&]<int i>() {  //<
+      multi[i] = *ptr;
+      ptr += lanes;
+    });
+#else
 #if defined(__clang__) || (__GNUC__ > 13)
     if constexpr (n == 2) {
       return argon::to_array(simd::load1_x2(ptr).val);
@@ -919,6 +1016,7 @@ class Vector {
       return {a, b, c, d};
     }
 #endif
+#endif
   }
 
   /// @brief Store the vector to a pointer
@@ -928,11 +1026,16 @@ class Vector {
   /// @brief Store a lane of the vector to a pointer
   /// @param ptr The pointer to store to
   /// @tparam lane The lane to store
-  template <int lane>
+  template <int LaneIndex>
   ace void StoreLaneTo(scalar_type* ptr) {
-    simd::store1_lane<lane>(ptr, vec_);
+#ifdef ARGON_PLATFORM_MVE
+    *ptr = vec_[LaneIndex];
+#else
+    simd::store1_lane<LaneIndex>(ptr, vec_);
+#endif
   }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Pairwise ops
 
   /// @brief Pairwise add two vectors, returning the sum of each pair of lanes.
@@ -949,6 +1052,7 @@ class Vector {
   /// @details Given a pair of vector {a0, a1, a2, a3} and {b0, b1, b2, b3},
   /// the result is {max(a0, a1), max(a2, b2), max(b0, b1), max(b2, b3)}
   ace argon_type PairwiseMin(argon_type b) const { return simd::pairwise_min(vec_, b); }
+#endif
 
   /// Bitwise ops
 
@@ -1011,6 +1115,7 @@ class Vector {
   /// @copydoc BitwiseAndNot
   ace argon_type BitwiseClear(argon_type b) const { BitwiseAndNot(b); }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Bitwise select between two vectors, using the current vector as a mask.
   /// @details Equivalent to (mask & b) | (~mask & c).
   template <typename ArgType>
@@ -1032,6 +1137,7 @@ class Vector {
 
   /// @copydoc CompareTestNonzero
   ace argon_type TestNonzero() const { return simd::compare_test_nonzero(vec_, argon_type{1}); }
+#endif
 
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
   /// @details Equivalent to std::countl_one(a).

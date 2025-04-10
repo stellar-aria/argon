@@ -8,10 +8,10 @@
 #define nce inline
 #endif
 
-namespace helium {
+namespace mve {
 // clang-format off
 template <typename T> nce T create(uint64_t a, uint64_t b);
-template <typename T> nce T uninitialized( void);
+template <typename T> nce T uninitialized();
 template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float16x8_t a, mve_pred16_t p);
 template <typename T> nce T convert_round_to_nearest_with_ties_away_from_zero(float32x4_t a, mve_pred16_t p);
 template <typename T> nce T convert_round_to_nearest_with_ties_to_even(float16x8_t a, mve_pred16_t p);
@@ -20,50 +20,60 @@ template <typename T> nce T convert_round_toward_positive_infinity(float16x8_t a
 template <typename T> nce T convert_round_toward_positive_infinity(float32x4_t a, mve_pred16_t p);
 template <typename T> nce T convert_round_toward_negative_infinity(float16x8_t a, mve_pred16_t p);
 template <typename T> nce T convert_round_toward_negative_infinity(float32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(float16x8_t inactive, int16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(float16x8_t inactive, uint16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(float32x4_t inactive, int32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(float32x4_t inactive, uint32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(uint16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(int16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(int32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(uint32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(int16x8_t inactive, float16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(int32x4_t inactive, float32x4_t a, mve_pred16_t p);
+template <typename T> nce T convert(uint16x8_t inactive, float16x8_t a, mve_pred16_t p);
+template <typename T> nce T convert(uint32x4_t inactive, float32x4_t a, mve_pred16_t p);
 template <typename T> nce T convert(float16x8_t a, mve_pred16_t p);
 template <typename T> nce T convert(float32x4_t a, mve_pred16_t p);
-template <typename T> nce T convert(float16x8_t a, const int imm6, mve_pred16_t p);
-template <typename T> nce T convert(float32x4_t a, const int imm6, mve_pred16_t p);
 [[gnu::always_inline]] nce uint16x8_t convert_round_to_nearest_with_ties_away_from_zero(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtaq_m_u16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce uint16x8_t convert_round_to_nearest_with_ties_to_even(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtnq_m_u16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce uint16x8_t convert_round_toward_positive_infinity(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtpq_m_u16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce uint16x8_t convert_round_toward_negative_infinity(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtmq_m_u16_f16(inactive, a, p); }
-[[gnu::always_inline]] nce uint16x8_t convert(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_u16_f16(inactive, a, p); }
-[[gnu::always_inline]] nce uint16x8_t convert(uint16x8_t inactive, float16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_u16_f16(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a, mve_pred16_t p) { return vcvtq_x_f16_u16(a, p); }
-[[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_f16_u16(a, imm6, p); }
+template <> [[gnu::always_inline]] nce uint16x8_t convert(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_u16_f16(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce uint16x8_t convert(uint16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_n_u16_f16(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a, mve_pred16_t p) { return vcvtq_x_f16_u16(a, p); }
+template <int imm6>[[gnu::always_inline]] nce float16x8_t convert(uint16x8_t a, mve_pred16_t p) { return vcvtq_x_n_f16_u16(a, imm6, p); }
 [[gnu::always_inline]] nce int16x8_t convert_round_to_nearest_with_ties_away_from_zero(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtaq_m_s16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce int16x8_t convert_round_to_nearest_with_ties_to_even(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtnq_m_s16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce int16x8_t convert_round_toward_positive_infinity(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtpq_m_s16_f16(inactive, a, p); }
 [[gnu::always_inline]] nce int16x8_t convert_round_toward_negative_infinity(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtmq_m_s16_f16(inactive, a, p); }
-[[gnu::always_inline]] nce int16x8_t convert(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_s16_f16(inactive, a, p); }
-[[gnu::always_inline]] nce int16x8_t convert(int16x8_t inactive, float16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_s16_f16(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float16x8_t convert(int16x8_t a, mve_pred16_t p) { return vcvtq_x_f16_s16(a, p); }
-[[gnu::always_inline]] nce float16x8_t convert(int16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_f16_s16(a, imm6, p); }
+template <> [[gnu::always_inline]] nce int16x8_t convert(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_s16_f16(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce int16x8_t convert(int16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtq_m_n_s16_f16(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float16x8_t convert(int16x8_t a, mve_pred16_t p) { return vcvtq_x_f16_s16(a, p); }
+template <int imm6>[[gnu::always_inline]] nce float16x8_t convert(int16x8_t a, mve_pred16_t p) { return vcvtq_x_n_f16_s16(a, imm6, p); }
 [[gnu::always_inline]] nce int32x4_t convert_round_to_nearest_with_ties_away_from_zero(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtaq_m_s32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce int32x4_t convert_round_to_nearest_with_ties_to_even(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtnq_m_s32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce int32x4_t convert_round_toward_positive_infinity(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtpq_m_s32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce int32x4_t convert_round_toward_negative_infinity(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtmq_m_s32_f32(inactive, a, p); }
-[[gnu::always_inline]] nce int32x4_t convert(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_s32_f32(inactive, a, p); }
-[[gnu::always_inline]] nce int32x4_t convert(int32x4_t inactive, float32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_s32_f32(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a, mve_pred16_t p) { return vcvtq_x_f32_s32(a, p); }
-[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_f32_s32(a, imm6, p); }
+template <> [[gnu::always_inline]] nce int32x4_t convert(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_s32_f32(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce int32x4_t convert(int32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_n_s32_f32(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float32x4_t convert(int32x4_t a, mve_pred16_t p) { return vcvtq_x_f32_s32(a, p); }
+template <int imm6>[[gnu::always_inline]] nce float32x4_t convert(int32x4_t a, mve_pred16_t p) { return vcvtq_x_n_f32_s32(a, imm6, p); }
 template <int offset>[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t addr) { return vldrwq_gather_base_f32(addr, offset); }
-[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t addr, const int offset, mve_pred16_t p) { return vldrwq_gather_base_z_f32(addr, offset, p); }
+template <int offset>[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t addr, mve_pred16_t p) { return vldrwq_gather_base_z_f32(addr, offset, p); }
 template <int offset>[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t *addr) { return vldrwq_gather_base_wb_f32(addr, offset); }
+template <int offset>[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t addr, float32x4_t value) { return vstrwq_scatter_base_f32(addr, offset, value); }
+template <int offset>[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t addr, float32x4_t value, mve_pred16_t p) { return vstrwq_scatter_base_p_f32(addr, offset, value, p); }
+template <int offset>[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t *addr, float32x4_t value) { return vstrwq_scatter_base_wb_f32(addr, offset, value); }
+template <int offset>[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t *addr, float32x4_t value, mve_pred16_t p) { return vstrwq_scatter_base_wb_p_f32(addr, offset, value, p); }
 [[gnu::always_inline]] nce uint32x4_t convert_round_to_nearest_with_ties_away_from_zero(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtaq_m_u32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce uint32x4_t convert_round_to_nearest_with_ties_to_even(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtnq_m_u32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce uint32x4_t convert_round_toward_positive_infinity(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtpq_m_u32_f32(inactive, a, p); }
 [[gnu::always_inline]] nce uint32x4_t convert_round_toward_negative_infinity(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtmq_m_u32_f32(inactive, a, p); }
-[[gnu::always_inline]] nce uint32x4_t convert(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_u32_f32(inactive, a, p); }
-[[gnu::always_inline]] nce uint32x4_t convert(uint32x4_t inactive, float32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_u32_f32(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a, mve_pred16_t p) { return vcvtq_x_f32_u32(a, p); }
-[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t *addr, const int offset, mve_pred16_t p) { return vldrwq_gather_base_wb_z_f32(addr, offset, p); }
-[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t addr, const int offset, float32x4_t value) { return vstrwq_scatter_base_f32(addr, offset, value); }
-[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t addr, const int offset, float32x4_t value, mve_pred16_t p) { return vstrwq_scatter_base_p_f32(addr, offset, value, p); }
-[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t *addr, const int offset, float32x4_t value) { return vstrwq_scatter_base_wb_f32(addr, offset, value); }
-[[gnu::always_inline]] nce void store_word_scatter_base(uint32x4_t *addr, const int offset, float32x4_t value, mve_pred16_t p) { return vstrwq_scatter_base_wb_p_f32(addr, offset, value, p); }
-[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_f32_u32(a, imm6, p); }
+template <> [[gnu::always_inline]] nce uint32x4_t convert(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_u32_f32(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce uint32x4_t convert(uint32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vcvtq_m_n_u32_f32(inactive, a, imm6, p); }
+template <int offset>[[gnu::always_inline]] nce float32x4_t load_word_gather_base(uint32x4_t *addr, mve_pred16_t p) { return vldrwq_gather_base_wb_z_f32(addr, offset, p); }
+template <> [[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a, mve_pred16_t p) { return vcvtq_x_f32_u32(a, p); }
+template <int imm6>[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a, mve_pred16_t p) { return vcvtq_x_n_f32_u32(a, imm6, p); }
 [[gnu::always_inline]] nce float16x8_t reverse_32bit(float16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vrev32q_m_f16(inactive, a, p); }
 [[gnu::always_inline]] nce float16x8_t reverse_64bit(float16x8_t inactive, float16x8_t a, mve_pred16_t p) { return vrev64q_m_f16(inactive, a, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float16x8_t a, float16x8_t b) { return vcmpeqq_f16(a, b); }
@@ -101,6 +111,8 @@ template <int offset>[[gnu::always_inline]] nce float32x4_t load_word_gather_bas
 [[gnu::always_inline]] nce float16x8_t subtract(float16x8_t a, float16x8_t b, mve_pred16_t p) { return vsubq_x_f16(a, b, p); }
 [[gnu::always_inline]] nce float16x8_t add(float16x8_t inactive, float16x8_t a, float16_t b, mve_pred16_t p) { return vaddq_m_n_f16(inactive, a, b, p); }
 [[gnu::always_inline]] nce float16x8_t multiply(float16x8_t inactive, float16x8_t a, float16_t b, mve_pred16_t p) { return vmulq_m_n_f16(inactive, a, b, p); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_scalar_fused(float16x8_t m1, float16x8_t m2, float16_t add) { return vfmasq_n_f16(m1, m2, add); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_scalar_fused(float16x8_t m1, float16x8_t m2, float16_t add, mve_pred16_t p) { return vfmasq_m_n_f16(m1, m2, add, p); }
 [[gnu::always_inline]] nce float16x8_t subtract(float16x8_t inactive, float16x8_t a, float16_t b, mve_pred16_t p) { return vsubq_m_n_f16(inactive, a, b, p); }
 [[gnu::always_inline]] nce float16x8_t abs(float16x8_t a, mve_pred16_t p) { return vabsq_x_f16(a, p); }
 [[gnu::always_inline]] nce float16x8_t add(float16x8_t a, float16_t b) { return vaddq_n_f16(a, b); }
@@ -139,10 +151,10 @@ template <> [[gnu::always_inline]] nce uint16x8_t convert_round_toward_negative_
 [[gnu::always_inline]] nce float32x4_t convert_bottom(float16x8_t a) { return vcvtbq_f32_f16(a); }
 [[gnu::always_inline]] nce float32x4_t convert_bottom(float16x8_t a, mve_pred16_t p) { return vcvtbq_x_f32_f16(a, p); }
 [[gnu::always_inline]] nce float32x4_t convert_top(float16x8_t a) { return vcvttq_f32_f16(a); }
-[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, uint16x8_t a, mve_pred16_t p) { return vcvtq_m_f16_u16(inactive, a, p); }
-[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, uint16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_f16_u16(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, int16x8_t a, mve_pred16_t p) { return vcvtq_m_f16_s16(inactive, a, p); }
-[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, int16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_f16_s16(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, uint16x8_t a, mve_pred16_t p) { return vcvtq_m_f16_u16(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, uint16x8_t a, mve_pred16_t p) { return vcvtq_m_n_f16_u16(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, int16x8_t a, mve_pred16_t p) { return vcvtq_m_f16_s16(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce float16x8_t convert(float16x8_t inactive, int16x8_t a, mve_pred16_t p) { return vcvtq_m_n_f16_s16(inactive, a, imm6, p); }
 [[gnu::always_inline]] nce float16x8_t bitwise_clear(float16x8_t inactive, float16x8_t a, float16x8_t b, mve_pred16_t p) { return vbicq_m_f16(inactive, a, b, p); }
 [[gnu::always_inline]] nce float16x8_t bitwise_xor(float16x8_t inactive, float16x8_t a, float16x8_t b, mve_pred16_t p) { return veorq_m_f16(inactive, a, b, p); }
 [[gnu::always_inline]] nce float16x8_t bitwise_or_not(float16x8_t inactive, float16x8_t a, float16x8_t b, mve_pred16_t p) { return vornq_m_f16(inactive, a, b, p); }
@@ -184,6 +196,8 @@ template <> [[gnu::always_inline]] nce uint16x8_t convert_round_toward_negative_
 [[gnu::always_inline]] nce float32x4_t convert_top(float16x8_t a, mve_pred16_t p) { return vcvttq_x_f32_f16(a, p); }
 template <> [[gnu::always_inline]] nce int16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_s16_f16(a, p); }
 template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_u16_f16(a, p); }
+template <int imm6>[[gnu::always_inline]] nce int16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_n_s16_f16(a, imm6, p); }
+template <int imm6>[[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_n_u16_f16(a, imm6, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float16x8_t a, float16_t b) { return vcmpeqq_n_f16(a, b); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float16x8_t a, float16_t b, mve_pred16_t p) { return vcmpeqq_m_n_f16(a, b, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_not_equal(float16x8_t a, float16_t b) { return vcmpneq_n_f16(a, b); }
@@ -196,14 +210,12 @@ template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, mve_pre
 [[gnu::always_inline]] nce mve_pred16_t compare_less_than_or_equal(float16x8_t a, float16_t b, mve_pred16_t p) { return vcmpleq_m_n_f16(a, b, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_less_than(float16x8_t a, float16_t b) { return vcmpltq_n_f16(a, b); }
 [[gnu::always_inline]] nce mve_pred16_t compare_less_than(float16x8_t a, float16_t b, mve_pred16_t p) { return vcmpltq_m_n_f16(a, b, p); }
-template <> [[gnu::always_inline]] nce int16x8_t convert(float16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_s16_f16(a, imm6, p); }
-template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_u16_f16(a, imm6, p); }
 [[gnu::always_inline]] nce float16x8_t bit_reverse_shift_right(float16x8_t a, int32_t b) { return vbrsrq_n_f16(a, b); }
 [[gnu::always_inline]] nce float16x8_t bit_reverse_shift_right(float16x8_t a, int32_t b, mve_pred16_t p) { return vbrsrq_x_n_f16(a, b, p); }
-[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, int32x4_t a, mve_pred16_t p) { return vcvtq_m_f32_s32(inactive, a, p); }
-[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, int32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_f32_s32(inactive, a, imm6, p); }
-[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, uint32x4_t a, mve_pred16_t p) { return vcvtq_m_f32_u32(inactive, a, p); }
-[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, uint32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_m_n_f32_u32(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, int32x4_t a, mve_pred16_t p) { return vcvtq_m_f32_s32(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, int32x4_t a, mve_pred16_t p) { return vcvtq_m_n_f32_s32(inactive, a, imm6, p); }
+template <> [[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, uint32x4_t a, mve_pred16_t p) { return vcvtq_m_f32_u32(inactive, a, p); }
+template <int imm6>[[gnu::always_inline]] nce float32x4_t convert(float32x4_t inactive, uint32x4_t a, mve_pred16_t p) { return vcvtq_m_n_f32_u32(inactive, a, imm6, p); }
 [[gnu::always_inline]] nce float32x4_t convert_bottom(float32x4_t inactive, float16x8_t a, mve_pred16_t p) { return vcvtbq_m_f32_f16(inactive, a, p); }
 [[gnu::always_inline]] nce float32x4_t convert_top(float32x4_t inactive, float16x8_t a, mve_pred16_t p) { return vcvttq_m_f32_f16(inactive, a, p); }
 [[gnu::always_inline]] nce float32x4_t reverse_64bit(float32x4_t inactive, float32x4_t a, mve_pred16_t p) { return vrev64q_m_f32(inactive, a, p); }
@@ -281,6 +293,8 @@ template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, const i
 [[gnu::always_inline]] nce float32x4_t predicate_select(float32x4_t a, float32x4_t b, mve_pred16_t p) { return vpselq_f32(a, b, p); }
 [[gnu::always_inline]] nce float32x4_t add(float32x4_t inactive, float32x4_t a, float32_t b, mve_pred16_t p) { return vaddq_m_n_f32(inactive, a, b, p); }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t inactive, float32x4_t a, float32_t b, mve_pred16_t p) { return vmulq_m_n_f32(inactive, a, b, p); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_scalar_fused(float32x4_t m1, float32x4_t m2, float32_t add) { return vfmasq_n_f32(m1, m2, add); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_scalar_fused(float32x4_t m1, float32x4_t m2, float32_t add, mve_pred16_t p) { return vfmasq_m_n_f32(m1, m2, add, p); }
 [[gnu::always_inline]] nce float32x4_t subtract(float32x4_t inactive, float32x4_t a, float32_t b, mve_pred16_t p) { return vsubq_m_n_f32(inactive, a, b, p); }
 [[gnu::always_inline]] nce float32x4_t bit_reverse_shift_right(float32x4_t inactive, float32x4_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_f32(inactive, a, b, p); }
 [[gnu::always_inline]] nce float32x4_t abs(float32x4_t a, mve_pred16_t p) { return vabsq_x_f32(a, p); }
@@ -301,6 +315,8 @@ template <> [[gnu::always_inline]] nce int32x4_t convert_round_toward_negative_i
 template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_negative_infinity(float32x4_t a, mve_pred16_t p) { return vcvtmq_x_u32_f32(a, p); }
 template <> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_s32_f32(a, p); }
 template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_u32_f32(a, p); }
+template <int imm6>[[gnu::always_inline]] nce int32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_n_s32_f32(a, imm6, p); }
+template <int imm6>[[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_n_u32_f32(a, imm6, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float32x4_t a, float32_t b) { return vcmpeqq_n_f32(a, b); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float32x4_t a, float32_t b, mve_pred16_t p) { return vcmpeqq_m_n_f32(a, b, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_not_equal(float32x4_t a, float32_t b) { return vcmpneq_n_f32(a, b); }
@@ -318,16 +334,14 @@ template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, mve_pre
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32_t b, mve_pred16_t p) { return vmulq_x_n_f32(a, b, p); }
 [[gnu::always_inline]] nce float32x4_t subtract(float32x4_t a, float32_t b) { return vsubq_n_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t subtract(float32x4_t a, float32_t b, mve_pred16_t p) { return vsubq_x_n_f32(a, b, p); }
-template <> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_s32_f32(a, imm6, p); }
-template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, const int imm6, mve_pred16_t p) { return vcvtq_x_n_u32_f32(a, imm6, p); }
 [[gnu::always_inline]] nce float32x4_t bit_reverse_shift_right(float32x4_t a, int32_t b) { return vbrsrq_n_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t bit_reverse_shift_right(float32x4_t a, int32_t b, mve_pred16_t p) { return vbrsrq_x_n_f32(a, b, p); }
 template <> [[gnu::always_inline]] nce float16x8_t create(uint64_t a, uint64_t b) { return vcreateq_f16(a, b); }
 template <> [[gnu::always_inline]] nce float32x4_t create(uint64_t a, uint64_t b) { return vcreateq_f32(a, b); }
 [[gnu::always_inline]] nce float16x8_t duplicate(float16_t a, mve_pred16_t p) { return vdupq_x_n_f16(a, p); }
 [[gnu::always_inline]] nce float32x4_t duplicate(float32_t a, mve_pred16_t p) { return vdupq_x_n_f32(a, p); }
-template <> [[gnu::always_inline]] nce float16x8_t uninitialized( void) { return vuninitializedq_f16(void); }
-template <> [[gnu::always_inline]] nce float32x4_t uninitialized( void) { return vuninitializedq_f32(void); }
+template <> [[gnu::always_inline]] nce float16x8_t uninitialized() { return vuninitializedq_f16(); }
+template <> [[gnu::always_inline]] nce float32x4_t uninitialized() { return vuninitializedq_f32(); }
 [[gnu::always_inline]] nce float16_t min_reduce_min(float16_t a, float16x8_t b) { return vminnmvq_f16(a, b); }
 [[gnu::always_inline]] nce float32_t min_reduce_min(float32_t a, float32x4_t b) { return vminnmvq_f32(a, b); }
 [[gnu::always_inline]] nce float16_t min_reduce_min(float16_t a, float16x8_t b, mve_pred16_t p) { return vminnmvq_p_f16(a, b, p); }
@@ -381,5 +395,6 @@ template <> [[gnu::always_inline]] nce float32x4_t uninitialized( void) { return
 [[gnu::always_inline]] nce void store_word_scatter_shifted_offset(float32_t *base, uint32x4_t offset, float32x4_t value) { return vstrwq_scatter_shifted_offset_f32(base, offset, value); }
 [[gnu::always_inline]] nce void store_word_scatter_shifted_offset(float32_t *base, uint32x4_t offset, float32x4_t value, mve_pred16_t p) { return vstrwq_scatter_shifted_offset_p_f32(base, offset, value, p); }
 // clang-format on
-}  // namespace helium
+}  // namespace mve
 #endif
+#undef nce

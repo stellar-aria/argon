@@ -5,7 +5,7 @@
 
 #define nce [[gnu::always_inline]] inline
 
-namespace helium {
+namespace mve {
 // clang-format off
 [[gnu::always_inline]] nce uint8x16_t multiply(uint8x16_t a, uint8_t b) { return vmulq_n_u8(a, b); }
 [[gnu::always_inline]] nce int8x16_t multiply(int8x16_t a, int8_t b) { return vmulq_n_s8(a, b); }
@@ -22,6 +22,6 @@ namespace helium {
 [[gnu::always_inline]] inline uint16x8_t load1(uint16_t const *ptr) { return vld1q_u16(ptr); }
 [[gnu::always_inline]] inline uint32x4_t load1(uint32_t const *ptr) { return vld1q_u32(ptr); }
 // clang-format on
-}  // namespace helium
+}  // namespace mve
 #endif
 #undef nce

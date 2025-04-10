@@ -7,7 +7,7 @@
 #define simd neon
 #elifdef __ARM_FEATURE_MVE
 #include <arm_mve.h>
-#define simd helium
+#define simd mve
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
 #include <arm/neon.h>
@@ -56,7 +56,7 @@ constexpr bool is_quadword_v =
 template <typename T>
 concept is_quadword = is_quadword_v<T>;
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 // clang-format off
 
 /// @brief Templated constant to determine if a type is a double-word SIMD vector type.
@@ -105,7 +105,7 @@ concept is_doubleword = is_doubleword_v<T>;
 /// @concept is_vector_type
 /// @brief Concept to check if a type is a vector type (either double-word or quad-word).
 /// @tparam T The type to check.
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <typename T>
 concept is_vector_type = is_doubleword<T> || is_quadword<T>;
 #else

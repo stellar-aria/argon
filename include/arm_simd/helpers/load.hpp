@@ -7,7 +7,7 @@
 #include "vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif

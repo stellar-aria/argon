@@ -3,7 +3,7 @@
 #include "arm_simd/helpers/make_unsigned.hpp"
 
 #ifdef __ARM_FEATURE_MVE
-#define simd helium
+#define simd mve
 #else
 #define simd neon
 #endif
@@ -21,7 +21,7 @@ template <typename T> struct Bool {
 #if ARGON_HAS_SINGLE_FLOAT
 template <> struct Bool<float32x4_t> { using type = uint32x4_t; };
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <> struct Bool<float32x2_t> { using type = uint32x2_t; };
 #endif
 #endif
@@ -29,7 +29,7 @@ template <> struct Bool<float32x2_t> { using type = uint32x2_t; };
 #if ARGON_HAS_DOUBLE_FLOAT
 template <> struct Bool<float64x2_t> { using type = uint64x2_t; };
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <> struct Bool<float64x1_t> { using type = uint64x1_t; };
 #endif
 #endif
@@ -37,7 +37,7 @@ template <> struct Bool<float64x1_t> { using type = uint64x1_t; };
 #if ARGON_HAS_HALF_FLOAT
 template <> struct Bool<float16x8_t> { using type = uint16x8_t; };
 
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 template <> struct Bool<float16x4_t> { using type = uint16x4_t; };
 #endif
 #endif

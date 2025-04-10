@@ -6,7 +6,7 @@
 #define simd neon
 #elifdef __ARM_FEATURE_MVE
 #include <arm_mve.h>
-#define simd helium
+#define simd mve
 #else
 #define SIMDE_ENABLE_NATIVE_ALIASES
 #include <arm/neon.h>
@@ -15,7 +15,7 @@
 
 namespace simd {
 // clang-format off
-#if ARGON_HAS_DWORD
+#ifndef ARGON_PLATFORM_MVE
 
 /// @brief Helper template to get the SIMD double-word vector type for a given scalar type.
 /// @tparam T The scalar type to get the SIMD vector type for.

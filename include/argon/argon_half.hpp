@@ -1,14 +1,12 @@
 #pragma once
 #include "vector.hpp"
 
-#ifdef ARGON_PLATFORM_SIMDE
-#define ace
-#elifdef __clang__
+#ifndef ARGON_PLATFORM_MVE
+#ifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
 #else
 #define ace [[gnu::always_inline]] inline
 #endif
-
 template <typename ScalarType>
 class ArgonHalf;
 
@@ -293,5 +291,5 @@ struct tuple_element<Index, ArgonHalf<T>> {
   using type = argon::Lane<typename ArgonHalf<T>::vector_type>;
 };
 }  // namespace std
-
+#endif
 #undef ace

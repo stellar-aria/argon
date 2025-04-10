@@ -17,7 +17,6 @@ namespace argon {
 constexpr Platform platform = Platform::NEON;
 }
 #define ARGON_PLATFORM_NEON true
-#define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 
 #if (__ARM_ARCH >= 8)
@@ -49,7 +48,6 @@ namespace argon {
 constexpr Platform platform = Platform::MVE;
 }
 #define ARGON_PLATFORM_MVE true
-#define ARGON_HAS_DWORD false
 
 #if (__ARM_FEATURE_MVE & 2)
 #define ARGON_HAS_FLOAT true
@@ -66,7 +64,6 @@ namespace argon {
 constexpr Platform platform = Platform::SIMDe;
 }
 #define ARGON_PLATFORM_SIMDE true
-#define ARGON_HAS_DWORD true
 #define ARGON_HAS_FLOAT true
 #define ARGON_HAS_HALF_FLOAT false
 #define ARGON_HAS_SINGLE_FLOAT true
@@ -75,9 +72,9 @@ constexpr Platform platform = Platform::SIMDe;
 
 #ifndef ARGON_USE_COMPILER_EXTENSIONS
 #if !defined(_MSC_VER) || defined(__clang__)
-#define ARGON_USE_COMPILER_EXTENSIONS true
+#define ARGON_USE_COMPILER_EXTENSIONS 1
 #else
-#define ARGON_USE_COMPILER_EXTENSIONS false
+#define ARGON_USE_COMPILER_EXTENSIONS 0
 #endif
 #endif
 
