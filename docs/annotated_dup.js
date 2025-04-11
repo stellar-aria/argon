@@ -3,7 +3,6 @@ var annotated_dup =
     [ "argon", null, [
       [ "helpers", "namespaceargon_1_1helpers.html", [
         [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ],
-        [ "MultiVector", "structargon_1_1helpers_1_1MultiVector.html", null ],
         [ "NextLarger", "structargon_1_1helpers_1_1NextLarger.html", null ],
         [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ]
       ] ],
@@ -25,6 +24,7 @@ var annotated_dup =
     [ "simd", null, [
       [ "make_signed", "structsimd_1_1make__signed.html", null ],
       [ "make_unsigned", "structsimd_1_1make__unsigned.html", null ],
+      [ "MultiVector", "structsimd_1_1MultiVector.html", null ],
       [ "Scalar", "structsimd_1_1Scalar.html", null ],
       [ "Vec128", "structsimd_1_1Vec128.html", null ],
       [ "Vec64", "structsimd_1_1Vec64.html", null ]

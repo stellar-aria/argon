@@ -148,14 +148,14 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>vector_type</b> = Ve
 using&#160;</td><td class="memItemRight" valign="bottom"><b>argon_type</b> = <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt;VectorType&gt;</td></tr>
 <tr class="memdesc:a9a415e7e729cc854cae3463e41cc3705"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classArgon.html">Argon</a> type for the SIMD vector. <br /></td></tr>
 <tr class="separator:a9a415e7e729cc854cae3463e41cc3705"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a897828ddf2a1f2bbd2c2c2e6db0537dc" id="r_a897828ddf2a1f2bbd2c2c2e6db0537dc"><td class="memItemLeft" align="right" valign="top"><a id="a897828ddf2a1f2bbd2c2c2e6db0537dc" name="a897828ddf2a1f2bbd2c2c2e6db0537dc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>vector_bool_type</b> = Bool_t&lt;VectorType&gt;</td></tr>
-<tr class="memdesc:a897828ddf2a1f2bbd2c2c2e6db0537dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a boolean SIMD vector. <br /></td></tr>
-<tr class="separator:a897828ddf2a1f2bbd2c2c2e6db0537dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5bb551934f54a1bc33b344dea9514fc" id="r_ac5bb551934f54a1bc33b344dea9514fc"><td class="memItemLeft" align="right" valign="top"><a id="ac5bb551934f54a1bc33b344dea9514fc" name="ac5bb551934f54a1bc33b344dea9514fc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>argon_bool_type</b> = <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt;<a class="el" href="#a897828ddf2a1f2bbd2c2c2e6db0537dc">vector_bool_type</a>&gt;</td></tr>
-<tr class="memdesc:ac5bb551934f54a1bc33b344dea9514fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classArgon.html">Argon</a> type for the boolean vector. <br /></td></tr>
-<tr class="separator:ac5bb551934f54a1bc33b344dea9514fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88f641dc73c423f906d60554a58e763f" id="r_a88f641dc73c423f906d60554a58e763f"><td class="memItemLeft" align="right" valign="top"><a id="a88f641dc73c423f906d60554a58e763f" name="a88f641dc73c423f906d60554a58e763f"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>predicate_type</b> = Bool_t&lt;VectorType&gt;</td></tr>
+<tr class="memdesc:a88f641dc73c423f906d60554a58e763f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a boolean SIMD vector. <br /></td></tr>
+<tr class="separator:a88f641dc73c423f906d60554a58e763f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb337d1f5ce5ced64b5a234b8ee9ee05" id="r_abb337d1f5ce5ced64b5a234b8ee9ee05"><td class="memItemLeft" align="right" valign="top"><a id="abb337d1f5ce5ced64b5a234b8ee9ee05" name="abb337d1f5ce5ced64b5a234b8ee9ee05"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>argon_bool_type</b> = <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt;<a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a>&gt;</td></tr>
+<tr class="memdesc:abb337d1f5ce5ced64b5a234b8ee9ee05"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classArgon.html">Argon</a> type for the boolean vector. <br /></td></tr>
+<tr class="separator:abb337d1f5ce5ced64b5a234b8ee9ee05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -179,9 +179,9 @@ constexpr <a class="el" href="classargon_1_1Vector.html">Vector</a> &amp;&#160;<
 constexpr <a class="el" href="classargon_1_1Vector.html">Vector</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classargon_1_1Vector.html">Vector</a> &amp;other)=default</td></tr>
 <tr class="memdesc:ae38fb1aad4f7ce19d608d5d24101d06f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator for the <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> class. <br /></td></tr>
 <tr class="separator:ae38fb1aad4f7ce19d608d5d24101d06f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67930edf8ec24038ebdfb251f323db1c" id="r_a67930edf8ec24038ebdfb251f323db1c"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67930edf8ec24038ebdfb251f323db1c">Vector</a> (VectorType vector)</td></tr>
-<tr class="memdesc:a67930edf8ec24038ebdfb251f323db1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a SIMD vector type.  <br /></td></tr>
-<tr class="separator:a67930edf8ec24038ebdfb251f323db1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b817b2f0d97814f2cf418b2a2ceba0" id="r_a04b817b2f0d97814f2cf418b2a2ceba0"><td class="memItemLeft" align="right" valign="top">ace&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04b817b2f0d97814f2cf418b2a2ceba0">Vector</a> (VectorType vector)</td></tr>
+<tr class="memdesc:a04b817b2f0d97814f2cf418b2a2ceba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a SIMD vector type.  <br /></td></tr>
+<tr class="separator:a04b817b2f0d97814f2cf418b2a2ceba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c822d6e8b568d4c6f6131fbbfd10982" id="r_a6c822d6e8b568d4c6f6131fbbfd10982"><td class="memItemLeft" align="right" valign="top">ace&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c822d6e8b568d4c6f6131fbbfd10982">Vector</a> (<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> scalar)</td></tr>
 <tr class="memdesc:a6c822d6e8b568d4c6f6131fbbfd10982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a scalar value.  <br /></td></tr>
 <tr class="separator:a6c822d6e8b568d4c6f6131fbbfd10982"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,27 +218,27 @@ ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;
 <tr class="memdesc:a4f1e2d36dd484d61d4a9d4bcf6626b1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a vector and return the result. <br /></td></tr>
 <tr class="separator:a4f1e2d36dd484d61d4a9d4bcf6626b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e8bca3fdb3c3f8ea5128a6c9d85dcd5" id="r_a2e8bca3fdb3c3f8ea5128a6c9d85dcd5"><td class="memItemLeft" align="right" valign="top"><a id="a2e8bca3fdb3c3f8ea5128a6c9d85dcd5" name="a2e8bca3fdb3c3f8ea5128a6c9d85dcd5"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a2e8bca3fdb3c3f8ea5128a6c9d85dcd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors for equality. <br /></td></tr>
 <tr class="separator:a2e8bca3fdb3c3f8ea5128a6c9d85dcd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae466b6dff062ccc37ce93cdfb5b4ee0d" id="r_ae466b6dff062ccc37ce93cdfb5b4ee0d"><td class="memItemLeft" align="right" valign="top"><a id="ae466b6dff062ccc37ce93cdfb5b4ee0d" name="ae466b6dff062ccc37ce93cdfb5b4ee0d"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:ae466b6dff062ccc37ce93cdfb5b4ee0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors for inequality. <br /></td></tr>
 <tr class="separator:ae466b6dff062ccc37ce93cdfb5b4ee0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0863d8504ce7ddb3edf8196115b9109f" id="r_a0863d8504ce7ddb3edf8196115b9109f"><td class="memItemLeft" align="right" valign="top"><a id="a0863d8504ce7ddb3edf8196115b9109f" name="a0863d8504ce7ddb3edf8196115b9109f"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a0863d8504ce7ddb3edf8196115b9109f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors, checking if this vector is less than the other. <br /></td></tr>
 <tr class="separator:a0863d8504ce7ddb3edf8196115b9109f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c06a4796802f825c7f613b1e927ab69" id="r_a7c06a4796802f825c7f613b1e927ab69"><td class="memItemLeft" align="right" valign="top"><a id="a7c06a4796802f825c7f613b1e927ab69" name="a7c06a4796802f825c7f613b1e927ab69"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&gt;</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&gt;</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a7c06a4796802f825c7f613b1e927ab69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors, checking if this vector is greater than the other. <br /></td></tr>
 <tr class="separator:a7c06a4796802f825c7f613b1e927ab69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab2e5a315ad9da5fcd22286e41840779" id="r_aab2e5a315ad9da5fcd22286e41840779"><td class="memItemLeft" align="right" valign="top"><a id="aab2e5a315ad9da5fcd22286e41840779" name="aab2e5a315ad9da5fcd22286e41840779"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:aab2e5a315ad9da5fcd22286e41840779"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors, checking if this vector is less than or equal to the other. <br /></td></tr>
 <tr class="separator:aab2e5a315ad9da5fcd22286e41840779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b11a98183b55cfc3916463f33d2e868" id="r_a2b11a98183b55cfc3916463f33d2e868"><td class="memItemLeft" align="right" valign="top"><a id="a2b11a98183b55cfc3916463f33d2e868" name="a2b11a98183b55cfc3916463f33d2e868"></a>
-ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&gt;=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator&gt;=</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a2b11a98183b55cfc3916463f33d2e868"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two vectors, checking if this vector is greater than or equal to the other. <br /></td></tr>
 <tr class="separator:a2b11a98183b55cfc3916463f33d2e868"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3822f6247207678e722e5f449eb1eba7" id="r_a3822f6247207678e722e5f449eb1eba7"><td class="memItemLeft" align="right" valign="top"><a id="a3822f6247207678e722e5f449eb1eba7" name="a3822f6247207678e722e5f449eb1eba7"></a>
@@ -461,19 +461,19 @@ ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;
 <tr class="memitem:ae9fded6d76878d39a236435acccb3eeb" id="r_ae9fded6d76878d39a236435acccb3eeb"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9fded6d76878d39a236435acccb3eeb">Min</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:ae9fded6d76878d39a236435acccb3eeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, copying the smaller of each lane to the result.  <br /></td></tr>
 <tr class="separator:ae9fded6d76878d39a236435acccb3eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3decc478c1472bc120da30c8cbd349b0" id="r_a3decc478c1472bc120da30c8cbd349b0"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3decc478c1472bc120da30c8cbd349b0">Equal</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memitem:a3decc478c1472bc120da30c8cbd349b0" id="r_a3decc478c1472bc120da30c8cbd349b0"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3decc478c1472bc120da30c8cbd349b0">Equal</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a3decc478c1472bc120da30c8cbd349b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, setting the result lane's bits to ON if are equal.  <br /></td></tr>
 <tr class="separator:a3decc478c1472bc120da30c8cbd349b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b12a632fc5646f7ed4751d07b28b13c" id="r_a7b12a632fc5646f7ed4751d07b28b13c"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b12a632fc5646f7ed4751d07b28b13c">GreaterThanOrEqual</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memitem:a7b12a632fc5646f7ed4751d07b28b13c" id="r_a7b12a632fc5646f7ed4751d07b28b13c"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b12a632fc5646f7ed4751d07b28b13c">GreaterThanOrEqual</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a7b12a632fc5646f7ed4751d07b28b13c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than or equal to b.  <br /></td></tr>
 <tr class="separator:a7b12a632fc5646f7ed4751d07b28b13c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c34bfe1567cedd121d6945031ff8687" id="r_a1c34bfe1567cedd121d6945031ff8687"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c34bfe1567cedd121d6945031ff8687">LessThanOrEqual</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memitem:a1c34bfe1567cedd121d6945031ff8687" id="r_a1c34bfe1567cedd121d6945031ff8687"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c34bfe1567cedd121d6945031ff8687">LessThanOrEqual</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a1c34bfe1567cedd121d6945031ff8687"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than or equal to b.  <br /></td></tr>
 <tr class="separator:a1c34bfe1567cedd121d6945031ff8687"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a919a7820afce4ddf71dcd8afc11db36b" id="r_a919a7820afce4ddf71dcd8afc11db36b"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a919a7820afce4ddf71dcd8afc11db36b">GreaterThan</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memitem:a919a7820afce4ddf71dcd8afc11db36b" id="r_a919a7820afce4ddf71dcd8afc11db36b"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a919a7820afce4ddf71dcd8afc11db36b">GreaterThan</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a919a7820afce4ddf71dcd8afc11db36b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than b.  <br /></td></tr>
 <tr class="separator:a919a7820afce4ddf71dcd8afc11db36b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66b11498ebe5371b468f10c76091e9f1" id="r_a66b11498ebe5371b468f10c76091e9f1"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66b11498ebe5371b468f10c76091e9f1">LessThan</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memitem:a66b11498ebe5371b468f10c76091e9f1" id="r_a66b11498ebe5371b468f10c76091e9f1"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66b11498ebe5371b468f10c76091e9f1">LessThan</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a66b11498ebe5371b468f10c76091e9f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than b.  <br /></td></tr>
 <tr class="separator:a66b11498ebe5371b468f10c76091e9f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaa79ce9a855371c3583c0f8f51f6eb6" id="r_aeaa79ce9a855371c3583c0f8f51f6eb6"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeaa79ce9a855371c3583c0f8f51f6eb6">ShiftLeft</a> (<a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; VectorType &gt; &gt; b) const</td></tr>
@@ -583,12 +583,12 @@ requires std::is_unsigned_v&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44
 <tr class="memitem:ad88e29f9051bfa88b952f58528e2489c"><td class="memTemplItemLeft" align="right" valign="top">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad88e29f9051bfa88b952f58528e2489c">Select</a> (ArgType true_value, ArgType false_value) const</td></tr>
 <tr class="memdesc:ad88e29f9051bfa88b952f58528e2489c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise select between two vectors, using the current vector as a mask.     <br /></td></tr>
 <tr class="separator:ad88e29f9051bfa88b952f58528e2489c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af82795b28a4b685de92659c5c3f0599b" id="r_af82795b28a4b685de92659c5c3f0599b"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af82795b28a4b685de92659c5c3f0599b">CompareTestNonzero</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
-<tr class="memdesc:af82795b28a4b685de92659c5c3f0599b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ands the current vector with the given vector, then checks if nonzero.  <br /></td></tr>
-<tr class="separator:af82795b28a4b685de92659c5c3f0599b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afff6785611071efef2e8110a7c7a2251" id="r_afff6785611071efef2e8110a7c7a2251"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afff6785611071efef2e8110a7c7a2251">TestNonzero</a> () const</td></tr>
-<tr class="memdesc:afff6785611071efef2e8110a7c7a2251"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ands the current vector with the given vector, then checks if nonzero.     <br /></td></tr>
-<tr class="separator:afff6785611071efef2e8110a7c7a2251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bd82746876ae1dce97036fda72bcd33" id="r_a4bd82746876ae1dce97036fda72bcd33"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bd82746876ae1dce97036fda72bcd33">CompareTestNonzero</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memdesc:a4bd82746876ae1dce97036fda72bcd33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ands the current vector with the given vector, then checks if nonzero.  <br /></td></tr>
+<tr class="separator:a4bd82746876ae1dce97036fda72bcd33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fa39b01b6f592232a4b3150f660b8aa" id="r_a9fa39b01b6f592232a4b3150f660b8aa"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fa39b01b6f592232a4b3150f660b8aa">TestNonzero</a> () const</td></tr>
+<tr class="memdesc:a9fa39b01b6f592232a4b3150f660b8aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ands the current vector with the given vector, then checks if nonzero.     <br /></td></tr>
+<tr class="separator:a9fa39b01b6f592232a4b3150f660b8aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af561d5a71dfef4d92b5650a24007a1e3" id="r_af561d5a71dfef4d92b5650a24007a1e3"><td class="memItemLeft" align="right" valign="top">ace <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; VectorType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af561d5a71dfef4d92b5650a24007a1e3">CountLeadingSignBits</a> () const</td></tr>
 <tr class="memdesc:af561d5a71dfef4d92b5650a24007a1e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.  <br /></td></tr>
 <tr class="separator:af561d5a71dfef4d92b5650a24007a1e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -620,10 +620,9 @@ ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;
 <tr class="memitem:a378a84364d98127adb2888a23d260790" id="r_a378a84364d98127adb2888a23d260790"><td class="memItemLeft" align="right" valign="top">std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a378a84364d98127adb2888a23d260790">UnzipWith</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b)</td></tr>
 <tr class="memdesc:a378a84364d98127adb2888a23d260790"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unzip two vectors, returning two vectors of pairs.  <br /></td></tr>
 <tr class="separator:a378a84364d98127adb2888a23d260790"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c7faa5ff5e8232caafb6e759ae6035d" id="r_a5c7faa5ff5e8232caafb6e759ae6035d"><td class="memItemLeft" align="right" valign="top"><a id="a5c7faa5ff5e8232caafb6e759ae6035d" name="a5c7faa5ff5e8232caafb6e759ae6035d"></a>
-std::tuple&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>TransposeWith</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
-<tr class="memdesc:a5c7faa5ff5e8232caafb6e759ae6035d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a matrix transpose on two vectors, returning two vectors of pairs. <br /></td></tr>
-<tr class="separator:a5c7faa5ff5e8232caafb6e759ae6035d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea12f326a728a3264306ac6266f4344" id="r_a0ea12f326a728a3264306ac6266f4344"><td class="memItemLeft" align="right" valign="top">std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ea12f326a728a3264306ac6266f4344">TransposeWith</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memdesc:a0ea12f326a728a3264306ac6266f4344"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a 2x2 matrix transpose on two vectors, returning two vectors of pairs.  <br /></td></tr>
+<tr class="separator:a0ea12f326a728a3264306ac6266f4344"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad89da2cf9061ca661d35df333a7d7356" id="r_ad89da2cf9061ca661d35df333a7d7356"><td class="memTemplParams" colspan="2"><a id="ad89da2cf9061ca661d35df333a7d7356" name="ad89da2cf9061ca661d35df333a7d7356"></a>
 template&lt;typename FuncType&gt; <br />
 requires std::convertible_to&lt;FuncType, std::function&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>(<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>)&gt;&gt;</td></tr>
@@ -717,12 +716,12 @@ static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a
 static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>LoadCopy</b> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
 <tr class="memdesc:aa07e70d54a8826a406e37430294e1251"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a vector from a pointer, duplicating the value across all lanes. <br /></td></tr>
 <tr class="separator:aa07e70d54a8826a406e37430294e1251"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8310e6b18ef2ed7f9ddc629afec10a24" id="r_a8310e6b18ef2ed7f9ddc629afec10a24"><td class="memItemLeft" align="right" valign="top">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8310e6b18ef2ed7f9ddc629afec10a24">LoadGather</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
-<tr class="memdesc:a8310e6b18ef2ed7f9ddc629afec10a24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Using a base address and a vector of offset indices and a base pointer, create a new vector.  <br /></td></tr>
-<tr class="separator:a8310e6b18ef2ed7f9ddc629afec10a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c08536d414194f8af8ab64a57e5f137" id="r_a3c08536d414194f8af8ab64a57e5f137"><td class="memItemLeft" align="right" valign="top">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c08536d414194f8af8ab64a57e5f137">LoadGather</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
-<tr class="memdesc:a3c08536d414194f8af8ab64a57e5f137"><td class="mdescLeft">&#160;</td><td class="mdescRight">Using a base address and a vector of offset indices and a base pointer, create a new vector.     <br /></td></tr>
-<tr class="separator:a3c08536d414194f8af8ab64a57e5f137"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f5096e120dbbc2ce26547a0732808db" id="r_a8f5096e120dbbc2ce26547a0732808db"><td class="memItemLeft" align="right" valign="top">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f5096e120dbbc2ce26547a0732808db">LoadGatherOffsetBytes</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
+<tr class="memdesc:a8f5096e120dbbc2ce26547a0732808db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Using a base address and a vector of offset bytes and a base pointer, create a new vector.  <br /></td></tr>
+<tr class="separator:a8f5096e120dbbc2ce26547a0732808db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9f02804de05da528affcfda49b45b86" id="r_ab9f02804de05da528affcfda49b45b86"><td class="memItemLeft" align="right" valign="top">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9f02804de05da528affcfda49b45b86">LoadGatherOffsetIndex</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
+<tr class="memdesc:ab9f02804de05da528affcfda49b45b86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Using a base address and a vector of offset indices and a base pointer, create a new vector.  <br /></td></tr>
+<tr class="separator:ab9f02804de05da528affcfda49b45b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a111495cbe4a08d7088edf156237f1a0a" id="r_a111495cbe4a08d7088edf156237f1a0a"><td class="memTemplParams" colspan="2">template&lt;size_t stride&gt; </td></tr>
 <tr class="memitem:a111495cbe4a08d7088edf156237f1a0a"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a111495cbe4a08d7088edf156237f1a0a">LoadInterleaved</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
 <tr class="memdesc:a111495cbe4a08d7088edf156237f1a0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load multiple vectors from a pointer, de-interleaving.  <br /></td></tr>
@@ -731,22 +730,18 @@ static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a
 <tr class="memitem:a8ae261783ad09cb429f176bb9fe4ed50"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8ae261783ad09cb429f176bb9fe4ed50">LoadCopyInterleaved</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
 <tr class="memdesc:a8ae261783ad09cb429f176bb9fe4ed50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load multiple vectors from a pointer, duplicating the value across all lanes.  <br /></td></tr>
 <tr class="separator:a8ae261783ad09cb429f176bb9fe4ed50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9fd70b52b7201422ea7ee51bf449ed6" id="r_ac9fd70b52b7201422ea7ee51bf449ed6"><td class="memTemplParams" colspan="2">template&lt;size_t LaneIndex, size_t Stride&gt; </td></tr>
-<tr class="memitem:ac9fd70b52b7201422ea7ee51bf449ed6"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, Stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac9fd70b52b7201422ea7ee51bf449ed6">LoadToLaneInterleaved</a> (<a class="el" href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">helpers::MultiVector_t</a>&lt; VectorType, Stride &gt; multi, const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
-<tr class="memdesc:ac9fd70b52b7201422ea7ee51bf449ed6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a value from a pointer into a vector at the lane index <code>lane</code>, de-interleaving.  <br /></td></tr>
-<tr class="separator:ac9fd70b52b7201422ea7ee51bf449ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7aacefb3f566661a545762a9c7a82d3" id="r_ab7aacefb3f566661a545762a9c7a82d3"><td class="memTemplParams" colspan="2">template&lt;size_t LaneIndex, size_t Stride&gt; </td></tr>
+<tr class="memitem:ab7aacefb3f566661a545762a9c7a82d3"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, Stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab7aacefb3f566661a545762a9c7a82d3">LoadToLaneInterleaved</a> (simd::MultiVector_t&lt; VectorType, Stride &gt; multi, const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
+<tr class="memdesc:ab7aacefb3f566661a545762a9c7a82d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a value from a pointer into a vector at the lane index <code>lane</code>, de-interleaving.  <br /></td></tr>
+<tr class="separator:ab7aacefb3f566661a545762a9c7a82d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cb92fb0ea18c81713d98cf2ddc9aa8c" id="r_a4cb92fb0ea18c81713d98cf2ddc9aa8c"><td class="memTemplParams" colspan="2">template&lt;size_t lane, size_t stride&gt; </td></tr>
 <tr class="memitem:a4cb92fb0ea18c81713d98cf2ddc9aa8c"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4cb92fb0ea18c81713d98cf2ddc9aa8c">LoadToLaneInterleaved</a> (std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt; multi, const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
 <tr class="memdesc:a4cb92fb0ea18c81713d98cf2ddc9aa8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a value from a pointer into a vector at the lane index <code>lane</code>, de-interleaving.     <br /></td></tr>
 <tr class="separator:a4cb92fb0ea18c81713d98cf2ddc9aa8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30f363d96d524246db0a59fdb1c42593" id="r_a30f363d96d524246db0a59fdb1c42593"><td class="memTemplParams" colspan="2">template&lt;size_t stride&gt; </td></tr>
-<tr class="memitem:a30f363d96d524246db0a59fdb1c42593"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a30f363d96d524246db0a59fdb1c42593">LoadGatherInterleaved</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base_ptr, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
-<tr class="memdesc:a30f363d96d524246db0a59fdb1c42593"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a Load-Gather of interleaved elements.  <br /></td></tr>
-<tr class="separator:a30f363d96d524246db0a59fdb1c42593"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c533d1c4dcf6159243558c37406255c" id="r_a4c533d1c4dcf6159243558c37406255c"><td class="memTemplParams" colspan="2">template&lt;size_t stride&gt; </td></tr>
-<tr class="memitem:a4c533d1c4dcf6159243558c37406255c"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4c533d1c4dcf6159243558c37406255c">LoadGatherInterleaved</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base_ptr, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
-<tr class="memdesc:a4c533d1c4dcf6159243558c37406255c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a Load-Gather of interleaved elements.     <br /></td></tr>
-<tr class="separator:a4c533d1c4dcf6159243558c37406255c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d59cd840ce89da92612577c9d96306a" id="r_a7d59cd840ce89da92612577c9d96306a"><td class="memTemplParams" colspan="2">template&lt;size_t stride&gt; </td></tr>
+<tr class="memitem:a7d59cd840ce89da92612577c9d96306a"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7d59cd840ce89da92612577c9d96306a">LoadGatherOffsetIndexInterleaved</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *base_ptr, <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; offset_vector)</td></tr>
+<tr class="memdesc:a7d59cd840ce89da92612577c9d96306a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a Load-Gather of interleaved elements.  <br /></td></tr>
+<tr class="separator:a7d59cd840ce89da92612577c9d96306a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab921d46adcbb7bff17e8d46be72cbe7a" id="r_ab921d46adcbb7bff17e8d46be72cbe7a"><td class="memTemplParams" colspan="2">template&lt;size_t n&gt; </td></tr>
 <tr class="memitem:ab921d46adcbb7bff17e8d46be72cbe7a"><td class="memTemplItemLeft" align="right" valign="top">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, n &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab921d46adcbb7bff17e8d46be72cbe7a">LoadMulti</a> (const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *ptr)</td></tr>
 <tr class="memdesc:ab921d46adcbb7bff17e8d46be72cbe7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load n vectors from a single contiguous set of memory.  <br /></td></tr>
@@ -780,8 +775,8 @@ class argon::Vector&lt; VectorType &gt;</div><p>Represents a SIMD vector with va
 </dl>
 <p>This class provides a wrapper around SIMD vector types, allowing for object-oriented operations on the vector. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a67930edf8ec24038ebdfb251f323db1c" name="a67930edf8ec24038ebdfb251f323db1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67930edf8ec24038ebdfb251f323db1c">&#9670;&#160;</a></span>Vector() <span class="overload">[1/4]</span></h2>
+<a id="a04b817b2f0d97814f2cf418b2a2ceba0" name="a04b817b2f0d97814f2cf418b2a2ceba0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04b817b2f0d97814f2cf418b2a2ceba0">&#9670;&#160;</a></span>Vector() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -792,7 +787,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Vector </td>
+          <td class="memname">ace <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Vector </td>
           <td>(</td>
           <td class="paramtype">VectorType</td>          <td class="paramname"><span class="paramname"><em>vector</em></span></td><td>)</td>
           <td></td>
@@ -800,7 +795,7 @@ template&lt;typename VectorType&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1178,8 +1173,8 @@ requires std::is_unsigned_v&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44
 
 </div>
 </div>
-<a id="af82795b28a4b685de92659c5c3f0599b" name="af82795b28a4b685de92659c5c3f0599b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af82795b28a4b685de92659c5c3f0599b">&#9670;&#160;</a></span>CompareTestNonzero()</h2>
+<a id="a4bd82746876ae1dce97036fda72bcd33" name="a4bd82746876ae1dce97036fda72bcd33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bd82746876ae1dce97036fda72bcd33">&#9670;&#160;</a></span>CompareTestNonzero()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1190,7 +1185,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::CompareTestNonzero </td>
+          <td class="memname">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::CompareTestNonzero </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1311,7 +1306,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Equal </td>
+          <td class="memname">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Equal </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1357,7 +1352,7 @@ template&lt;int n&gt; </div>
 </div><div class="memdoc">
 
 <p>Extract n elements from the lower end of the operand, and the remaining elements from the top end of this vector, combining them into the result vector. </p>
-<p>For example: {a0, a1, a2, a3} and {b0, b1, b2, b3} with n = 1 will result in {a0, a1, a2, b3} </p>
+<p>For example: {a0, a1, a2, a3} and {b0, b1, b2, b3} with n = 1 will result in {b0, a1, a2, a3} </p>
 
 </div>
 </div>
@@ -1674,7 +1669,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::GreaterThan </td>
+          <td class="memname">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::GreaterThan </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1704,7 +1699,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::GreaterThanOrEqual </td>
+          <td class="memname">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::GreaterThanOrEqual </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1776,7 +1771,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LessThan </td>
+          <td class="memname">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LessThan </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1806,7 +1801,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#ac5bb551934f54a1bc33b344dea9514fc">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LessThanOrEqual </td>
+          <td class="memname">ace <a class="el" href="#abb337d1f5ce5ced64b5a234b8ee9ee05">argon_bool_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LessThanOrEqual </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
           <td> const</td>
@@ -1868,8 +1863,8 @@ template&lt;size_t stride&gt; </div>
 
 </div>
 </div>
-<a id="a8310e6b18ef2ed7f9ddc629afec10a24" name="a8310e6b18ef2ed7f9ddc629afec10a24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8310e6b18ef2ed7f9ddc629afec10a24">&#9670;&#160;</a></span>LoadGather() <span class="overload">[1/2]</span></h2>
+<a id="a8f5096e120dbbc2ce26547a0732808db" name="a8f5096e120dbbc2ce26547a0732808db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f5096e120dbbc2ce26547a0732808db">&#9670;&#160;</a></span>LoadGatherOffsetBytes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1880,14 +1875,56 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGather </td>
+          <td class="memname">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGatherOffsetBytes </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *</td>          <td class="paramname"><span class="paramname"><em>base</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Using a base address and a vector of offset bytes and a base pointer, create a new vector. </p>
+<dl class="section note"><dt>Note</dt><dd>On NEON this incurs a writeback + load penalty </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base</td><td>The address to index from </td></tr>
+    <tr><td class="paramname">offset_vector</td><td>A vector of offset indices </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new vector constructed from the various indices </dd></dl>
+
+</div>
+</div>
+<a id="ab9f02804de05da528affcfda49b45b86" name="ab9f02804de05da528affcfda49b45b86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9f02804de05da528affcfda49b45b86">&#9670;&#160;</a></span>LoadGatherOffsetIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGatherOffsetIndex </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *</td>          <td class="paramname"><span class="paramname"><em>base</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1910,50 +1947,8 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
-<a id="a3c08536d414194f8af8ab64a57e5f137" name="a3c08536d414194f8af8ab64a57e5f137"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c08536d414194f8af8ab64a57e5f137">&#9670;&#160;</a></span>LoadGather() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename VectorType&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGather </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *</td>          <td class="paramname"><span class="paramname"><em>base</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Using a base address and a vector of offset indices and a base pointer, create a new vector.    </p>
-<dl class="section note"><dt>Note</dt><dd>On NEON this incurs a writeback + load penalty </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">base</td><td>The address to index from </td></tr>
-    <tr><td class="paramname">offset_vector</td><td>A vector of offset indices </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A new vector constructed from the various indices    </dd></dl>
-
-</div>
-</div>
-<a id="a30f363d96d524246db0a59fdb1c42593" name="a30f363d96d524246db0a59fdb1c42593"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30f363d96d524246db0a59fdb1c42593">&#9670;&#160;</a></span>LoadGatherInterleaved() <span class="overload">[1/2]</span></h2>
+<a id="a7d59cd840ce89da92612577c9d96306a" name="a7d59cd840ce89da92612577c9d96306a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d59cd840ce89da92612577c9d96306a">&#9670;&#160;</a></span>LoadGatherOffsetIndexInterleaved()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1966,14 +1961,14 @@ template&lt;size_t stride&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt; <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGatherInterleaved </td>
+          <td class="memname">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt; <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGatherOffsetIndexInterleaved </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *</td>          <td class="paramname"><span class="paramname"><em>base_ptr</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_signed_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1999,56 +1994,6 @@ template&lt;size_t stride&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::array&lt;argon_type, stride&gt; An array of vectors from the resulting interleaved loads </dd></dl>
-
-</div>
-</div>
-<a id="a4c533d1c4dcf6159243558c37406255c" name="a4c533d1c4dcf6159243558c37406255c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c533d1c4dcf6159243558c37406255c">&#9670;&#160;</a></span>LoadGatherInterleaved() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename VectorType&gt; </div>
-<div class="memtemplate">
-template&lt;size_t stride&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, stride &gt; <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadGatherInterleaved </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> *</td>          <td class="paramname"><span class="paramname"><em>base_ptr</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt; simd::make_unsigned_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>offset_vector</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Perform a Load-Gather of interleaved elements.    </p>
-<dl class="section note"><dt>Note</dt><dd>On NEON this incurs a writeback + load penalty</dd></dl>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">stride</td><td>the distance between similar elements </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">base_ptr</td><td>the address to use as a base for the gather operation </td></tr>
-    <tr><td class="paramname">offset_vector</td><td>a vector of offset values that are added to base_ptr to get the address to load </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>std::array&lt;argon_type, stride&gt; An array of vectors from the resulting interleaved loads    </dd></dl>
 
 </div>
 </div>
@@ -2214,8 +2159,8 @@ template&lt;size_t lane&gt; </div>
 
 </div>
 </div>
-<a id="ac9fd70b52b7201422ea7ee51bf449ed6" name="ac9fd70b52b7201422ea7ee51bf449ed6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9fd70b52b7201422ea7ee51bf449ed6">&#9670;&#160;</a></span>LoadToLaneInterleaved() <span class="overload">[1/2]</span></h2>
+<a id="ab7aacefb3f566661a545762a9c7a82d3" name="ab7aacefb3f566661a545762a9c7a82d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7aacefb3f566661a545762a9c7a82d3">&#9670;&#160;</a></span>LoadToLaneInterleaved() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2230,7 +2175,7 @@ template&lt;size_t LaneIndex, size_t Stride&gt; </div>
         <tr>
           <td class="memname">static ace std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, Stride &gt; <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::LoadToLaneInterleaved </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">helpers::MultiVector_t</a>&lt; VectorType, Stride &gt;</td>          <td class="paramname"><span class="paramname"><em>multi</em></span>, </td>
+          <td class="paramtype">simd::MultiVector_t&lt; VectorType, Stride &gt;</td>          <td class="paramname"><span class="paramname"><em>multi</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -3646,8 +3591,8 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
-<a id="afff6785611071efef2e8110a7c7a2251" name="afff6785611071efef2e8110a7c7a2251"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afff6785611071efef2e8110a7c7a2251">&#9670;&#160;</a></span>TestNonzero()</h2>
+<a id="a9fa39b01b6f592232a4b3150f660b8aa" name="a9fa39b01b6f592232a4b3150f660b8aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fa39b01b6f592232a4b3150f660b8aa">&#9670;&#160;</a></span>TestNonzero()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3658,7 +3603,7 @@ template&lt;typename VectorType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::TestNonzero </td>
+          <td class="memname">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::TestNonzero </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -3704,6 +3649,36 @@ template&lt;typename VectorType&gt; </div>
 
 <p>Convert the vector to an array of scalar values. </p>
 <dl class="section return"><dt>Returns</dt><dd>An array of scalar values representing the vector. </dd></dl>
+
+</div>
+</div>
+<a id="a0ea12f326a728a3264306ac6266f4344" name="a0ea12f326a728a3264306ac6266f4344"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea12f326a728a3264306ac6266f4344">&#9670;&#160;</a></span>TransposeWith()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt; <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>, 2 &gt; <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::TransposeWith </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Perform a 2x2 matrix transpose on two vectors, returning two vectors of pairs. </p>
+<p>Given a pair of vectors {{a0, a1, a2, a3}, the result is {{a0, b0, a2, b2}, </p>
 
 </div>
 </div>

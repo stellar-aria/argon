@@ -12,6 +12,5 @@ var searchData=
   ['multiplyroundaddq31_9',['MultiplyRoundAddQ31',['../classargon_1_1Vector.html#aa7c75882f452a87d61100af43d0cdbdc',1,'argon::Vector']]],
   ['multiplyroundq31_10',['MultiplyRoundQ31',['../classargon_1_1Vector.html#ae686c3a62137e885333b81a76ac94c10',1,'argon::Vector::MultiplyRoundQ31(argon_type v) const'],['../classargon_1_1Vector.html#a1cd0a31095fb7215afa759a7a1bd4510',1,'argon::Vector::MultiplyRoundQ31(scalar_type s) const'],['../classargon_1_1Vector.html#a598a38a3681b02a61b5658878d0da83d',1,'argon::Vector::MultiplyRoundQ31(lane_type l) const']]],
   ['multiplysubtract_11',['MultiplySubtract',['../classargon_1_1Vector.html#a18f15cb6e2ba71f90ac0927bece0250c',1,'argon::Vector::MultiplySubtract(argon_type b, argon_type c) const'],['../classargon_1_1Vector.html#a75462f482302303584296d30a5f1b36a',1,'argon::Vector::MultiplySubtract(argon_type b, scalar_type c) const'],['../classargon_1_1Vector.html#aaa89c23ca17233b39740179621e16201',1,'argon::Vector::MultiplySubtract(scalar_type b, argon_type c) const'],['../classargon_1_1Vector.html#a044130cfb0e6b776a94989d5e33a5e3b',1,'argon::Vector::MultiplySubtract(argon_type b, lane_type c) const']]],
-  ['multivector_12',['MultiVector',['../structargon_1_1helpers_1_1MultiVector.html',1,'argon::helpers']]],
-  ['multivector_5ft_13',['MultiVector_t',['../namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61',1,'argon::helpers']]]
+  ['multivector_12',['MultiVector',['../structsimd_1_1MultiVector.html',1,'simd']]]
 ];

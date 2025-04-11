@@ -80,7 +80,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
-"classargon_1_1Vector.html#ae686c3a62137e885333b81a76ac94c10",
+"classargon_1_1Vector.html#ae37a5488e8811817d2909772b1ff8ca6",
 "structsimd_1_1make__signed.html"
 ];
 

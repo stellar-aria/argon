@@ -157,7 +157,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  ace ArgonHalf&lt;ScalarType&gt; TableExtension(vector_type* b, ArgonHalf&lt;ScalarType&gt; idx) {</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">static_assert</span>(NumTables &gt; 1 &amp;&amp; NumTables &lt; 5, <span class="stringliteral">&quot;Table Extension can only be performed with 1, 2, 3, or 4 tables&quot;</span>);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">using </span>multivec_type = argon::helpers::MultiVector&lt;vector_type, NumTables&gt;::type;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">using </span>multivec_type = neon::MultiVector_t&lt;vector_type, NumTables&gt;;</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    multivec_type multivector = *(multivec_type*)b;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
@@ -318,7 +318,7 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>  ace ArgonHalf&lt;ScalarType&gt; TableExtension(vector_type* b, ArgonHalf&lt;ScalarType&gt; idx) {</div>
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    <span class="keyword">static_assert</span>(NumTables &gt; 1 &amp;&amp; NumTables &lt; 5, <span class="stringliteral">&quot;Table Extension can only be performed with 1, 2, 3, or 4 tables&quot;</span>);</div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keyword">using </span>multivec_type = <a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">argon::helpers::MultiVector_t&lt;vector_type, NumTables&gt;</a>;</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keyword">using </span>multivec_type = neon::MultiVector_t&lt;vector_type, NumTables&gt;;</div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    multivec_type multivector = *(multivec_type*)b;</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
@@ -405,9 +405,8 @@ $(function(){initNavTree('argon__half_8hpp_source.html',''); initResizable(true)
 <div class="ttc" id="aclassargon_1_1Lane_html"><div class="ttname"><a href="classargon_1_1Lane.html">argon::Lane</a></div><div class="ttdoc">Represents a single lane of a SIMD vector.</div><div class="ttdef"><b>Definition</b> lane.hpp:101</div></div>
 <div class="ttc" id="aclassargon_1_1Vector_html"><div class="ttname"><a href="classargon_1_1Vector.html">argon::Vector</a></div><div class="ttdoc">Represents a SIMD vector with various operations.</div><div class="ttdef"><b>Definition</b> vector.hpp:50</div></div>
 <div class="ttc" id="aclassargon_1_1Vector_html_a1a31c64f4d5a2c75097ea19bf381f8ea"><div class="ttname"><a href="classargon_1_1Vector.html#a1a31c64f4d5a2c75097ea19bf381f8ea">argon::Vector&lt; neon::Vec64_t&lt; ScalarType &gt; &gt;::vec</a></div><div class="ttdeci">constexpr neon::Vec64_t&lt; ScalarType &gt; vec() const</div><div class="ttdef"><b>Definition</b> vector.hpp:264</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a1b91cd89c8f53ae7792649404cb95f61"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61">argon::helpers::MultiVector_t</a></div><div class="ttdeci">MultiVector&lt; T, size &gt;::type MultiVector_t</div><div class="ttdoc">Helper alias for multi-vector types of different SIMD types and sizes.</div><div class="ttdef"><b>Definition</b> multivector.hpp:113</div></div>
 <div class="ttc" id="anamespaceargon_1_1helpers_html_ae7872fcc8769f160ebc61fa2d4bc19e5"><div class="ttname"><a href="namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5">argon::helpers::NextLarger_t</a></div><div class="ttdeci">NextLarger&lt; T &gt;::type NextLarger_t</div><div class="ttdoc">Helper alias to get the next larger type for a given type.</div><div class="ttdef"><b>Definition</b> helpers.hpp:75</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:283</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:288</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

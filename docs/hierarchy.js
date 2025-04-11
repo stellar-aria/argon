@@ -15,7 +15,7 @@ var hierarchy =
     [ "argon::vectorize::load< ScalarType >::LoadIterator", "structargon_1_1vectorize_1_1load_1_1LoadIterator.html", null ],
     [ "simd::make_signed< T >", "structsimd_1_1make__signed.html", null ],
     [ "simd::make_unsigned< T >", "structsimd_1_1make__unsigned.html", null ],
-    [ "argon::helpers::MultiVector< T, size >", "structargon_1_1helpers_1_1MultiVector.html", null ],
+    [ "simd::MultiVector< T, size >", "structsimd_1_1MultiVector.html", null ],
     [ "argon::helpers::NextLarger< T >", "structargon_1_1helpers_1_1NextLarger.html", null ],
     [ "argon::helpers::NextSmaller< T >", "structargon_1_1helpers_1_1NextSmaller.html", null ],
     [ "std::pair", null, [

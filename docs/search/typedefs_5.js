@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['multivector_5ft_0',['MultiVector_t',['../namespaceargon_1_1helpers.html#a1b91cd89c8f53ae7792649404cb95f61',1,'argon::helpers']]]
+  ['nextlarger_5ft_0',['NextLarger_t',['../namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5',1,'argon::helpers']]],
+  ['nextsmaller_5ft_1',['NextSmaller_t',['../namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0',1,'argon::helpers']]]
 ];
