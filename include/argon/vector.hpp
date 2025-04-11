@@ -665,7 +665,7 @@ class Vector {
 
   /// Shift the elemnets of the vector to the left by a specified number of bits.
   /// @details Equivalent to a << b.
-  ace argon_type ShiftLeft(helpers::ArgonFor_t<simd::make_signed_t<VectorType>> b) const
+  ace argon_type ShiftLeft(helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> b) const
     requires std::is_integral_v<scalar_type>
   {
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
@@ -677,7 +677,7 @@ class Vector {
 
   /// Shift the elements of the vector to the left by a specified number of bits.
   /// @details Equivalent to a << b.
-  ace argon_type ShiftLeft(std::make_signed_t<scalar_type> n) const
+  ace argon_type ShiftLeft(std::make_signed_t<simd::Scalar_t<Bool_t<VectorType>>> n) const
     requires std::is_integral_v<scalar_type>
   {
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
@@ -700,7 +700,7 @@ class Vector {
   }
 
   /// Shift the elements of the vector to the left by a specified number of bits, saturating the result.
-  ace argon_type ShiftLeftSaturate(helpers::ArgonFor_t<simd::make_signed_t<VectorType>> b) const
+  ace argon_type ShiftLeftSaturate(helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> b) const
     requires(std::is_integral_v<scalar_type>)
   {
     return simd::shift_left_saturate(vec_, b);
@@ -1016,12 +1016,13 @@ class Vector {
     return multi;
 #else
 #if defined(__clang__) || (__GNUC__ > 13)
+    using multi_type = simd::MultiVector_t<VectorType, n>;
     if constexpr (n == 2) {
-      return argon::to_array(simd::load1_x2(ptr).val);
+      return argon::to_array(simd::load1_x2<multi_type>(ptr).val);
     } else if constexpr (n == 3) {
-      return argon::to_array(simd::load1_x3(ptr).val);
+      return argon::to_array(simd::load1_x3<multi_type>(ptr).val);
     } else if constexpr (n == 4) {
-      return argon::to_array(simd::load1_x4(ptr).val);
+      return argon::to_array(simd::load1_x4<multi_type>(ptr).val);
     }
 #else
     if constexpr (n == 2) {
@@ -1166,7 +1167,7 @@ class Vector {
 
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
   /// @details Equivalent to std::countl_one(a).
-  ace helpers::ArgonFor_t<simd::make_signed_t<VectorType>> CountLeadingSignBits() const
+  ace helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> CountLeadingSignBits() const
     requires(std::is_integral_v<scalar_type>)
   {
     return simd::count_leading_sign_bits(vec_);
