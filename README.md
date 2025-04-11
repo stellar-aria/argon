@@ -107,7 +107,7 @@ int main() {
 | ------------------------------ | ------------------------ | ------------------ | ------------------------------------------------- |
 | [ARM NEON (ARMv7)][arm-neon]   | VFPv3, VFPv3-FP16, VFPv4 | :white_check_mark: | Primary target                                    |
 | [ARM NEON (ARMv8+)][arm-neon]  | AArch32, AArch64         | :white_check_mark: | Primary target                                    |
-| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | :white_check_mark: | Secondary target                                  |
+| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | :warning:          | Secondary target (in-progress)                    |
 | [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | :white_check_mark: | Tertiary target, used for portability and testing |
 
 ## Compatibility
