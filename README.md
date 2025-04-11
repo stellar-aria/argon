@@ -27,7 +27,7 @@ and capabilities.
 
 #### What Argon is not (yet?):
 
-- A library of commonly used algorithms optimized in NEON.
+- A library of optimized commonly used algorithms
 
 ## API Documentation
 
@@ -83,14 +83,32 @@ int main() {
 }
 ```
 
-## Backend Support:
+## Key Differences between NEON and MVE
 
-| Backend                        | Architectures            | Status             | Notes                                      |
-| ------------------------------ | ------------------------ | ------------------ | ------------------------------------------ |
-| [ARM NEON (ARMv7)][arm-neon]   | VFPv3, VFPv3-FP16, VFPv4 | :white_check_mark: | Primary target                             |
-| [ARM NEON (ARMv8+)][arm-neon]  | AArch32, AArch64         | :white_check_mark: | Primary target                             |
-| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | :white_check_mark: | Primary target                             |
-| [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | :white_check_mark: | Fallback, used for portability and testing |
+|                               | NEON                          | MVE                             |
+| ----------------------------- | ----------------------------- | ------------------------------- |
+| Number of quad-word registers | 16                            | 8                               |
+| Narrowing support (see note)  | to lower double-word register | to even or odd scalar registers |
+| Double-word instructions      | :heavy_check_mark:            | :x:                             |
+| 64-bit floating point         | :heavy_check_mark:            | :x:                             |
+| Predicated lane instructions  | :x:                           | :heavy_check_mark:              |
+| Native Scatter-Gather         | :x:                           | :heavy_check_mark:              |
+
+### Narrowing support
+
+- NEON supports double-word and quad-word operations, MVE only has quad-word.
+  - This means that operations that _would_ result in a double-word (such as narrowing) instead go into either the top or bottom registers of the current quadword.
+  - i.e. in NEON, an int32x4_t narrow to int16x4_t {x, x, x, x} => {x, x, x, x, o, o, o, o}
+  - while in MVE they are placed in the bottom or top of a pair: {x, x, x, x} => {x, o, x, o, x, o, x, o}
+
+## Backend Support
+
+| Backend                        | Architectures            | Status             | Notes                                             |
+| ------------------------------ | ------------------------ | ------------------ | ------------------------------------------------- |
+| [ARM NEON (ARMv7)][arm-neon]   | VFPv3, VFPv3-FP16, VFPv4 | :white_check_mark: | Primary target                                    |
+| [ARM NEON (ARMv8+)][arm-neon]  | AArch32, AArch64         | :white_check_mark: | Primary target                                    |
+| [ARM MVE (Helium)][arm-helium] | ARMv8.1-M                | :white_check_mark: | Secondary target                                  |
+| [SIMDe][simde]                 | x86-64(SSE2/AVX), RISCV  | :white_check_mark: | Tertiary target, used for portability and testing |
 
 ## Compatibility
 
@@ -105,7 +123,7 @@ Compilers:
 
 Testing is currently done across a range of platforms and compilers, including:
 
-### Architectures:
+### Architectures
 
 | Compiler | ARMv7              | ARMv8              | ARMv8.1-M          | X86-64             |
 | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
@@ -113,7 +131,7 @@ Testing is currently done across a range of platforms and compilers, including:
 | Clang    | :x:                | :heavy_check_mark: | (TBD)              | :heavy_check_mark: |
 | MSVC     | :x:                | (TBD)              | :x:                | :heavy_check_mark: |
 
-### Target ABI:
+### Target ABI
 
 | Compiler | Bare-metal         | Linux              | macOS              | Windows            |
 | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
@@ -121,12 +139,12 @@ Testing is currently done across a range of platforms and compilers, including:
 | Clang    | :warning:\*        | :heavy_check_mark: | :warning:\*\*      | :heavy_check_mark: |
 | MSVC     | :x:                | :x:                | :x:                | :heavy_check_mark: |
 
-\*: Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regulary but not
+\*: Windows/GCC (via MinGW64) and Bare-metal/Clang (via the LLVM Embedded Toolchain for ARM) are used regularly but not
 tested via CI.
 
 \*\*: In order to compile with Clang on macOS, you'll need to use the brew-bundled versions of libc++, as Apple's system libraries do not support required C++23 features.
 
-### Host Platform:
+### Host Platform
 
 | Host    | ARMv7     | ARMv8              | X86-64             |
 | ------- | --------- | ------------------ | ------------------ |
