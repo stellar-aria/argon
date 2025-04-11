@@ -31,23 +31,26 @@ var NAVTREE =
       [ "Object-oriented Argon interface", "index.html#autotoc_md6", null ],
       [ "Low-level NEON interface", "index.html#autotoc_md7", null ]
     ] ],
-    [ "Backend Support:", "index.html#autotoc_md8", null ],
-    [ "Compatibility", "index.html#autotoc_md9", [
-      [ "Architectures:", "index.html#autotoc_md10", null ],
-      [ "Target ABI:", "index.html#autotoc_md11", null ],
-      [ "Host Platform:", "index.html#autotoc_md12", null ]
+    [ "Key Differences between NEON and MVE", "index.html#autotoc_md8", [
+      [ "Narrowing support", "index.html#autotoc_md9", null ]
+    ] ],
+    [ "Backend Support", "index.html#autotoc_md10", null ],
+    [ "Compatibility", "index.html#autotoc_md11", [
+      [ "Architectures", "index.html#autotoc_md12", null ],
+      [ "Target ABI", "index.html#autotoc_md13", null ],
+      [ "Host Platform", "index.html#autotoc_md14", null ]
     ] ],
     [ "Vectorized Views", "md_docs_2vectorize.html", [
-      [ "Vectorized read (vectorize::load)", "md_docs_2vectorize.html#autotoc_md14", null ],
-      [ "Vectorized write (vectorize::store)", "md_docs_2vectorize.html#autotoc_md15", null ],
-      [ "Vectorized In-place Read/Write (vectorize::load_store)", "md_docs_2vectorize.html#autotoc_md16", null ],
-      [ "Interleaved Data Access", "md_docs_2vectorize.html#autotoc_md17", [
-        [ "Loading Interleaved Data", "md_docs_2vectorize.html#autotoc_md18", null ],
-        [ "Storing Interleaved Data", "md_docs_2vectorize.html#autotoc_md19", null ]
+      [ "Vectorized read (vectorize::load)", "md_docs_2vectorize.html#autotoc_md16", null ],
+      [ "Vectorized write (vectorize::store)", "md_docs_2vectorize.html#autotoc_md17", null ],
+      [ "Vectorized In-place Read/Write (vectorize::load_store)", "md_docs_2vectorize.html#autotoc_md18", null ],
+      [ "Interleaved Data Access", "md_docs_2vectorize.html#autotoc_md19", [
+        [ "Loading Interleaved Data", "md_docs_2vectorize.html#autotoc_md20", null ],
+        [ "Storing Interleaved Data", "md_docs_2vectorize.html#autotoc_md21", null ]
       ] ],
-      [ "Key Features", "md_docs_2vectorize.html#autotoc_md20", null ],
-      [ "Notes", "md_docs_2vectorize.html#autotoc_md21", null ],
-      [ "Error Handling", "md_docs_2vectorize.html#autotoc_md22", null ]
+      [ "Key Features", "md_docs_2vectorize.html#autotoc_md22", null ],
+      [ "Notes", "md_docs_2vectorize.html#autotoc_md23", null ],
+      [ "Error Handling", "md_docs_2vectorize.html#autotoc_md24", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -81,7 +84,7 @@ var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
 "classargon_1_1Vector.html#ae37a5488e8811817d2909772b1ff8ca6",
-"structsimd_1_1make__signed.html"
+"structsimd_1_1Vec128.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

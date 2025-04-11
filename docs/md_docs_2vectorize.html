@@ -100,9 +100,9 @@ $(function(){initNavTree('md_docs_2vectorize.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Vectorized Views</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md13"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md15"></a></p>
 <p>The <a class="el" href="classArgon.html">Argon</a> library provides several vectorized views for processing data using SIMD operations. These views work with contiguous ranges and provide iterator-based access to the vectorized data.</p>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="autotoc_md16"></a>
 Vectorized read (vectorize::load)</h1>
 <p>The <code>load</code> view presents a read-only view of a contiguous set of data (i.e. a <code>std::ranges::input_range</code>). <code>Load</code> is lazy, and occurs only on dereference (and on every dereference, as it is not memoized).</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/vectorize/load.hpp&gt;</span></div>
@@ -119,7 +119,7 @@ Vectorized read (vectorize::load)</h1>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a></div><div class="ttdoc">A view that loads data from a contiguous range into SIMD vectors.</div><div class="ttdef"><b>Definition</b> load.hpp:36</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md15"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md17"></a>
 Vectorized write (vectorize::store)</h1>
 <p>The <code>store</code> presents a write-only view of a contiguous set of data (i.e. a <code>std::ranges::output_range</code>). <code>StoreTo</code> is lazy, and occurs <em>only</em> on incrementing or decrementing the iterator.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/vectorize/store.hpp&gt;</span></div>
@@ -135,7 +135,7 @@ Vectorized write (vectorize::store)</h1>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1store_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1store.html">argon::vectorize::store</a></div><div class="ttdef"><b>Definition</b> store.hpp:17</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md18"></a>
 Vectorized In-place Read/Write (vectorize::load_store)</h1>
 <p>The <code>load_store</code> view allows you to process data in-place using SIMD operations. Internally, a vector is stored in the iterator that is loaded on creation, and then stored on increment, before the next element is loaded. Dereferencing accesses the internal stored vector, and will not <code>Load</code> again without a manual <code>.reload()</code> call.</p>
 <p>Note: If you do not need <em>both</em> read <em>and</em> write on the same range, use either <code>vectorize::load</code> or <code>vectorize::store</code> instead, as <code>vectorize::load_store</code> incurs the read latency and writeback penalty of them combined.</p>
@@ -152,10 +152,10 @@ Vectorized In-place Read/Write (vectorize::load_store)</h1>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load__store_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1load__store.html">argon::vectorize::load_store</a></div><div class="ttdoc">A SIMD vectorized view of a range of data.</div><div class="ttdef"><b>Definition</b> load_store.hpp:26</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md17"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md19"></a>
 Interleaved Data Access</h1>
 <p>For working with interleaved data (like RGB values), <a class="el" href="classArgon.html">Argon</a> provides specialized views:</p>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md20"></a>
 Loading Interleaved Data</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/vectorize/load.hpp&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;array&gt;</span></div>
@@ -169,7 +169,7 @@ Loading Interleaved Data</h2>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load__interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1load__interleaved.html">argon::vectorize::load_interleaved</a></div><div class="ttdef"><b>Definition</b> load_interleaved.hpp:15</div></div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md19"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md21"></a>
 Storing Interleaved Data</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/vectorize/store.hpp&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;array&gt;</span></div>
@@ -184,7 +184,7 @@ Storing Interleaved Data</h2>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1store__interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1store__interleaved.html">argon::vectorize::store_interleaved</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:15</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md20"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md22"></a>
 Key Features</h1>
 <ul>
 <li>All views work with contiguous ranges (arrays, vectors, spans)</li>
@@ -193,7 +193,7 @@ Key Features</h1>
 <li>Iterator-based interface compatible with C++ ranges</li>
 <li>Support for different data types (int32_t, float, etc.)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md23"></a>
 Notes</h1>
 <ol type="1">
 <li>The number of elements processed in each iteration depends on the SIMD vector size for the target architecture</li>
@@ -201,7 +201,7 @@ Notes</h1>
 <li>Non-aligned sizes are handled automatically (remaining elements are not processed)</li>
 <li>Interleaved operations support strides of 2, 3, or 4</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md24"></a>
 Error Handling</h1>
 <p>The views handle common errors gracefully:</p>
 <ul>

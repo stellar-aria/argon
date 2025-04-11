@@ -21,11 +21,12 @@ var searchData=
   ['storeiterator_18',['StoreIterator',['../structargon_1_1vectorize_1_1store_1_1StoreIterator.html',1,'argon::vectorize::store']]],
   ['storelaneto_19',['StoreLaneTo',['../classargon_1_1Vector.html#a72f5ef376e9294faa4fe36be434a7a50',1,'argon::Vector']]],
   ['storeto_20',['StoreTo',['../classargon_1_1Vector.html#a42451f1aadb8a99656980b90961423da',1,'argon::Vector']]],
-  ['storing_20interleaved_20data_21',['Storing Interleaved Data',['../md_docs_2vectorize.html#autotoc_md19',1,'']]],
+  ['storing_20interleaved_20data_21',['Storing Interleaved Data',['../md_docs_2vectorize.html#autotoc_md21',1,'']]],
   ['subtract_22',['Subtract',['../classargon_1_1Vector.html#af23b164299323cc619dda55b3797c147',1,'argon::Vector']]],
   ['subtractabs_23',['SubtractAbs',['../classargon_1_1Vector.html#aa3bb694741ef42d25f930cb7fce004ac',1,'argon::Vector']]],
   ['subtractabsadd_24',['SubtractAbsAdd',['../classargon_1_1Vector.html#aef58f8dc53b5ce13887f3fcd721d7fda',1,'argon::Vector']]],
   ['subtracthalve_25',['SubtractHalve',['../classargon_1_1Vector.html#aeb396f0fbf479eab31e7ca97a4e88e02',1,'argon::Vector']]],
   ['subtractsaturate_26',['SubtractSaturate',['../classargon_1_1Vector.html#ab67f82f7ac8a10fd748715bf3a99e582',1,'argon::Vector']]],
-  ['support_3a_27',['Backend Support:',['../index.html#autotoc_md8',1,'']]]
+  ['support_27',['Backend Support',['../index.html#autotoc_md10',1,'']]],
+  ['support_28',['Narrowing support',['../index.html#autotoc_md9',1,'']]]
 ];

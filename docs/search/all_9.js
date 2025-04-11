@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['in_20place_20read_20write_20vectorize_3a_3aload_5fstore_0',['Vectorized In-place Read/Write (vectorize::load_store)',['../md_docs_2vectorize.html#autotoc_md16',1,'']]],
+  ['in_20place_20read_20write_20vectorize_3a_3aload_5fstore_0',['Vectorized In-place Read/Write (vectorize::load_store)',['../md_docs_2vectorize.html#autotoc_md18',1,'']]],
   ['interface_1',['interface',['../index.html#autotoc_md7',1,'Low-level NEON interface'],['../index.html#autotoc_md6',1,'Object-oriented Argon interface']]],
   ['interleaved_2',['interleaved',['../structargon_1_1vectorize_1_1interleaved.html',1,'argon::vectorize']]],
-  ['interleaved_20data_3',['Interleaved Data',['../md_docs_2vectorize.html#autotoc_md18',1,'Loading Interleaved Data'],['../md_docs_2vectorize.html#autotoc_md19',1,'Storing Interleaved Data']]],
-  ['interleaved_20data_20access_4',['Interleaved Data Access',['../md_docs_2vectorize.html#autotoc_md17',1,'']]],
+  ['interleaved_20data_3',['Interleaved Data',['../md_docs_2vectorize.html#autotoc_md20',1,'Loading Interleaved Data'],['../md_docs_2vectorize.html#autotoc_md21',1,'Storing Interleaved Data']]],
+  ['interleaved_20data_20access_4',['Interleaved Data Access',['../md_docs_2vectorize.html#autotoc_md19',1,'']]],
   ['intrinsic_5ftype_5',['intrinsic_type',['../structargon_1_1vectorize_1_1load.html#ae0feaae5cf7226742b5e794b4eeebb19',1,'argon::vectorize::load::intrinsic_type'],['../structargon_1_1vectorize_1_1load__store.html#a94222520cb2c6a11df06b0f522e723e7',1,'argon::vectorize::load_store::intrinsic_type']]],
   ['iota_6',['Iota',['../classargon_1_1Vector.html#a9d08f142487b96d0b10eca211956b51f',1,'argon::Vector']]],
   ['is_20not_20yet_20_3a_7',['What Argon is not (yet?):',['../index.html#autotoc_md3',1,'']]],
