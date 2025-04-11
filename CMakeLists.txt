@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project(argon
   VERSION 0.1.0
   LANGUAGES CXX

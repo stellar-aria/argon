@@ -56,7 +56,7 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   ace ArgonHalf<ScalarType> TableExtension(vector_type* b, ArgonHalf<ScalarType> idx) {
     static_assert(NumTables > 1 && NumTables < 5, "Table Extension can only be performed with 1, 2, 3, or 4 tables");
 
-    using multivec_type = argon::helpers::MultiVector<vector_type, NumTables>::type;
+    using multivec_type = neon::MultiVector_t<vector_type, NumTables>;
 
     multivec_type multivector = *(multivec_type*)b;
 
@@ -217,7 +217,7 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   ace ArgonHalf<ScalarType> TableExtension(vector_type* b, ArgonHalf<ScalarType> idx) {
     static_assert(NumTables > 1 && NumTables < 5, "Table Extension can only be performed with 1, 2, 3, or 4 tables");
 
-    using multivec_type = argon::helpers::MultiVector_t<vector_type, NumTables>;
+    using multivec_type = neon::MultiVector_t<vector_type, NumTables>;
 
     multivec_type multivector = *(multivec_type*)b;
 

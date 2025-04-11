@@ -29,8 +29,8 @@ template <int n>[[gnu::always_inline]] nce float32x4_t convert(uint32x4_t a) { r
 [[gnu::always_inline]] nce float32x4_t complex_multiply_add_rotate_90(float32x4_t a, float32x4_t b, float32x4_t c) { return vcmlaq_rot90_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t complex_multiply_add_rotate_180(float32x4_t a, float32x4_t b, float32x4_t c) { return vcmlaq_rot180_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t complex_multiply_add_rotate_270(float32x4_t a, float32x4_t b, float32x4_t c) { return vcmlaq_rot270_f32(a, b, c); }
-template <int n>[[gnu::always_inline]] nce int32x4_t convert(float32x4_t a) { return vcvtq_n_s32_f32(a, n); }
-template <int n>[[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a) { return vcvtq_n_u32_f32(a, n); }
+template <int n>[[gnu::always_inline]] nce int32x4_t convert_n_signed(float32x4_t a) { return vcvtq_n_s32_f32(a, n); }
+template <int n>[[gnu::always_inline]] nce uint32x4_t convert_n_unsigned(float32x4_t a) { return vcvtq_n_u32_f32(a, n); }
 [[gnu::always_inline]] nce float16x8_t duplicate(float16_t a) { return vdupq_n_f16(a); }
 [[gnu::always_inline]] nce float32x4_t duplicate(float32_t a) { return vdupq_n_f32(a); }
 [[gnu::always_inline]] inline float16x8_t load1(float16_t const *ptr) { return vld1q_f16(ptr); }

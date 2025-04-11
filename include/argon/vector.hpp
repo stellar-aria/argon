@@ -8,12 +8,12 @@
 #include <utility>
 #include "arm_simd.hpp"
 #include "arm_simd/helpers.hpp"
+#include "arm_simd/helpers/multivector.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/bool.hpp"
-#include "helpers/multivector.hpp"
 #include "helpers/to_array.hpp"
 #include "lane.hpp"
 
@@ -50,13 +50,13 @@ template <typename VectorType>
 class Vector {
  public:
   template <size_t LaneIndex>
-  using const_lane_type = ConstLane<LaneIndex, VectorType>;       ///< The type of a single lane of the SIMD vector.
-  using lane_type = Lane<VectorType>;                             ///< The type of a single lane of the SIMD vector.
-  using scalar_type = simd::Scalar_t<VectorType>;                 ///< The scalar type of the SIMD vector.
-  using vector_type = VectorType;                                 ///< The SIMD vector type.
-  using argon_type = helpers::ArgonFor_t<VectorType>;             ///< The Argon type for the SIMD vector.
-  using vector_bool_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
-  using argon_bool_type = helpers::ArgonFor_t<vector_bool_type>;  ///< The Argon type for the boolean vector.
+  using const_lane_type = ConstLane<LaneIndex, VectorType>;     ///< The type of a single lane of the SIMD vector.
+  using lane_type = Lane<VectorType>;                           ///< The type of a single lane of the SIMD vector.
+  using scalar_type = simd::Scalar_t<VectorType>;               ///< The scalar type of the SIMD vector.
+  using vector_type = VectorType;                               ///< The SIMD vector type.
+  using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
+  using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
+  using argon_bool_type = helpers::ArgonFor_t<predicate_type>;  ///< The Argon type for the boolean vector.
 
   /// @brief The number of lanes in the SIMD vector.
   static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
@@ -71,7 +71,7 @@ class Vector {
 
   /// @brief Constructs a Vector from a SIMD vector type.
   /// @param vector The SIMD vector to construct from.
-  constexpr Vector(VectorType vector) : vec_{std::move(vector)} {};
+  ace Vector(VectorType vector) : vec_{std::move(vector)} {};
 
   /// @brief Constructs a Vector from a scalar value.
   /// @param scalar The scalar value to construct from.
@@ -270,7 +270,7 @@ class Vector {
   /// @return An array of scalar values representing the vector.
   ace std::array<scalar_type, lanes> to_array() {
     std::array<scalar_type, lanes> out;
-    simd::store1(&out[0], vec_);
+    simd::store1(out.data(), vec_);
     return out;
   }
 
@@ -790,9 +790,41 @@ class Vector {
 #ifdef ARGON_PLATFORM_MVE
     scalar_type val = *ptr;
     VectorType vec;
-    utility::constexpr_for<0, lanes, 1>([val, &vec](auto i) { vec[i] = val; });
+    utility::constexpr_for<0, lanes, 1>([val, &vec]<int i>() { vec[i] = val; });
 #else
     return simd::load1_duplicate<VectorType>(ptr);
+#endif
+  }
+
+  ///@brief Using a base address and a vector of offset bytes and a base pointer, create a new vector
+  ///@note On NEON this incurs a writeback + load penalty
+  ///@param base The address to index from
+  ///@param offset_vector A vector of offset indices
+  ///@return A new vector constructed from the various indices
+  ace static argon_type LoadGatherOffsetBytes(
+      const scalar_type* base,
+      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+#ifdef ARGON_PLATFORM_MVE
+    static_assert(
+        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
+        "Unsupported size for gather load");
+
+    if constexpr (sizeof(scalar_type) == 1) {
+      return mve::load_byte_gather_offset(base, offset_vector);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      return mve::load_halfword_gather_offset(base, offset_vector);
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      return mve::load_word_gather_offset(base, offset_vector);
+    } else if constexpr (sizeof(scalar_type) == 8) {
+      return mve::load_doubleword_gather_offset(base, offset_vector);
+    }
+#else
+    argon_type destination;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      auto lane_val = neon::get_lane<i>(offset_vector);
+      destination = destination.template LoadToLane<i>(base + (lane_val * sizeof(scalar_type)));
+    });
+    return destination;
 #endif
   }
 
@@ -801,25 +833,31 @@ class Vector {
   ///@param base The address to index from
   ///@param offset_vector A vector of offset indices
   ///@return A new vector constructed from the various indices
-  ace static argon_type LoadGather(const scalar_type* base,
-                                   helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> offset_vector) {
-    argon_type destination;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = simd::get_lane<i>(offset_vector);
-      destination = destination.template LoadToLane<i>(base + lane_val);
-    });
-    return destination;
-  }
+  ace static argon_type LoadGatherOffsetIndex(
+      const scalar_type* base,
+      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+#ifdef ARGON_PLATFORM_MVE
+    static_assert(
+        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
+        "Unsupported size for gather load");
 
-  /// @copydoc LoadGather
-  ace static argon_type LoadGather(const scalar_type* base,
-                                   helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+    if constexpr (sizeof(scalar_type) == 1) {
+      return mve::load_byte_gather_offset(base, offset_vector);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      return mve::load_halfword_gather_offset(base, offset_vector * sizeof(scalar_type));
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      return mve::load_word_gather_offset(base, offset_vector * sizeof(scalar_type));
+    } else if constexpr (sizeof(scalar_type) == 8) {
+      return mve::load_doubleword_gather_offset(base, offset_vector * sizeof(scalar_type));
+    }
+#else
     argon_type destination;
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = simd::get_lane<i>(offset_vector);
+      auto lane_val = neon::get_lane<i>(offset_vector);
       destination = destination.template LoadToLane<i>(base + lane_val);
     });
     return destination;
+#endif
   }
 
   /// @brief Load a lane from a pointer
@@ -849,7 +887,7 @@ class Vector {
     }
 #else
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVector_t<VectorType, stride>;
+    using multivec_type = simd::MultiVector_t<VectorType, stride>;
     if constexpr (stride == 2) {
       return argon::to_array(neon::load2<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
@@ -878,7 +916,7 @@ class Vector {
 #else
     static_assert(stride > 1 && stride < 5,
                   "De-interleaving LoadCopy can only be performed with a stride of 2, 3, or 4");
-    using multivec_type = helpers::MultiVector<VectorType, stride>::type;
+    using multivec_type = simd::MultiVector<VectorType, stride>::type;
     if constexpr (stride == 2) {
       return argon::to_array(simd::load2_duplicate<multivec_type>(ptr).val);
     } else if constexpr (stride == 3) {
@@ -896,15 +934,15 @@ class Vector {
   /// @param ptr The pointer to load from
   /// @return The new multi-vector
   template <size_t LaneIndex, size_t Stride>
-  ace static std::array<argon_type, Stride> LoadToLaneInterleaved(helpers::MultiVector_t<VectorType, Stride> multi,
+  ace static std::array<argon_type, Stride> LoadToLaneInterleaved(simd::MultiVector_t<VectorType, Stride> multi,
                                                                   const scalar_type* ptr) {
     static_assert(Stride > 1 && Stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
 #ifdef ARGON_PLATFORM_MVE
     auto out = multi;
-    utility::constexpr_for<0, Stride, 1>([&](auto i) {  //<
-      out.val[i][LaneIndex] = *ptr;
-      ptr += lanes;
+    utility::constexpr_for<0, Stride, 1>([&]<int i>() {  //<
+      out.val[i][LaneIndex] = ptr[i];
     });
+    return argon::to_array(out.val);
 #else
     if constexpr (Stride == 2) {
       if constexpr (simd::is_quadword_v<VectorType>) {
@@ -932,7 +970,7 @@ class Vector {
   template <size_t lane, size_t stride>
   ace static std::array<argon_type, stride> LoadToLaneInterleaved(std::array<argon_type, stride> multi,
                                                                   const scalar_type* ptr) {
-    using multivec_type = helpers::MultiVector_t<VectorType, stride>;
+    using multivec_type = simd::MultiVector_t<VectorType, stride>;
     return LoadToLaneInterleaved<lane, stride>(*(multivec_type*)multi.data(), ptr);
   }
 
@@ -947,28 +985,14 @@ class Vector {
    * @return std::array<argon_type, stride> An array of vectors from the resulting interleaved loads
    */
   template <size_t stride>
-  ace static std::array<argon_type, stride> LoadGatherInterleaved(
-      const scalar_type* base_ptr,
-      helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> offset_vector) {
-    static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
-    std::array<argon_type, stride> multi{};
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = simd::get_lane<i>(offset_vector);
-      multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
-    });
-    return multi;
-  }
-
-  /// @copydoc LoadGatherInterleaved
-  template <size_t stride>
-  ace static std::array<argon_type, stride> LoadGatherInterleaved(
+  ace static std::array<argon_type, stride> LoadGatherOffsetIndexInterleaved(
       const scalar_type* base_ptr,
       helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
     static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     std::array<argon_type, stride> multi{};
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       auto lane_val = simd::get_lane<i>(offset_vector);
-      multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + lane_val);
+      multi = LoadToLaneInterleaved<i, stride>(multi, base_ptr + (lane_val * stride));
     });
     return multi;
   }
@@ -989,6 +1013,7 @@ class Vector {
       multi[i] = *ptr;
       ptr += lanes;
     });
+    return multi;
 #else
 #if defined(__clang__) || (__GNUC__ > 13)
     if constexpr (n == 2) {
@@ -1133,10 +1158,10 @@ class Vector {
 
   /// Ands the current vector with the given vector, then checks if nonzero. If so, fills the lane with all ones
   /// @details Equivalent to (a & b) != 0 ? 0xFFFFFFFF : 0x00000000
-  ace argon_type CompareTestNonzero(argon_type b) const { return simd::compare_test_nonzero(vec_, b); }
+  ace predicate_type CompareTestNonzero(argon_type b) const { return simd::compare_test_nonzero(vec_, b); }
 
   /// @copydoc CompareTestNonzero
-  ace argon_type TestNonzero() const { return simd::compare_test_nonzero(vec_, argon_type{1}); }
+  ace predicate_type TestNonzero() const { return simd::compare_test_nonzero(vec_, argon_type{1}); }
 #endif
 
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
@@ -1153,17 +1178,37 @@ class Vector {
 
   /// Count the number of bits that are set to one in the vector.
   /// @details Equivalent to std::popcount(a).
-  ace argon_type CountActiveBits() const { return simd::count_active_bits(vec_); }
+  ace argon_type CountActiveBits() const {
+#ifdef ARGON_PLATFORM_MVE
+    auto new_vec = vec_;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      new_vec[i] = std::popcount(vec_[i]);
+    });
+    return new_vec;
+#else
+    return neon::count_active_bits(vec_);
+#endif
+  }
 
   /// @copydoc CountActiveBits
   ace argon_type Popcount() const { return CountActiveBits(); }
 
   /// @brief Extract n elements from the lower end of the operand, and the remaining elements from the top end of this
   /// vector, combining them into the result vector.
-  /// For example:  {a0, a1, a2, a3} and {b0, b1, b2, b3} with n = 1 will result in {a0, a1, a2, b3}
+  /// For example:  {a0, a1, a2, a3} and {b0, b1, b2, b3} with n = 1 will result in {b0, a1, a2, a3}
   template <int n>
   ace argon_type Extract(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    auto new_vec = vec_;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if (i < n) {
+        new_vec[i] = b.vec_[i];
+      }
+    });
+    return new_vec;
+#else
     return simd::extract<n>(vec_, b);
+#endif
   }
 
   ace argon_type Reverse64bit() const { return simd::reverse_64bit(vec_); }
@@ -1174,20 +1219,65 @@ class Vector {
   /// @details Given a pair of vector {a0, a1, a2, a3} and {b0, b1, b2, b3},
   /// the result is {{a0, b0, a1, b1}, {a2, b2, a3, b3}}
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
-    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
+#ifdef ARGON_PLATFORM_MVE
+    std::array<argon_type, 2> new_vec;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if (i % 2 == 0) {
+        new_vec[0][i] = vec_[i / 2];
+        new_vec[1][i] = vec_[(i + lanes) / 2];
+      } else {
+        new_vec[0][i] = b.vec_[i / 2];
+        new_vec[1][i] = b.vec_[(i + lanes) / 2];
+      }
+    });
+    return new_vec;
+#else
+    return argon::to_array(neon::zip(vec_, b.vec()).val);
+#endif
   }
 
   /// @brief Unzip two vectors, returning two vectors of pairs
   /// @details Given a pair of vector {a0, b0, a1, b1} and {a2, b2, a3, b3},
   /// the result is {{a0, a1, a2, a3}, {b0, b1, b2, b3}}
   std::array<argon_type, 2> UnzipWith(argon_type b) {
-    return std::bit_cast<std::array<argon_type, 2>>(std::to_array(simd::transpose(vec_, b.vec()).val));
+#ifdef ARGON_PLATFORM_MVE
+    std::array<argon_type, 2> new_vec;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if ((i * 2) < lanes) {
+        new_vec[0][i] = vec_[i * 2];
+        new_vec[1][i] = vec_[i * 2 + 1];
+      } else {
+        new_vec[0][i] = b.vec_[i * 2];
+        new_vec[1][i] = b.vec_[i * 2 + 1];
+      }
+    });
+    return new_vec;
+#else
+    return argon::to_array(neon::unzip(vec_, b.vec()).val);
+#endif
   }
 
-  /// @brief Perform a matrix transpose on two vectors, returning two vectors of pairs
-  std::tuple<argon_type, argon_type> TransposeWith(argon_type b) const {
-    auto result = simd::transpose(vec_, b.vec());
-    return std::tuple<argon_type, argon_type>(result.val[0], result.val[1]);
+  /// @brief Perform a 2x2 matrix transpose on two vectors, returning two vectors of pairs
+  /// @details Given a pair of vectors {{a0, a1, a2, a3},
+  //                                    {b0, b1, b2, b3}}
+  ///                    the result is {{a0, b0, a2, b2},
+  //                                    {a1, b1, a3, b3}}
+  std::array<argon_type, 2> TransposeWith(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    std::array<argon_type, 2> new_vec;
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if (i % 2 == 1) {
+        new_vec[0][i] = vec_[i];
+        new_vec[1][i] = vec_[i + 1];
+      } else {
+        new_vec[0][i] = b.vec_[i + 1];
+        new_vec[1][i] = b.vec_[i];
+      }
+    });
+    return new_vec;
+#else
+    return argon::to_array(simd::transpose(vec_, b.vec()).val);
+#endif
   }
 
   /// Get the number of elements
@@ -1197,9 +1287,9 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace argon_type map(FuncType body) const {
     VectorType out;
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       out[i] = body(vec_[i]);
-    }
+    });
     return out;
   }
 
@@ -1207,9 +1297,9 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, int)>>
   ace argon_type map_with_index(FuncType body) const {
     VectorType out;
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       out[i] = body(vec_[i], i);
-    }
+    });
     return out;
   }
 
@@ -1217,9 +1307,9 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type, scalar_type)>>
   ace argon_type map2(argon_type other, FuncType body) const {
     VectorType out;
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       out[i] = body(vec_[i], other.vec_[i]);
-    }
+    });
     return out;
   }
 
@@ -1227,9 +1317,9 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<void(scalar_type&)>>
   ace argon_type each_lane(FuncType body) {
     VectorType out = vec_;
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       body(out[i]);
-    }
+    });
     return out;
   }
 
@@ -1237,79 +1327,87 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<void(scalar_type&, int)>>
   ace argon_type each_lane_with_index(FuncType body) {
     VectorType out = vec_;
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       body(out[i], i);
-    }
+    });
     return out;
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_lane(FuncType true_branch) {
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (vec_[i] != 0) {
         true_branch();
       }
-    }
+    });
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void()>>
   ace void if_else_lane(FuncType true_branch, FuncType false_branch) {
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (vec_[i] != 0) {
         true_branch();
       } else {
         false_branch();
       }
-    }
+    });
   }
 
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<void(int)>>
   ace void if_lane_with_index(FuncType true_branch) {
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (vec_[i] != 0) {
         true_branch(i);
       }
-    }
+    });
   }
 
   template <typename FuncType1, typename FuncType2>
     requires std::convertible_to<FuncType1, std::function<void(int)>> &&
              std::convertible_to<FuncType2, std::function<void(int)>>
   ace void if_else_lane_with_index(FuncType1 true_branch, FuncType2 false_branch) {
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (vec_[i] != 0) {
         true_branch(i);
       } else {
         false_branch(i);
       }
-    }
+    });
   }
 
   ace bool any() {
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (vec_[i]) {
         return true;
       }
-    }
+    });
     return false;
   }
 
   ace bool all() {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::max_reduce_max(vec_, vec_) != 0;
+#else
     auto nonzero = TestNonzero();
-    for (size_t i = 0; i < lanes; ++i) {
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if (nonzero[i] == 0) {
         return false;
       }
-    }
+    });
     return true;
+#endif
   }
 
   template <std::size_t Index>
   std::tuple_element_t<Index, argon_type> get() {
-    return Lane{vec_, Index};
+#ifdef ARGON_PLATFORM_MVE
+    return vec_[Index];
+#else
+    return GetLane<Index>();
+#endif
   }
 
  protected:
@@ -1330,7 +1428,7 @@ struct tuple_size<argon::Vector<T>> {
 template <size_t Index, typename T>
 struct tuple_element<Index, argon::Vector<T>> {
   static_assert(Index < argon::Vector<T>::lanes);
-  using type = argon::Vector<T>::lane_type;
+  using type = argon::Vector<T>::const_lane_type;
 };
 }  // namespace std
 
