@@ -21,7 +21,7 @@ var searchData=
   ['loading_20interleaved_20data_18',['Loading Interleaved Data',['../md_docs_2vectorize.html#autotoc_md20',1,'']]],
   ['loadinterleaved_19',['LoadInterleaved',['../classargon_1_1Vector.html#a111495cbe4a08d7088edf156237f1a0a',1,'argon::Vector']]],
   ['loadinterleavediterator_20',['LoadInterleavedIterator',['../structargon_1_1vectorize_1_1load__interleaved_1_1LoadInterleavedIterator.html',1,'argon::vectorize::load_interleaved']]],
-  ['loaditerator_21',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html',1,'argon::vectorize::load&lt; ScalarType &gt;::LoadIterator'],['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ae8d44ee87ac07d4c24e5012a5cb21a3d',1,'argon::vectorize::load::LoadIterator::LoadIterator()']]],
+  ['loaditerator_21',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html',1,'argon::vectorize::load&lt; ScalarType &gt;::LoadIterator'],['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ad88ac548972fd68643a3f6ecbe6bb104',1,'argon::vectorize::load::LoadIterator::LoadIterator()']]],
   ['loadmulti_22',['LoadMulti',['../classargon_1_1Vector.html#ab921d46adcbb7bff17e8d46be72cbe7a',1,'argon::Vector']]],
   ['loadscalar_23',['LoadScalar',['../classargon_1_1Vector.html#a9b39610ee7243ea7499711aeb821de0e',1,'argon::Vector']]],
   ['loadtolane_24',['LoadToLane',['../classargon_1_1Vector.html#aa2e16481307865c0d17cbc73784e83a0',1,'argon::Vector']]],

@@ -12,5 +12,6 @@ var dir_8f55dd3ded7944f08d54613532a6a0e1 =
     [ "set_lane.hpp", "set__lane_8hpp_source.html", null ],
     [ "store.hpp", "arm__simd_2helpers_2store_8hpp_source.html", null ],
     [ "vec128.hpp", "vec128_8hpp_source.html", null ],
-    [ "vec64.hpp", "vec64_8hpp_source.html", null ]
+    [ "vec64.hpp", "vec64_8hpp_source.html", null ],
+    [ "vector.hpp", "arm__simd_2helpers_2vector_8hpp_source.html", null ]
 ];

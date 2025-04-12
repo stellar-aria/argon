@@ -125,15 +125,18 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>difference_type</b> 
 using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = <a class="el" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">helpers::ArgonFor_t</a>&lt;<a class="el" href="structargon_1_1vectorize_1_1load.html#ae0feaae5cf7226742b5e794b4eeebb19">intrinsic_type</a>&gt;</td></tr>
 <tr class="memdesc:ab60d797c3bc758277f1f3029839dc293"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value type of the iterator. <br /></td></tr>
 <tr class="separator:ab60d797c3bc758277f1f3029839dc293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61bd8a3e887f7c0fd69c573a3c12a768" id="r_a61bd8a3e887f7c0fd69c573a3c12a768"><td class="memItemLeft" align="right" valign="top"><a id="a61bd8a3e887f7c0fd69c573a3c12a768" name="a61bd8a3e887f7c0fd69c573a3c12a768"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>reference_type</b> = <a class="el" href="#ab60d797c3bc758277f1f3029839dc293">value_type</a>&amp;</td></tr>
+<tr class="separator:a61bd8a3e887f7c0fd69c573a3c12a768"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae8d44ee87ac07d4c24e5012a5cb21a3d" id="r_ae8d44ee87ac07d4c24e5012a5cb21a3d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8d44ee87ac07d4c24e5012a5cb21a3d">LoadIterator</a> (ScalarType *<a class="el" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>)</td></tr>
-<tr class="memdesc:ae8d44ee87ac07d4c24e5012a5cb21a3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html" title="The Iterator type for the range.">LoadIterator</a> from a pointer to the data.  <br /></td></tr>
-<tr class="separator:ae8d44ee87ac07d4c24e5012a5cb21a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c38040a1615bb604aea58b0047532cc" id="r_a1c38040a1615bb604aea58b0047532cc"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classArgon.html">Argon</a>&lt; ScalarType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c38040a1615bb604aea58b0047532cc">operator*</a> () const</td></tr>
-<tr class="memdesc:a1c38040a1615bb604aea58b0047532cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dereferences the iterator to get the SIMD vector.  <br /></td></tr>
-<tr class="separator:a1c38040a1615bb604aea58b0047532cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad88ac548972fd68643a3f6ecbe6bb104" id="r_ad88ac548972fd68643a3f6ecbe6bb104"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad88ac548972fd68643a3f6ecbe6bb104">LoadIterator</a> (const ScalarType *<a class="el" href="structargon_1_1vectorize_1_1ptr.html">ptr</a>)</td></tr>
+<tr class="memdesc:ad88ac548972fd68643a3f6ecbe6bb104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html" title="The Iterator type for the range.">LoadIterator</a> from a pointer to the data.  <br /></td></tr>
+<tr class="separator:ad88ac548972fd68643a3f6ecbe6bb104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bab232e78955834048ae3451d36c121" id="r_a1bab232e78955834048ae3451d36c121"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classArgon.html">Argon</a>&lt; ScalarType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1bab232e78955834048ae3451d36c121">operator*</a> () const</td></tr>
+<tr class="memdesc:a1bab232e78955834048ae3451d36c121"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dereferences the iterator to get the SIMD vector.  <br /></td></tr>
+<tr class="separator:a1bab232e78955834048ae3451d36c121"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08bcf45f5b7803134c31a13b80abca62" id="r_a08bcf45f5b7803134c31a13b80abca62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html">LoadIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08bcf45f5b7803134c31a13b80abca62">operator+=</a> (int n)</td></tr>
 <tr class="memdesc:a08bcf45f5b7803134c31a13b80abca62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the iterator by a number of steps.  <br /></td></tr>
 <tr class="separator:a08bcf45f5b7803134c31a13b80abca62"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,8 +197,8 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;=&gt;</b>
 struct argon::vectorize::load&lt; ScalarType &gt;::LoadIterator</div><p>The Iterator type for the range. </p>
 <dl class="section note"><dt>Note</dt><dd>This iterator performs a load operation on every dereference! </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae8d44ee87ac07d4c24e5012a5cb21a3d" name="ae8d44ee87ac07d4c24e5012a5cb21a3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8d44ee87ac07d4c24e5012a5cb21a3d">&#9670;&#160;</a></span>LoadIterator()</h2>
+<a id="ad88ac548972fd68643a3f6ecbe6bb104" name="ad88ac548972fd68643a3f6ecbe6bb104"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad88ac548972fd68643a3f6ecbe6bb104">&#9670;&#160;</a></span>LoadIterator()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -208,7 +211,7 @@ template&lt;typename ScalarType&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::LoadIterator::LoadIterator </td>
           <td>(</td>
-          <td class="paramtype">ScalarType *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
+          <td class="paramtype">const ScalarType *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -230,8 +233,8 @@ template&lt;typename ScalarType&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1c38040a1615bb604aea58b0047532cc" name="a1c38040a1615bb604aea58b0047532cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c38040a1615bb604aea58b0047532cc">&#9670;&#160;</a></span>operator*()</h2>
+<a id="a1bab232e78955834048ae3451d36c121" name="a1bab232e78955834048ae3451d36c121"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bab232e78955834048ae3451d36c121">&#9670;&#160;</a></span>operator*()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,7 +245,7 @@ template&lt;typename ScalarType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classArgon.html">Argon</a>&lt; ScalarType &gt; <a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::LoadIterator::operator* </td>
+          <td class="memname"><a class="el" href="classArgon.html">Argon</a>&lt; ScalarType &gt; <a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::LoadIterator::operator* </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

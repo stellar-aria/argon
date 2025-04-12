@@ -83,8 +83,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
-"classargon_1_1Vector.html#ae097bd673f14aa4d1cdf350819976618",
-"structsimd_1_1Vec128.html"
+"classargon_1_1Vector.html#ae01b7082ded41ed06e4eceb745ea387e",
+"structsimd_1_1MultiVector.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

@@ -34,8 +34,10 @@ var hierarchy =
     [ "simd::Vec64< T >", "structsimd_1_1Vec64.html", null ],
     [ "argon::Vector< VectorType >", "classargon_1_1Vector.html", [
       [ "Argon< ScalarType >", "classArgon.html", null ],
+      [ "Argon< next_larger >", "classArgon.html", null ],
       [ "Argon< ScalarType > *", "classArgon.html", null ]
     ] ],
+    [ "simd::Vector< T, Lanes >", "structsimd_1_1Vector.html", null ],
     [ "argon::Vector< neon::Vec64_t< ScalarType > >", "classargon_1_1Vector.html", [
       [ "ArgonHalf< ScalarType >", "classArgonHalf_3_01ScalarType_01_4.html", null ],
       [ "ArgonHalf< ScalarType >", "classArgonHalf_3_01ScalarType_01_4.html", null ]

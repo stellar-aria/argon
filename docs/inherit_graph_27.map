@@ -1,17 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,221,204,246"/>
-<area shape="rect" id="Node000001" href="$structargon_1_1vectorize_1_1interleaved.html" title=" " alt="" coords="252,5,461,45"/>
-<area shape="poly" id="edge6_Node000000_Node000001" title=" " alt="" coords="118,207,170,132,207,91,251,55,273,43,276,48,253,60,211,95,174,136,122,210"/>
-<area shape="rect" id="Node000002" href="$structargon_1_1vectorize_1_1load.html" title="A view that loads data from a contiguous range into SIMD vectors." alt="" coords="275,69,438,109"/>
-<area shape="poly" id="edge7_Node000000_Node000002" title=" " alt="" coords="128,209,182,164,251,119,279,107,281,112,253,124,185,168,131,213"/>
-<area shape="rect" id="Node000003" href="$structargon_1_1vectorize_1_1load__interleaved.html" title=" " alt="" coords="261,134,453,189"/>
-<area shape="poly" id="edge8_Node000000_Node000003" title=" " alt="" coords="162,214,260,186,261,191,164,219"/>
-<area shape="rect" id="Node000004" href="$structargon_1_1vectorize_1_1load__store.html" title="A SIMD vectorized view of a range of data." alt="" coords="275,213,438,253"/>
-<area shape="poly" id="edge9_Node000000_Node000004" title=" " alt="" coords="218,231,275,231,275,236,218,236"/>
-<area shape="rect" id="Node000005" href="$structargon_1_1vectorize_1_1ptr.html" title=" " alt="" coords="280,277,433,317"/>
-<area shape="poly" id="edge10_Node000000_Node000005" title=" " alt="" coords="170,247,281,275,279,281,168,252"/>
-<area shape="rect" id="Node000006" href="$structargon_1_1vectorize_1_1store.html" title=" " alt="" coords="273,341,441,381"/>
-<area shape="poly" id="edge11_Node000000_Node000006" title=" " alt="" coords="134,252,188,290,253,327,283,339,281,344,251,332,185,294,131,256"/>
-<area shape="rect" id="Node000007" href="$structargon_1_1vectorize_1_1store__interleaved.html" title=" " alt="" coords="258,406,455,461"/>
-<area shape="poly" id="edge12_Node000000_Node000007" title=" " alt="" coords="125,256,178,322,214,359,254,391,275,403,272,408,250,396,210,363,174,326,121,259"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,13,80,38"/>
+<area shape="rect" id="Node000001" href="$classargon_1_1CondMonad.html" title=" " alt="" coords="128,5,355,45"/>
+<area shape="poly" id="edge6_Node000000_Node000001" title=" " alt="" coords="94,23,128,23,128,28,94,28"/>
 </map>

@@ -27,7 +27,8 @@ var annotated_dup =
       [ "MultiVector", "structsimd_1_1MultiVector.html", null ],
       [ "Scalar", "structsimd_1_1Scalar.html", null ],
       [ "Vec128", "structsimd_1_1Vec128.html", null ],
-      [ "Vec64", "structsimd_1_1Vec64.html", null ]
+      [ "Vec64", "structsimd_1_1Vec64.html", null ],
+      [ "Vector", "structsimd_1_1Vector.html", null ]
     ] ],
     [ "std", "namespacestd.html", [
       [ "tuple_element< Index, argon::Vector< T > >", "structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],

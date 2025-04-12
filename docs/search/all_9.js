@@ -6,7 +6,7 @@ var searchData=
   ['interleaved_20data_3',['Interleaved Data',['../md_docs_2vectorize.html#autotoc_md20',1,'Loading Interleaved Data'],['../md_docs_2vectorize.html#autotoc_md21',1,'Storing Interleaved Data']]],
   ['interleaved_20data_20access_4',['Interleaved Data Access',['../md_docs_2vectorize.html#autotoc_md19',1,'']]],
   ['intrinsic_5ftype_5',['intrinsic_type',['../structargon_1_1vectorize_1_1load.html#ae0feaae5cf7226742b5e794b4eeebb19',1,'argon::vectorize::load::intrinsic_type'],['../structargon_1_1vectorize_1_1load__store.html#a94222520cb2c6a11df06b0f522e723e7',1,'argon::vectorize::load_store::intrinsic_type']]],
-  ['iota_6',['Iota',['../classargon_1_1Vector.html#a9d08f142487b96d0b10eca211956b51f',1,'argon::Vector']]],
+  ['iota_6',['Iota',['../classargon_1_1Vector.html#a136fe4f1f1e3bb707a9633ef6dcbbb4d',1,'argon::Vector']]],
   ['is_20not_20yet_20_3a_7',['What Argon is not (yet?):',['../index.html#autotoc_md3',1,'']]],
   ['is_3a_8',['What Argon is:',['../index.html#autotoc_md2',1,'']]],
   ['is_5fdoubleword_9',['is_doubleword',['../conceptsimd_1_1is__doubleword.html',1,'simd']]],

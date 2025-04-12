@@ -12,7 +12,7 @@ var searchData=
   ['loadgatheroffsetindex_9',['LoadGatherOffsetIndex',['../classargon_1_1Vector.html#ab9f02804de05da528affcfda49b45b86',1,'argon::Vector']]],
   ['loadgatheroffsetindexinterleaved_10',['LoadGatherOffsetIndexInterleaved',['../classargon_1_1Vector.html#a7d59cd840ce89da92612577c9d96306a',1,'argon::Vector']]],
   ['loadinterleaved_11',['LoadInterleaved',['../classargon_1_1Vector.html#a111495cbe4a08d7088edf156237f1a0a',1,'argon::Vector']]],
-  ['loaditerator_12',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ae8d44ee87ac07d4c24e5012a5cb21a3d',1,'argon::vectorize::load::LoadIterator']]],
+  ['loaditerator_12',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ad88ac548972fd68643a3f6ecbe6bb104',1,'argon::vectorize::load::LoadIterator']]],
   ['loadmulti_13',['LoadMulti',['../classargon_1_1Vector.html#ab921d46adcbb7bff17e8d46be72cbe7a',1,'argon::Vector']]],
   ['loadscalar_14',['LoadScalar',['../classargon_1_1Vector.html#a9b39610ee7243ea7499711aeb821de0e',1,'argon::Vector']]],
   ['loadtolane_15',['LoadToLane',['../classargon_1_1Vector.html#aa2e16481307865c0d17cbc73784e83a0',1,'argon::Vector']]],

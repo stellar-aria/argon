@@ -10,5 +10,5 @@ var dir_55bc6843ac02ee57a5c85e0d6affd9dd =
     [ "split.hpp", "split_8hpp_source.html", null ],
     [ "store.hpp", "argon_2store_8hpp_source.html", null ],
     [ "utility.hpp", "utility_8hpp_source.html", null ],
-    [ "vector.hpp", "vector_8hpp_source.html", null ]
+    [ "vector.hpp", "argon_2vector_8hpp_source.html", null ]
 ];

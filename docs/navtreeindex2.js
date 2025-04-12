@@ -1,7 +1,10 @@
 var NAVTREEINDEX2 =
 {
+"structsimd_1_1MultiVector.html":[9,0,1,2],
+"structsimd_1_1Scalar.html":[9,0,1,3],
 "structsimd_1_1Vec128.html":[9,0,1,4],
 "structsimd_1_1Vec64.html":[9,0,1,5],
+"structsimd_1_1Vector.html":[9,0,1,6],
 "structsimd_1_1make__signed.html":[9,0,1,0],
 "structsimd_1_1make__unsigned.html":[9,0,1,1],
 "structstd_1_1tuple__element_3_01Index_00_01ArgonHalf_3_01T_01_4_01_4.html":[7,0,1,2],
@@ -23,7 +26,6 @@ var NAVTREEINDEX2 =
 "utility_8hpp_source.html":[10,0,0,0,9],
 "vec128_8hpp_source.html":[10,0,0,1,0,11],
 "vec64_8hpp_source.html":[10,0,0,1,0,12],
-"vector_8hpp_source.html":[10,0,0,0,10],
 "vfpv3_8hpp_source.html":[10,0,0,1,2,3],
 "vfpv3__float_8hpp_source.html":[10,0,0,1,3,1],
 "vfpv3__int_8hpp_source.html":[10,0,0,1,3,2],
