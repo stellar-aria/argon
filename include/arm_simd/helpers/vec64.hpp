@@ -47,7 +47,7 @@ template <> struct Vec64<float64_t> {using type = float64x1_t; };
 /// @brief Helper alias to get the SIMD vector type for a given scalar type.
 /// @tparam T The scalar type to get the SIMD vector type for.
 template <typename T>
-using Vec64_t = typename Vec64<T>::type;
+using Vec64_t = typename Vec64<std::remove_cv_t<T>>::type;
 
 #endif
 // clang-format on

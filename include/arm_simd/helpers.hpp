@@ -10,3 +10,4 @@
 #include "helpers/set_lane.hpp"
 #include "helpers/vec128.hpp"
 #include "helpers/vec64.hpp"
+#include "helpers/vector.hpp"

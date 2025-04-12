@@ -151,20 +151,12 @@ class Vector {
   /// @return The constructed SIMD vector.
   /// @details This constructor creates a SIMD vector with lanes containing values from start to start + (lanes - 1) *
   /// step.
-  ace static argon_type Iota(scalar_type start, scalar_type step = 1) {
+  ace static argon_type Iota(scalar_type start) {
     // TODO: Remove this once MSVC 19.44 is released.
 #if __cpp_if_consteval >= 202106L
-    if consteval {
-      VectorType out;
-      utility::constexpr_for<0, lanes, 1>([&](size_t i) {  //
-        out[i] = start + i * step;
-      });
-      return out;
-    } else {
-      return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
-    }
+    return IotaHelper(start, std::make_index_sequence<lanes>{});
 #else
-    return Argon{start}.MultiplyAdd(step, VectorType{0, 1, 2, 3});
+    return Argon{start}.Add(VectorType{0, 1, 2, 3});
 #endif
   }
 
@@ -255,10 +247,22 @@ class Vector {
   ace lane_type operator[](const size_t i) { return GetLane(i); }
 
   /// Shift the elements of the vector to the right by a specified number of bits.
-  ace argon_type operator>>(const int i) const { return ShiftRight(i); }
+  ace argon_type operator>>(const int i) const {
+#if ARGON_USE_COMPILER_EXTENSIONS
+    return vec_ >> i;
+#else
+    return ShiftRight(i);
+#endif
+  }
 
   /// Shift the elements of the vector to the left by a specified number of bits.
-  ace argon_type operator<<(const int i) const { return ShiftLeft(i); }
+  ace argon_type operator<<(const int i) const {
+#if ARGON_USE_COMPILER_EXTENSIONS
+    return vec_ << i;
+#else
+    return ShiftLeft(i);
+#endif
+  }
 
   /// Get the underlying SIMD vector.
   [[gnu::always_inline]] constexpr VectorType vec() const { return vec_; }
@@ -513,34 +517,34 @@ class Vector {
   }
 #endif
 
-  /// Multiply two Q31 fixed-point vectors, returning a fixed-point product
+  /// Multiply two QMax fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQ31(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
+  ace argon_type MultiplyQMax(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
 
-  /// Multiply a Q31 fixed-point vector by a scalar value, returning a fixed-point product
+  /// Multiply a QMax fixed-point vector by a scalar value, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQ31(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+  ace argon_type MultiplyQMax(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
 
 #ifndef ARGON_PLATFORM_MVE
-  /// Multiply a Q31 fixed-point vector by a lane value, returning a fixed-point product
+  /// Multiply a QMax fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQ31(lane_type l) const {
+  ace argon_type MultiplyQMax(lane_type l) const {
     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 #endif
 
   /// Multiply two fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQ31(argon_type v) const { return simd::multiply_double_round_saturate_high(vec_, v); }
+  ace argon_type MultiplyRoundQMax(argon_type v) const { return simd::multiply_double_round_saturate_high(vec_, v); }
 
   /// Multiply a fixed-point vector by a scalar value, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQ31(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
+  ace argon_type MultiplyRoundQMax(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
 
 #ifndef ARGON_PLATFORM_MVE
   /// Multiply a fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQ31(lane_type l) const {
+  ace argon_type MultiplyRoundQMax(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 #endif
@@ -569,8 +573,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyAddQ31(argon_type b, arg_type c) const {
-    return Add(b.MultiplyQ31(c));
+  ace argon_type MultiplyAddQMax(argon_type b, arg_type c) const {
+    return Add(b.MultiplyQMax(c));
   }
 
   /// Multiply-round-add three fixed-point vectors, returning a fixed-point sum
@@ -578,8 +582,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyRoundAddQ31(argon_type b, arg_type c) const {
-    return Add(b.MultiplyRoundQ31(c));
+  ace argon_type MultiplyRoundAddQMax(argon_type b, arg_type c) const {
+    return Add(b.MultiplyRoundQMax(c));
   }
 
 #ifdef __aarch64__
@@ -1412,6 +1416,11 @@ class Vector {
   }
 
  protected:
+  template <std::size_t... Ints>
+  ace static argon_type IotaHelper(scalar_type start, std::index_sequence<Ints...>) {
+    return VectorType{static_cast<scalar_type>(start + Ints)...};
+  }
+
   VectorType vec_;
 };
 

@@ -153,10 +153,10 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 /// we're required to execute _both_ branches of the conditional and then select the lanes we want, _even if_ one of the
 /// branches is completely unused.
 template <typename BranchType, typename CondType>
-  requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_result_type>
+  requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_bool_type>
 ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_value, Argon<BranchType> false_value) {
   if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
-    return condition ? true_value.vec() : false_value.vec();
+    return condition.vec() ? true_value.vec() : false_value.vec();
   } else {
     return condition.Select(true_value, false_value);
   }
@@ -165,10 +165,10 @@ ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_
 /// @copydoc ternary
 template <typename ValueType, typename CondType>
   requires std::is_arithmetic_v<ValueType> &&
-           std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_result_type>
+           std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_bool_type>
 ace Argon<ValueType> ternary(Argon<CondType> condition, ValueType true_value, ValueType false_value) {
   if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
-    return condition ? true_value : false_value;
+    return condition.vec() ? true_value : false_value;
   } else {
     return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
   }

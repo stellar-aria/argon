@@ -21,31 +21,31 @@ namespace simd {
 /// @tparam T The type to check.
 template <typename T>
 constexpr bool is_quadword_v =
-       std::is_same_v<T, uint8x16_t>
-    || std::is_same_v<T, uint16x8_t>
-    || std::is_same_v<T, uint32x4_t>
-    || std::is_same_v<T, uint64x2_t>
-    || std::is_same_v<T, int8x16_t>
-    || std::is_same_v<T, int16x8_t>
-    || std::is_same_v<T, int32x4_t>
-    || std::is_same_v<T, int64x2_t>
+       std::is_same_v<std::remove_cv_t<T>, uint8x16_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint16x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint32x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint64x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, int8x16_t>
+    || std::is_same_v<std::remove_cv_t<T>, int16x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, int32x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, int64x2_t>
 #if ARGON_HAS_SINGLE_FLOAT
-    || std::is_same_v<T, float32x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, float32x4_t>
 #endif
 #if ARGON_HAS_DOUBLE_FLOAT
-    || std::is_same_v<T, float64x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, float64x2_t>
 #endif
 #if ARGON_HAS_HALF_FLOAT
-    || std::is_same_v<T, float16x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, float16x8_t>
 #endif
 #if ARGON_HAS_BRAIN_FLOAT
-    || std::is_same_v<T, bfloat16x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, bfloat16x8_t>
 #endif
 #if ARGON_HAS_POLY
-    || std::is_same_v<T, poly8x16_t>
-    || std::is_same_v<T, poly16x8_t>
-    || std::is_same_v<T, poly32x4_t>
-    || std::is_same_v<T, poly64x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly8x16_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly16x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly32x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly64x2_t>
 #endif
     ;
 // clang-format on
@@ -63,33 +63,33 @@ concept is_quadword = is_quadword_v<T>;
 /// @tparam T The type to check.
 template <typename T>
 constexpr bool is_doubleword_v =
-       std::is_same_v<T, uint8x8_t>
-    || std::is_same_v<T, uint16x4_t>
-    || std::is_same_v<T, uint32x2_t>
-    || std::is_same_v<T, uint64x1_t>
-    || std::is_same_v<T, int8x8_t>
-    || std::is_same_v<T, int16x4_t>
-    || std::is_same_v<T, int32x2_t>
-    || std::is_same_v<T, int64x1_t>
+       std::is_same_v<std::remove_cv_t<T>, uint8x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint16x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint32x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, uint64x1_t>
+    || std::is_same_v<std::remove_cv_t<T>, int8x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, int16x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, int32x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, int64x1_t>
 #if ARGON_HAS_SINGLE_FLOAT
-|| std::is_same_v<T, float32x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, float32x2_t>
 #endif
 #if ARGON_HAS_DOUBLE_FLOAT
-|| std::is_same_v<T, float64x1_t>
+    || std::is_same_v<std::remove_cv_t<T>, float64x1_t>
 #endif
 #if ARGON_HAS_HALF_FLOAT
-|| std::is_same_v<T, float16x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, float16x4_t>
 #endif
 #if ARGON_HAS_BRAIN_FLOAT
-|| std::is_same_v<T, bfloat16x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, bfloat16x4_t>
 #endif
 #if ARGON_HAS_POLY
-|| std::is_same_v<T, poly8x8_t>
-|| std::is_same_v<T, poly16x4_t>
-|| std::is_same_v<T, poly32x2_t>
-|| std::is_same_v<T, poly64x1_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly8x8_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly16x4_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly32x2_t>
+    || std::is_same_v<std::remove_cv_t<T>, poly64x1_t>
 #endif
-;
+    ;
 // clang-format on
 
 #else

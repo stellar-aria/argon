@@ -45,17 +45,18 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
     using iterator_category = std::bidirectional_iterator_tag;  ///< The iterator category.
     using difference_type = std::ptrdiff_t;                     ///< The difference type.
     using value_type = helpers::ArgonFor_t<intrinsic_type>;     ///< The value type of the iterator.
+    using reference_type = value_type&;
 
     LoadIterator() = default;
 
     /// @brief Constructs a LoadIterator from a pointer to the data.
     /// @param ptr The pointer to the data.
-    LoadIterator(ScalarType* ptr) : ptr_{ptr} {}
+    LoadIterator(const ScalarType* ptr) : ptr_{ptr} {}
 
     /// @brief Dereferences the iterator to get the SIMD vector.
     /// @return The SIMD vector loaded from the data.
     /// @note This function `Load`s the data from the pointer and returns it as an Argon vector.
-    const Argon<ScalarType> operator*() const { return value_type::Load(ptr_); }
+    Argon<ScalarType> operator*() const { return value_type::Load(ptr_); }
 
     /// @brief Increments the iterator by a number of steps
     /// @param n The number of steps to increment.
@@ -153,7 +154,7 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
     friend auto operator<=>(const LoadIterator& a, const LoadIterator& b) { return a.ptr_ <=> b.ptr_; }
 
    private:
-    ScalarType* ptr_;
+    const ScalarType* ptr_;
   };
   static_assert(std::sized_sentinel_for<LoadIterator, LoadIterator>);
   static_assert(std::bidirectional_iterator<LoadIterator>);
@@ -167,7 +168,7 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
 
   /// @brief Returns an iterator to the end of the range.
   /// @return An iterator to the end of the range.
-  ScalarType* end() { return start_ + (size_ * lanes); }
+  const ScalarType* end() { return start_ + (size_ * lanes); }
 
   /// @brief Returns the size of the range.
   /// @return The size of the range.
@@ -185,7 +186,7 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
   load(const std::span<ScalarType> span) : start_{span.data()}, size_{vectorizeable_size(span.size()) / lanes} {}
 
  private:
-  ScalarType* start_;
+  const ScalarType* start_;
   size_t size_;
 };
 
@@ -195,10 +196,10 @@ static_assert(std::movable<load<int32_t>>);
 static_assert(std::ranges::viewable_range<load<int32_t>>);
 
 template <std::ranges::contiguous_range R>
-load(R&& r) -> load<std::ranges::range_value_t<R>>;
+load(R&& r) -> load<std::remove_cv_t<std::ranges::range_value_t<R>>>;
 
 template <typename ScalarType>
-load(const std::span<ScalarType>) -> load<ScalarType>;
+load(const std::span<ScalarType>) -> load<std::remove_cv_t<ScalarType>>;
 
 }  // namespace argon::vectorize
 #undef simd

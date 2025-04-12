@@ -47,7 +47,7 @@ template <> struct Vec128<double> {using type = float64x2_t; };
 /// @brief  Helper template to get the SIMD vector type for a given scalar type.
 /// @tparam type The scalar type to get the SIMD vector type for.
 template <typename T>
-using Vec128_t = typename Vec128<T>::type;
+using Vec128_t = typename Vec128<std::remove_cv_t<T>>::type;
 
 // clang-format on
 }  // namespace simd
