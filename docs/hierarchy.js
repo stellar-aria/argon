@@ -33,17 +33,16 @@ var hierarchy =
     [ "simd::Vec128< T >", "structsimd_1_1Vec128.html", null ],
     [ "simd::Vec64< T >", "structsimd_1_1Vec64.html", null ],
     [ "argon::Vector< VectorType >", "classargon_1_1Vector.html", [
-      [ "Argon< ScalarType >", "classArgon.html", null ],
-      [ "Argon< next_larger >", "classArgon.html", null ],
-      [ "Argon< ScalarType > *", "classArgon.html", null ]
+      [ "Argon< next_larger >", "classArgon.html", null ]
     ] ],
     [ "simd::Vector< T, Lanes >", "structsimd_1_1Vector.html", null ],
     [ "argon::Vector< neon::Vec64_t< ScalarType > >", "classargon_1_1Vector.html", [
       [ "ArgonHalf< ScalarType >", "classArgonHalf_3_01ScalarType_01_4.html", null ],
       [ "ArgonHalf< ScalarType >", "classArgonHalf_3_01ScalarType_01_4.html", null ]
     ] ],
-    [ "argon::Vector< simd::Vec128_t< scalar_type > >", "classargon_1_1Vector.html", [
-      [ "Argon< scalar_type >", "classArgon.html", null ]
+    [ "argon::Vector< simd::Vec128_t< ScalarType > >", "classargon_1_1Vector.html", [
+      [ "Argon< ScalarType > *", "classArgon.html", null ],
+      [ "Argon< ScalarType >", "classArgon.html", null ]
     ] ],
     [ "std::ranges::view_interface", null, [
       [ "argon::vectorize::interleaved< Stride, ScalarType >", "structargon_1_1vectorize_1_1interleaved.html", null ],

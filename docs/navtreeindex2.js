@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html":[9,0,0,1,6,0],
 "structsimd_1_1MultiVector.html":[9,0,1,2],
 "structsimd_1_1Scalar.html":[9,0,1,3],
 "structsimd_1_1Vec128.html":[9,0,1,4],

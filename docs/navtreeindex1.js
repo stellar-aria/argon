@@ -172,11 +172,12 @@ var NAVTREEINDEX1 =
 "structargon_1_1vectorize_1_1interleaved_1_1ConstIterator.html":[9,0,0,1,0,0],
 "structargon_1_1vectorize_1_1interleaved_1_1Iterator.html":[9,0,0,1,0,1],
 "structargon_1_1vectorize_1_1load.html":[9,0,0,1,1],
-"structargon_1_1vectorize_1_1load.html#a05737df50aae3d1fddf5396c8097fc69":[9,0,0,1,1,6],
-"structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898":[9,0,0,1,1,7],
-"structargon_1_1vectorize_1_1load.html#a276f7faa5662ff01b220f276139dc5c5":[9,0,0,1,1,3],
-"structargon_1_1vectorize_1_1load.html#a79422902332281fc7cfc764f16e6b2a4":[9,0,0,1,1,5],
-"structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563":[9,0,0,1,1,4],
+"structargon_1_1vectorize_1_1load.html#a05737df50aae3d1fddf5396c8097fc69":[9,0,0,1,1,7],
+"structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898":[9,0,0,1,1,8],
+"structargon_1_1vectorize_1_1load.html#a276f7faa5662ff01b220f276139dc5c5":[9,0,0,1,1,4],
+"structargon_1_1vectorize_1_1load.html#a7612e00731ee6b9db324f2c74a5683a4":[9,0,0,1,1,3],
+"structargon_1_1vectorize_1_1load.html#a79422902332281fc7cfc764f16e6b2a4":[9,0,0,1,1,6],
+"structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563":[9,0,0,1,1,5],
 "structargon_1_1vectorize_1_1load.html#ace52638706d2875d753d1c882944f429":[9,0,0,1,1,2],
 "structargon_1_1vectorize_1_1load.html#ae0feaae5cf7226742b5e794b4eeebb19":[9,0,0,1,1,1],
 "structargon_1_1vectorize_1_1load_1_1LoadIterator.html":[9,0,0,1,1,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "structargon_1_1vectorize_1_1store_1_1StoreIterator.html#a9875f928aa653d0309ba70a99b436ad9":[9,0,0,1,5,0,1],
 "structargon_1_1vectorize_1_1store_1_1StoreIterator.html#ada85cbd35182e7eb20701ff863ab08ad":[9,0,0,1,5,0,0],
 "structargon_1_1vectorize_1_1store_1_1StoreIterator.html#aeada54574dac8fbd7f18892c99e578f5":[9,0,0,1,5,0,2],
-"structargon_1_1vectorize_1_1store__interleaved.html":[9,0,0,1,6],
-"structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html":[9,0,0,1,6,0]
+"structargon_1_1vectorize_1_1store__interleaved.html":[9,0,0,1,6]
 };

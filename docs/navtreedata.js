@@ -84,7 +84,7 @@ var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
 "classargon_1_1Vector.html#ae01b7082ded41ed06e4eceb745ea387e",
-"structsimd_1_1MultiVector.html"
+"structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';
