@@ -16,7 +16,7 @@ auto vectorize_load = describe("vectorize_load", ${
     using element_type = int16_t;
     std::array<element_type, 8> vals;
     auto vec = argon::vectorize::load(vals);
-    expect(std::is_same_v<decltype(vec.end()), element_type*>).to_be_true();
+    expect(std::is_same_v<decltype(vec.end()), typename argon::vectorize::load<element_type>::sentinel>).to_be_true();
   });
 
   it("can access all elements of vals", _{

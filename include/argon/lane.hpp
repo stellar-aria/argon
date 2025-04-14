@@ -1,6 +1,7 @@
 #pragma once
 #include "arm_simd.hpp"
 #include "arm_simd/helpers/scalar.hpp"
+#include "arm_simd/helpers/vec64.hpp"
 #include "features.h"
 #include "helpers/argon_for.hpp"
 
@@ -64,17 +65,17 @@ class ConstLane {
   ace scalar_type Get() const { return simd::get_lane<LaneIndex>(vec_); }
 
 #if __ARM_ARCH >= 8
-  ace VectorType& vec() { return vec_; }
+  ace VectorType vec() { return vec_; }
   ace const int lane() { return LaneIndex; }
 #else
-  ace VectorType& vec() {
+  ace neon::Vec64_t<scalar_type> vec() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
     } else if constexpr (simd::is_quadword_v<VectorType>) {
-      if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec());
+      if constexpr (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
+        return simd::get_high(vec_);
       } else {
-        return simd::get_low(vec());
+        return simd::get_low(vec_);
       }
     }
   }
@@ -118,17 +119,17 @@ class Lane {
   ace operator scalar_type() const { return Get(); }
 
 #if __ARM_ARCH >= 8
-  ace VectorType& vec() { return vec_; }
+  ace VectorType vec() { return vec_; }
   ace const int lane() { return lane_; }
 #else
-  ace VectorType& vec() {
+  ace neon::Vec64_t<scalar_type> vec() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
     } else if constexpr (simd::is_quadword_v<VectorType>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
-        return simd::get_high(vec());
+        return simd::get_high(vec_);
       } else {
-        return simd::get_low(vec());
+        return simd::get_low(vec_);
       }
     }
   }
