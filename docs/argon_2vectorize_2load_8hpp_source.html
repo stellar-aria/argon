@@ -249,31 +249,34 @@ $(function(){initNavTree('argon_2vectorize_2load_8hpp_source.html',''); initResi
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>      : start_{&amp;*<a class="code hl_namespace" href="namespacestd.html">std</a>::ranges::<a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a79422902332281fc7cfc764f16e6b2a4">begin</a>(r)}, size_{<a class="code hl_namespace" href="namespaceargon_1_1helpers.html">helpers</a>::vectorizeable_size&lt;ScalarType&gt;(<a class="code hl_namespace" href="namespacestd.html">std</a>::ranges::<a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898">size</a>(r)) / <a class="code hl_variable" href="structargon_1_1vectorize_1_1load.html#a292aaa0e453c2cf8fa232993d3b55e18">lanes</a>} {}</div>
 </div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span></div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563">  187</a></span>  <a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563">load</a>(<span class="keyword">const</span> std::span&lt;ScalarType&gt; span) : start_{span.data()}, size_{vectorizeable_size(span.<a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898">size</a>()) / <a class="code hl_variable" href="structargon_1_1vectorize_1_1load.html#a292aaa0e453c2cf8fa232993d3b55e18">lanes</a>} {}</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  <span class="keyword">const</span> ScalarType* start_;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  <span class="keywordtype">size_t</span> size_;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>};</div>
+<div class="foldopen" id="foldopen00187" data-start="{" data-end="}">
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563">  187</a></span>  <a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563">load</a>(<span class="keyword">const</span> std::span&lt;ScalarType&gt; span)</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>      : start_{span.data()}, size_{<a class="code hl_namespace" href="namespaceargon_1_1helpers.html">helpers</a>::vectorizeable_size&lt;ScalarType&gt;(span.<a class="code hl_function" href="structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898">size</a>()) / <a class="code hl_variable" href="structargon_1_1vectorize_1_1load.html#a292aaa0e453c2cf8fa232993d3b55e18">lanes</a>} {}</div>
 </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keyword">static_assert</span>(std::ranges::range&lt;load&lt;int32_t&gt;&gt;);</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="keyword">static_assert</span>(std::ranges::view&lt;load&lt;int32_t&gt;&gt;);</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="keyword">static_assert</span>(std::movable&lt;load&lt;int32_t&gt;&gt;);</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="keyword">static_assert</span>(std::ranges::viewable_range&lt;load&lt;int32_t&gt;&gt;);</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="keyword">template</span> &lt;std::ranges::contiguous_range R&gt;</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>load(R&amp;&amp; r) -&gt; load&lt;std::remove_cv_t&lt;std::ranges::range_value_t&lt;R&gt;&gt;&gt;;</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> ScalarType&gt;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>load(<span class="keyword">const</span> std::span&lt;ScalarType&gt;) -&gt; load&lt;std::remove_cv_t&lt;ScalarType&gt;&gt;;</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>}  <span class="comment">// namespace argon::vectorize</span></div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="preprocessor">#undef simd</span></div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:23</div></div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  <span class="keyword">const</span> ScalarType* start_;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>  <span class="keywordtype">size_t</span> size_;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>};</div>
+</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="keyword">static_assert</span>(std::ranges::range&lt;load&lt;int32_t&gt;&gt;);</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="keyword">static_assert</span>(std::ranges::view&lt;load&lt;int32_t&gt;&gt;);</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="keyword">static_assert</span>(std::movable&lt;load&lt;int32_t&gt;&gt;);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="keyword">static_assert</span>(std::ranges::viewable_range&lt;load&lt;int32_t&gt;&gt;);</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">template</span> &lt;std::ranges::contiguous_range R&gt;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>load(R&amp;&amp; r) -&gt; load&lt;std::remove_cv_t&lt;std::ranges::range_value_t&lt;R&gt;&gt;&gt;;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> ScalarType&gt;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>load(<span class="keyword">const</span> std::span&lt;ScalarType&gt;) -&gt; load&lt;std::remove_cv_t&lt;ScalarType&gt;&gt;;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>}  <span class="comment">// namespace argon::vectorize</span></div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="preprocessor">#undef simd</span></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:24</div></div>
 <div class="ttc" id="anamespaceargon_1_1helpers_html"><div class="ttname"><a href="namespaceargon_1_1helpers.html">argon::helpers</a></div><div class="ttdoc">Contains helper templates and concepts for type manipulation and compile-time utilities.</div><div class="ttdef"><b>Definition</b> helpers.hpp:12</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:43</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:301</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:45</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:302</div></div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load_1_1LoadIterator_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html">argon::vectorize::load::LoadIterator</a></div><div class="ttdoc">The Iterator type for the range.</div><div class="ttdef"><b>Definition</b> load.hpp:44</div></div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load_1_1LoadIterator_html_a08bcf45f5b7803134c31a13b80abca62"><div class="ttname"><a href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html#a08bcf45f5b7803134c31a13b80abca62">argon::vectorize::load::LoadIterator::operator+=</a></div><div class="ttdeci">LoadIterator &amp; operator+=(int n)</div><div class="ttdoc">Increments the iterator by a number of steps.</div><div class="ttdef"><b>Definition</b> load.hpp:64</div></div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1load_1_1LoadIterator_html_a08dc09c1c5213005e3507270c5bf2f1f"><div class="ttname"><a href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html#a08dc09c1c5213005e3507270c5bf2f1f">argon::vectorize::load::LoadIterator::operator!=</a></div><div class="ttdeci">friend bool operator!=(const LoadIterator &amp;a, const LoadIterator &amp;b)</div><div class="ttdoc">Compares LoadIterators for inequality.</div><div class="ttdef"><b>Definition</b> load.hpp:148</div></div>
