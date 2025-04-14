@@ -27,7 +27,7 @@ struct load_interleaved : std::ranges::view_interface<load_interleaved<ScalarTyp
     using value_type = std::array<Argon<ScalarType>, Stride>;
 
     LoadInterleavedIterator() = default;
-    LoadInterleavedIterator(ScalarType* ptr) : ptr_{ptr} {}
+    LoadInterleavedIterator(const ScalarType* ptr) : ptr_{ptr} {}
 
     std::array<Argon<ScalarType>, Stride> operator*() const {
       return Argon<ScalarType>::template LoadInterleaved<Stride>(ptr_);
@@ -96,23 +96,24 @@ struct load_interleaved : std::ranges::view_interface<load_interleaved<ScalarTyp
     friend LoadInterleavedIterator operator+(const int n, const LoadInterleavedIterator& it) { return it + n; }
 
    private:
-    ScalarType* ptr_;
+    const ScalarType* ptr_;
   };
   static_assert(std::sized_sentinel_for<LoadInterleavedIterator, LoadInterleavedIterator>);
   static_assert(std::bidirectional_iterator<LoadInterleavedIterator>);
   static_assert(std::input_iterator<LoadInterleavedIterator>);
 
   using iterator = LoadInterleavedIterator;
+  using sentinel = const ScalarType*;
 
   iterator begin() { return start_; }
-  ScalarType* end() { return start_ + size_; }
+  const ScalarType* end() { return start_ + size_; }
   size_t size() const { return size_ / (lanes * Stride); }
 
   template <std::ranges::contiguous_range R>
   load_interleaved(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
 
  private:
-  ScalarType* start_;
+  const ScalarType* start_;
   size_t size_;
 };
 

@@ -20,6 +20,7 @@
 #endif
 
 template <typename ScalarType>
+  requires std::is_arithmetic_v<ScalarType>
 class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   using T = argon::Vector<simd::Vec128_t<ScalarType>>;
 

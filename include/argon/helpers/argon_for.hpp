@@ -12,7 +12,9 @@
 
 template <typename T>
 class ArgonHalf;
+
 template <typename T>
+  requires std::is_arithmetic_v<T>
 class Argon;
 
 namespace argon::helpers {
