@@ -9,14 +9,14 @@ auto vectorize_load_interleaved = describe("vectorize_load_interleaved", ${
     using element_type = int16_t;
     std::array<element_type, 8> vals;
     auto vec = argon::vectorize::load_interleaved(vals);
-    expect(std::is_same_v<decltype(vec.begin()), typename argon::vectorize::load_interleaved<element_type, 2>::iterator>).to_be_true();
+    expect(std::is_same_v<decltype(vec.begin()), std::ranges::iterator_t<argon::vectorize::load_interleaved<element_type, 2>>>).to_be_true();
   });
 
   it("returns an end sentinel pointer when end() is called", _{
     using element_type = int16_t;
     std::array<element_type, 8> vals;
     auto vec = argon::vectorize::load_interleaved(vals);
-    expect(std::is_same_v<decltype(vec.end()), element_type*>).to_be_true();
+    expect(std::is_same_v<decltype(vec.end()), std::ranges::sentinel_t<argon::vectorize::load_interleaved<element_type, 2>>>).to_be_true();
   });
 
   it("can access all elements of vals", _{

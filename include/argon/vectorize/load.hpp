@@ -184,7 +184,8 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
 
   /// @brief Construct a load from a span
   /// @param span The span to load data from.
-  load(const std::span<ScalarType> span) : start_{span.data()}, size_{vectorizeable_size(span.size()) / lanes} {}
+  load(const std::span<ScalarType> span)
+      : start_{span.data()}, size_{helpers::vectorizeable_size<ScalarType>(span.size()) / lanes} {}
 
  private:
   const ScalarType* start_;

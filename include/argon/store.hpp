@@ -110,7 +110,7 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
   using intrinsic_type = typename std::tuple_element_t<0, std::tuple<intrinsic_types...>>;
 
   constexpr size_t size = sizeof...(vectors);
-  const std::array<intrinsic_type, sizeof...(vectors)> vec_array = {vectors...};
+  constexpr std::array<intrinsic_type, size> vec_array = {std::move(vectors)...};
 
   // Best case scenerio: we know both length and stride
   static_assert(0 < stride && stride < 5, "Stores can only be performed with a stride of 1, 2, 3, or 4");
@@ -119,26 +119,26 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
 
   if constexpr (stride == 1) {
     constexpr size_t tail_size = size % 4;
-#pragma unroll
-    for (auto v : vec_array | std::views::chunk(4)) {
-      if (v.size() == 4) {  // 4-element chunks
+    constexpr size_t head_size = size - tail_size;
+    size_t i = 0;
+    if constexpr (head_size > 0) {
+      for (; i < head_size; i += 4) {
         using multi_type = simd::MultiVector_t<intrinsic_type, 4>;
-        simd::store1_x4(ptr, *(multi_type*)v.begin());
+        simd::store1_x4(ptr, *(multi_type*)&vec_array[i]);
         ptr += (sizeof(intrinsic_type) / sizeof(*ptr)) * 4;  // increment output pointer
-      } else {
-        if constexpr (tail_size == 1) {  // 1-element tail
-          simd::store1(ptr, v.begin());
-        } else if constexpr (tail_size == 2) {
-          using tail_multi_type = simd::MultiVector_t<intrinsic_type, 2>;
-          simd::store1_x2(ptr, *(tail_multi_type*)v.begin());
-        } else if constexpr (tail_size == 3) {
-          using tail_multi_type = simd::MultiVector_t<intrinsic_type, 3>;
-          simd::store1_x3(ptr, *(tail_multi_type*)v.begin());
-        }
       }
     }
+    if constexpr (tail_size == 1) {  // 1-element tail
+      simd::store1(ptr, &vec_array[i]);
+    } else if constexpr (tail_size == 2) {
+      using tail_multi_type = simd::MultiVector_t<intrinsic_type, 2>;
+      simd::store1_x2(ptr, *(tail_multi_type*)&vec_array[i]);
+    } else if constexpr (tail_size == 3) {
+      using tail_multi_type = simd::MultiVector_t<intrinsic_type, 3>;
+      simd::store1_x3(ptr, *(tail_multi_type*)&vec_array[i]);
+    }
   } else {
-#pragma unroll
+#pragma GCC unroll size
     for (auto v : vec_array | std::views::chunk(stride)) {
       if constexpr (stride == 2) {
         store_interleaved<2>(ptr, v.begin());
