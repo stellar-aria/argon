@@ -6,6 +6,7 @@
 #include <type_traits>
 #include "argon/argon_full.hpp"
 #include "argon/argon_half.hpp"
+#include "argon/helpers/argon_for.hpp"
 #include "argon/store.hpp"
 #include "argon/vector.hpp"
 #include "arm_simd/helpers/multivector.hpp"
@@ -50,6 +51,16 @@ template <typename argon_type, simd::is_vector_type V>
 ace argon_type reinterpret(V in) {
   static_assert(!std::is_same_v<typename argon_type::vector_type, V>);
   return argon_type{simd::reinterpret<typename argon_type::vector_type>(in)};
+}
+
+/// @brief Reinterpret a vector of one type to another
+/// @tparam argon_type The type to reinterpret to
+/// @tparam V The type to reinterpret from
+/// @param in The vector to reinterpret
+/// @return The reinterpreted vector
+template <typename ScalarType, typename ArgonType>
+ace ScalarType bit_cast(ArgonType in) {
+  return in.template As<ScalarType>();
 }
 
 /// @brief Load data to a set of vector lanes from a pointer with interleaving
@@ -159,6 +170,16 @@ ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_
     return condition.vec() ? true_value.vec() : false_value.vec();
   } else {
     return condition.Select(true_value, false_value);
+  }
+}
+
+template <typename BranchType, typename CondType>
+  requires(sizeof(CondType) == sizeof(BranchType))
+ace BranchType ternary(CondType condition, BranchType true_value, BranchType false_value) {
+  if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    return condition ? true_value.vec() : false_value.vec();
+  } else {
+    return helpers::ArgonFor_t<CondType>{condition}.Select(true_value, false_value);
   }
 }
 

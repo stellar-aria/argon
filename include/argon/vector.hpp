@@ -124,7 +124,7 @@ class Vector {
 #ifdef ARGON_PLATFORM_MVE
     return simd::duplicate(lane.Get());
 #else
-    return simd::duplicate_lane(lane.vec(), lane.lane());
+    return simd::duplicate_lane<vector_type>(lane.vec(), lane.lane());
 #endif
   }
 
@@ -138,9 +138,9 @@ class Vector {
     return simd::duplicate(lane.Get());
 #else
     if constexpr (simd::is_quadword_v<VectorType>) {
-      return simd::duplicate_lane_quad<Lane>(lane.vec());
+      return simd::duplicate_lane_quad<LaneIndex>(lane.vec());
     } else {
-      return simd::duplicate_lane<Lane>(lane.vec());
+      return simd::duplicate_lane<LaneIndex>(lane.vec());
     }
 #endif
   }

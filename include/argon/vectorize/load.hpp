@@ -160,7 +160,8 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
   static_assert(std::bidirectional_iterator<LoadIterator>);
   static_assert(std::input_iterator<LoadIterator>);
 
-  using iterator = LoadIterator;  ///< The iterator type for the range.
+  using iterator = LoadIterator;       ///< The iterator type for the range.
+  using sentinel = const ScalarType*;  ///< The sentinel type for the range.
 
   /// @brief Returns an iterator to the beginning of the range.
   /// @return An iterator to the beginning of the range.

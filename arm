@@ -1,0 +1,3 @@
+CC=arm-none-eabi-gcc CXX=arm-none-eabi-g++ cmake -B build-m55 -DARGON_ENABLE_TESTING=ON -DARGON_TEST_CPU=M55 -DFETCHCONTENT_SOURCE_DIR_C++SPEC=../cppspec
+
+cmake --build build-m55 --target gather_spec && sudo qemu-arm -cpu cortex-m55 build-m55/test/specs/gather_spec
