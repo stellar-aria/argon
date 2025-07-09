@@ -107,9 +107,9 @@ class Lane {
  public:
   ace Lane(VectorType& vec, const int lane) : vec_{vec}, lane_{lane} {}
   ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
-  ace argon_type Load(const scalar_type* ptr) {
+  [[nodiscard]] ace argon_type Load(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    Set(*ptr);
+    return Set(*ptr);
 #else
     return simd::load1_lane(vec_, lane_, ptr);
 #endif

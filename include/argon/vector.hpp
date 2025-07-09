@@ -519,32 +519,36 @@ class Vector {
 
   /// Multiply two QMax fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQMax(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
+  ace argon_type MultiplyFixedQMax(argon_type v) const { return simd::multiply_double_saturate_high(vec_, v); }
 
   /// Multiply a QMax fixed-point vector by a scalar value, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQMax(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
+  ace argon_type MultiplyFixedQMax(scalar_type s) const { return simd::multiply_double_saturate_high(vec_, s); }
 
 #ifndef ARGON_PLATFORM_MVE
   /// Multiply a QMax fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to ((uint64_t)a * b) >> 31
-  ace argon_type MultiplyQMax(lane_type l) const {
+  ace argon_type MultiplyFixedQMax(lane_type l) const {
     return simd::multiply_double_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 #endif
 
   /// Multiply two fixed-point vectors, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQMax(argon_type v) const { return simd::multiply_double_round_saturate_high(vec_, v); }
+  ace argon_type MultiplyRoundFixedQMax(argon_type v) const {
+    return simd::multiply_double_round_saturate_high(vec_, v);
+  }
 
   /// Multiply a fixed-point vector by a scalar value, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQMax(scalar_type s) const { return simd::multiply_double_round_saturate_high(vec_, s); }
+  ace argon_type MultiplyRoundFixedQMax(scalar_type s) const {
+    return simd::multiply_double_round_saturate_high(vec_, s);
+  }
 
 #ifndef ARGON_PLATFORM_MVE
   /// Multiply a fixed-point vector by a lane value, returning a fixed-point product
   /// @details This is equivalent to round(a * b) >> 31
-  ace argon_type MultiplyRoundQMax(lane_type l) const {
+  ace argon_type MultiplyRoundFixedQMax(lane_type l) const {
     return simd::multiply_double_round_saturate_high_lane(vec_, l.vec(), l.lane());
   }
 #endif
@@ -573,8 +577,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyAddQMax(argon_type b, arg_type c) const {
-    return Add(b.MultiplyQMax(c));
+  ace argon_type MultiplyAddFixedQMax(argon_type b, arg_type c) const {
+    return Add(b.MultiplyFixedQMax(c));
   }
 
   /// Multiply-round-add three fixed-point vectors, returning a fixed-point sum
@@ -582,8 +586,8 @@ class Vector {
   template <typename arg_type>
     requires(is_one_of<arg_type, argon_type, scalar_type, lane_type> || std::is_convertible_v<arg_type, argon_type> ||
              std::is_convertible_v<arg_type, scalar_type>)
-  ace argon_type MultiplyRoundAddQMax(argon_type b, arg_type c) const {
-    return Add(b.MultiplyRoundQMax(c));
+  ace argon_type MultiplyRoundAddFixedQMax(argon_type b, arg_type c) const {
+    return Add(b.MultiplyRoundFixedQMax(c));
   }
 
 #ifdef __aarch64__
