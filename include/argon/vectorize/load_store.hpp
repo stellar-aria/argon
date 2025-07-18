@@ -73,7 +73,11 @@ struct load_store : public std::ranges::view_interface<load_store<ScalarType>> {
     }
 
     /// @brief Postfix increment operator for the iterator.
-    void operator++(int) { ++(*this); }
+    Iterator operator++(int) {
+      Iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
 
     /// @brief Comparison operators for the iterator.
     /// @return True if the iterators are equal, false otherwise.
