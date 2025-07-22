@@ -183,7 +183,7 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace static argon_type GenerateWithIndex(FuncType body) {
     VectorType out;
-    utility::constexpr_for<0, lanes, 1>([&](size_t i) {  //
+    utility::constexpr_for<0, lanes, 1>([&]<size_t i>() {  //
       out[i] = body(i);
     });
     return out;
@@ -338,7 +338,7 @@ class Vector {
   }
 
   /// Get the last lane of the vector.
-  ace const_lane_type<lanes - 1> LastLane() { return {vec_, lanes - 1}; }
+  ace const_lane_type<lanes - 1> LastLane() { return vec_; }
 
   /// Shift the elements of the vector to the right by a specified number of bits.
   ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
