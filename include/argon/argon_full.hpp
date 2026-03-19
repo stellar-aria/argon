@@ -217,13 +217,13 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     auto rev = this->SwapDoublewords();
     auto sum = op(*this, rev);
     if constexpr (lanes == 16) {
-      sum = op(*this, sum.Reverse16bit());
+      sum = op(sum, sum.Reverse16bit());
     }
     if constexpr (lanes == 8 || lanes == 16) {
-      sum = op(*this, sum.Reverse32bit());
+      sum = op(sum, sum.Reverse32bit());
     }
     if constexpr (lanes == 4 || lanes == 8 || lanes == 16) {
-      sum = op(*this, sum.Reverse64bit());
+      sum = op(sum, sum.Reverse64bit());
     }
     return sum[0];
   }
@@ -240,7 +240,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef __aarch64__
     return simd::reduce_max(this->vec_);
 #else
-    return this->Reduce([](auto a, auto b) { return std::max(a, b); });
+    return this->Reduce([](auto a, auto b) { return a.Max(b); });
 #endif
   }
 
@@ -255,6 +255,46 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 
 #ifndef ARGON_PLATFORM_MVE
   ace Argon<ScalarType> SwapDoublewords() { return Combine(GetHigh(), GetLow()); }
+#endif
+
+#if ARGON_HAS_CRYPTO && !defined(ARGON_PLATFORM_MVE)
+  /// @brief AES single-round encryption
+  /// @param key  Round key vector (uint8x16_t)
+  /// @return     Result after AddRoundKey + SubBytes + ShiftRows
+  /// @note Requires __ARM_FEATURE_CRYPTO. Use with AesMixColumns for a full AES round.
+  ace Argon<ScalarType> AesEncrypt(Argon<ScalarType> key) const
+    requires std::is_same_v<ScalarType, uint8_t>
+  {
+    return neon::aes_encrypt(this->vec_, key.vec_);
+  }
+
+  /// @brief AES single-round decryption
+  /// @param key  Round key vector (uint8x16_t)
+  /// @return     Result after inverse AddRoundKey + InvSubBytes + InvShiftRows
+  /// @note Requires __ARM_FEATURE_CRYPTO. Use with AesInverseMixColumns for a full inverse AES round.
+  ace Argon<ScalarType> AesDecrypt(Argon<ScalarType> key) const
+    requires std::is_same_v<ScalarType, uint8_t>
+  {
+    return neon::aes_decrypt(this->vec_, key.vec_);
+  }
+
+  /// @brief AES MixColumns transformation
+  /// @return Result after the MixColumns step of the AES cipher
+  /// @note Requires __ARM_FEATURE_CRYPTO.
+  ace Argon<ScalarType> AesMixColumns() const
+    requires std::is_same_v<ScalarType, uint8_t>
+  {
+    return neon::aes_mix_columns(this->vec_);
+  }
+
+  /// @brief AES inverse MixColumns transformation
+  /// @return Result after the InvMixColumns step of the AES decipher
+  /// @note Requires __ARM_FEATURE_CRYPTO.
+  ace Argon<ScalarType> AesInverseMixColumns() const
+    requires std::is_same_v<ScalarType, uint8_t>
+  {
+    return neon::aes_inverse_mix_columns(this->vec_);
+  }
 #endif
 };
 

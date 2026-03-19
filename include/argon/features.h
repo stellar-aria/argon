@@ -78,6 +78,14 @@ constexpr Platform platform = Platform::SIMDe;
 #endif
 #endif
 
+/// Set to 1 when the AES and PMULL crypto intrinsics are available.
+/// Requires __ARM_FEATURE_CRYPTO (ARMv8 Cryptographic Extension).
+#ifdef __ARM_FEATURE_CRYPTO
+#define ARGON_HAS_CRYPTO true
+#else
+#define ARGON_HAS_CRYPTO false
+#endif
+
 /*
 #define XSTR(x) STR(x)
 #define STR(x) #x

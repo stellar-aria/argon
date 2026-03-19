@@ -45,6 +45,7 @@ template <> [[gnu::always_inline]] nce uint16x8_t reinterpret(float32x4_t a) { r
 template <> [[gnu::always_inline]] nce uint32x4_t reinterpret(float32x4_t a) { return vreinterpretq_u32_f32(a); }
 template <> [[gnu::always_inline]] nce uint64x2_t reinterpret(float32x4_t a) { return vreinterpretq_u64_f32(a); }
 template <> [[gnu::always_inline]] nce int64x2_t reinterpret(float32x4_t a) { return vreinterpretq_s64_f32(a); }
+template <> [[gnu::always_inline]] nce float32x4_t reinterpret(float32x4_t a) { return a; }
 [[gnu::always_inline]] nce float32x4_t multiply(float32x4_t a, float32_t b) { return vmulq_n_f32(a, b); }
 [[gnu::always_inline]] nce float32x4_t negate(float32x4_t a) { return vnegq_f32(a); }
 [[gnu::always_inline]] nce float32x4_t reverse_64bit(float32x4_t a) { return vrev64q_f32(a); }

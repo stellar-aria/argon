@@ -61,7 +61,7 @@ class ConstLane {
     }
 #endif
   }
-  ace argon_type Set(const scalar_type b) { return simd::set_lane<LaneIndex>(vec_, b); }
+  ace argon_type Set(const scalar_type b) { return simd::set_lane<LaneIndex>(b, vec_); }
   ace scalar_type Get() const { return simd::get_lane<LaneIndex>(vec_); }
 
 #if __ARM_ARCH >= 8

@@ -138,7 +138,14 @@ class Vector {
     return simd::duplicate(lane.Get());
 #else
     if constexpr (simd::is_quadword_v<VectorType>) {
+#if __ARM_ARCH >= 8
       return simd::duplicate_lane_quad<LaneIndex>(lane.vec());
+#else
+      // On A32, vec() returns the 64-bit half-register (low or high).
+      // The template arg must be the lane index within that half-vector.
+      constexpr size_t local_lane = LaneIndex >= (lanes / 2) ? LaneIndex - (lanes / 2) : LaneIndex;
+      return simd::duplicate_lane_quad<local_lane>(lane.vec());
+#endif
     } else {
       return simd::duplicate_lane<LaneIndex>(lane.vec());
     }
@@ -570,6 +577,74 @@ class Vector {
 #else
     return simd::reciprocal_estimate(vec_);
 #endif
+  }
+
+  /// @brief 1 / sqrt(value), using an estimate for speed
+  /// @note For greater precision, follow with ReciprocalSqrtStep iterations (Newton-Raphson).
+  ace argon_type ReciprocalSqrtEstimate() const
+    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
+      return std::numeric_limits<uint32_t>::max() / (vec_ * vec_);
+    } else {
+      return 1.f / (vec_ * vec_);
+    }
+#else
+    return simd::reciprocal_sqrt_estimate(vec_);
+#endif
+  }
+
+  /// @brief Newton-Raphson step for reciprocal refinement: (2 - a * b) / 2
+  /// @details Feeds into the standard NR iteration: est = est * ReciprocalStep(value * est)
+  /// @note Only defined for floating-point types.
+  ace argon_type ReciprocalStep(argon_type b) const
+    requires std::floating_point<scalar_type>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    return 2.f - vec_ * b.vec_;
+#else
+    return simd::reciprocal_step(vec_, b.vec_);
+#endif
+  }
+
+  /// @brief Newton-Raphson step for reciprocal-sqrt refinement: (3 - a * b) / 2
+  /// @details Use after ReciprocalSqrtEstimate to increase precision.
+  /// @note Only defined for floating-point types.
+  ace argon_type ReciprocalSqrtStep(argon_type b) const
+    requires std::floating_point<scalar_type>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    return (3.f - vec_ * b.vec_) * 0.5f;
+#else
+    return simd::reciprocal_sqrt_step(vec_, b.vec_);
+#endif
+  }
+
+  /// @brief Compute a refined reciprocal estimate using Newton-Raphson iterations.
+  /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
+  /// @details Each iteration approximately doubles the number of correct mantissa bits.
+  ace argon_type ReciprocalEstimateRefine(int n_iters = 1) const
+    requires std::floating_point<scalar_type>
+  {
+    argon_type est = ReciprocalEstimate();
+    for (int i = 0; i < n_iters; ++i) {
+      est = est * ReciprocalStep(est);
+    }
+    return est;
+  }
+
+  /// @brief Compute a refined reciprocal-sqrt estimate using Newton-Raphson iterations.
+  /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
+  /// @details Each iteration approximately doubles the number of correct mantissa bits.
+  ace argon_type ReciprocalSqrtEstimateRefine(int n_iters = 1) const
+    requires std::floating_point<scalar_type>
+  {
+    argon_type est = ReciprocalSqrtEstimate();
+    for (int i = 0; i < n_iters; ++i) {
+      est = est * (*this * est).ReciprocalSqrtStep(est);
+    }
+    return est;
   }
 
   /// Multiply-add three fixed-point vectors, returning a fixed-point sum
