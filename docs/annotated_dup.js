@@ -2,9 +2,9 @@ var annotated_dup =
 [
     [ "argon", null, [
       [ "helpers", "namespaceargon_1_1helpers.html", [
-        [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ],
         [ "NextLarger", "structargon_1_1helpers_1_1NextLarger.html", null ],
-        [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ]
+        [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ],
+        [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ]
       ] ],
       [ "vectorize", null, [
         [ "interleaved", "structargon_1_1vectorize_1_1interleaved.html", "structargon_1_1vectorize_1_1interleaved" ],
@@ -15,11 +15,11 @@ var annotated_dup =
         [ "store", "structargon_1_1vectorize_1_1store.html", "structargon_1_1vectorize_1_1store" ],
         [ "store_interleaved", "structargon_1_1vectorize_1_1store__interleaved.html", "structargon_1_1vectorize_1_1store__interleaved" ]
       ] ],
-      [ "Bool", "structargon_1_1Bool.html", null ],
       [ "CondMonad", "classargon_1_1CondMonad.html", null ],
-      [ "ConstLane", "classargon_1_1ConstLane.html", null ],
-      [ "Lane", "classargon_1_1Lane.html", null ],
-      [ "Vector", "classargon_1_1Vector.html", "classargon_1_1Vector" ]
+      [ "Bool", "structargon_1_1Bool.html", null ],
+      [ "Vector", "classargon_1_1Vector.html", "classargon_1_1Vector" ],
+      [ "ConstLane", "classargon_1_1ConstLane.html", "classargon_1_1ConstLane" ],
+      [ "Lane", "classargon_1_1Lane.html", "classargon_1_1Lane" ]
     ] ],
     [ "simd", null, [
       [ "make_signed", "structsimd_1_1make__signed.html", null ],
@@ -31,15 +31,15 @@ var annotated_dup =
       [ "Vector", "structsimd_1_1Vector.html", null ]
     ] ],
     [ "std", "namespacestd.html", [
-      [ "tuple_element< Index, argon::Vector< T > >", "structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],
-      [ "tuple_element< Index, Argon< T > >", "structstd_1_1tuple__element_3_01Index_00_01Argon_3_01T_01_4_01_4.html", null ],
-      [ "tuple_element< Index, ArgonHalf< T > >", "structstd_1_1tuple__element_3_01Index_00_01ArgonHalf_3_01T_01_4_01_4.html", null ],
-      [ "tuple_size< argon::Vector< T > >", "structstd_1_1tuple__size_3_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],
-      [ "tuple_size< Argon< T > >", "structstd_1_1tuple__size_3_01Argon_3_01T_01_4_01_4.html", null ],
-      [ "tuple_size< ArgonHalf< T > >", "structstd_1_1tuple__size_3_01ArgonHalf_3_01T_01_4_01_4.html", null ]
+      [ "tuple_size&lt; Argon&lt; T &gt; &gt;", "structstd_1_1tuple__size_3_01Argon_3_01T_01_4_01_4.html", null ],
+      [ "tuple_element&lt; Index, Argon&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01Argon_3_01T_01_4_01_4.html", null ],
+      [ "tuple_size&lt; ArgonHalf&lt; T &gt; &gt;", "structstd_1_1tuple__size_3_01ArgonHalf_3_01T_01_4_01_4.html", null ],
+      [ "tuple_element&lt; Index, ArgonHalf&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01ArgonHalf_3_01T_01_4_01_4.html", null ],
+      [ "tuple_size&lt; argon::Vector&lt; T &gt; &gt;", "structstd_1_1tuple__size_3_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],
+      [ "tuple_element&lt; Index, argon::Vector&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html", null ]
     ] ],
-    [ "Argon", "classArgon.html", null ],
+    [ "Argon", "classArgon.html", "classArgon" ],
     [ "ArgonHalf", "classArgonHalf.html", null ],
-    [ "ArgonHalf< ScalarType >", "classArgonHalf_3_01ScalarType_01_4.html", "classArgonHalf_3_01ScalarType_01_4" ],
+    [ "ArgonHalf&lt; ScalarType &gt;", "classArgonHalf_3_01ScalarType_01_4.html", "classArgonHalf_3_01ScalarType_01_4" ],
     [ "ArgonPtr", "structArgonPtr.html", null ]
 ];

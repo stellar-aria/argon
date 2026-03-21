@@ -1,7 +1,7 @@
 var structargon_1_1vectorize_1_1load__store =
 [
-    [ "ConstIterator", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator" ],
     [ "Iterator", "structargon_1_1vectorize_1_1load__store_1_1Iterator.html", "structargon_1_1vectorize_1_1load__store_1_1Iterator" ],
+    [ "ConstIterator", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator" ],
     [ "const_iterator", "structargon_1_1vectorize_1_1load__store.html#a74a4362d779573bbb98bd2c41e75fc6f", null ],
     [ "intrinsic_type", "structargon_1_1vectorize_1_1load__store.html#a94222520cb2c6a11df06b0f522e723e7", null ],
     [ "iterator", "structargon_1_1vectorize_1_1load__store.html#a8e8b353b5793de061a2e40a47ac982b6", null ],

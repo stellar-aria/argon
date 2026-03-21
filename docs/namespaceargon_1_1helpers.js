@@ -1,8 +1,8 @@
 var namespaceargon_1_1helpers =
 [
-    [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ],
     [ "NextLarger", "structargon_1_1helpers_1_1NextLarger.html", null ],
     [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ],
+    [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ],
     [ "has_smaller", "conceptargon_1_1helpers_1_1has__smaller.html", null ],
     [ "has_larger", "conceptargon_1_1helpers_1_1has__larger.html", null ],
     [ "ArgonFor_t", "namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a", null ],

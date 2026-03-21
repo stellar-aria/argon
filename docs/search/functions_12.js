@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zipwith_0',['ZipWith',['../classargon_1_1Vector.html#a94643eaec4a28cee8492f9bacba8b6eb',1,'argon::Vector']]]
+  ['widen_0',['Widen',['../classArgonHalf_3_01ScalarType_01_4.html#a2e3e5cc4c8ae251a732ecd7d496578c1',1,'ArgonHalf&lt; ScalarType &gt;']]]
 ];
