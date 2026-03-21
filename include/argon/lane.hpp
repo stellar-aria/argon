@@ -36,10 +36,12 @@ using Lane = simd::Scalar_t<VectorType>;
 
 #else
 
-/// @brief Represents a single lane of a SIMD vector, where the lane's index is known at compile time.
-/// @tparam VectorType The type of the SIMD vector.
-/// @tparam LaneIndex The index of the lane in the SIMD vector.
-/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
+/// @brief Represents a single lane of a SIMD vector with the lane index known at compile time.
+/// @tparam LaneIndex Compile-time lane index within the vector.
+/// @tparam VectorType The intrinsic SIMD vector type (e.g., `int32x4_t`).
+/// @details Provides type-safe read/write access to one element of a SIMD register.
+/// On ARM32 (`__ARM_ARCH < 8`) quadword vectors, `vec()` returns the 64-bit half-register
+/// that contains the lane, and `lane()` returns the local index within that half.
 template <size_t LaneIndex, typename VectorType>
 class ConstLane {
   using scalar_type = simd::Scalar_t<VectorType>;
@@ -47,9 +49,13 @@ class ConstLane {
   using argon_type = helpers::ArgonFor_t<VectorType>;
 
  public:
+  /// @brief Construct a lane accessor bound to `vec`.
   ace ConstLane(VectorType& vec) : vec_{vec} {}
+  /// @brief Read the lane value (implicit conversion to scalar).
   ace operator scalar_type() const { return Get(); }
+  /// @brief Write a scalar value into this lane and return the updated vector.
   ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
+  /// @brief Load a scalar from `ptr` into this lane.
   ace argon_type Load(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
     Set(*ptr);
@@ -61,13 +67,18 @@ class ConstLane {
     }
 #endif
   }
+  /// @brief Set this lane to `b` and return the updated vector.
   ace argon_type Set(const scalar_type b) { return simd::set_lane<LaneIndex>(b, vec_); }
+  /// @brief Get the scalar value of this lane.
   ace scalar_type Get() const { return simd::get_lane<LaneIndex>(vec_); }
 
 #if __ARM_ARCH >= 8
+  /// @brief Return the full vector held by this lane accessor.
   ace VectorType vec() { return vec_; }
+  /// @brief Return the lane index.
   ace const int lane() { return LaneIndex; }
 #else
+  /// @brief On ARM32, return the 64-bit half-register that contains this lane.
   ace neon::Vec64_t<scalar_type> vec() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
@@ -79,6 +90,7 @@ class ConstLane {
       }
     }
   }
+  /// @brief On ARM32, return the local lane index within the 64-bit half-register returned by `vec()`.
   ace int lane() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return LaneIndex;
@@ -95,9 +107,11 @@ class ConstLane {
   VectorType& vec_;
 };
 
-/// @brief Represents a single lane of a SIMD vector.
-/// @tparam VectorType The type of the SIMD vector.
-/// @details This class provides access to a single lane of a SIMD vector, allowing for operations on that lane.
+/// @brief Represents a single lane of a SIMD vector with a runtime-determined index.
+/// @tparam VectorType The intrinsic SIMD vector type (e.g., `int32x4_t`).
+/// @details Provides type-safe read/write access to one element of a SIMD register when the lane
+/// index is not known until runtime. On ARM32 (`__ARM_ARCH < 8`) quadword vectors, `vec()` returns
+/// the 64-bit half-register containing the lane, and `lane()` returns the local index within that half.
 template <typename VectorType>
 class Lane {
   using scalar_type = simd::Scalar_t<VectorType>;
@@ -105,8 +119,11 @@ class Lane {
   using argon_type = helpers::ArgonFor_t<VectorType>;
 
  public:
+  /// @brief Construct a lane accessor bound to `vec` at runtime index `lane`.
   ace Lane(VectorType& vec, const int lane) : vec_{vec}, lane_{lane} {}
+  /// @brief Write a scalar value into this lane and return the updated vector.
   ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
+  /// @brief Load a scalar from `ptr` into this lane and return the updated vector.
   [[nodiscard]] ace argon_type Load(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
     return Set(*ptr);
@@ -114,14 +131,20 @@ class Lane {
     return simd::load1_lane(vec_, lane_, ptr);
 #endif
   }
+  /// @brief Set this lane to `b` and return the updated vector.
   ace argon_type Set(const scalar_type b) { return simd::set_lane(vec_, lane_, b); }
+  /// @brief Get the scalar value of this lane.
   ace scalar_type Get() const { return simd::get_lane(vec_, lane_); }
+  /// @brief Read the lane value (implicit conversion to scalar).
   ace operator scalar_type() const { return Get(); }
 
 #if __ARM_ARCH >= 8
+  /// @brief Return the full vector held by this lane accessor.
   ace VectorType vec() { return vec_; }
+  /// @brief Return the runtime lane index.
   ace const int lane() { return lane_; }
 #else
+  /// @brief On ARM32, return the 64-bit half-register that contains this lane.
   ace neon::Vec64_t<scalar_type> vec() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return vec_;
@@ -133,6 +156,7 @@ class Lane {
       }
     }
   }
+  /// @brief On ARM32, return the local lane index within the 64-bit half-register returned by `vec()`.
   ace int lane() {
     if constexpr (simd::is_doubleword_v<VectorType>) {
       return lane_;
