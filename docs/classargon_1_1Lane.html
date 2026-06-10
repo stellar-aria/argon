@@ -106,9 +106,8 @@ ace&#160;</td><td class="memItemRight"><b>Lane</b> (VectorType &amp;<a class="el
 <tr class="memitem:ad13bf0c58d676b976a7eb4c456764710" id="r_ad13bf0c58d676b976a7eb4c456764710"><td class="memItemLeft"><a id="ad13bf0c58d676b976a7eb4c456764710" name="ad13bf0c58d676b976a7eb4c456764710"></a>
 ace argon_type&#160;</td><td class="memItemRight"><b>operator=</b> (const scalar_type b)</td></tr>
 <tr class="memdesc:ad13bf0c58d676b976a7eb4c456764710"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a scalar value into this lane and return the updated vector. <br /></td></tr>
-<tr class="memitem:a26272e70b22ca02e68127f9cfd6ea7d0" id="r_a26272e70b22ca02e68127f9cfd6ea7d0"><td class="memItemLeft"><a id="a26272e70b22ca02e68127f9cfd6ea7d0" name="a26272e70b22ca02e68127f9cfd6ea7d0"></a>
-ace argon_type&#160;</td><td class="memItemRight"><b>Load</b> (const scalar_type *ptr)</td></tr>
-<tr class="memdesc:a26272e70b22ca02e68127f9cfd6ea7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a scalar from <span class="tt">ptr</span> into this lane and return the updated vector. <br /></td></tr>
+<tr class="memitem:a26272e70b22ca02e68127f9cfd6ea7d0" id="r_a26272e70b22ca02e68127f9cfd6ea7d0"><td class="memItemLeft">ace argon_type&#160;</td><td class="memItemRight"><a class="el" href="#a26272e70b22ca02e68127f9cfd6ea7d0">Load</a> (const scalar_type *ptr)</td></tr>
+<tr class="memdesc:a26272e70b22ca02e68127f9cfd6ea7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a scalar from <span class="tt">ptr</span> into this lane and return the updated vector.  <br /></td></tr>
 <tr class="memitem:a25a8a868c14718edb5e477c9642658a4" id="r_a25a8a868c14718edb5e477c9642658a4"><td class="memItemLeft"><a id="a25a8a868c14718edb5e477c9642658a4" name="a25a8a868c14718edb5e477c9642658a4"></a>
 ace argon_type&#160;</td><td class="memItemRight"><b>Set</b> (const scalar_type b)</td></tr>
 <tr class="memdesc:a25a8a868c14718edb5e477c9642658a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this lane to <span class="tt">b</span> and return the updated vector. <br /></td></tr>
@@ -135,7 +134,38 @@ class argon::Lane&lt; VectorType &gt;</div><p>Represents a single lane of a SIMD
   </dd>
 </dl>
 <p>Provides type-safe read/write access to one element of a SIMD register when the lane index is not known until runtime. On ARM32 (<span class="tt">__ARM_ARCH &lt; 8</span>) quadword vectors, <span class="tt"><a class="el" href="#ac15405e8ff33c371bdb035b758b2af82" title="On ARM32, return the 64-bit half-register that contains this lane.">vec()</a></span> returns the 64-bit half-register containing the lane, and <span class="tt"><a class="el" href="#a4cf3f1979d4f2980a235f25fdc1e602d" title="On ARM32, return the local lane index within the 64-bit half-register returned by vec().">lane()</a></span> returns the local index within that half. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a26272e70b22ca02e68127f9cfd6ea7d0" name="a26272e70b22ca02e68127f9cfd6ea7d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26272e70b22ca02e68127f9cfd6ea7d0">&#9670;&#160;</a></span>Load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace argon_type <a class="el" href="classargon_1_1Lane.html">argon::Lane</a>&lt; VectorType &gt;::Load </td>
+          <td>(</td>
+          <td class="paramtype">const scalar_type *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Load a scalar from <span class="tt">ptr</span> into this lane and return the updated vector. </p>
+<dl class="section note"><dt>Note</dt><dd>Mutates the referenced vector in place (like operator=), so callers may discard the result. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/argon/<a class="el" href="lane_8hpp_source.html">lane.hpp</a></li>
 </ul>
 </div><!-- contents -->
