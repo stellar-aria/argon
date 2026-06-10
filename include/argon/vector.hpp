@@ -948,8 +948,7 @@ class Vector {
   /// @return The new vector
   template <size_t lane>
   ace argon_type LoadToLane(const scalar_type* ptr) {
-    argon_type new_argon = *this;
-    return new_argon.template GetLane<lane>().Load(ptr);
+    return ConstLane<lane, VectorType>{vec_}.Load(ptr);
   }
 
   /// @brief Load multiple vectors from a pointer, de-interleaving

@@ -37,6 +37,81 @@ auto describe_set_lane = describe("SetLane", ${
   });
 });
 
+// ── Lane::Load — regression for in-place mutation ──────────────────────────
+// The lane accessors (both compile-time GetLane<N>() and runtime operator[])
+// MUTATE the vector they are bound to, so callers may discard the returned
+// vector — exactly as `operator=` does. A regression here (Load returning the
+// updated vector but not writing it back to vec_) silently produced zeroed
+// wavetable reads on the SIMDe backend — `readValue[i].Load(addr)` in a
+// per-lane gather left the vector at 0 — while passing on native NEON, which
+// silenced the DelugeFirmware oscillators. These pin the mutation contract.
+auto describe_lane_load = describe("Lane::Load", ${
+  it("compile-time GetLane<N>().Load() mutates the vector in place (return discarded)", _{
+    std::array<int32_t, 4> data = {10, 20, 30, 40};
+    int32_t src = 222;
+    auto v = Argon<int32_t>::Load(data.data());
+    v.template GetLane<1>().Load(&src);
+    expect(v.to_array()).to_equal(std::array<int32_t, 4>{10, 222, 30, 40});
+  });
+
+  it("GetLane<N>().Load() also returns the updated vector", _{
+    std::array<int32_t, 4> data = {10, 20, 30, 40};
+    int32_t src = 222;
+    auto v = Argon<int32_t>::Load(data.data());
+    auto r = v.template GetLane<1>().Load(&src);
+    expect(r.to_array()).to_equal(std::array<int32_t, 4>{10, 222, 30, 40});
+  });
+
+  it("runtime operator[].Load() loads every lane in place (wavetable-gather pattern)", _{
+    std::array<int32_t, 4> data = {0, 0, 0, 0};
+    std::array<int32_t, 4> src = {111, 222, 333, 444};
+    auto v = Argon<int32_t>::Load(data.data());
+    for (int i = 0; i < 4; ++i)
+      v[i].Load(&src[i]);
+    expect(v.to_array()).to_equal(std::array<int32_t, 4>{111, 222, 333, 444});
+  });
+
+  it("loads into a uint32 quadword (oscillator readValue type)", _{
+    std::array<uint32_t, 4> data = {0, 0, 0, 0};
+    std::array<uint32_t, 4> src = {0xAAAA0001u, 0xBBBB0002u, 0xCCCC0003u, 0xDDDD0004u};
+    auto v = Argon<uint32_t>::Load(data.data());
+    for (int i = 0; i < 4; ++i)
+      v[i].Load(&src[i]);
+    expect(v.to_array()).to_equal(src);
+  });
+
+  it("loads into a uint16 half-vector (oscillator strength type)", _{
+    std::array<uint16_t, 4> data = {0, 0, 0, 0};
+    std::array<uint16_t, 4> src = {11, 22, 33, 44};
+    auto v = ArgonHalf<uint16_t>::Load(data.data());
+    for (int i = 0; i < 4; ++i)
+      v[i].Load(&src[i]);
+    expect(v.to_array()).to_equal(src);
+  });
+});
+
+// ── Lane mutation — operator= / Set write in place ─────────────────────────
+auto describe_lane_mutation = describe("Lane mutation", ${
+  it("operator[] = scalar mutates the vector in place (return discarded)", _{
+    auto v = Argon<int32_t>::FromScalar(0);
+    v[2] = 99;
+    expect(v.to_array()).to_equal(std::array<int32_t, 4>{0, 0, 99, 0});
+  });
+
+  it("compile-time GetLane<N>() = scalar mutates the vector in place", _{
+    auto v = Argon<int32_t>::FromScalar(0);
+    v.template GetLane<3>() = 7;
+    expect(v.to_array()).to_equal(std::array<int32_t, 4>{0, 0, 0, 7});
+  });
+
+  it("half-vector lane assignment mutates in place", _{
+    auto v = ArgonHalf<uint16_t>::FromScalar(0);
+    for (uint16_t i = 0; i < 4; ++i)
+      v[i] = static_cast<uint16_t>(i * 10 + 1);
+    expect(v.to_array()).to_equal(std::array<uint16_t, 4>{1, 11, 21, 31});
+  });
+});
+
 // ── DuplicateLane ──────────────────────────────────────────────────────────
 
 auto describe_duplicate_lane = describe("DuplicateLane", ${
@@ -137,6 +212,8 @@ auto describe_transpose = describe("TransposeWith", ${
 CPPSPEC_MAIN(
   describe_get_lane,
   describe_set_lane,
+  describe_lane_load,
+  describe_lane_mutation,
   describe_duplicate_lane,
   describe_extract,
   describe_reverse,

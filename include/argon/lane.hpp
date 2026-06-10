@@ -55,20 +55,21 @@ class ConstLane {
   ace operator scalar_type() const { return Get(); }
   /// @brief Write a scalar value into this lane and return the updated vector.
   ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
-  /// @brief Load a scalar from `ptr` into this lane.
+  /// @brief Load a scalar from `ptr` into this lane and return the updated vector.
+  /// @note Mutates the referenced vector in place (like operator=), so callers may discard the result.
   ace argon_type Load(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    Set(*ptr);
+    return vec_ = Set(*ptr);
 #else
     if constexpr (simd::is_quadword_v<VectorType>) {
-      return simd::load1_lane_quad<LaneIndex>(ptr, vec_);
+      return vec_ = argon_type{simd::load1_lane_quad<LaneIndex>(ptr, vec_)};
     } else {
-      return simd::load1_lane<LaneIndex>(ptr, vec_);
+      return vec_ = argon_type{simd::load1_lane<LaneIndex>(ptr, vec_)};
     }
 #endif
   }
   /// @brief Set this lane to `b` and return the updated vector.
-  ace argon_type Set(const scalar_type b) { return simd::set_lane<LaneIndex>(b, vec_); }
+  ace argon_type Set(const scalar_type b) { return argon_type{simd::set_lane<LaneIndex>(b, vec_)}; }
   /// @brief Get the scalar value of this lane.
   ace scalar_type Get() const { return simd::get_lane<LaneIndex>(vec_); }
 
@@ -124,15 +125,16 @@ class Lane {
   /// @brief Write a scalar value into this lane and return the updated vector.
   ace argon_type operator=(const scalar_type b) { return vec_ = Set(b); }
   /// @brief Load a scalar from `ptr` into this lane and return the updated vector.
-  [[nodiscard]] ace argon_type Load(const scalar_type* ptr) {
+  /// @note Mutates the referenced vector in place (like operator=), so callers may discard the result.
+  ace argon_type Load(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    return Set(*ptr);
+    return vec_ = Set(*ptr);
 #else
-    return simd::load1_lane(vec_, lane_, ptr);
+    return vec_ = argon_type{simd::load1_lane(vec_, lane_, ptr)};
 #endif
   }
   /// @brief Set this lane to `b` and return the updated vector.
-  ace argon_type Set(const scalar_type b) { return simd::set_lane(vec_, lane_, b); }
+  ace argon_type Set(const scalar_type b) { return argon_type{simd::set_lane(vec_, lane_, b)}; }
   /// @brief Get the scalar value of this lane.
   ace scalar_type Get() const { return simd::get_lane(vec_, lane_); }
   /// @brief Read the lane value (implicit conversion to scalar).
