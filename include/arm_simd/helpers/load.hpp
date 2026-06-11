@@ -13,7 +13,7 @@
 #endif
 
 #ifdef ARGON_PLATFORM_SIMDE
-#define nce
+#define nce [[gnu::always_inline]] inline
 #elifdef __clang__
 #define nce [[gnu::always_inline]] constexpr
 #else

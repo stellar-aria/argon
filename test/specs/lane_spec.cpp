@@ -112,6 +112,55 @@ auto describe_lane_mutation = describe("Lane mutation", ${
   });
 });
 
+// ── ArgonHalf<float> — SIMDe MMX-ABI regression ────────────────────────────
+// float32x2 (the 64-bit half-width float vector) is backed by a GCC
+// vector_size(8) type; under the i386 SysV ABI those are passed/returned in
+// MMX registers. When argon's SIMDe wrappers were *non-inlined* (the `nce`/
+// `ace` macros expanded to nothing on the SIMDe backend), a float32x2 crossing
+// one of those call boundaries got corrupted once mixed with x87/SSE scalar
+// float math — the scalar landed in lane 1 with lane 0 left as garbage/NaN.
+// So `ArgonHalf<float> x = 16.0f` came back [NaN, 16] on the SIMDe host while
+// passing on native NEON, which NaN'd the Mutable reverb's cosine-oscillator
+// LFO and railed DelugeFirmware's host-sim audio output. The fix keeps the
+// wrappers always-inlined under SIMDe so no half-vector crosses a real call in
+// an MMX register; these pin the broadcast / lane-access contract. (The other
+// widths are 128-bit or already covered; float32x2 was the uncovered gap.)
+auto describe_half_float_simde = describe("ArgonHalf<float> broadcast + lane access", ${
+  it("FromScalar broadcasts the value across both lanes", _{
+    auto v = ArgonHalf<float>::FromScalar(16.0f);
+    expect(v.to_array()).to_equal(std::array<float, 2>{16.0f, 16.0f});
+  });
+
+  it("scalar-constructor broadcast fills both lanes", _{
+    ArgonHalf<float> v = 16.0f;
+    expect(v.to_array()).to_equal(std::array<float, 2>{16.0f, 16.0f});
+  });
+
+  it("reads each lane by compile-time index", _{
+    std::array<float, 2> data = {3.0f, 7.0f};
+    auto v = ArgonHalf<float>::Load(data.data());
+    expect((float)v.template GetLane<0>()).to_equal(3.0f);
+    expect((float)v.template GetLane<1>()).to_equal(7.0f);
+  });
+
+  it("reads each lane by runtime index", _{
+    std::array<float, 2> data = {3.0f, 7.0f};
+    auto v = ArgonHalf<float>::Load(data.data());
+    for (int i = 0; i < 2; ++i)
+      expect((float)v[i]).to_equal(data[i]);
+  });
+
+  it("survives a broadcast -> multiply -> lane-read round trip (cosine-LFO pattern)", _{
+    // mirrors DualCosineOscillator::InitApproximate: a broadcast sign times the
+    // loaded frequencies, then the product is read back lane by lane.
+    ArgonHalf<float> sign = 16.0f;
+    std::array<float, 2> freqs = {0.25f, 0.5f};
+    auto prod = sign * ArgonHalf<float>::Load(freqs.data());
+    expect((float)prod[0]).to_equal(4.0f);
+    expect((float)prod[1]).to_equal(8.0f);
+  });
+});
+
 // ── DuplicateLane ──────────────────────────────────────────────────────────
 
 auto describe_duplicate_lane = describe("DuplicateLane", ${
@@ -214,6 +263,7 @@ CPPSPEC_MAIN(
   describe_set_lane,
   describe_lane_load,
   describe_lane_mutation,
+  describe_half_float_simde,
   describe_duplicate_lane,
   describe_extract,
   describe_reverse,

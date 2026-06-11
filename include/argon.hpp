@@ -19,7 +19,7 @@
 #endif
 
 #ifdef ARGON_PLATFORM_SIMDE
-#define ace
+#define ace [[gnu::always_inline]] inline
 #elifdef __clang__
 #define ace [[gnu::always_inline]] constexpr
 #else
