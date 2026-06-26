@@ -170,7 +170,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, macos-13]
+        os: [macos-15]
         compiler: [gcc]
     runs-on: ${{ matrix.os }}
     steps:
