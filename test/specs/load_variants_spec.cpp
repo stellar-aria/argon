@@ -54,6 +54,11 @@ auto describe_load_interleaved = describe("LoadInterleaved", ${
 });
 
 // ── LoadCopyInterleaved<stride> (de-interleave + duplicate) ─────────────────
+// Backed by the quadword vldNq_dup intrinsics, which only exist on clang or
+// SIMDe — native GCC's AArch32 <arm_neon.h> omits them — so gate this spec on
+// the same condition the library uses to provide load2_duplicate.
+#if defined(__clang__) || defined(SIMDE_VERSION)
+#define ARGON_TEST_HAS_QUADWORD_LOAD_DUP 1
 
 auto describe_load_copy_interleaved = describe("LoadCopyInterleaved", ${
   it("duplicates the first stride elements across each vector", _{
@@ -65,6 +70,7 @@ auto describe_load_copy_interleaved = describe("LoadCopyInterleaved", ${
       expect(x).to_equal(20);
   });
 });
+#endif
 
 // ── LoadGatherOffsetBytes (gather by *byte* offset from a base) ──────────────
 
@@ -84,6 +90,8 @@ CPPSPEC_MAIN(
   describe_load_to_lane,
   describe_load_multi,
   describe_load_interleaved,
+#ifdef ARGON_TEST_HAS_QUADWORD_LOAD_DUP
   describe_load_copy_interleaved,
+#endif
   describe_load_gather_offset_bytes
 );
