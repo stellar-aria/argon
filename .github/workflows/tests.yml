@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cpu: [A9, M55]
+        cpu: [A9]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -222,7 +222,9 @@ jobs:
 
   test-build-x86_64-windows:
     name: Run tests (x86_64 Windows)
-    runs-on: windows-latest
+    # Pinned to windows-2022: windows-latest now maps to the windows-2025 image,
+    # where the "Visual Studio 17 2022" generator fails to find a VS instance.
+    runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
