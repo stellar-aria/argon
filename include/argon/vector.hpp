@@ -174,11 +174,13 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type()>>
   ace static argon_type Generate(FuncType body) {
-    VectorType out;
+    // Build via a scalar array + Load rather than subscripting the raw vector:
+    // MSVC's SIMDe vector types are structs with no operator[].
+    std::array<scalar_type, lanes> out;
     utility::constexpr_for<0, lanes, 1>([&]<size_t i>() {  //
       out[i] = body();
     });
-    return out;
+    return Load(out.data());
   }
 
   /// @brief Constructs a Vector from a function that generates values with an index.
@@ -189,11 +191,13 @@ class Vector {
   template <typename FuncType>
     requires std::convertible_to<FuncType, std::function<scalar_type(scalar_type)>>
   ace static argon_type GenerateWithIndex(FuncType body) {
-    VectorType out;
+    // Build via a scalar array + Load rather than subscripting the raw vector:
+    // MSVC's SIMDe vector types are structs with no operator[].
+    std::array<scalar_type, lanes> out;
     utility::constexpr_for<0, lanes, 1>([&]<size_t i>() {  //
       out[i] = body(i);
     });
-    return out;
+    return Load(out.data());
   }
 
   /// Negate the SIMD vector and return the result.
@@ -1110,20 +1114,22 @@ class Vector {
       return argon::to_array(simd::load1_x4<multi_type>(ptr).val);
     }
 #else
+    // load1 is a return-type-only template, so the element type must be named
+    // explicitly — `simd::load1(ptr)` cannot deduce it (fails to compile on MSVC).
     if constexpr (n == 2) {
-      auto a = simd::load1(ptr);
-      auto b = simd::load1(ptr + lanes);
+      auto a = simd::load1<VectorType>(ptr);
+      auto b = simd::load1<VectorType>(ptr + lanes);
       return {a, b};
     } else if constexpr (n == 3) {
-      auto a = simd::load1(ptr);
-      auto b = simd::load1(ptr + lanes);
-      auto c = simd::load1(ptr + 2 * lanes);
+      auto a = simd::load1<VectorType>(ptr);
+      auto b = simd::load1<VectorType>(ptr + lanes);
+      auto c = simd::load1<VectorType>(ptr + 2 * lanes);
       return {a, b, c};
     } else if constexpr (n == 4) {
-      auto a = simd::load1(ptr);
-      auto b = simd::load1(ptr + lanes);
-      auto c = simd::load1(ptr + 2 * lanes);
-      auto d = simd::load1(ptr + 3 * lanes);
+      auto a = simd::load1<VectorType>(ptr);
+      auto b = simd::load1<VectorType>(ptr + lanes);
+      auto c = simd::load1<VectorType>(ptr + 2 * lanes);
+      auto d = simd::load1<VectorType>(ptr + 3 * lanes);
       return {a, b, c, d};
     }
 #endif

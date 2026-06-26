@@ -85,13 +85,19 @@ auto describe_load_gather_offset_bytes = describe("LoadGatherOffsetBytes", ${
   });
 });
 
+// Preprocessor directives inside a macro invocation are UB (and break MSVC's
+// preprocessor), so fold the conditional spec into a macro expanded in-place.
+#ifdef ARGON_TEST_HAS_QUADWORD_LOAD_DUP
+#define MAYBE_LOAD_COPY_INTERLEAVED describe_load_copy_interleaved,
+#else
+#define MAYBE_LOAD_COPY_INTERLEAVED
+#endif
+
 CPPSPEC_MAIN(
   describe_load_scalar,
   describe_load_to_lane,
   describe_load_multi,
   describe_load_interleaved,
-#ifdef ARGON_TEST_HAS_QUADWORD_LOAD_DUP
-  describe_load_copy_interleaved,
-#endif
+  MAYBE_LOAD_COPY_INTERLEAVED
   describe_load_gather_offset_bytes
 );

@@ -95,9 +95,6 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
   interleaved(ScalarType* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
   interleaved(const std::span<ScalarType> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
 
-  template <size_t, std::ranges::contiguous_range R>
-  interleaved(R&& r) : start_{std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
-
   iterator begin() const { return Iterator(start_); }
   const ScalarType* end() const { return start_ + size_; }
   const_iterator cbegin() const { return ConstIterator(start_); }

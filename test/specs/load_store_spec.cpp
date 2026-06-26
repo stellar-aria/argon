@@ -123,6 +123,14 @@ auto describe_get_high_low = describe("GetHigh/GetLow/Combine", ${
 });
 #endif
 
+// Preprocessor directives inside a macro invocation are UB (and break MSVC's
+// preprocessor), so fold the conditional spec into a macro expanded in-place.
+#ifndef ARGON_PLATFORM_MVE
+#define MAYBE_GET_HIGH_LOW , describe_get_high_low
+#else
+#define MAYBE_GET_HIGH_LOW
+#endif
+
 CPPSPEC_MAIN(
   describe_load_store_int32,
   describe_load_store_uint8,
@@ -131,7 +139,5 @@ CPPSPEC_MAIN(
   describe_from_scalar,
   describe_iota,
   describe_store_lane
-#ifndef ARGON_PLATFORM_MVE
-  , describe_get_high_low
-#endif
+  MAYBE_GET_HIGH_LOW
 );
