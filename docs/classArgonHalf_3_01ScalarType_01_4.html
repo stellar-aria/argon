@@ -238,12 +238,11 @@ ace argon_next_larger&#160;</td><td class="memItemRight"><b>SubtractLong</b> (<a
 <tr class="memitem:a564ed4aeb15a10da05186b56f242a6d8" id="r_a564ed4aeb15a10da05186b56f242a6d8"><td class="memItemLeft"><a id="a564ed4aeb15a10da05186b56f242a6d8" name="a564ed4aeb15a10da05186b56f242a6d8"></a>
 ace argon_next_larger&#160;</td><td class="memItemRight"><b>SubtractAbsoluteLong</b> (<a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; ScalarType &gt; b) const</td></tr>
 <tr class="memdesc:a564ed4aeb15a10da05186b56f242a6d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Absolute difference and widen: <span class="tt">|this - b|</span> widened to the next-larger element type. <br /></td></tr>
-<tr class="memitem:ad6cb15d9f4b246bfaed86ec3bfd4198f" id="r_ad6cb15d9f4b246bfaed86ec3bfd4198f"><td class="memItemLeft"><a id="ad6cb15d9f4b246bfaed86ec3bfd4198f" name="ad6cb15d9f4b246bfaed86ec3bfd4198f"></a>
-ace argon_next_larger&#160;</td><td class="memItemRight"><b>PairwiseAddLong</b> () const</td></tr>
-<tr class="memdesc:ad6cb15d9f4b246bfaed86ec3bfd4198f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pairwise add adjacent lanes and widen: produces <span class="tt">lanes/2</span> wider-type results. <br /></td></tr>
-<tr class="memitem:a60247650e4e3a980fb7999dcb5fbc7dd" id="r_a60247650e4e3a980fb7999dcb5fbc7dd"><td class="memItemLeft"><a id="a60247650e4e3a980fb7999dcb5fbc7dd" name="a60247650e4e3a980fb7999dcb5fbc7dd"></a>
-ace argon_next_larger&#160;</td><td class="memItemRight"><b>PairwiseAddLong</b> (<a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; typename <a class="el" href="structargon_1_1helpers_1_1NextSmaller.html">argon::helpers::NextSmaller</a>&lt; ScalarType &gt; &gt; b) const</td></tr>
-<tr class="memdesc:a60247650e4e3a980fb7999dcb5fbc7dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pairwise add this and the next-smaller-type vector <span class="tt">b</span>, widening into <span class="tt">argon_next_larger</span>. <br /></td></tr>
+<tr class="memitem:a092550c0ee6fce2d557a2c32c77ed28b" id="r_a092550c0ee6fce2d557a2c32c77ed28b"><td class="memItemLeft">ace <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; next_larger &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a092550c0ee6fce2d557a2c32c77ed28b">PairwiseAddLong</a> () const</td></tr>
+<tr class="memdesc:a092550c0ee6fce2d557a2c32c77ed28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pairwise add adjacent lanes and widen: produces <span class="tt">lanes/2</span> wider-type results.  <br /></td></tr>
+<tr class="memitem:a15c39c78826261d78e5d67410d5b88e0" id="r_a15c39c78826261d78e5d67410d5b88e0"><td class="memTemplParams" colspan="2">template&lt;typename SmallerType&gt; </td></tr>
+<tr class="memitem:a15c39c78826261d78e5d67410d5b88e0 template"><td class="memItemLeft">ace <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; ScalarType &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a15c39c78826261d78e5d67410d5b88e0">PairwiseAddLong</a> (<a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; SmallerType &gt; b) const</td></tr>
+<tr class="memdesc:a15c39c78826261d78e5d67410d5b88e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pairwise add adjacent lanes of the next-smaller-type vector <span class="tt">b</span> and accumulate into this.  <br /></td></tr>
 <tr class="memitem:a2e3e5cc4c8ae251a732ecd7d496578c1" id="r_a2e3e5cc4c8ae251a732ecd7d496578c1"><td class="memItemLeft"><a id="a2e3e5cc4c8ae251a732ecd7d496578c1" name="a2e3e5cc4c8ae251a732ecd7d496578c1"></a>
 ace argon_next_larger&#160;</td><td class="memItemRight"><b>Widen</b> () const</td></tr>
 <tr class="memdesc:a2e3e5cc4c8ae251a732ecd7d496578c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-extend (widen) each lane to the next-larger element type. <br /></td></tr>
@@ -997,6 +996,68 @@ template&lt;typename ScalarType&gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a092550c0ee6fce2d557a2c32c77ed28b" name="a092550c0ee6fce2d557a2c32c77ed28b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a092550c0ee6fce2d557a2c32c77ed28b">&#9670;&#160;</a></span>PairwiseAddLong() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ScalarType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; next_larger &gt; <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; ScalarType &gt;::PairwiseAddLong </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pairwise add adjacent lanes and widen: produces <span class="tt">lanes/2</span> wider-type results. </p>
+<p>Halving the lane count keeps the result in a doubleword, so this returns an <span class="tt"><a class="el" href="classArgonHalf.html">ArgonHalf</a></span> of the next-larger element type (e.g. int16x4 -&gt; int32x2). </p>
+
+</div>
+</div>
+<a id="a15c39c78826261d78e5d67410d5b88e0" name="a15c39c78826261d78e5d67410d5b88e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15c39c78826261d78e5d67410d5b88e0">&#9670;&#160;</a></span>PairwiseAddLong() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ScalarType&gt; </div>
+<div class="memtemplate">
+template&lt;typename SmallerType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; ScalarType &gt; <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; ScalarType &gt;::PairwiseAddLong </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; SmallerType &gt;</td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pairwise add adjacent lanes of the next-smaller-type vector <span class="tt">b</span> and accumulate into this. </p>
+<p>Equivalent to <span class="tt">this + b.PairwiseAddLong()</span> (NEON VPADAL): <span class="tt">b</span> is pairwise-added and widened to this element type, then added lane-wise to this accumulator. <span class="tt">b</span> must be an <span class="tt"><a class="el" href="classArgonHalf.html">ArgonHalf</a></span> of the next-smaller element type (deduced from the argument). </p>
 
 </div>
 </div>

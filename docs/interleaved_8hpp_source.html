@@ -99,23 +99,23 @@ $(function(){initNavTree('interleaved_8hpp_source.html','',''); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;ranges&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;span&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;argon.hpp&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;argon/vectorize.hpp&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;arm_simd/helpers/vec128.hpp&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#define simd mve</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#define simd neon</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>argon::vectorize {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Str<span class="keywordtype">id</span>e, <span class="keyword">typename</span> ScalarType&gt;</div>
-<div class="foldopen" id="foldopen00020" data-start="{" data-end="};">
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1interleaved.html">   20</a></span><span class="keyword">struct </span>interleaved : <span class="keyword">public</span> std::ranges::view_interface&lt;interleaved&lt;Stride, ScalarType&gt;&gt; {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">using </span>intrinsic_type = simd::Vec128_t&lt;ScalarType&gt;;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> lanes = <span class="keyword">sizeof</span>(intrinsic_type) / <span class="keyword">sizeof</span>(ScalarType);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> vectorizeable_size(<span class="keywordtype">size_t</span> size) { <span class="keywordflow">return</span> size &amp; ~(lanes - 1); }</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;arm_simd/helpers/vec128.hpp&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define simd mve</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#define simd neon</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>argon::vectorize {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Str<span class="keywordtype">id</span>e, <span class="keyword">typename</span> ScalarType&gt;</div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="};">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1interleaved.html">   19</a></span><span class="keyword">struct </span>interleaved : <span class="keyword">public</span> std::ranges::view_interface&lt;interleaved&lt;Stride, ScalarType&gt;&gt; {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keyword">using </span>intrinsic_type = simd::Vec128_t&lt;ScalarType&gt;;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> lanes = <span class="keyword">sizeof</span>(intrinsic_type) / <span class="keyword">sizeof</span>(ScalarType);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="comment">// Round down to a whole number of iterations; each iteration spans lanes*Stride elements.</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> vectorizeable_size(<span class="keywordtype">size_t</span> size) { <span class="keywordflow">return</span> size - (size % (lanes * Stride)); }</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> <span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
@@ -133,8 +133,8 @@ $(function(){initNavTree('interleaved_8hpp_source.html','',''); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keyword">const</span> value_type&amp; operator*()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vec; }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">const</span> value_type* operator-&gt;()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> &amp;vec; }</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    Iterator&amp; operator++() {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      <a class="code hl_struct" href="structargon_1_1vectorize_1_1store__interleaved.html">store_interleaved</a>(ptr, vec);  <span class="comment">// store before increment</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      ptr += lanes;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      argon::store_interleaved(ptr, vec);  <span class="comment">// store before increment</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      ptr += lanes * Stride;</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      vec = argon_type::template LoadInterleaved&lt;Stride&gt;(ptr);</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
@@ -168,7 +168,7 @@ $(function(){initNavTree('interleaved_8hpp_source.html','',''); });
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">const</span> value_type operator*()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> vec; }</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    ConstIterator&amp; operator++() {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>      ptr += lanes;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>      ptr += lanes * Stride;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      vec = argon_type::template LoadInterleaved&lt;Stride&gt;(ptr);</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>      <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
@@ -224,8 +224,7 @@ $(function(){initNavTree('interleaved_8hpp_source.html','',''); });
 <div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Lane deconstruction feature.</div><div class="ttdef"><b>Definition</b> argon_full.hpp:399</div></div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1interleaved_1_1ConstIterator_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1interleaved_1_1ConstIterator.html">argon::vectorize::interleaved::ConstIterator</a></div><div class="ttdef"><b>Definition</b> interleaved.hpp:62</div></div>
 <div class="ttc" id="astructargon_1_1vectorize_1_1interleaved_1_1Iterator_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1interleaved_1_1Iterator.html">argon::vectorize::interleaved::Iterator</a></div><div class="ttdef"><b>Definition</b> interleaved.hpp:26</div></div>
-<div class="ttc" id="astructargon_1_1vectorize_1_1interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1interleaved.html">argon::vectorize::interleaved</a></div><div class="ttdef"><b>Definition</b> interleaved.hpp:20</div></div>
-<div class="ttc" id="astructargon_1_1vectorize_1_1store__interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1store__interleaved.html">argon::vectorize::store_interleaved</a></div><div class="ttdef"><b>Definition</b> store_interleaved.hpp:15</div></div>
+<div class="ttc" id="astructargon_1_1vectorize_1_1interleaved_html"><div class="ttname"><a href="structargon_1_1vectorize_1_1interleaved.html">argon::vectorize::interleaved</a></div><div class="ttdef"><b>Definition</b> interleaved.hpp:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

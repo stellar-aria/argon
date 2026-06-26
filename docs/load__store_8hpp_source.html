@@ -180,7 +180,7 @@ $(function(){initNavTree('load__store_8hpp_source.html','',''); });
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a625b8557ecaccb499b8f939cbe6e56ab">   97</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a625b8557ecaccb499b8f939cbe6e56ab">reload</a>() { vec = value_type::Load(ptr); }</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>   <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordtype">bool</span> dirty_;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordtype">bool</span> dirty_ = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    ScalarType* <a class="code hl_struct" href="structargon_1_1vectorize_1_1ptr.html">ptr</a> = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <a class="code hl_typedef" href="structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a14731459167438b56205e9644ecc92ab">value_type</a> vec;</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  };</div>
