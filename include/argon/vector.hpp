@@ -175,7 +175,7 @@ class Vector {
     requires std::convertible_to<FuncType, std::function<scalar_type()>>
   ace static argon_type Generate(FuncType body) {
     VectorType out;
-    utility::constexpr_for<0, lanes, 1>([&](size_t i) {  //
+    utility::constexpr_for<0, lanes, 1>([&]<size_t i>() {  //
       out[i] = body();
     });
     return out;
@@ -905,7 +905,10 @@ class Vector {
     argon_type destination;
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       auto lane_val = neon::get_lane<i>(offset_vector);
-      destination = destination.template LoadToLane<i>(base + (lane_val * sizeof(scalar_type)));
+      // lane_val is a *byte* offset; address by bytes (scalar_type* arithmetic
+      // would scale by sizeof a second time).
+      auto* addr = reinterpret_cast<const scalar_type*>(reinterpret_cast<const char*>(base) + lane_val);
+      destination = destination.template LoadToLane<i>(addr);
     });
     return destination;
 #endif
@@ -1221,7 +1224,7 @@ class Vector {
   }
 
   /// @copydoc BitwiseAndNot
-  ace argon_type BitwiseClear(argon_type b) const { BitwiseAndNot(b); }
+  ace argon_type BitwiseClear(argon_type b) const { return BitwiseAndNot(b); }
 
 #ifndef ARGON_PLATFORM_MVE
   /// Bitwise select between two vectors, using the current vector as a mask.

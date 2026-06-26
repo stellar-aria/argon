@@ -5,7 +5,6 @@
 #include <ranges>
 #include <span>
 #include "argon.hpp"
-#include "argon/vectorize.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -20,7 +19,8 @@ template <size_t Stride, typename ScalarType>
 struct interleaved : public std::ranges::view_interface<interleaved<Stride, ScalarType>> {
   using intrinsic_type = simd::Vec128_t<ScalarType>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(ScalarType);
-  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+  // Round down to a whole number of iterations; each iteration spans lanes*Stride elements.
+  static constexpr size_t vectorizeable_size(size_t size) { return size - (size % (lanes * Stride)); }
 
  public:
   struct Iterator {
@@ -37,8 +37,8 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
     const value_type& operator*() const { return vec; }
     const value_type* operator->() const { return &vec; }
     Iterator& operator++() {
-      store_interleaved(ptr, vec);  // store before increment
-      ptr += lanes;
+      argon::store_interleaved(ptr, vec);  // store before increment
+      ptr += lanes * Stride;
       vec = argon_type::template LoadInterleaved<Stride>(ptr);
       return *this;
     }
@@ -70,7 +70,7 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
 
     const value_type operator*() const { return vec; }
     ConstIterator& operator++() {
-      ptr += lanes;
+      ptr += lanes * Stride;
       vec = argon_type::template LoadInterleaved<Stride>(ptr);
       return *this;
     }

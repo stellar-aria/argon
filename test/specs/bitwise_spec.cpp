@@ -157,6 +157,42 @@ auto describe_count_leading_sign_bits = describe("CountLeadingSignBits", ${
   });
 });
 
+// ── BitwiseAndNot / OrNot / Clear ──────────────────────────────────────────
+
+auto describe_bitwise_and_not = describe("BitwiseAndNot", ${
+  it("computes a & ~b for uint32", _{
+    std::array<uint32_t, 4> a_arr = {0xFFu, 0xF0u, 0xAAu, 0xFFFFu};
+    std::array<uint32_t, 4> b_arr = {0x0Fu, 0x0Fu, 0x0Fu, 0xFF00u};
+    auto a = Argon<uint32_t>::Load(a_arr.data());
+    auto b = Argon<uint32_t>::Load(b_arr.data());
+    auto result = a.BitwiseAndNot(b).to_array();
+    expect(result).to_equal(std::array<uint32_t, 4>{0xF0u, 0xF0u, 0xA0u, 0xFFu});
+  });
+});
+
+auto describe_bitwise_or_not = describe("BitwiseOrNot", ${
+  it("computes a | ~b for uint8", _{
+    std::array<uint8_t, 16> a_arr; a_arr.fill(0x0Fu);
+    std::array<uint8_t, 16> b_arr; b_arr.fill(0x0Fu);  // ~b == 0xF0
+    auto a = Argon<uint8_t>::Load(a_arr.data());
+    auto b = Argon<uint8_t>::Load(b_arr.data());
+    auto result = a.BitwiseOrNot(b).to_array();
+    for (auto v : result)
+      expect((int)v).to_equal(0xFF);  // 0x0F | 0xF0
+  });
+});
+
+auto describe_bitwise_clear = describe("BitwiseClear", ${
+  it("clears the bits of b from a (alias of BitwiseAndNot)", _{
+    std::array<uint32_t, 4> a_arr = {0xFFu, 0xF0u, 0xAAu, 0xFFFFu};
+    std::array<uint32_t, 4> b_arr = {0x0Fu, 0x0Fu, 0x0Fu, 0xFF00u};
+    auto a = Argon<uint32_t>::Load(a_arr.data());
+    auto b = Argon<uint32_t>::Load(b_arr.data());
+    auto result = a.BitwiseClear(b).to_array();
+    expect(result).to_equal(std::array<uint32_t, 4>{0xF0u, 0xF0u, 0xA0u, 0xFFu});
+  });
+});
+
 // ── BitwiseSelect ──────────────────────────────────────────────────────────
 
 auto describe_bitwise_select = describe("BitwiseSelect", ${
@@ -182,5 +218,8 @@ CPPSPEC_MAIN(
   describe_count_leading_zeros,
   describe_count_active_bits,
   describe_count_leading_sign_bits,
+  describe_bitwise_and_not,
+  describe_bitwise_or_not,
+  describe_bitwise_clear,
   describe_bitwise_select
 );

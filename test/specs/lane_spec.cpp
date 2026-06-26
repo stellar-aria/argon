@@ -258,6 +258,78 @@ auto describe_transpose = describe("TransposeWith", ${
   });
 });
 
+// ── Reverse (full) / Reverse16bit / Reverse32bit / SwapDoublewords ──────────
+
+auto describe_reverse_full = describe("Reverse", ${
+  it("reverses all int32 lanes of the 128-bit vector", _{
+    std::array<int32_t, 4> data = {1, 2, 3, 4};
+    auto v = Argon<int32_t>::Load(data.data());
+    auto result = v.Reverse().to_array();
+    expect(result).to_equal(std::array<int32_t, 4>{4, 3, 2, 1});
+  });
+});
+
+auto describe_reverse_32bit = describe("Reverse32bit", ${
+  it("reverses int16 elements within each 32-bit word", _{
+    std::array<int16_t, 8> data = {0, 1, 2, 3, 4, 5, 6, 7};
+    auto v = Argon<int16_t>::Load(data.data());
+    // swaps adjacent int16 pairs within each 32-bit lane
+    auto result = v.Reverse32bit().to_array();
+    expect(result).to_equal(std::array<int16_t, 8>{1, 0, 3, 2, 5, 4, 7, 6});
+  });
+});
+
+auto describe_reverse_16bit = describe("Reverse16bit", ${
+  it("reverses int8 elements within each 16-bit halfword", _{
+    std::array<int8_t, 16> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    auto v = Argon<int8_t>::Load(data.data());
+    auto result = v.Reverse16bit().to_array();
+    expect(result).to_equal(std::array<int8_t, 16>{1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14});
+  });
+});
+
+auto describe_swap_doublewords = describe("SwapDoublewords", ${
+  it("swaps the upper and lower 64-bit halves", _{
+    std::array<int32_t, 4> data = {1, 2, 3, 4};
+    auto v = Argon<int32_t>::Load(data.data());
+    auto result = v.SwapDoublewords().to_array();
+    expect(result).to_equal(std::array<int32_t, 4>{3, 4, 1, 2});
+  });
+});
+
+// ── CombineWith (ArgonHalf -> Argon) ────────────────────────────────────────
+
+auto describe_combine_with = describe("CombineWith", ${
+  it("combines two doublewords into a full vector (low, then high)", _{
+    std::array<int32_t, 2> lo = {1, 2};
+    std::array<int32_t, 2> hi = {3, 4};
+    auto low  = ArgonHalf<int32_t>::Load(lo.data());
+    auto high = ArgonHalf<int32_t>::Load(hi.data());
+    auto result = low.CombineWith(high).to_array();
+    expect(result).to_equal(std::array<int32_t, 4>{1, 2, 3, 4});
+  });
+});
+
+// ── LastLane / FromLane ─────────────────────────────────────────────────────
+
+auto describe_last_lane = describe("LastLane", ${
+  it("reads the final lane of the vector", _{
+    std::array<int32_t, 4> data = {10, 20, 30, 40};
+    auto v = Argon<int32_t>::Load(data.data());
+    expect((int32_t)v.LastLane()).to_equal(40);
+  });
+});
+
+auto describe_from_lane = describe("FromLane", ${
+  it("broadcasts a single lane across a new vector", _{
+    std::array<int32_t, 4> data = {10, 20, 30, 40};
+    auto v = Argon<int32_t>::Load(data.data());
+    auto broadcast = Argon<int32_t>::FromLane(v.template GetLane<2>()).to_array();  // lane 2 == 30
+    for (auto x : broadcast)
+      expect(x).to_equal(30);
+  });
+});
+
 CPPSPEC_MAIN(
   describe_get_lane,
   describe_set_lane,
@@ -267,6 +339,13 @@ CPPSPEC_MAIN(
   describe_duplicate_lane,
   describe_extract,
   describe_reverse,
+  describe_reverse_full,
+  describe_reverse_32bit,
+  describe_reverse_16bit,
+  describe_swap_doublewords,
+  describe_combine_with,
+  describe_last_lane,
+  describe_from_lane,
   describe_zip,
   describe_unzip,
   describe_transpose

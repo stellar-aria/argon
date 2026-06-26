@@ -34,6 +34,25 @@ auto vectorize_store_interleaved = describe("vectorize_store_interleaved", ${
       expect(vals[i]).to_equal(i);
     }
   });
+
+  it("only writes the vectorizable prefix when size is not divisible by lanes*stride", _{
+    // 514 elements -> 512 vectorizable (64 stride-2 iterations of 8 elements)
+    std::array<int32_t, 514> vals;
+    vals.fill(5);
+
+    int32_t counter = 0;
+    for (auto& [val_a, val_b] : argon::vectorize::store_interleaved(vals)){
+      val_a = { counter + 0, counter + 2, counter + 4, counter + 6 };
+      val_b = { counter + 1, counter + 3, counter + 5, counter + 7 };
+      counter += 8;
+    }
+    expect(counter).to_equal(512);
+
+    for (size_t i = 0; i < 512; ++i)
+      expect(vals[i]).to_equal(static_cast<int32_t>(i));
+    expect(vals[512]).to_equal(5);  // tail untouched
+    expect(vals[513]).to_equal(5);
+  });
 });
 
 CPPSPEC_MAIN(vectorize_store_interleaved);

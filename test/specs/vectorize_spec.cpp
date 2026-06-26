@@ -42,6 +42,21 @@ auto vectorize = describe("vectorize", ${
     expect(vals[510]).to_equal(5);
   });
 
+  it("does not write back when the buffer is iterated without being dereferenced", _{
+    // The iterator only stores on increment when it has been dereferenced for
+    // write (dirty_). Iterating without touching the elements must leave the
+    // buffer untouched — exercises the dirty_ == false path.
+    std::array<int32_t, 512> vals;
+    vals.fill(5);
+
+    auto view = argon::vectorize::load_store(vals);
+    for (auto iter = view.begin(); iter != view.end(); ++iter) {
+      // intentionally do not dereference
+    }
+    for (auto v : vals)
+      expect(v).to_equal(5);
+  });
+
   it("vectorize_ptr can be zipped together", _{
     std::array<int32_t, 512> vals1;
     std::array<int32_t, 512> vals2;

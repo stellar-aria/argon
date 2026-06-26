@@ -97,7 +97,7 @@ struct load_store : public std::ranges::view_interface<load_store<ScalarType>> {
     void reload() { vec = value_type::Load(ptr); }
 
    private:
-    bool dirty_;
+    bool dirty_ = false;
     ScalarType* ptr = nullptr;
     value_type vec;
   };

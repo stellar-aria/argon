@@ -225,11 +225,20 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   }
 
   /// @brief Pairwise add adjacent lanes and widen: produces `lanes/2` wider-type results.
-  ace argon_next_larger PairwiseAddLong() const { return neon::pairwise_add_long(this->vec_); }
+  /// @details Halving the lane count keeps the result in a doubleword, so this returns an
+  /// `ArgonHalf` of the next-larger element type (e.g. int16x4 -> int32x2).
+  ace ArgonHalf<next_larger> PairwiseAddLong() const { return neon::pairwise_add_long(this->vec_); }
 
-  /// @brief Pairwise add this and the next-smaller-type vector `b`, widening into `argon_next_larger`.
-  ace argon_next_larger PairwiseAddLong(ArgonHalf<typename argon::helpers::NextSmaller<ScalarType>> b) const {
-    return neon::pairwise_add_long(this->vec_, b);
+  /// @brief Pairwise add adjacent lanes of the next-smaller-type vector `b` and accumulate into this.
+  /// @details Equivalent to `this + b.PairwiseAddLong()` (NEON VPADAL): `b` is pairwise-added and
+  /// widened to this element type, then added lane-wise to this accumulator. `b` must be an
+  /// `ArgonHalf` of the next-smaller element type (deduced from the argument).
+  template <typename SmallerType>
+    requires argon::helpers::has_smaller_v<ScalarType>
+  ace ArgonHalf<ScalarType> PairwiseAddLong(ArgonHalf<SmallerType> b) const {
+    static_assert(std::is_same_v<SmallerType, argon::helpers::NextSmaller_t<ScalarType>>,
+                  "PairwiseAddLong(b) requires b to be an ArgonHalf of the next-smaller element type");
+    return this->Add(b.PairwiseAddLong());
   }
 
   /// @brief Zero-extend (widen) each lane to the next-larger element type.
