@@ -1354,129 +1354,137 @@ $(function(){initNavTree('argon_2vector_8hpp_source.html','',''); });
 <div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>  ace <a class="code hl_typedef" href="classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> each_lane(FuncType body) {</div>
 <div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>    VectorType out = vec_;</div>
 <div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>      body(out[i]);</div>
-<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>    });</div>
-<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>    <span class="keywordflow">return</span> out;</div>
-<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>  }</div>
-<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span> </div>
-<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
-<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void(<a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>&amp;, <span class="keywordtype">int</span>)&gt;&gt;</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>  ace <a class="code hl_typedef" href="classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> each_lane_with_index(FuncType body) {</div>
-<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>    VectorType out = vec_;</div>
-<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>      body(out[i], i);</div>
-<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>    });</div>
-<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span>    <span class="keywordflow">return</span> out;</div>
-<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>  }</div>
-<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span> </div>
-<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
-<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void()&gt;&gt;</div>
-<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>  ace <span class="keywordtype">void</span> if_lane(FuncType true_branch) {</div>
-<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
-<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>        true_branch();</div>
-<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>      }</div>
-<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span>    });</div>
-<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>  }</div>
-<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span> </div>
-<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
-<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void()&gt;&gt;</div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>  ace <span class="keywordtype">void</span> if_else_lane(FuncType true_branch, FuncType false_branch) {</div>
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>        true_branch();</div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>        false_branch();</div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>      }</div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>    });</div>
-<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>  }</div>
-<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span> </div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
-<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt;</div>
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>  ace <span class="keywordtype">void</span> if_lane_with_index(FuncType true_branch) {</div>
-<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
-<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>        true_branch(i);</div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>      }</div>
-<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span>    });</div>
-<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>  }</div>
-<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span> </div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType1, <span class="keyword">typename</span> FuncType2&gt;</div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType1, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt; &amp;&amp;</div>
-<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>             std::convertible_to&lt;FuncType2, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt;</div>
-<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>  ace <span class="keywordtype">void</span> if_else_lane_with_index(FuncType1 true_branch, FuncType2 false_branch) {</div>
-<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
-<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>        true_branch(i);</div>
-<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>        false_branch(i);</div>
-<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>      }</div>
-<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>    });</div>
-<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>  }</div>
-<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span> </div>
-<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>  ace <span class="keywordtype">bool</span> any() {</div>
-<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>      <span class="keywordflow">if</span> (vec_[i]) {</div>
-<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>      <span class="comment">// A vector subscript (out[i]) is not an lvalue a non-const reference can bind to under</span></div>
+<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>      <span class="comment">// Clang (GCC accepts it as an extension). Round-trip through a scalar so the callback&#39;s</span></div>
+<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>      <span class="comment">// scalar_type&amp; binds to a real object, then write the mutated value back.</span></div>
+<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>      <a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> lane = out[i];</div>
+<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>      body(lane);</div>
+<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>      out[i] = lane;</div>
+<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>    });</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>    <span class="keywordflow">return</span> out;</div>
+<div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>  }</div>
+<div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span> </div>
+<div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
+<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void(<a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>&amp;, <span class="keywordtype">int</span>)&gt;&gt;</div>
+<div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span>  ace <a class="code hl_typedef" href="classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> each_lane_with_index(FuncType body) {</div>
+<div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>    VectorType out = vec_;</div>
+<div class="line"><a id="l01427" name="l01427"></a><span class="lineno"> 1427</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01428" name="l01428"></a><span class="lineno"> 1428</span>      <span class="comment">// See each_lane: a non-const reference cannot bind to a vector subscript under Clang.</span></div>
+<div class="line"><a id="l01429" name="l01429"></a><span class="lineno"> 1429</span>      <a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> lane = out[i];</div>
+<div class="line"><a id="l01430" name="l01430"></a><span class="lineno"> 1430</span>      body(lane, i);</div>
+<div class="line"><a id="l01431" name="l01431"></a><span class="lineno"> 1431</span>      out[i] = lane;</div>
+<div class="line"><a id="l01432" name="l01432"></a><span class="lineno"> 1432</span>    });</div>
+<div class="line"><a id="l01433" name="l01433"></a><span class="lineno"> 1433</span>    <span class="keywordflow">return</span> out;</div>
+<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span>  }</div>
+<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"> 1435</span> </div>
+<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
+<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void()&gt;&gt;</div>
+<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>  ace <span class="keywordtype">void</span> if_lane(FuncType true_branch) {</div>
+<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>        true_branch();</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>      }</div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>    });</div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>  }</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span> </div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void()&gt;&gt;</div>
+<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>  ace <span class="keywordtype">void</span> if_else_lane(FuncType true_branch, FuncType false_branch) {</div>
+<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
+<div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>        true_branch();</div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>        false_branch();</div>
+<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>      }</div>
+<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>    });</div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>  }</div>
+<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span> </div>
+<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType&gt;</div>
+<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt;</div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>  ace <span class="keywordtype">void</span> if_lane_with_index(FuncType true_branch) {</div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>        true_branch(i);</div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>      }</div>
+<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span>    });</div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>  }</div>
+<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span> </div>
+<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> FuncType1, <span class="keyword">typename</span> FuncType2&gt;</div>
+<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>    <span class="keyword">requires</span> std::convertible_to&lt;FuncType1, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt; &amp;&amp;</div>
+<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>             std::convertible_to&lt;FuncType2, std::function&lt;void(<span class="keywordtype">int</span>)&gt;&gt;</div>
+<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>  ace <span class="keywordtype">void</span> if_else_lane_with_index(FuncType1 true_branch, FuncType2 false_branch) {</div>
+<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>      <span class="keywordflow">if</span> (vec_[i] != 0) {</div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>        true_branch(i);</div>
+<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>        false_branch(i);</div>
 <div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>      }</div>
 <div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>    });</div>
-<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>  }</div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span> </div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>  ace <span class="keywordtype">bool</span> all() {</div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span><span class="preprocessor">#ifdef ARGON_PLATFORM_MVE</span></div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>    <span class="keywordflow">return</span> mve::max_reduce_max(vec_, vec_) != 0;</div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>    <span class="keyword">auto</span> nonzero = <a class="code hl_function" href="classargon_1_1Vector.html#a9fa39b01b6f592232a4b3150f660b8aa">TestNonzero</a>();</div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>      <span class="keywordflow">if</span> (nonzero[i] == 0) {</div>
-<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>      }</div>
-<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>    });</div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>  }</div>
-<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span> </div>
-<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> Index&gt;</div>
-<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>  std::tuple_element_t&lt;Index, argon_type&gt; get() {</div>
-<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span><span class="preprocessor">#ifdef ARGON_PLATFORM_MVE</span></div>
-<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span>    <span class="keywordflow">return</span> vec_[Index];</div>
-<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="classargon_1_1Vector.html#aca0e82bb381963cb4a43c3c54762484b">GetLane&lt;Index&gt;</a>();</div>
-<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>  }</div>
-<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span> </div>
-<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span> <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  <span class="keyword">template</span> &lt;std::size_t... Ints&gt;</div>
-<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  ace <span class="keyword">static</span> <a class="code hl_typedef" href="classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> IotaHelper(<a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> start, std::index_sequence&lt;Ints...&gt;) {</div>
-<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>    <span class="keywordflow">return</span> VectorType{<span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a><span class="keyword">&gt;</span>(start + Ints)...};</div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>  }</div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span> </div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>  VectorType vec_;</div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>};</div>
+<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>  }</div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span> </div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>  ace <span class="keywordtype">bool</span> any() {</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>      <span class="keywordflow">if</span> (vec_[i]) {</div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>      }</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>    });</div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>  }</div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span> </div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>  ace <span class="keywordtype">bool</span> all() {</div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span><span class="preprocessor">#ifdef ARGON_PLATFORM_MVE</span></div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>    <span class="keywordflow">return</span> mve::max_reduce_max(vec_, vec_) != 0;</div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>    <span class="keyword">auto</span> nonzero = <a class="code hl_function" href="classargon_1_1Vector.html#a9fa39b01b6f592232a4b3150f660b8aa">TestNonzero</a>();</div>
+<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>    utility::constexpr_for&lt;0, lanes, 1&gt;([&amp;]&lt;<span class="keywordtype">int</span> i&gt;() {  <span class="comment">//&lt;</span></div>
+<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>      <span class="keywordflow">if</span> (nonzero[i] == 0) {</div>
+<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span>      }</div>
+<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span>    });</div>
+<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>  }</div>
+<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span> </div>
+<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> Index&gt;</div>
+<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span>  std::tuple_element_t&lt;Index, argon_type&gt; get() {</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span><span class="preprocessor">#ifdef ARGON_PLATFORM_MVE</span></div>
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>    <span class="keywordflow">return</span> vec_[Index];</div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="classargon_1_1Vector.html#aca0e82bb381963cb4a43c3c54762484b">GetLane&lt;Index&gt;</a>();</div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>  }</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span> </div>
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span> <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>  <span class="keyword">template</span> &lt;std::size_t... Ints&gt;</div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>  ace <span class="keyword">static</span> <a class="code hl_typedef" href="classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> IotaHelper(<a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> start, std::index_sequence&lt;Ints...&gt;) {</div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>    <span class="keywordflow">return</span> VectorType{<span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a><span class="keyword">&gt;</span>(start + Ints)...};</div>
+<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>  }</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span> </div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>  VectorType vec_;</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>};</div>
 </div>
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span> </div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>}  <span class="comment">// namespace argon</span></div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span></div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacestd.html">std</a> {</div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="foldopen" id="foldopen01521" data-start="{" data-end="};">
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"><a class="line" href="structstd_1_1tuple__size_3_01argon_1_1Vector_3_01T_01_4_01_4.html"> 1521</a></span><span class="keyword">struct </span>tuple_size&lt;argon::Vector&lt;T&gt;&gt; {</div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> value = <a class="code hl_variable" href="classargon_1_1Vector.html#ad92ce1a195a40c1f752ce0ddc524c9e4">argon::Vector&lt;T&gt;::lanes</a>;</div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>};</div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span> </div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>}  <span class="comment">// namespace argon</span></div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span></div>
+<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacestd.html">std</a> {</div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="foldopen" id="foldopen01529" data-start="{" data-end="};">
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"><a class="line" href="structstd_1_1tuple__size_3_01argon_1_1Vector_3_01T_01_4_01_4.html"> 1529</a></span><span class="keyword">struct </span>tuple_size&lt;argon::Vector&lt;T&gt;&gt; {</div>
+<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> value = <a class="code hl_variable" href="classargon_1_1Vector.html#ad92ce1a195a40c1f752ce0ddc524c9e4">argon::Vector&lt;T&gt;::lanes</a>;</div>
+<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>};</div>
 </div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span> </div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Index, <span class="keyword">typename</span> T&gt;</div>
-<div class="foldopen" id="foldopen01526" data-start="{" data-end="};">
-<div class="line"><a id="l01526" name="l01526"></a><span class="lineno"><a class="line" href="structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html"> 1526</a></span><span class="keyword">struct </span>tuple_element&lt;Index, argon::Vector&lt;T&gt;&gt; {</div>
-<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span>  <span class="keyword">static_assert</span>(Index &lt; argon::Vector&lt;T&gt;::lanes);</div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>  <span class="keyword">using </span>type = <a class="code hl_typedef" href="classargon_1_1Vector.html#a42b8f34739c804799a601bdeabedc7ec">argon::Vector&lt;T&gt;::const_lane_type</a>;</div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>};</div>
+<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span> </div>
+<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Index, <span class="keyword">typename</span> T&gt;</div>
+<div class="foldopen" id="foldopen01534" data-start="{" data-end="};">
+<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"><a class="line" href="structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html"> 1534</a></span><span class="keyword">struct </span>tuple_element&lt;Index, argon::Vector&lt;T&gt;&gt; {</div>
+<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>  <span class="keyword">static_assert</span>(Index &lt; argon::Vector&lt;T&gt;::lanes);</div>
+<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>  <span class="keyword">using </span>type = <a class="code hl_typedef" href="classargon_1_1Vector.html#a42b8f34739c804799a601bdeabedc7ec">argon::Vector&lt;T&gt;::const_lane_type</a>;</div>
+<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>};</div>
 </div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>}  <span class="comment">// namespace std</span></div>
-<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span> </div>
-<div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span><span class="preprocessor">#undef ace</span></div>
-<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span><span class="preprocessor">#undef simd</span></div>
+<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>}  <span class="comment">// namespace std</span></div>
+<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span> </div>
+<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span><span class="preprocessor">#undef ace</span></div>
+<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span><span class="preprocessor">#undef simd</span></div>
 <div class="ttc" id="aargon_2helpers_8hpp_html"><div class="ttname"><a href="argon_2helpers_8hpp.html">helpers.hpp</a></div><div class="ttdoc">Provides utility templates and concepts for type traits and compile-time iteration.</div></div>
 <div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon_full.hpp:29</div></div>
 <div class="ttc" id="aclassargon_1_1ConstLane_html"><div class="ttname"><a href="classargon_1_1ConstLane.html">argon::ConstLane</a></div><div class="ttdoc">Represents a single lane of a SIMD vector with the lane index known at compile time.</div><div class="ttdef"><b>Definition</b> lane.hpp:46</div></div>
