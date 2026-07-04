@@ -1410,7 +1410,12 @@ class Vector {
   ace argon_type each_lane(FuncType body) {
     VectorType out = vec_;
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      body(out[i]);
+      // A vector subscript (out[i]) is not an lvalue a non-const reference can bind to under
+      // Clang (GCC accepts it as an extension). Round-trip through a scalar so the callback's
+      // scalar_type& binds to a real object, then write the mutated value back.
+      scalar_type lane = out[i];
+      body(lane);
+      out[i] = lane;
     });
     return out;
   }
@@ -1420,7 +1425,10 @@ class Vector {
   ace argon_type each_lane_with_index(FuncType body) {
     VectorType out = vec_;
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      body(out[i], i);
+      // See each_lane: a non-const reference cannot bind to a vector subscript under Clang.
+      scalar_type lane = out[i];
+      body(lane, i);
+      out[i] = lane;
     });
     return out;
   }
