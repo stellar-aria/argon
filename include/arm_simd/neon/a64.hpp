@@ -1,6 +1,15 @@
 #pragma once
 #include "a32.hpp"
 
+// Scalar half-precision (float16_t) intrinsics live in <arm_fp16.h>, which — unlike GCC —
+// clang's <arm_neon.h> does not pull in. The FullFP16 block below (guarded on
+// __ARM_FEATURE_FP16_SCALAR_ARITHMETIC) uses them (vabdh_f16, vmaxh_f16, vcvth_*, …), so the
+// header must be included explicitly or every such intrinsic is an undeclared identifier on
+// AArch64 FullFP16 targets (e.g. Apple Silicon). Included at file scope, before `namespace neon`.
+#ifdef __ARM_FEATURE_FP16_SCALAR_ARITHMETIC
+#include <arm_fp16.h>
+#endif
+
 #ifdef __clang__
 #define nce constexpr
 #else
@@ -1687,7 +1696,7 @@ template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_r
 template <int lane>[[gnu::always_inline]] nce int16_t multiply_double_subtract_round_saturate_high_lane(int16_t a, int16_t b, int16x8_t v) { return vqrdmlshh_laneq_s16(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x2_t v) { return vqrdmlshs_lane_s32(a, b, v, lane); }
 template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_subtract_round_saturate_high_lane(int32_t a, int32_t b, int32x4_t v) { return vqrdmlshs_laneq_s32(a, b, v, lane); }
-#ifdef __ARM_FEATURE_FP16_VECTOR_ARITHMETIC
+#ifdef __ARM_FEATURE_FP16_SCALAR_ARITHMETIC
 [[gnu::always_inline]] nce float16_t absolute_difference(float16_t a, float16_t b) { return vabdh_f16(a, b); }
 [[gnu::always_inline]] nce float16_t reciprocal_estimate(float16_t a) { return vrecpeh_f16(a); }
 [[gnu::always_inline]] nce float16_t reciprocal_exponent(float16_t a) { return vrecpxh_f16(a); }
