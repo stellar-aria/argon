@@ -138,6 +138,7 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
       simd::store1_x3(ptr, *(tail_multi_type*)&vec_array[i]);
     }
   } else {
+#if defined(__cpp_lib_ranges_chunk) && __cpp_lib_ranges_chunk >= 202202L
 #pragma GCC unroll size
     for (auto v : vec_array | std::views::chunk(stride)) {
       if constexpr (stride == 2) {
@@ -149,6 +150,21 @@ ace void store(scalar_type* ptr, intrinsic_types... vectors) {
       }
       ptr += sizeof(intrinsic_type) / sizeof(*ptr);  // increment output pointer
     }
+#else
+    // libc++ (through LLVM 22) has not shipped std::views::chunk; walk the chunks by index.
+    // vec_array.begin() + i is the same iterator std::views::chunk hands to store_interleaved.
+#pragma GCC unroll size
+    for (size_t i = 0; i + stride <= vec_array.size(); i += stride) {
+      if constexpr (stride == 2) {
+        store_interleaved<2>(ptr, vec_array.begin() + i);
+      } else if constexpr (stride == 3) {
+        store_interleaved<3>(ptr, vec_array.begin() + i);
+      } else if constexpr (stride == 4) {
+        store_interleaved<4>(ptr, vec_array.begin() + i);
+      }
+      ptr += sizeof(intrinsic_type) / sizeof(*ptr);  // increment output pointer
+    }
+#endif
   }
 }
 
