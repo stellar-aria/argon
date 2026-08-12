@@ -10,13 +10,29 @@
 #define nce inline
 #endif
 
-// The quadword structure-load intrinsics (vldNq_dup / vldNq_lane) are provided by
-// clang's <arm_neon.h>, but GCC's AArch32 header omits the load-duplicate family
-// entirely (verified absent in both gcc 14 and 15 — it ships only the bf16 ones).
-// SIMDe implements all of them for every compiler, so enable the block whenever we
-// build on clang or against the SIMDe backend; native GCC stays excluded.
+// vldNq_dup: a COMPILER difference. clang's AArch32 <arm_neon.h> provides the
+// quadword load-duplicate family; GCC's omits it entirely (verified absent in
+// both gcc 14 and 15 — it ships only the bf16 ones). SIMDe implements them for
+// every compiler. So: clang or SIMDe yes, native GCC no.
 #if defined(__clang__) || defined(SIMDE_VERSION)
 #define ARGON_HAS_QUADWORD_STRUCTURE_LOADS
+#endif
+
+// vldNq_lane at 8-bit element width: an ARCHITECTURE difference, not a compiler
+// one. ACLE defines vld{2,3,4}q_lane only for 16/32/64-bit elements on AArch32 —
+// byte-lane addressing of a Q register is not encodable in A32 NEON — so the _s8
+// and _u8 forms are A64-only. Neither clang nor GCC provides them here (verified:
+// clang 22 --target=armv7a-none-eabihf rejects vld2q_lane_u8 while accepting
+// vld2q_dup_u8, and accepts both on aarch64). This header is reached only on
+// AArch32 or the SIMDe/host path — arm_simd.hpp routes A64 to a64.hpp, which
+// declares these six itself — so only the SIMDe backend can satisfy them.
+//
+// Previously these shared ARGON_HAS_QUADWORD_STRUCTURE_LOADS, which made any
+// clang AArch32 build fail to parse this header: the bodies live in templates,
+// so the missing names are diagnosed at definition time even when nothing
+// instantiates them.
+#if defined(SIMDE_VERSION)
+#define ARGON_HAS_QUADWORD_BYTE_LANE_LOADS
 #endif
 
 namespace neon {
@@ -1684,7 +1700,7 @@ template <int lane>[[gnu::always_inline]] nce poly16x8x4_t load4_lane_quad(poly1
 template <int lane>[[gnu::always_inline]] nce int8x8x4_t load4_lane(int8_t const *ptr, int8x8x4_t src) { return vld4_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x8x4_t load4_lane(uint8_t const *ptr, uint8x8x4_t src) { return vld4_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce poly8x8x4_t load4_lane(poly8_t const *ptr, poly8x8x4_t src) { return vld4_lane_p8(ptr, src, lane); }
-#ifdef ARGON_HAS_QUADWORD_STRUCTURE_LOADS
+#ifdef ARGON_HAS_QUADWORD_BYTE_LANE_LOADS
 template <int lane>[[gnu::always_inline]] nce int8x16x2_t load2_lane_quad(int8_t const *ptr, int8x16x2_t src) { return vld2q_lane_s8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce uint8x16x2_t load2_lane_quad(uint8_t const *ptr, uint8x16x2_t src) { return vld2q_lane_u8(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce int8x16x3_t load3_lane_quad(int8_t const *ptr, int8x16x3_t src) { return vld3q_lane_s8(ptr, src, lane); }
