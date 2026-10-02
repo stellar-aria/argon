@@ -42,7 +42,8 @@ elseif(ARGON_TEST_CPU STREQUAL "A55")
   add_link_options(${CPU_OPTIONS})
 
   set(CMAKE_CROSSCOMPILING TRUE)
-  set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-aarch64 -cpu cortex-a55)
+  # the specs link dynamically: point qemu at the AArch64 sysroot
+  set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-aarch64;-L;/usr/aarch64-linux-gnu;-cpu;cortex-a55)
   set(CPPSPEC_SPEC_RUNNER ${CMAKE_CROSSCOMPILING_EMULATOR})
 elseif(ARGON_TEST_CPU STREQUAL "M55")
   set(CPU_OPTIONS
