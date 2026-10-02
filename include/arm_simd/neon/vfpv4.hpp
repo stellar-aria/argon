@@ -65,7 +65,9 @@ template <> [[gnu::always_inline]] nce float16x4_t reinterpret(uint16x4_t a) { r
 template <> [[gnu::always_inline]] nce float16x4_t reinterpret(int16x4_t a) { return vreinterpret_f16_s16(a); }
 template <> [[gnu::always_inline]] nce float16x4_t reinterpret(int32x2_t a) { return vreinterpret_f16_s32(a); }
 template <> [[gnu::always_inline]] nce float16x4_t reinterpret(uint64x1_t a) { return vreinterpret_f16_u64(a); }
+#ifdef __aarch64__  // float64x2_t only exists on A64
 template <> [[gnu::always_inline]] nce float64x2_t reinterpret(uint64x2_t a) { return vreinterpretq_f64_u64(a); }
+#endif
 template <> [[gnu::always_inline]] nce float16x4_t reinterpret(uint32x2_t a) { return vreinterpret_f16_u32(a); }
 template <> [[gnu::always_inline]] nce float32x4_t convert(float16x4_t a) { return vcvt_f32_f16(a); }
 template <> [[gnu::always_inline]] nce int8x8_t reinterpret(float16x4_t a) { return vreinterpret_s8_f16(a); }
@@ -119,11 +121,17 @@ template <> [[gnu::always_inline]] inline float16x8x3_t load3(float16_t const *p
 template <> [[gnu::always_inline]] inline float16x4x4_t load4(float16_t const *ptr) { return vld4_f16(ptr); }
 template <> [[gnu::always_inline]] inline float16x8x4_t load4(float16_t const *ptr) { return vld4q_f16(ptr); }
 template <> [[gnu::always_inline]] inline float16x4x2_t load2_duplicate(float16_t const *ptr) { return vld2_dup_f16(ptr); }
-template <> [[gnu::always_inline]] inline float16x8x2_t load2_duplicate(float16_t const *ptr) { return vld2q_dup_f16(ptr); }
 template <> [[gnu::always_inline]] inline float16x4x3_t load3_duplicate(float16_t const *ptr) { return vld3_dup_f16(ptr); }
-template <> [[gnu::always_inline]] inline float16x8x3_t load3_duplicate(float16_t const *ptr) { return vld3q_dup_f16(ptr); }
 template <> [[gnu::always_inline]] inline float16x4x4_t load4_duplicate(float16_t const *ptr) { return vld4_dup_f16(ptr); }
+#ifdef __aarch64__
+template <> [[gnu::always_inline]] inline float16x8x2_t load2_duplicate(float16_t const *ptr) { return vld2q_dup_f16(ptr); }
+template <> [[gnu::always_inline]] inline float16x8x3_t load3_duplicate(float16_t const *ptr) { return vld3q_dup_f16(ptr); }
 template <> [[gnu::always_inline]] inline float16x8x4_t load4_duplicate(float16_t const *ptr) { return vld4q_dup_f16(ptr); }
+#else  // AArch32 VLDn-to-all-lanes only targets D registers, and the q forms are A64-only in ACLE: widen the D-register result
+template <> [[gnu::always_inline]] inline float16x8x2_t load2_duplicate(float16_t const *ptr) { float16x4x2_t d = vld2_dup_f16(ptr); return {{vcombine_f16(d.val[0], d.val[0]), vcombine_f16(d.val[1], d.val[1])}}; }
+template <> [[gnu::always_inline]] inline float16x8x3_t load3_duplicate(float16_t const *ptr) { float16x4x3_t d = vld3_dup_f16(ptr); return {{vcombine_f16(d.val[0], d.val[0]), vcombine_f16(d.val[1], d.val[1]), vcombine_f16(d.val[2], d.val[2])}}; }
+template <> [[gnu::always_inline]] inline float16x8x4_t load4_duplicate(float16_t const *ptr) { float16x4x4_t d = vld4_dup_f16(ptr); return {{vcombine_f16(d.val[0], d.val[0]), vcombine_f16(d.val[1], d.val[1]), vcombine_f16(d.val[2], d.val[2]), vcombine_f16(d.val[3], d.val[3])}}; }
+#endif
 template <int lane>[[gnu::always_inline]] nce float16x4x2_t load2_lane(float16_t const *ptr, float16x4x2_t src) { return vld2_lane_f16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float16x8x2_t load2_lane(float16_t const *ptr, float16x8x2_t src) { return vld2q_lane_f16(ptr, src, lane); }
 template <int lane>[[gnu::always_inline]] nce float16x4x3_t load3_lane(float16_t const *ptr, float16x4x3_t src) { return vld3_lane_f16(ptr, src, lane); }
@@ -166,10 +174,17 @@ template <> [[gnu::always_inline]] nce float16x8_t move(float16_t value) { retur
 [[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32x2_t c) { return vfms_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmaq_f32(a, b, c);}
 [[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmsq_f32(a, b, c); }
+#ifdef __aarch64__
 [[gnu::always_inline]] nce float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfma_n_f32(a, b, c);}
 [[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfms_n_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmaq_n_f32(a, b, c);}
 [[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmsq_n_f32(a, b, c); }
+#else  // the by-scalar fused forms are A64-only in ACLE; AArch32 VFMA has no scalar operand, so broadcast first
+[[gnu::always_inline]] nce float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfma_f32(a, b, vdup_n_f32(c));}
+[[gnu::always_inline]] nce float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32_t c) { return vfms_f32(a, b, vdup_n_f32(c)); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmaq_f32(a, b, vdupq_n_f32(c));}
+[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmsq_f32(a, b, vdupq_n_f32(c)); }
+#endif
 // clang-format on
 }  // namespace neon
 #undef nce

@@ -12,6 +12,23 @@ if(ARGON_TEST_CPU STREQUAL "A9")
   set(CMAKE_CROSSCOMPILING TRUE)
   set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-arm;-L;/usr/arm-linux-gnueabihf;-cpu;cortex-a9)
   set(CPPSPEC_SPEC_RUNNER ${CMAKE_CROSSCOMPILING_EMULATOR})
+elseif(ARGON_TEST_CPU STREQUAL "A7")
+  message(STATUS "Building for Cortex-A7 (ARMv7, VFPv4 + NEON)")
+  set(CPU_OPTIONS
+    -mcpu=cortex-a7
+    -mfloat-abi=hard
+    -mfpu=neon-vfpv4
+  )
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # GCC only exposes the float16 vector types on AArch32 with an explicit FP16 storage format
+    list(APPEND CPU_OPTIONS -mfp16-format=ieee)
+  endif()
+  add_compile_options(${CPU_OPTIONS} -Wno-psabi -static)
+  add_link_options(${CPU_OPTIONS})
+
+  set(CMAKE_CROSSCOMPILING TRUE)
+  set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-arm;-L;/usr/arm-linux-gnueabihf;-cpu;cortex-a7)
+  set(CPPSPEC_SPEC_RUNNER ${CMAKE_CROSSCOMPILING_EMULATOR})
 elseif(ARGON_TEST_CPU STREQUAL "A55")
   message(STATUS "Building for Cortex-A55 (ARMv8, AArch64 NEON)")
   set(CPU_OPTIONS
