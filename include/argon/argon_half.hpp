@@ -88,6 +88,14 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   /// @tparam U The destination element type.
   template <typename U>
   ace ArgonHalf<U> ConvertTo() {
+#ifndef __ARM_FEATURE_MVE
+    // vcvt semantics (truncate, saturate, NaN -> 0) on every compiler: see helpers/float_fixups.hpp
+    if constexpr (std::is_same_v<ScalarType, float> && std::is_same_v<U, int32_t>) {
+      return argon::helpers::convert_to_int32(this->vec_);
+    } else if constexpr (std::is_same_v<ScalarType, float> && std::is_same_v<U, uint32_t>) {
+      return argon::helpers::convert_to_uint32(this->vec_);
+    }
+#endif
     return neon::convert<typename neon::Vec64<U>::type>(this->vec_);
   }
 
@@ -292,6 +300,14 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   /// @tparam U The destination element type.
   template <typename U>
   ace ArgonHalf<U> ConvertTo() {
+#ifndef __ARM_FEATURE_MVE
+    // vcvt semantics (truncate, saturate, NaN -> 0) on every compiler: see helpers/float_fixups.hpp
+    if constexpr (std::is_same_v<ScalarType, float> && std::is_same_v<U, int32_t>) {
+      return argon::helpers::convert_to_int32(this->vec_);
+    } else if constexpr (std::is_same_v<ScalarType, float> && std::is_same_v<U, uint32_t>) {
+      return argon::helpers::convert_to_uint32(this->vec_);
+    }
+#endif
     return neon::convert<typename neon::Vec64<U>::type>(this->vec_);
   }
 

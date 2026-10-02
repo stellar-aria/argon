@@ -14,6 +14,7 @@
 #include "features.h"
 #include "helpers.hpp"
 #include "helpers/bool.hpp"
+#include "helpers/float_fixups.hpp"
 #include "helpers/to_array.hpp"
 #include "lane.hpp"
 
@@ -53,6 +54,12 @@ class Vector {
   using const_lane_type = ConstLane<LaneIndex, VectorType>;     ///< The type of a single lane of the SIMD vector.
   using lane_type = Lane<VectorType>;                           ///< The type of a single lane of the SIMD vector.
   using scalar_type = simd::Scalar_t<VectorType>;               ///< The scalar type of the SIMD vector.
+
+  /// Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT).
+  static constexpr bool extension_arithmetic =
+      ARGON_USE_COMPILER_EXTENSIONS && !(ARGON_GCC_AARCH32_FLOAT && std::is_floating_point_v<scalar_type>);
+  /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
+  static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
   using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
   using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
@@ -368,7 +375,7 @@ class Vector {
 
   /// Add two vectors
   ace argon_type Add(argon_type b) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ + b.vec_;
     } else {
       return simd::add(vec_, b);
@@ -390,7 +397,7 @@ class Vector {
 
   /// Subtract two vectors
   ace argon_type Subtract(argon_type b) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ - b.vec_;
     } else {
       return simd::subtract(vec_, b);
@@ -420,7 +427,7 @@ class Vector {
 
   /// Multiply two vectors
   ace argon_type Multiply(argon_type b) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ * b.vec_;
     } else {
       return simd::multiply(vec_, b);
@@ -429,7 +436,7 @@ class Vector {
 
   /// Multiply a vector by a scalar value
   ace argon_type Multiply(scalar_type b) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ * b;
     } else {
       return simd::multiply(vec_, b);
@@ -450,7 +457,7 @@ class Vector {
   /// Multiply two vectors and add a third vector
   /// @details Equivalent to a + (b * c).
   ace argon_type MultiplyAdd(argon_type b, argon_type c) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ + b.vec_ * c.vec_;
     } else {
       return simd::multiply_add(vec_, b, c);
@@ -460,7 +467,7 @@ class Vector {
   /// Multiply a vector by a scalar value and add a third vector
   /// @details Equivalent to a + (b * c).
   ace argon_type MultiplyAdd(argon_type b, scalar_type c) const {
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+    if constexpr (extension_arithmetic) {
       return vec_ + b.vec_ * c;
     } else {
       return simd::multiply_add(vec_, b, c);
@@ -499,21 +506,21 @@ class Vector {
   /// Multiply two vectors and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const {
-#if ARGON_USE_COMPILER_EXTENSIONS
+if constexpr (extension_arithmetic) {
     return vec_ - b.vec_ * c.vec_;
-#else
+    } else {
     return simd::multiply_subtract(vec_, b, c);
-#endif
+    }
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const {
-#if ARGON_USE_COMPILER_EXTENSIONS
+if constexpr (extension_arithmetic) {
     return vec_ - b.vec_ * c;
-#else
+    } else {
     return simd::multiply_subtract(vec_, b, c);
-#endif
+    }
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
@@ -736,19 +743,39 @@ class Vector {
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than or equal to b
   /// @details Equivalent to a >= b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type GreaterThanOrEqual(argon_type b) const { return simd::greater_than_or_equal(vec_, b); }
+  ace argon_bool_type GreaterThanOrEqual(argon_type b) const {
+#if ARGON_GCC_AARCH32_FLOAT
+    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(vec_, b.vec_);
+#endif
+    return simd::greater_than_or_equal(vec_, b);
+  }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than or equal to b
   /// @details Equivalent to a <= b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type LessThanOrEqual(argon_type b) const { return simd::less_than_or_equal(vec_, b); }
+  ace argon_bool_type LessThanOrEqual(argon_type b) const {
+#if ARGON_GCC_AARCH32_FLOAT
+    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(b.vec_, vec_);
+#endif
+    return simd::less_than_or_equal(vec_, b);
+  }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than b
   /// @details Equivalent to a > b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type GreaterThan(argon_type b) const { return simd::greater_than(vec_, b); }
+  ace argon_bool_type GreaterThan(argon_type b) const {
+#if ARGON_GCC_AARCH32_FLOAT
+    if constexpr (fixup_float_compare) return helpers::greater_than(vec_, b.vec_);
+#endif
+    return simd::greater_than(vec_, b);
+  }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than b
   /// @details Equivalent to a < b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type LessThan(argon_type b) const { return simd::less_than(vec_, b); }
+  ace argon_bool_type LessThan(argon_type b) const {
+#if ARGON_GCC_AARCH32_FLOAT
+    if constexpr (fixup_float_compare) return helpers::greater_than(b.vec_, vec_);
+#endif
+    return simd::less_than(vec_, b);
+  }
 
   /// Shift the elemnets of the vector to the left by a specified number of bits.
   /// @details Equivalent to a << b.

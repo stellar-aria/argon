@@ -83,3 +83,13 @@ if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 add_subdirectory(specs)
+
+# AArch32: every Argon<float> operation must stay on NEON (GCC scalarises float vector extensions there).
+if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
+  add_library(argon_float_codegen OBJECT codegen/float_ops.cpp)
+  target_link_libraries(argon_float_codegen PRIVATE argon)
+  target_compile_options(argon_float_codegen PRIVATE -O2)
+  find_program(ARGON_ARM_OBJDUMP NAMES arm-linux-gnueabihf-objdump llvm-objdump REQUIRED)
+  add_test(NAME float_ops_use_neon
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_float.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_float_codegen>)
+endif()

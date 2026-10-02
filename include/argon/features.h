@@ -78,6 +78,16 @@ constexpr Platform platform = Platform::SIMDe;
 #endif
 #endif
 
+/// True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-extension
+/// float arithmetic, comparisons and ?: to VFP (NEON flushes denormals, so it isn't IEEE), so Argon routes float
+/// operations through NEON builtins and inline vcgt/vcge instead (argon/helpers/float_fixups.hpp).
+#if defined(__arm__) && !defined(__aarch64__) && defined(__ARM_NEON) && defined(__GNUC__) && !defined(__clang__) && \
+    !defined(__FAST_MATH__)
+#define ARGON_GCC_AARCH32_FLOAT true
+#else
+#define ARGON_GCC_AARCH32_FLOAT false
+#endif
+
 /// Set to 1 when the AES and PMULL crypto intrinsics are available.
 /// Requires __ARM_FEATURE_CRYPTO (ARMv8 Cryptographic Extension).
 #ifdef __ARM_FEATURE_CRYPTO
