@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <utility>
 #include "argon/features.h"
 #include "arm_simd.hpp"
@@ -122,3 +123,4 @@ nce Scalar_t<T> get_lane(T vec, const int i) {
 }
 }  // namespace simd
 #undef simd
+#undef nce

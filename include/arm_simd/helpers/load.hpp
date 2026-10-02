@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <utility>
 #include "argon/utility.hpp"
 #include "arm_simd.hpp"
@@ -162,5 +163,5 @@ nce T load1_lane(T vec, const int i, Scalar_t<T> const* ptr) {
 #endif
 
 }  // namespace simd
-#undef neon
+#undef simd
 #undef nce

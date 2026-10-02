@@ -123,3 +123,5 @@ template <> struct MultiVector<float16x4_t, 4> { using type = float16x4x4_t; };
 template <typename T, size_t size>
 using MultiVector_t = MultiVector<T, size>::type;
 }
+
+#undef simd

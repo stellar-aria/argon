@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include "arm_simd.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec64.hpp"
@@ -180,3 +181,6 @@ class Lane {
 };
 #endif
 }  // namespace argon
+
+#undef ace
+#undef simd
