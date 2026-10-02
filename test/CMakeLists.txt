@@ -16,8 +16,11 @@ elseif(ARGON_TEST_CPU STREQUAL "A55")
   message(STATUS "Building for Cortex-A55 (ARMv8, AArch64 NEON)")
   set(CPU_OPTIONS
     -mcpu=cortex-a55
-    -mfloat-abi=hard
   )
+  if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # AArch64 has no float-ABI choice; GCC rejects the flag outright
+    list(APPEND CPU_OPTIONS -mfloat-abi=hard)
+  endif()
   add_compile_options(${CPU_OPTIONS} -Wno-psabi -static)
   add_link_options(${CPU_OPTIONS})
 
