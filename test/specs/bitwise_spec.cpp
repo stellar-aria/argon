@@ -206,6 +206,28 @@ auto describe_bitwise_select = describe("BitwiseSelect", ${
     auto result = mask.BitwiseSelect(tv, fv).to_array();
     expect(result).to_equal(std::array<uint32_t, 4>{100u, 20u, 300u, 40u});
   });
+  it("selects float lanes with a uint32 mask (BitwiseSelect and Select)", _{
+    std::array<uint32_t, 4> mask_arr  = {0xFFFFFFFFu, 0u, 0xFFFFFFFFu, 0u};
+    std::array<float, 4> true_arr  = {1.5f, 2.5f, 3.5f, 4.5f};
+    std::array<float, 4> false_arr = {-1.0f, -2.0f, -3.0f, -4.0f};
+    auto mask = Argon<uint32_t>::Load(mask_arr.data());
+    auto tv   = Argon<float>::Load(true_arr.data());
+    auto fv   = Argon<float>::Load(false_arr.data());
+    expect(mask.BitwiseSelect(tv, fv).to_array()).to_equal(std::array<float, 4>{1.5f, -2.0f, 3.5f, -4.0f});
+    expect(mask.Select(tv, fv).to_array()).to_equal(std::array<float, 4>{1.5f, -2.0f, 3.5f, -4.0f});
+  });
+  it("selects int32 lanes with Select", _{
+    std::array<uint32_t, 4> mask_arr = {0u, 0xFFFFFFFFu, 0u, 0xFFFFFFFFu};
+    auto mask = Argon<uint32_t>::Load(mask_arr.data());
+    expect(mask.Select(Argon<int32_t>{7}, Argon<int32_t>{-7}).to_array()).to_equal(std::array<int32_t, 4>{-7, 7, -7, 7});
+  });
+  it("selects through argon::ternary for floats", _{
+    std::array<float, 4> a_arr = {1.0f, 5.0f, -2.0f, 0.5f};
+    auto a = Argon<float>::Load(a_arr.data());
+    expect(argon::ternary(a > Argon<float>{0.75f}, a, Argon<float>{0.0f}).to_array())
+        .to_equal(std::array<float, 4>{1.0f, 5.0f, 0.0f, 0.0f});
+    expect(argon::ternary(a < Argon<float>{0.75f}, 1.0f, 2.0f).to_array()).to_equal(std::array<float, 4>{2.0f, 2.0f, 1.0f, 1.0f});
+  });
 });
 
 CPPSPEC_MAIN(

@@ -1235,17 +1235,18 @@ class Vector {
 #ifndef ARGON_PLATFORM_MVE
   /// Bitwise select between two vectors, using the current vector as a mask.
   /// @details Equivalent to (mask & b) | (~mask & c).
+  /// @return A vector of the operands' type (not the mask's).
   template <typename ArgType>
     requires std::is_unsigned_v<scalar_type>
-  ace argon_type BitwiseSelect(ArgType true_value, ArgType false_value) const {
-    return simd::bitwise_select(vec_, true_value, false_value);
+  ace ArgType BitwiseSelect(ArgType true_value, ArgType false_value) const {
+    return ArgType{simd::bitwise_select(vec_, true_value, false_value)};
   }
 
   /// @copydoc BitwiseSelect
   template <typename ArgType>
     requires std::is_unsigned_v<scalar_type>
-  ace argon_type Select(ArgType true_value, ArgType false_value) const {
-    return simd::bitwise_select(true_value, false_value);
+  ace ArgType Select(ArgType true_value, ArgType false_value) const {
+    return BitwiseSelect(true_value, false_value);
   }
 
   /// Ands the current vector with the given vector, then checks if nonzero. If so, fills the lane with all ones
