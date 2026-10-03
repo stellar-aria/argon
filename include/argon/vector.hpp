@@ -933,7 +933,7 @@ if constexpr (extension_arithmetic) {
       return mve::load_doubleword_gather_offset(base, offset_vector);
     }
 #else
-    argon_type destination;
+    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       auto lane_val = neon::get_lane<i>(offset_vector);
       // lane_val is a *byte* offset; address by bytes (scalar_type* arithmetic
@@ -968,7 +968,7 @@ if constexpr (extension_arithmetic) {
       return mve::load_doubleword_gather_offset(base, offset_vector * sizeof(scalar_type));
     }
 #else
-    argon_type destination;
+    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       auto lane_val = neon::get_lane<i>(offset_vector);
       destination = destination.template LoadToLane<i>(base + lane_val);
