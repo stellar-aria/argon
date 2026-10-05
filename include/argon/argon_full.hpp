@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <array>
 #include <limits>
 #include <numeric>
@@ -685,6 +686,11 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef __aarch64__
     return simd::reduce_max(this->vec_);
 #else
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
+      return mve::maximum_across_vector(std::numeric_limits<ScalarType>::lowest(), this->vec_);  // vmaxv
+    }
+#endif
     return this->Reduce([](auto a, auto b) { return a.Max(b); });
 #endif
   }
@@ -694,8 +700,63 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef __aarch64__
     return simd::reduce_min(this->vec_);
 #else
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
+      return mve::minimum_across_vector(std::numeric_limits<ScalarType>::max(), this->vec_);  // vminv
+    }
+#endif
     auto arr = this->to_array();
     return std::reduce(arr.begin(), arr.end(), arr[0], [](auto a, auto b) { return std::min(a, b); });
+#endif
+  }
+
+  /// @brief The largest magnitude across the lanes, or `init` if that is larger: a peak meter. Signed integer lanes.
+  /// @details The result is unsigned, so the magnitude of the most negative value fits. MVE: vmaxav.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_signed_v<S> && sizeof(S) <= 4)
+  ace std::make_unsigned_t<S> ReduceMaxAbs(std::make_unsigned_t<S> init = 0) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::maximum_absolute_across_vector(init, this->vec_);
+#else
+    using U = std::make_unsigned_t<S>;
+    return std::max(init, this->Absolute().template As<U>().ReduceMax());  // vabs wraps INT_MIN to its magnitude
+#endif
+  }
+
+  /// @brief The smallest magnitude across the lanes, or `init` if that is smaller. Signed integer lanes.
+  /// @details MVE: vminav.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_signed_v<S> && sizeof(S) <= 4)
+  ace std::make_unsigned_t<S> ReduceMinAbs(
+      std::make_unsigned_t<S> init = std::numeric_limits<std::make_unsigned_t<S>>::max()) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::minimum_absolute_across_vector(init, this->vec_);
+#else
+    using U = std::make_unsigned_t<S>;
+    return std::min(init, this->Absolute().template As<U>().ReduceMin());
+#endif
+  }
+
+  /// @brief Each lane's maximum of this (unsigned) vector and the magnitude of `b`: running peak tracking,
+  /// `peak = peak.MaxAbs(samples)`. MVE: vmaxa.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_unsigned_v<S> && sizeof(S) <= 4)
+  ace Argon<S> MaxAbs(Argon<std::make_signed_t<S>> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::maximum_absolute(this->vec_, b.vec());
+#else
+    return this->Max(b.Absolute().template As<S>());
+#endif
+  }
+
+  /// @brief Each lane's minimum of this (unsigned) vector and the magnitude of `b`. MVE: vmina.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_unsigned_v<S> && sizeof(S) <= 4)
+  ace Argon<S> MinAbs(Argon<std::make_signed_t<S>> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::minimum_absolute(this->vec_, b.vec());
+#else
+    return this->Min(b.Absolute().template As<S>());
 #endif
   }
 
