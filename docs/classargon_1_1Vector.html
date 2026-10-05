@@ -626,6 +626,8 @@ static constexpr bool&#160;</td><td class="memItemRight"><b>mve_platform</b> = f
 <tr class="memitem:a1d40f61a4ebb372936c7525a0e22ea17" id="r_a1d40f61a4ebb372936c7525a0e22ea17"><td class="memItemLeft"><a id="a1d40f61a4ebb372936c7525a0e22ea17" name="a1d40f61a4ebb372936c7525a0e22ea17"></a>
 static constexpr bool&#160;</td><td class="memItemRight"><b>mve_float</b> = <a class="el" href="#a7134d278ac589dc2cb1576cf017cf2f2">mve_platform</a> &amp;&amp; lane_floating_point&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>&gt;</td></tr>
 <tr class="memdesc:a1d40f61a4ebb372936c7525a0e22ea17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Float lanes on Helium, which go through MVE intrinsics where GCC mishandles the vector extensions. <br /></td></tr>
+<tr class="memitem:add4b33c4e4a7f5e0a46863b1236fb5ee" id="r_add4b33c4e4a7f5e0a46863b1236fb5ee"><td class="memItemLeft">static constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee">native_maxnm</a></td></tr>
+<tr class="memdesc:add4b33c4e4a7f5e0a46863b1236fb5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane on Helium and Armv8 NEON, half lanes on NEON only with FP16 vector arithmetic.  <br /></td></tr>
 <tr class="memitem:acac4c0359f6f0d465f35342f2dabafbe" id="r_acac4c0359f6f0d465f35342f2dabafbe"><td class="memItemLeft"><a id="acac4c0359f6f0d465f35342f2dabafbe" name="acac4c0359f6f0d465f35342f2dabafbe"></a>
 static constexpr bool&#160;</td><td class="memItemRight"><b>fixup_float_compare</b> = <a class="el" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a> &amp;&amp; std::is_same_v&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>, float&gt;</td></tr>
 <tr class="memdesc:acac4c0359f6f0d465f35342f2dabafbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT). <br /></td></tr>
@@ -2360,8 +2362,10 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 
 <p>Compare the lanes of two vectors, copying the larger of each lane to the result. </p>
-<p>Equivalent to a &gt; b ? a : b </p>
-
+<p>Equivalent to a &gt; b ? a : b: a NaN in either lane gives b. One instruction on NEON and x86 (maxps); on Helium a compare and a select. For floats that are never NaN, MaxNumber gives the same results and is one instruction (vmaxnm) where <span class="tt"><a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee" title="Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane...">native_maxnm</a></span> is true, so a clamp can pick the cheaper per platform: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_variable" href="#add4b33c4e4a7f5e0a46863b1236fb5ee">Argon&lt;float&gt;::native_maxnm</a>) x = x.MaxNumber(lo).MinNumber(hi);</div>
+<div class="line"><span class="keywordflow">else</span> x = x.Max(lo).Min(hi);</div>
+<div class="ttc" id="aclassargon_1_1Vector_html_add4b33c4e4a7f5e0a46863b1236fb5ee"><div class="ttname"><a href="#add4b33c4e4a7f5e0a46863b1236fb5ee">argon::Vector&lt; simd::Vec128_t&lt; ScalarType &gt; &gt;::native_maxnm</a></div><div class="ttdeci">static constexpr bool native_maxnm</div><div class="ttdef"><b>Definition</b> vector.hpp:74</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a0f156f70c680bc1132c4f3ed82248d36" name="a0f156f70c680bc1132c4f3ed82248d36"></a>
@@ -2390,8 +2394,10 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 
 <p>The larger of each lane by IEEE 754 maxNum, as Arm's vmaxnm: a quiet NaN in one operand gives the other (NaN only where both are), and +0 is larger than -0. </p>
-<p>Max is a &gt; b ? a : b, which passes a NaN in b through; MaxNumber is for when NaNs should be ignored, or can't occur and one instruction (vmaxnm) beats Max's compare and select. Native on Helium and Armv8 NEON; elsewhere a few compares and selects. </p>
-
+<p>Max is a &gt; b ? a : b, which passes a NaN in b through.</p>
+<p>One instruction (vmaxnm) where <span class="tt"><a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee" title="Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane...">native_maxnm</a></span> is true: Helium and Armv8 NEON. Elsewhere (Armv7 NEON, x86 via SIMDe) it is emulated with several compares and selects, so use it there only when NaNs must be ignored. For floats that are never NaN, Max and MaxNumber agree; choose the cheaper per platform: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_variable" href="#add4b33c4e4a7f5e0a46863b1236fb5ee">Argon&lt;float&gt;::native_maxnm</a>) x = x.MaxNumber(lo).MinNumber(hi);</div>
+<div class="line"><span class="keywordflow">else</span> x = x.Max(lo).Min(hi);</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="ae9fded6d76878d39a236435acccb3eeb" name="ae9fded6d76878d39a236435acccb3eeb"></a>
@@ -2420,7 +2426,7 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 
 <p>Compare the lanes of two vectors, copying the smaller of each lane to the result. </p>
-<p>Equivalent to a &lt; b ? a : b </p>
+<p>Equivalent to a &lt; b ? a : b: a NaN in either lane gives b. One instruction on NEON and x86 (minps); on Helium a compare and a select. For floats that are never NaN, MinNumber gives the same results and is one instruction (vminnm) where <span class="tt"><a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee" title="Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane...">native_maxnm</a></span> is true; see Max for the clamp idiom. </p>
 
 </div>
 </div>
@@ -2450,7 +2456,8 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 
 <p>The smaller of each lane by IEEE 754 minNum, as Arm's vminnm: a quiet NaN in one operand gives the other (NaN only where both are), and -0 is smaller than +0. </p>
-<p>See MaxNumber. </p>
+<p>Min is a &lt; b ? a : b, which passes a NaN in b through.</p>
+<p>One instruction (vminnm) where <span class="tt"><a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee" title="Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane...">native_maxnm</a></span> is true, emulated elsewhere; see MaxNumber for when to use it and the clamp idiom. </p>
 
 </div>
 </div>
@@ -4328,6 +4335,40 @@ template&lt;typename VectorType&gt; </div>
 <div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:102</div></div>
 </div><!-- fragment -->
 <p>Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT). </p>
+
+</div>
+</div>
+<a id="add4b33c4e4a7f5e0a46863b1236fb5ee" name="add4b33c4e4a7f5e0a46863b1236fb5ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add4b33c4e4a7f5e0a46863b1236fb5ee">&#9670;&#160;</a></span>native_maxnm</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::native_maxnm</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code hl_define" href="features_8h.html#af7c57a2810b61fe7154fc25d7c49f652">ARGON_HAS_MAXNM</a> &amp;&amp; <a class="code hl_concept" href="conceptargon_1_1lane__floating__point.html">lane_floating_point&lt;scalar_type&gt;</a> &amp;&amp;</div>
+<div class="line">  (<a class="code hl_variable" href="#a7134d278ac589dc2cb1576cf017cf2f2">mve_platform</a> || !<a class="code hl_variable" href="namespaceargon.html#a9f3ead4a577c34ccc68a6317d77c6cc0">is_half_float_v&lt;scalar_type&gt;</a> || <a class="code hl_define" href="features_8h.html#a73ee56945b3d05c38ace2f386e007373">ARGON_NEON_FP16_VECTOR</a>)</div>
+<div class="ttc" id="aclassargon_1_1Vector_html_a7134d278ac589dc2cb1576cf017cf2f2"><div class="ttname"><a href="#a7134d278ac589dc2cb1576cf017cf2f2">argon::Vector::mve_platform</a></div><div class="ttdeci">static constexpr bool mve_platform</div><div class="ttdoc">Whether this is the MVE (Helium) platform.</div><div class="ttdef"><b>Definition</b> vector.hpp:66</div></div>
+<div class="ttc" id="aconceptargon_1_1lane__floating__point_html"><div class="ttname"><a href="conceptargon_1_1lane__floating__point.html">argon::lane_floating_point</a></div><div class="ttdoc">A floating-point lane type: float, double, or float16_t where half-float vectors exist.</div><div class="ttdef"><b>Definition</b> lane_scalar.hpp:35</div></div>
+<div class="ttc" id="afeatures_8h_html_a73ee56945b3d05c38ace2f386e007373"><div class="ttname"><a href="features_8h.html#a73ee56945b3d05c38ace2f386e007373">ARGON_NEON_FP16_VECTOR</a></div><div class="ttdeci">#define ARGON_NEON_FP16_VECTOR</div><div class="ttdoc">True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm e...</div><div class="ttdef"><b>Definition</b> features.h:84</div></div>
+<div class="ttc" id="afeatures_8h_html_af7c57a2810b61fe7154fc25d7c49f652"><div class="ttname"><a href="features_8h.html#af7c57a2810b61fe7154fc25d7c49f652">ARGON_HAS_MAXNM</a></div><div class="ttdeci">#define ARGON_HAS_MAXNM</div><div class="ttdoc">True where vmaxnm/vminnm exist (simd::max_strict / min_strict): Helium with floating point,...</div><div class="ttdef"><b>Definition</b> features.h:77</div></div>
+<div class="ttc" id="anamespaceargon_html_a9f3ead4a577c34ccc68a6317d77c6cc0"><div class="ttname"><a href="namespaceargon.html#a9f3ead4a577c34ccc68a6317d77c6cc0">argon::is_half_float_v</a></div><div class="ttdeci">constexpr bool is_half_float_v</div><div class="ttdoc">Whether T is the half-precision lane type, float16_t (__fp16), on a platform with half-float vectors.</div><div class="ttdef"><b>Definition</b> lane_scalar.hpp:22</div></div>
+</div><!-- fragment -->
+<p>Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane on Helium and Armv8 NEON, half lanes on NEON only with FP16 vector arithmetic. </p>
+<p>False on Armv7 NEON and on x86 (SIMDe), where they are emulated with compares and selects, and Max/Min are the cheap ones (x86's maxps is exactly Max). For inputs that are never NaN, pick with <span class="tt">if constexpr (<a class="el" href="#add4b33c4e4a7f5e0a46863b1236fb5ee" title="Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane...">native_maxnm</a>)</span>; see MaxNumber. </p>
 
 </div>
 </div>
