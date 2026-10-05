@@ -125,6 +125,16 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a74a499b1b44c139c7e8b5b11d0071145" id="r_a74a499b1b44c139c7e8b5b11d0071145"><td class="memItemLeft"><a id="a74a499b1b44c139c7e8b5b11d0071145" name="a74a499b1b44c139c7e8b5b11d0071145"></a>
+uint32_t&#160;</td><td class="memItemRight"><b>saturate_to_uint32</b> (float x)</td></tr>
+<tr class="memitem:a6baff655ee719a00f6a0e31a349bfbe4" id="r_a6baff655ee719a00f6a0e31a349bfbe4"><td class="memItemLeft"><a id="a6baff655ee719a00f6a0e31a349bfbe4" name="a6baff655ee719a00f6a0e31a349bfbe4"></a>
+int32x4_t&#160;</td><td class="memItemRight"><b>convert_to_int32</b> (float32x4_t a)</td></tr>
+<tr class="memitem:ac22cedb1903f221f10ba0f4d1d8a98cd" id="r_ac22cedb1903f221f10ba0f4d1d8a98cd"><td class="memItemLeft"><a id="ac22cedb1903f221f10ba0f4d1d8a98cd" name="ac22cedb1903f221f10ba0f4d1d8a98cd"></a>
+int32x2_t&#160;</td><td class="memItemRight"><b>convert_to_int32</b> (float32x2_t a)</td></tr>
+<tr class="memitem:acee114b800a2e5cb1b367e0defb33cd7" id="r_acee114b800a2e5cb1b367e0defb33cd7"><td class="memItemLeft"><a id="acee114b800a2e5cb1b367e0defb33cd7" name="acee114b800a2e5cb1b367e0defb33cd7"></a>
+uint32x4_t&#160;</td><td class="memItemRight"><b>convert_to_uint32</b> (float32x4_t a)</td></tr>
+<tr class="memitem:a6a2d9bdf92c20df699469176685a1353" id="r_a6a2d9bdf92c20df699469176685a1353"><td class="memItemLeft"><a id="a6a2d9bdf92c20df699469176685a1353" name="a6a2d9bdf92c20df699469176685a1353"></a>
+uint32x2_t&#160;</td><td class="memItemRight"><b>convert_to_uint32</b> (float32x2_t a)</td></tr>
 <tr class="memitem:a4b9e3c8b4b56518879df473c4074abf3" id="r_a4b9e3c8b4b56518879df473c4074abf3"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a4b9e3c8b4b56518879df473c4074abf3 template"><td class="memItemLeft">constexpr size_t&#160;</td><td class="memItemRight"><a class="el" href="#a4b9e3c8b4b56518879df473c4074abf3">vectorizeable_size</a> (size_t size)</td></tr>
 <tr class="memdesc:a4b9e3c8b4b56518879df473c4074abf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the size of a vectorized range.  <br /></td></tr>
@@ -143,6 +153,12 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains helper templates and concepts for type manipulation and compile-time utilities. </p>
+<p>Workarounds that keep <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a>'s float operations on NEON with the NEON instructions' semantics.</p>
+<ul>
+<li>GCC on AArch32 scalarises generic vector-extension float arithmetic, comparisons and <span class="tt">?:</span> to VFP unless -ffast-math is on (AArch32 NEON flushes denormals, so it is not IEEE), and its arm_neon.h implements vc{lt,gt,le,ge}{q}_f32 as such generic comparisons. <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> uses the NEON builtins behind the arithmetic intrinsics there (see <span class="tt"><a class="el" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08" title="True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...">ARGON_GCC_AARCH32_FLOAT</a></span>), and the inline vcgt/vcge below for comparisons.</li>
+<li>clang on AArch32 lowers vcvt{q}_{s,u}32_f32 to IR fptosi/fptoui, which are poison for NaN and out-of-range inputs and get constant-folded to wrong values (AArch64 uses llvm.fpto{s,u}i.sat). The conversions below emit vcvt directly there, keeping its truncate/saturate/NaN→0 semantics.</li>
+<li>SIMDe (x86) converts float values between 2^31 and 2^32 to uint32 as 2^31; the conversions below convert per lane there. </li>
+</ul>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
 <a id="a78d315330017f0fe0a14cccd2d5b318a" name="a78d315330017f0fe0a14cccd2d5b318a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a78d315330017f0fe0a14cccd2d5b318a">&#9670;&#160;</a></span>ArgonFor_t</h2>

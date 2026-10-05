@@ -442,12 +442,12 @@ ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;
 <tr class="memdesc:adf81303d33688352129c9c6c5acbec54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise AND of the vector with the NOT of another vector.  <br /></td></tr>
 <tr class="memitem:ade26621c9a471b9c5ccbde3bcc37db93" id="r_ade26621c9a471b9c5ccbde3bcc37db93"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#ade26621c9a471b9c5ccbde3bcc37db93">BitwiseClear</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:ade26621c9a471b9c5ccbde3bcc37db93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise AND of the vector with the NOT of another vector.     <br /></td></tr>
-<tr class="memitem:a33700d22ba9f527e245f6043e767f56d" id="r_a33700d22ba9f527e245f6043e767f56d"><td class="memTemplParams" colspan="2">template&lt;typename ArgType&gt; </td></tr>
-<tr class="memitem:a33700d22ba9f527e245f6043e767f56d template"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a33700d22ba9f527e245f6043e767f56d">BitwiseSelect</a> (ArgType true_value, ArgType false_value) const</td></tr>
-<tr class="memdesc:a33700d22ba9f527e245f6043e767f56d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise select between two vectors, using the current vector as a mask.  <br /></td></tr>
-<tr class="memitem:aca53c3d90e7d85f798fefb3b6ef30ee9" id="r_aca53c3d90e7d85f798fefb3b6ef30ee9"><td class="memTemplParams" colspan="2">template&lt;typename ArgType&gt; </td></tr>
-<tr class="memitem:aca53c3d90e7d85f798fefb3b6ef30ee9 template"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#aca53c3d90e7d85f798fefb3b6ef30ee9">Select</a> (ArgType true_value, ArgType false_value) const</td></tr>
-<tr class="memdesc:aca53c3d90e7d85f798fefb3b6ef30ee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise select between two vectors, using the current vector as a mask.     <br /></td></tr>
+<tr class="memitem:a5cc65eeaa54a0ade6f35cd00333c71c9" id="r_a5cc65eeaa54a0ade6f35cd00333c71c9"><td class="memTemplParams" colspan="2">template&lt;typename ArgType&gt; </td></tr>
+<tr class="memitem:a5cc65eeaa54a0ade6f35cd00333c71c9 template"><td class="memItemLeft">ace ArgType&#160;</td><td class="memItemRight"><a class="el" href="#a5cc65eeaa54a0ade6f35cd00333c71c9">BitwiseSelect</a> (ArgType true_value, ArgType false_value) const</td></tr>
+<tr class="memdesc:a5cc65eeaa54a0ade6f35cd00333c71c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise select between two vectors, using the current vector as a mask.  <br /></td></tr>
+<tr class="memitem:ae729a48dfc0a6ef42848fcbda11add0f" id="r_ae729a48dfc0a6ef42848fcbda11add0f"><td class="memTemplParams" colspan="2">template&lt;typename ArgType&gt; </td></tr>
+<tr class="memitem:ae729a48dfc0a6ef42848fcbda11add0f template"><td class="memItemLeft">ace ArgType&#160;</td><td class="memItemRight"><a class="el" href="#ae729a48dfc0a6ef42848fcbda11add0f">Select</a> (ArgType true_value, ArgType false_value) const</td></tr>
+<tr class="memdesc:ae729a48dfc0a6ef42848fcbda11add0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitwise select between two vectors, using the current vector as a mask.     <br /></td></tr>
 <tr class="memitem:a4bd82746876ae1dce97036fda72bcd33" id="r_a4bd82746876ae1dce97036fda72bcd33"><td class="memItemLeft">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a4bd82746876ae1dce97036fda72bcd33">CompareTestNonzero</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a4bd82746876ae1dce97036fda72bcd33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ands the current vector with the given vector, then checks if nonzero.  <br /></td></tr>
 <tr class="memitem:a9fa39b01b6f592232a4b3150f660b8aa" id="r_a9fa39b01b6f592232a4b3150f660b8aa"><td class="memItemLeft">ace <a class="el" href="#a88f641dc73c423f906d60554a58e763f">predicate_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a9fa39b01b6f592232a4b3150f660b8aa">TestNonzero</a> () const</td></tr>
@@ -564,6 +564,11 @@ static ace int&#160;</td><td class="memItemRight"><b>size</b> ()</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
+<tr class="memitem:a44a02695e396357a8d9dfbcc60e12c67" id="r_a44a02695e396357a8d9dfbcc60e12c67"><td class="memItemLeft">static constexpr bool&#160;</td><td class="memItemRight"><a class="el" href="#a44a02695e396357a8d9dfbcc60e12c67">extension_arithmetic</a></td></tr>
+<tr class="memdesc:a44a02695e396357a8d9dfbcc60e12c67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT).  <br /></td></tr>
+<tr class="memitem:acac4c0359f6f0d465f35342f2dabafbe" id="r_acac4c0359f6f0d465f35342f2dabafbe"><td class="memItemLeft"><a id="acac4c0359f6f0d465f35342f2dabafbe" name="acac4c0359f6f0d465f35342f2dabafbe"></a>
+static constexpr bool&#160;</td><td class="memItemRight"><b>fixup_float_compare</b> = <a class="el" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a> &amp;&amp; std::is_same_v&lt;<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>, float&gt;</td></tr>
+<tr class="memdesc:acac4c0359f6f0d465f35342f2dabafbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT). <br /></td></tr>
 <tr class="memitem:ad92ce1a195a40c1f752ce0ddc524c9e4" id="r_ad92ce1a195a40c1f752ce0ddc524c9e4"><td class="memItemLeft"><a id="ad92ce1a195a40c1f752ce0ddc524c9e4" name="ad92ce1a195a40c1f752ce0ddc524c9e4"></a>
 static constexpr size_t&#160;</td><td class="memItemRight"><b>lanes</b> = (simd::is_quadword_v&lt;VectorType&gt; ? 16 : 8) / sizeof(<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a>)</td></tr>
 <tr class="memdesc:ad92ce1a195a40c1f752ce0ddc524c9e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of lanes in the SIMD vector. <br /></td></tr>
@@ -951,8 +956,8 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
-<a id="a33700d22ba9f527e245f6043e767f56d" name="a33700d22ba9f527e245f6043e767f56d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33700d22ba9f527e245f6043e767f56d">&#9670;&#160;</a></span>BitwiseSelect()</h2>
+<a id="a5cc65eeaa54a0ade6f35cd00333c71c9" name="a5cc65eeaa54a0ade6f35cd00333c71c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cc65eeaa54a0ade6f35cd00333c71c9">&#9670;&#160;</a></span>BitwiseSelect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -965,7 +970,7 @@ template&lt;typename ArgType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::BitwiseSelect </td>
+          <td class="memname">ace ArgType <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::BitwiseSelect </td>
           <td>(</td>
           <td class="paramtype">ArgType</td>          <td class="paramname"><span class="paramname"><em>true_value</em></span>, </td>
         </tr>
@@ -983,7 +988,7 @@ template&lt;typename ArgType&gt; </div>
 </div><div class="memdoc">
 
 <p>Bitwise select between two vectors, using the current vector as a mask. </p>
-<p>Equivalent to (mask &amp; b) | (~mask &amp; c). </p>
+<p>Equivalent to (mask &amp; b) | (~mask &amp; c). </p><dl class="section return"><dt>Returns</dt><dd>A vector of the operands' type (not the mask's). </dd></dl>
 
 </div>
 </div>
@@ -3130,8 +3135,8 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
-<a id="aca53c3d90e7d85f798fefb3b6ef30ee9" name="aca53c3d90e7d85f798fefb3b6ef30ee9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca53c3d90e7d85f798fefb3b6ef30ee9">&#9670;&#160;</a></span>Select()</h2>
+<a id="ae729a48dfc0a6ef42848fcbda11add0f" name="ae729a48dfc0a6ef42848fcbda11add0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae729a48dfc0a6ef42848fcbda11add0f">&#9670;&#160;</a></span>Select()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3144,7 +3149,7 @@ template&lt;typename ArgType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Select </td>
+          <td class="memname">ace ArgType <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Select </td>
           <td>(</td>
           <td class="paramtype">ArgType</td>          <td class="paramname"><span class="paramname"><em>true_value</em></span>, </td>
         </tr>
@@ -3162,7 +3167,7 @@ template&lt;typename ArgType&gt; </div>
 </div><div class="memdoc">
 
 <p>Bitwise select between two vectors, using the current vector as a mask.    </p>
-<p>Equivalent to (mask &amp; b) | (~mask &amp; c).    </p>
+<p>Equivalent to (mask &amp; b) | (~mask &amp; c). </p><dl class="section return"><dt>Returns</dt><dd>A vector of the operands' type (not the mask's).    </dd></dl>
 
 </div>
 </div>
@@ -3706,6 +3711,36 @@ template&lt;typename VectorType&gt; </div>
 
 <p>Zip two vectors together, returning two vectors of pairs. </p>
 <p>Given a pair of vector {a0, a1, a2, a3} and {b0, b1, b2, b3}, the result is {{a0, b0, a1, b1}, {a2, b2, a3, b3}} </p>
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a44a02695e396357a8d9dfbcc60e12c67" name="a44a02695e396357a8d9dfbcc60e12c67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44a02695e396357a8d9dfbcc60e12c67">&#9670;&#160;</a></span>extension_arithmetic</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::extension_arithmetic</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                                       =</div>
+<div class="line">ARGON_USE_COMPILER_EXTENSIONS &amp;&amp; !(<a class="code hl_define" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a> &amp;&amp; std::is_floating_point_v&lt;scalar_type&gt;)</div>
+<div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:88</div></div>
+</div><!-- fragment -->
+<p>Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT). </p>
 
 </div>
 </div>

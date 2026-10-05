@@ -3,7 +3,7 @@ var searchData=
   ['saturatenarrow_0',['SaturateNarrow',['../classArgon.html#a7bfa8018aa82dd2cce2ddc73c7d1f861',1,'Argon']]],
   ['scalar_1',['Scalar',['../structsimd_1_1Scalar.html',1,'simd']]],
   ['scalar_5ftype_2',['scalar_type',['../classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9',1,'argon::Vector']]],
-  ['select_3',['Select',['../classargon_1_1Vector.html#aca53c3d90e7d85f798fefb3b6ef30ee9',1,'argon::Vector']]],
+  ['select_3',['Select',['../classargon_1_1Vector.html#ae729a48dfc0a6ef42848fcbda11add0f',1,'argon::Vector']]],
   ['sentinel_4',['sentinel',['../structargon_1_1vectorize_1_1load.html#a7612e00731ee6b9db324f2c74a5683a4',1,'argon::vectorize::load']]],
   ['set_5',['Set',['../classargon_1_1ConstLane.html#a4741503de328e940697129e11d958bb6',1,'argon::ConstLane::Set()'],['../classargon_1_1Lane.html#a25a8a868c14718edb5e477c9642658a4',1,'argon::Lane::Set()']]],
   ['shiftleft_6',['ShiftLeft',['../classargon_1_1Vector.html#a1f5174f52a764a872b5c4551ffbbcbc3',1,'argon::Vector::ShiftLeft(const int i) const'],['../classargon_1_1Vector.html#a235f1983552e5049a465dbce9301f0b1',1,'argon::Vector::ShiftLeft(helpers::ArgonFor_t&lt; simd::make_signed_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; b) const'],['../classargon_1_1Vector.html#a339ac134c3ae1143e6a7244e5bd490ff',1,'argon::Vector::ShiftLeft(std::make_signed_t&lt; simd::Scalar_t&lt; Bool_t&lt; VectorType &gt; &gt; &gt; n) const'],['../classargon_1_1Vector.html#aa519dbdec10abee1979bfa0dd01c18d6',1,'argon::Vector::ShiftLeft() const']]],

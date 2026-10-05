@@ -21,13 +21,14 @@ var searchData=
   ['argon_3c_20next_5flarger_20_3e_18',['Argon&lt; next_larger &gt;',['../classArgon.html',1,'']]],
   ['argon_3c_20scalartype_20_3e_20_2a_19',['Argon&lt; ScalarType &gt; *',['../classArgon.html',1,'']]],
   ['argon_5fbool_5ftype_20',['argon_bool_type',['../classargon_1_1Vector.html#abb337d1f5ce5ced64b5a234b8ee9ee05',1,'argon::Vector']]],
-  ['argon_5fhas_5fcrypto_21',['ARGON_HAS_CRYPTO',['../features_8h.html#afb9b5272fcd759016ad82efbd92ec7f7',1,'features.h']]],
-  ['argon_5ftype_22',['argon_type',['../classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705',1,'argon::Vector']]],
-  ['argonfor_23',['ArgonFor',['../structargon_1_1helpers_1_1ArgonFor.html',1,'argon::helpers']]],
-  ['argonfor_5ft_24',['ArgonFor_t',['../namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a',1,'argon::helpers']]],
-  ['argonhalf_25',['ArgonHalf',['../classArgonHalf.html',1,'']]],
-  ['argonhalf_3c_20scalartype_20_3e_26',['ArgonHalf&lt; ScalarType &gt;',['../classArgonHalf_3_01ScalarType_01_4.html',1,'']]],
-  ['argonptr_27',['ArgonPtr',['../structArgonPtr.html',1,'']]],
-  ['arithmetic_28',['arithmetic',['../conceptargon_1_1arithmetic.html',1,'argon']]],
-  ['as_29',['As',['../classArgon.html#a7df79bc7295a4c5bdda51bd5ceae532d',1,'Argon::As()'],['../classArgonHalf_3_01ScalarType_01_4.html#abc6fcb57d3551db39740eda6bfb4e827',1,'ArgonHalf&lt; ScalarType &gt;::As() const'],['../classArgonHalf_3_01ScalarType_01_4.html#abc6fcb57d3551db39740eda6bfb4e827',1,'ArgonHalf&lt; ScalarType &gt;::As() const']]]
+  ['argon_5fgcc_5faarch32_5ffloat_21',['ARGON_GCC_AARCH32_FLOAT',['../features_8h.html#afcd6a7fb7ee51b796ad46864696fee08',1,'features.h']]],
+  ['argon_5fhas_5fcrypto_22',['ARGON_HAS_CRYPTO',['../features_8h.html#afb9b5272fcd759016ad82efbd92ec7f7',1,'features.h']]],
+  ['argon_5ftype_23',['argon_type',['../classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705',1,'argon::Vector']]],
+  ['argonfor_24',['ArgonFor',['../structargon_1_1helpers_1_1ArgonFor.html',1,'argon::helpers']]],
+  ['argonfor_5ft_25',['ArgonFor_t',['../namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a',1,'argon::helpers']]],
+  ['argonhalf_26',['ArgonHalf',['../classArgonHalf.html',1,'']]],
+  ['argonhalf_3c_20scalartype_20_3e_27',['ArgonHalf&lt; ScalarType &gt;',['../classArgonHalf_3_01ScalarType_01_4.html',1,'']]],
+  ['argonptr_28',['ArgonPtr',['../structArgonPtr.html',1,'']]],
+  ['arithmetic_29',['arithmetic',['../conceptargon_1_1arithmetic.html',1,'argon']]],
+  ['as_30',['As',['../classArgon.html#a7df79bc7295a4c5bdda51bd5ceae532d',1,'Argon::As()'],['../classArgonHalf_3_01ScalarType_01_4.html#abc6fcb57d3551db39740eda6bfb4e827',1,'ArgonHalf&lt; ScalarType &gt;::As() const'],['../classArgonHalf_3_01ScalarType_01_4.html#abc6fcb57d3551db39740eda6bfb4e827',1,'ArgonHalf&lt; ScalarType &gt;::As() const']]]
 ];
