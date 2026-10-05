@@ -108,11 +108,43 @@ int main() {
 - Iterator-based interface compatible with C++ ranges
 - Support for different data types (int32_t, float, etc.)
 
+## Including the final partial vector (`with_tail()`)
+
+`load`, `store` and `load_store` skip any elements after the last whole vector. Call `with_tail()` on them to visit
+those too, as one final partial vector. Each element is then an `argon::vectorize::Partial`: `*p` is the vector,
+`p.count()` how many of its leading lanes are in the range, and `p.active()` those lanes as an `argon::Predicate`.
+Lanes past the end of the range load as zero and are never written.
+
+```cpp
+#include <argon/vectorize/load.hpp>
+#include <argon/vectorize/load_store.hpp>
+
+int32_t sum(std::span<const int32_t> data) {
+  int32_t total = 0;
+  for (auto p : argon::vectorize::load(data).with_tail()) {
+    total += p->ReduceAdd(p.active());  // the zeroed lanes would be harmless here, but not for a minimum
+  }
+  return total;
+}
+
+void scale(std::span<float> data) {
+  for (auto& p : argon::vectorize::load_store(data).with_tail()) {
+    *p = *p * 3.0f;  // only the lanes inside the range are stored
+  }
+}
+```
+
+On Helium (MVE) every vector is loaded and stored under a `vctp` predicate, and loops like these compile to
+low-overhead tail-predicated loops (`dlstp`/`letp`) with no scalar epilogue. On NEON the whole vectors use plain
+loads and stores; only the final partial vector is loaded and stored lane by lane.
+
+The interleaved views do not have `with_tail()` yet.
+
 ## Notes
 
 1. The number of elements processed in each iteration depends on the SIMD vector size for the target architecture
 2. Data size should ideally be aligned to the SIMD vector size
-3. Non-aligned sizes are handled automatically (remaining elements are not processed)
+3. Elements after the last whole vector are not processed, unless you use `with_tail()` (see above)
 4. Interleaved operations support strides of 2, 3, or 4
 
 ## Error Handling
@@ -121,4 +153,4 @@ The views handle common errors gracefully:
 
 - Non-contiguous ranges: Will not compile
 - Invalid strides: Static assertions prevent invalid stride values
-- Misaligned sizes: Automatically handled by processing only aligned portions
+- Sizes that aren't a multiple of the lane count: only whole vectors are processed, unless you use `with_tail()`

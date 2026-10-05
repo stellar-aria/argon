@@ -154,16 +154,17 @@ NEON fast path.
 
 ### 4. Tail handling in `vectorize::`
 
-Each view gets a per-platform tail strategy:
+Opt-in, so existing loops keep their documented behaviour: `load`, `store` and `load_store` gain `with_tail()`, a view
+that also visits the final partial vector. Each element is a `Partial` (`*p`, `p.count()`, `p.active()`); lanes past
+the end load as zero and are never stored. The tail is predicated on both platforms, so portable code sees the same
+vectors everywhere:
 
-- **MVE:** iterate `ceil(n / lanes)` times. The last iteration loads with `FirstN(remaining)` and stores with the same
-  predicate. Inactive lanes load as zero. This shape lowers to `dlstp`/`letp`, which should be verified with a codegen
-  test like `test/codegen/check_neon_float.sh`.
-- **NEON:** keep the full-vector loop and expose the remainder as a scalar range, e.g. `view.tail()`, rather than
-  dropping it silently.
+- **MVE:** every vector is loaded and stored under `FirstN(remaining)` (`vctp`), unclamped; the loops compile to
+  `dlstp`/`letp` with no scalar epilogue.
+- **NEON:** whole vectors use plain loads and stores; only the final partial vector goes lane by lane.
 
-Zeroed inactive lanes are safe for sums but not for min/max/product reductions. The iterator therefore exposes the
-active predicate (`it.active()`), and predicated reductions take it.
+Zeroed inactive lanes are safe for sums but not for min/max/product reductions, so reductions take `p.active()`.
+The interleaved views don't have `with_tail()` yet.
 
 ### 5. Predicated arithmetic (later, optional)
 
@@ -190,7 +191,7 @@ on MVE.
 | 1    | **Done** (`helium-build`). `Predicate<V>`, comparisons return it; specs for logic, `Select`, `Any`/`All`/`Count`, `FirstN` on both platforms | Medium |
 | 2    | **Done** (`helium-build`). Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
 | 3    | **Done** (`helium-build`). Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
-| 4    | Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
+| 4    | **Done** (`helium-build`), as opt-in `with_tail()` on `load`/`store`/`load_store`. Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
 | 5    | Predicated arithmetic overloads and predicated compares                                           | Medium |
 
 Steps 0 and 1 are prerequisites for everything else. Step 1 also fixes the silent `Equal` miscompile.
@@ -208,5 +209,6 @@ circular-buffer indices, and wide-integer carry chains (`vadcq`, `vshlcq`).
    Other conversions, such as reusing an `int32` predicate for `uint8` lanes, don't compile.
 3. **SVE.** This API is shaped to fit SVE's `svbool_t` later. Is SVE a goal, and if so, should the type be named and
    specified with that in mind now?
-4. **NEON tail API.** Is `view.tail()` as a scalar range the right shape, or would an overlapping final vector (where
-   the operation is idempotent) be preferable for load-only views?
+4. ~~**NEON tail API.**~~ Resolved: the tail is opt-in (`view.with_tail()`) and predicated on both platforms, so
+   portable loops see the same vectors everywhere. MVE predicates every vector with `vctp` (which forms
+   `dlstp`/`letp`); NEON uses whole-vector loads and stores except for the final partial vector.
