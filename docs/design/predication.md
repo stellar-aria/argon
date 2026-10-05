@@ -258,8 +258,9 @@ it scalarises float `?:` to VFP compares (`vcmpe` + `vmrs APSR_nzcv`, per lane) 
 into `vfma`, even with `-ffp-contract=fast`. Float `Max`/`Min` therefore use `vcmp` + `vpsel` on MVE (keeping
 `a > b ? a : b`, which `vmaxnm` would not), and float `MultiplyAdd`/`MultiplySubtract` use `vfma`/`vfms`: fused,
 Helium's only float multiply-accumulate. MVE has no float `vaddv` and no `vext`, so the generic `Reduce` fold's
-doubleword swap goes through the stack; float and half `ReduceAdd` add pairs with `vrev` instead (pairwise order, as
-AArch64's `faddp`). CTest `float_ops_use_mve` (M55) checks all three.
+doubleword swap goes through the stack; float and half `ReduceAdd`, `ReduceMax` and `ReduceMin` fold pairs with `vrev`
+instead (pairwise order, as AArch64's `faddp`; Max/Min keep `a > b ? a : b` rather than `vmaxnmv`, which skips NaNs).
+CTest `float_ops_use_mve` (M55) checks all of these.
 
 ## Open questions
 

@@ -32,4 +32,8 @@ H fma_half_subtract_vector(H a, H b, H c) { return a.MultiplySubtract(b, c); }
 
 float reduce_add(F a) { return a.ReduceAdd(); }
 float16_t reduce_add_half(H a) { return a.ReduceAdd(); }
+float reduce_max(F a) { return a.ReduceMax(); }
+float reduce_min(F a) { return a.ReduceMin(); }
+float16_t reduce_max_half(H a) { return a.ReduceMax(); }
+float16_t reduce_min_half(H a) { return a.ReduceMin(); }
 }
