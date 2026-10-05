@@ -177,8 +177,8 @@ template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_left_insert(uint8x
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_left_unsigned_saturate(uint8x16_t inactive, int8x16_t a, mve_pred16_t p) { return vqshluq_m_n_s8(inactive, a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_bottom(uint8x16_t a, uint16x8_t b) { return vqrshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrnbq_m_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shight_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b) { return vqrshrntq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shight_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_u16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b) { return vqrshrntq_n_u16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_bottom(uint8x16_t a, uint16x8_t b) { return vqshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqshrnbq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_top(uint8x16_t a, uint16x8_t b) { return vqshrntq_n_u16(a, b, imm); }
@@ -363,8 +363,8 @@ template <int imm>[[gnu::always_inline]] nce int8x16_t shift_left_saturate(int8x
 [[gnu::always_inline]] nce int8x16_t bit_reverse_shift_right(int8x16_t inactive, int8x16_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_s8(inactive, a, b, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_bottom(int8x16_t a, int16x8_t b) { return vqrshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrnbq_m_n_s16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shight_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b) { return vqrshrntq_n_s16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shight_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_s16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b) { return vqrshrntq_n_s16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_bottom(int8x16_t a, int16x8_t b) { return vqshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqshrnbq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_top(int8x16_t a, int16x8_t b) { return vqshrntq_n_s16(a, b, imm); }
@@ -611,8 +611,8 @@ template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_satur
 [[gnu::always_inline]] nce uint16x8_t move_narrow_saturate_top(uint16x8_t a, int32x4_t b, mve_pred16_t p) { return vqmovuntq_m_s32(a, b, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_bottom(uint16x8_t a, uint32x4_t b) { return vqrshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrnbq_m_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shight_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b) { return vqrshrntq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shight_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_u32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b) { return vqrshrntq_n_u32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_bottom(uint16x8_t a, uint32x4_t b) { return vqshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqshrnbq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_top(uint16x8_t a, uint32x4_t b) { return vqshrntq_n_u32(a, b, imm); }
@@ -706,8 +706,8 @@ template <int imm>[[gnu::always_inline]] nce int16x8_t shift_left_saturate(int16
 [[gnu::always_inline]] nce int16x8_t bit_reverse_shift_right(int16x8_t inactive, int16x8_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_s16(inactive, a, b, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_bottom(int16x8_t a, int32x4_t b) { return vqrshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrnbq_m_n_s32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shight_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b) { return vqrshrntq_n_s32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shight_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_s32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b) { return vqrshrntq_n_s32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_bottom(int16x8_t a, int32x4_t b) { return vqshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqshrnbq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_top(int16x8_t a, int32x4_t b) { return vqshrntq_n_s32(a, b, imm); }
