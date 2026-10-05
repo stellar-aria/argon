@@ -1,6 +1,8 @@
 #include "argon.hpp"
 #include "cppspec.hpp"
 #include <array>
+#include <cmath>
+#include <limits>
 
 // clang-format off
 
@@ -75,6 +77,16 @@ auto describe_arithmetic = describe("Argon<float16_t> arithmetic", ${
     expect(floats(a.Min(z))).to_equal(std::array<float, 8>{-1, 0, -3, 0, -5, 0, -7, 0});
     expect(floats(a.Absolute())).to_equal(std::array<float, 8>{1, 2, 3, 4, 5, 6, 7, 8});
     expect(floats(a.Negate())).to_equal(std::array<float, 8>{1, -2, 3, -4, 5, -6, 7, -8});
+  });
+
+  it("takes IEEE maxNum / minNum: a NaN gives the other operand, +0 > -0", _{
+    const float nan = std::numeric_limits<float>::quiet_NaN();
+    auto a = halves({1, nan, -0.0f, 0, 4, -4, nan, 2});
+    auto b = halves({2, 3, 0, -0.0f, nan, -5, 1, 2});
+    expect(floats(a.MaxNumber(b))).to_equal(std::array<float, 8>{2, 3, 0, 0, 4, -4, 1, 2});
+    expect(floats(a.MinNumber(b))).to_equal(std::array<float, 8>{1, 3, -0.0f, -0.0f, 4, -5, 1, 2});
+    expect(std::signbit(floats(a.MaxNumber(b))[2])).to_be_false();
+    expect(std::signbit(floats(a.MinNumber(b))[3])).to_be_true();
   });
 
   it("finds the maximum and minimum in every lane", _{

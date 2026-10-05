@@ -70,6 +70,20 @@ constexpr Platform platform = Platform::SIMDe;
 #define ARGON_HAS_DOUBLE_FLOAT false
 #endif
 
+/// True where vmaxnm/vminnm exist (simd::max_strict / min_strict): Helium with floating point, and Armv8 NEON.
+#if (defined(__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE & 2)) || (defined(__ARM_NEON) && __ARM_ARCH >= 8)
+#define ARGON_HAS_MAXNM true
+#else
+#define ARGON_HAS_MAXNM false
+#endif
+
+/// True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm exist.
+#if defined(__ARM_NEON) && defined(__ARM_FEATURE_FP16_VECTOR_ARITHMETIC)
+#define ARGON_NEON_FP16_VECTOR true
+#else
+#define ARGON_NEON_FP16_VECTOR false
+#endif
+
 #ifndef ARGON_USE_COMPILER_EXTENSIONS
 #if !defined(_MSC_VER) || defined(__clang__)
 #define ARGON_USE_COMPILER_EXTENSIONS 1

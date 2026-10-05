@@ -109,8 +109,56 @@ auto describe_float_minmax = describe("float Max / Min", ${
   });
 });
 
+// MaxNumber/MinNumber are IEEE 754 maxNum/minNum, as Arm's vmaxnm/vminnm: a quiet NaN in one operand gives the
+// other operand, NaN only if both are NaN, and +0 is larger than -0.
+template <typename T>
+static void check_number_minmax(auto& self) {
+  constexpr T nan = std::numeric_limits<T>::quiet_NaN();
+  constexpr T inf = std::numeric_limits<T>::infinity();
+  constexpr size_t n = Argon<T>::lanes;
+  auto lanes = [](std::array<T, 4> v) {
+    std::array<T, n> out{};
+    for (size_t i = 0; i < n; ++i) out[i] = v[i % 4];
+    return Argon<T>::Load(out.data()).to_array();
+  };
+  auto load = [](std::array<T, 4> v) {
+    std::array<T, n> out{};
+    for (size_t i = 0; i < n; ++i) out[i] = v[i % 4];
+    return Argon<T>::Load(out.data());
+  };
+  auto as_bits = [](auto arr) {
+    std::array<uint64_t, n> out{};
+    for (size_t i = 0; i < n; ++i) {
+      if constexpr (sizeof(T) == 8) out[i] = std::bit_cast<uint64_t>(arr[i]);
+      else out[i] = std::bit_cast<uint32_t>(arr[i]);
+    }
+    return out;
+  };
+  expect(as_bits(load({1, -2, inf, -inf}).MaxNumber(load({-1, 3, 0, 5})).to_array())).to_equal(as_bits(lanes({1, 3, inf, 5})));
+  expect(as_bits(load({1, -2, inf, -inf}).MinNumber(load({-1, 3, 0, 5})).to_array())).to_equal(as_bits(lanes({-1, -2, 0, -inf})));
+  expect(as_bits(load({nan, 1, -inf, 2}).MaxNumber(load({1, nan, nan, -inf})).to_array())).to_equal(as_bits(lanes({1, 1, -inf, 2})));
+  expect(as_bits(load({nan, 1, inf, 2}).MinNumber(load({1, nan, nan, inf})).to_array())).to_equal(as_bits(lanes({1, 1, inf, 2})));
+  expect(as_bits(load({T(0), T(-0.0), T(0), T(-0.0)}).MaxNumber(load({T(-0.0), T(0), T(0), T(-0.0)})).to_array()))
+      .to_equal(as_bits(lanes({T(0), T(0), T(0), T(-0.0)})));
+  expect(as_bits(load({T(0), T(-0.0), T(0), T(-0.0)}).MinNumber(load({T(-0.0), T(0), T(0), T(-0.0)})).to_array()))
+      .to_equal(as_bits(lanes({T(-0.0), T(-0.0), T(0), T(-0.0)})));
+  const auto both = load({nan, nan, nan, nan});
+  for (auto x : both.MaxNumber(both).to_array()) expect(x != x).to_be_true();
+  for (auto x : both.MinNumber(both).to_array()) expect(x != x).to_be_true();
+  expect(as_bits(load({-3, T(0.5), 2, nan}).MaxNumber(T(-1)).MinNumber(T(1)).to_array()))
+      .to_equal(as_bits(lanes({-1, T(0.5), 1, -1})));
+}
+
+auto describe_number_minmax = describe("MaxNumber / MinNumber", ${
+  it("float: IEEE maxNum / minNum", _{ check_number_minmax<float>(self); });
+#if defined(__aarch64__)
+  it("double: IEEE maxNum / minNum", _{ check_number_minmax<double>(self); });
+#endif
+});
+
 CPPSPEC_MAIN(
   describe_reduce,
   describe_abs,
-  describe_float_minmax
+  describe_float_minmax,
+  describe_number_minmax
 );

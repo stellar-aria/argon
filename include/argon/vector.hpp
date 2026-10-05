@@ -67,6 +67,12 @@ class Vector {
 #endif
   /// Float lanes on Helium, which go through MVE intrinsics where GCC mishandles the vector extensions.
   static constexpr bool mve_float = mve_platform && lane_floating_point<scalar_type>;
+#if ARGON_HAS_MAXNM
+  /// Whether vmaxnm/vminnm exist for these lanes: every float lane on Helium and Armv8 NEON, half lanes on NEON
+  /// only with FP16 vector arithmetic.
+  static constexpr bool native_maxnm =
+      lane_floating_point<scalar_type> && (mve_platform || !is_half_float_v<scalar_type> || ARGON_NEON_FP16_VECTOR);
+#endif
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
@@ -770,6 +776,51 @@ class Vector {
     } else {
       return simd::min(vec_, b);
     }
+  }
+
+  /// The larger of each lane by IEEE 754 maxNum, as Arm's vmaxnm: a quiet NaN in one operand gives the other
+  /// (NaN only where both are), and +0 is larger than -0. Max is a > b ? a : b, which passes a NaN in b through;
+  /// MaxNumber is for when NaNs should be ignored, or can't occur and one instruction (vmaxnm) beats Max's
+  /// compare and select. Native on Helium and Armv8 NEON; elsewhere a few compares and selects.
+  ace argon_type MaxNumber(argon_type b) const
+    requires lane_floating_point<scalar_type>
+  {
+#if ARGON_HAS_MAXNM
+    if constexpr (native_maxnm) {
+      return simd::max_strict(vec_, b.vec_);
+    } else
+#endif
+    {
+      return NumberMinMax<true>(b);
+    }
+  }
+
+  /// The smaller of each lane by IEEE 754 minNum, as Arm's vminnm: a quiet NaN in one operand gives the other
+  /// (NaN only where both are), and -0 is smaller than +0. See MaxNumber.
+  ace argon_type MinNumber(argon_type b) const
+    requires lane_floating_point<scalar_type>
+  {
+#if ARGON_HAS_MAXNM
+    if constexpr (native_maxnm) {
+      return simd::min_strict(vec_, b.vec_);
+    } else
+#endif
+    {
+      return NumberMinMax<false>(b);
+    }
+  }
+
+  /// MaxNumber/MinNumber from compares and selects, where there is no vmaxnm/vminnm.
+  template <bool max>
+  ace argon_type NumberMinMax(argon_type b) const {
+    using bits_type = std::conditional_t<sizeof(scalar_type) == 2, uint16_t,
+                                         std::conditional_t<sizeof(scalar_type) == 4, uint32_t, uint64_t>>;
+    const argon_type a{vec_};
+    argon_type r = max ? (a > b).Select(a, b) : (a < b).Select(a, b);  // NaN in a: b
+    const auto a_bits = a.template As<bits_type>(), b_bits = b.template As<bits_type>();
+    const argon_type zeros = (max ? (a_bits & b_bits) : (a_bits | b_bits)).template As<scalar_type>();
+    r = (a == b).Select(zeros, r);  // equal lanes: the same value, or zeros of either sign (+0 & -0 is +0)
+    return (b == b).Select(r, a);   // NaN in b: a (NaN only if a is too)
   }
 
   /// Compare the lanes of two vectors, returning a predicate active where a == b.
