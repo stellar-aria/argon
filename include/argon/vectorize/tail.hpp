@@ -214,8 +214,7 @@ class store_tail : public std::ranges::view_interface<store_tail<ScalarType, Str
     using difference_type = std::ptrdiff_t;          ///< The difference type of the iterator.
 
     Iterator() = default;
-    Iterator(detail::TailCursor<ScalarType, Stride> cursor)
-        : cursor_{cursor}, current_{{}, cursor.done() ? 0 : cursor.remaining()} {}
+    Iterator(detail::TailCursor<ScalarType, Stride> cursor) : cursor_{cursor}, current_{{}, cursor.remaining()} {}
 
     value_type& operator*() { return current_; }
     const value_type& operator*() const { return current_; }
@@ -224,7 +223,9 @@ class store_tail : public std::ranges::view_interface<store_tail<ScalarType, Str
     Iterator& operator++() {
       detail::store_partial<Stride>(cursor_.ptr(), *current_, current_.remaining());
       cursor_.index += lanes;
-      current_ = value_type{{}, cursor_.done() ? 0 : cursor_.remaining()};
+      // Past the end the remaining count wraps, but it is never read there; a conditional here would keep the
+      // compiler from forming a tail-predicated (dlstp/letp) loop.
+      current_ = value_type{{}, cursor_.remaining()};
       return *this;
     }
     void operator++(int) { ++*this; }
