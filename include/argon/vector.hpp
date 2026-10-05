@@ -1342,6 +1342,116 @@ class Vector {
     return CompareTestNonzero(*this);
   }
 
+  // ── Predicated operations ──────────────────────────────────────────────────────────────────────────────────
+  // Each operation has two predicated forms, after ACLE's:
+  //   Op(b, active)            "_x": lanes outside `active` are unspecified (on NEON, simply Op(b)).
+  //   Op(b, active, inactive)  "_m": lanes outside `active` are taken from `inactive` (pass zero for "_z").
+  // On MVE these are the VPT-predicated instructions; on NEON, the operation followed by vbsl. They are worth using
+  // on MVE with GCC, which doesn't fold Select(op, ...) into a predicated instruction the way clang does.
+
+#ifdef ARGON_PLATFORM_MVE
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
+  ace argon_type Name(argon_type b, argon_bool_type active) const {                                      \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(vec_, b.vec_, active.native());                                                \
+    } else {                                                                                              \
+      return Name(b);                                                                                     \
+    }                                                                                                     \
+  }                                                                                                       \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(inactive.vec_, vec_, b.vec_, active.native());                                 \
+    } else {                                                                                              \
+      return active.Select(Name(b), inactive);                                                            \
+    }                                                                                                     \
+  }
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
+  ace argon_type Name(argon_bool_type active) const {                                                    \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(vec_, active.native());                                                        \
+    } else {                                                                                              \
+      return Name();                                                                                      \
+    }                                                                                                     \
+  }                                                                                                       \
+  ace argon_type Name(argon_bool_type active, argon_type inactive) const {                               \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(inactive.vec_, vec_, active.native());                                         \
+    } else {                                                                                              \
+      return active.Select(Name(), inactive);                                                             \
+    }                                                                                                     \
+  }
+#else
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
+  ace argon_type Name(argon_type b, argon_bool_type /*active*/) const { return Name(b); }                 \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
+    return active.Select(Name(b), inactive);                                                              \
+  }
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
+  ace argon_type Name(argon_bool_type /*active*/) const { return Name(); }                               \
+  ace argon_type Name(argon_bool_type active, argon_type inactive) const { return active.Select(Name(), inactive); }
+#endif
+
+  ARGON_PREDICATED_BINARY(Add, add, true)
+  ARGON_PREDICATED_BINARY(Subtract, subtract, true)
+  ARGON_PREDICATED_BINARY(Multiply, multiply, true)
+  // Float Max/Min would be vmaxnm/vminnm, whose NaN handling differs from the unpredicated a > b ? a : b.
+  ARGON_PREDICATED_BINARY(Max, max, std::is_integral_v<scalar_type>)
+  ARGON_PREDICATED_BINARY(Min, min, std::is_integral_v<scalar_type>)
+  ARGON_PREDICATED_BINARY(SubtractAbs, subtract_absolute, true)
+  ARGON_PREDICATED_BINARY(BitwiseAnd, bitwise_and, true)
+  ARGON_PREDICATED_BINARY(BitwiseOr, bitwise_or, true)
+  ARGON_PREDICATED_BINARY(BitwiseXor, bitwise_xor, true)
+  ARGON_PREDICATED_BINARY(BitwiseAndNot, bitwise_clear, true)
+  // MVE has no unsigned vneg/vabs.
+  ARGON_PREDICATED_UNARY(Negate, negate, !std::is_unsigned_v<scalar_type>)
+  ARGON_PREDICATED_UNARY(Absolute, abs, !std::is_unsigned_v<scalar_type>)
+
+#undef ARGON_PREDICATED_BINARY
+#undef ARGON_PREDICATED_UNARY
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a == b.
+  /// @details MVE: one predicated compare (vcmpq_m), rather than a compare and a predicate AND through core registers.
+  ace argon_bool_type Equal(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_, active.native())};
+#else
+    return active & Equal(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a > b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type GreaterThan(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_, active.native())};
+#else
+    return active & GreaterThan(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a >= b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type GreaterThanOrEqual(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_, active.native())};
+#else
+    return active & GreaterThanOrEqual(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a < b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type LessThan(argon_type b, argon_bool_type active) const { return b.GreaterThan(*this, active); }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a <= b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type LessThanOrEqual(argon_type b, argon_bool_type active) const {
+    return b.GreaterThanOrEqual(*this, active);
+  }
+
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
   /// @details Equivalent to std::countl_one(a).
   ace helpers::ArgonFor_t<simd::make_signed_t<Bool_t<VectorType>>> CountLeadingSignBits() const

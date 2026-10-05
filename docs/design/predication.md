@@ -167,22 +167,23 @@ Zeroed inactive lanes are safe for sums but not for min/max/product reductions, 
 The interleaved views have `with_tail()` too: whole groups use `vld2`-`vld4`, which can't be predicated, and the
 final partial group is gathered and scattered per channel.
 
-### 5. Predicated arithmetic (later, optional)
+### 5. Predicated arithmetic and compares
 
-Only after the above. `p.Select(a + b, a)` is already correct and optimal on Clang. Explicit overloads let GCC skip
-one `vpsel`, following ACLE's three modes:
+`Add`, `Subtract`, `Multiply`, `Max`, `Min`, `SubtractAbs`, the bitwise operations, `Negate` and `Absolute` take
+ACLE-style predicated forms:
 
 ```cpp
 a.Add(b, p);            // _x: inactive lanes unspecified
-a.Add(b, p, inactive);  // _m: inactive lanes from `inactive`
-a.Add(b, p, Zero);      // _z: inactive lanes zero
+a.Add(b, p, inactive);  // _m: inactive lanes from `inactive` (pass zero for _z)
 ```
 
-On NEON every form lowers to op + `vbsl`, and `_x` lowers to the bare op. To avoid doubling `Vector`'s surface,
-generate these from the existing operation list, not by hand.
+On MVE these are VPT-predicated instructions (`vpst; vaddt`); on NEON, `_x` is the plain operation and `_m` adds a
+`vbsl`. Float `Max`/`Min` go through `Select` on MVE too, since `vmaxnm`'s NaN handling differs from the unpredicated
+form. In isolation `_m` is no shorter than `Select` (the destination needs `inactive` moved into it), so the gain
+depends on register allocation in real loops.
 
-The `vcmp*q_m` predicated compares belong here too: `Predicate::And(a > b)` can lower to a single predicated compare
-on MVE.
+Comparisons take a predicate as well: `x.LessThan(hi, x > lo)` is active where both hold. On MVE that is one
+predicated compare (`vpst; vcmpt`) instead of two compares whose predicates are ANDed through core registers.
 
 ## Plan
 
@@ -193,7 +194,7 @@ on MVE.
 | 2    | **Done** (`helium-build`). Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
 | 3    | **Done** (`helium-build`). Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
 | 4    | **Done** (`helium-build`), as opt-in `with_tail()` on `load`/`store`/`load_store`. Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
-| 5    | Predicated arithmetic overloads and predicated compares                                           | Medium |
+| 5    | **Done** (`helium-build`). Predicated arithmetic overloads and predicated compares                                           | Medium |
 
 Steps 0 and 1 are prerequisites for everything else. Step 1 also fixes the silent `Equal` miscompile.
 

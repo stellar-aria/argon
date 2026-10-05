@@ -22,30 +22,31 @@ enum class MveComparison { Equal, GreaterThan, GreaterThanOrEqual };
 /// @param a The left-hand operand.
 /// @param b The right-hand operand.
 /// @return A predicate with every byte of each lane set where the comparison holds.
-template <MveComparison op, typename VectorType>
-[[gnu::always_inline]] inline mve_pred16_t mve_compare(VectorType a, VectorType b) {
+/// @param active Optionally, compare only these lanes (vcmpq_m): the result is inactive wherever `active` is.
+template <MveComparison op, typename VectorType, typename... PredicateType>
+[[gnu::always_inline]] inline mve_pred16_t mve_compare(VectorType a, VectorType b, PredicateType... active) {
   using scalar_type = mve::Scalar_t<VectorType>;
   if constexpr (op == MveComparison::Equal) {
     if constexpr (!std::is_integral_v<scalar_type>) {
-      return mve::compare_equal(a, b);
+      return mve::compare_equal(a, b, active...);
     } else {
-      return mve::equal(a, b);
+      return mve::equal(a, b, active...);
     }
   } else if constexpr (op == MveComparison::GreaterThan) {
     if constexpr (!std::is_integral_v<scalar_type>) {
-      return mve::compare_greater_than(a, b);
+      return mve::compare_greater_than(a, b, active...);
     } else if constexpr (std::is_signed_v<scalar_type>) {
-      return mve::greater_than(a, b);
+      return mve::greater_than(a, b, active...);
     } else {
-      return mve::higher(a, b);
+      return mve::higher(a, b, active...);
     }
   } else {
     if constexpr (!std::is_integral_v<scalar_type>) {
-      return mve::compare_greater_than_or_equal(a, b);
+      return mve::compare_greater_than_or_equal(a, b, active...);
     } else if constexpr (std::is_signed_v<scalar_type>) {
-      return mve::greater_than_or_equal(a, b);
+      return mve::greater_than_or_equal(a, b, active...);
     } else {
-      return mve::higher_or_same(a, b);
+      return mve::higher_or_same(a, b, active...);
     }
   }
 }
