@@ -188,7 +188,7 @@ on MVE.
 | ---- | ------------------------------------------------------------------------------------------------- | ------ |
 | 0    | **Done** (`helium-build`). Fix the M55 build: `MultiplySubtract` as `a - b*c`, comparison name mapping, gate `Reverse` and lane assignment, guard NEON-only specs; re-enable the M55 CI runner | Small  |
 | 1    | **Done** (`helium-build`). `Predicate<V>`, comparisons return it; specs for logic, `Select`, `Any`/`All`/`Count`, `FirstN` on both platforms | Medium |
-| 2    | Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
+| 2    | **Done** (`helium-build`). Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
 | 3    | Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
 | 4    | Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
 | 5    | Predicated arithmetic overloads and predicated compares                                           | Medium |

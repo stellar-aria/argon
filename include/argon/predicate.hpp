@@ -160,6 +160,17 @@ class Predicate {
 #endif
   }
 
+  /// @brief Lanes active in both predicates; the same as `&`.
+  /// @note Both operands are always evaluated: there is no short-circuit for per-lane logic.
+  ace Predicate operator&&(Predicate b) const { return *this & b; }
+
+  /// @brief Lanes active in either predicate; the same as `|`.
+  /// @note Both operands are always evaluated: there is no short-circuit for per-lane logic.
+  ace Predicate operator||(Predicate b) const { return *this | b; }
+
+  /// @brief Invert every lane; the same as `~`.
+  ace Predicate operator!() const { return ~*this; }
+
   /// @brief Choose each lane from `true_value` where the predicate is active, and from `false_value` otherwise.
   /// @details NEON: vbsl. MVE: vpsel.
   /// @param true_value The lanes to take where the predicate is active.
