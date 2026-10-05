@@ -19,3 +19,5 @@ U less_equal(F a, F b) { return (a <= b).ToMask(); }
 U greater_equal(F a, F b) { return (a >= b).ToMask(); }
 F select(U m, F a, F b) { return argon::ternary(m, a, b); }
 F select_scalars(U m, float a, float b) { return argon::ternary(m, a, b); }
+F max_number(F a, F b) { return a.MaxNumber(b); }
+F min_number(F a, F b) { return a.MinNumber(b); }

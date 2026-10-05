@@ -18,6 +18,11 @@ F min(F a, F b) { return a.Min(b); }
 F max_scalar(F a, float b) { return a.Max(b); }
 F min_scalar(F a, float b) { return a.Min(b); }
 F clamp(F a) { return a.Max(-1.f).Min(1.f); }
+F maxnum_vector(F a, F b) { return a.MaxNumber(b); }
+F maxnum_min_vector(F a, F b) { return a.MinNumber(b); }
+F maxnum_clamp(F a) { return a.MaxNumber(-1.f).MinNumber(1.f); }
+H maxnum_half(H a, H b) { return a.MaxNumber(b); }
+H maxnum_min_half(H a, H b) { return a.MinNumber(b); }
 H max_half(H a, H b) { return a.Max(b); }
 H min_half(H a, H b) { return a.Min(b); }
 
