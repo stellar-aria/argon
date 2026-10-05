@@ -211,7 +211,7 @@ NEON fallback so it stays portable. In order:
 | 8  | **Done** (`helium-build`). **Multiply-accumulate dot-product reductions:** `vmladavaq` (32-bit), `vmlaldavaq` (64-bit), `vrmlaldavhaq` (rounded high), and the exchange-pairs forms for complex dot products. FIR filters and convolution. | `vmlal` + pairwise add |
 | 9  | **Done** (`helium-build`). **Circular-buffer indices:** `viwdupq`/`vdwdupq` produce wrapping incrementing/decrementing indices in one instruction, feeding gathers: delay lines and wavetables. | `Iota` + compare-and-subtract |
 | 10 | **Done** (`helium-build`). **Across-vector min/max:** `ReduceMax`/`ReduceMin` via `vmaxvq`/`vminvq` (they use the shuffle fold on MVE today), plus `ReduceMaxAbs`/`ReduceMinAbs` (`vmaxavq`/`vminavq`, a peak meter in one instruction) and `MaxAbs`/`MinAbs` (`vmaxaq`/`vminaq`). | `vmaxv` on A64, fold on A32 |
-| 11 | **Complex arithmetic:** `vcmulq`, `vcmlaq` (with rotations), `vcaddq`, `vhcaddq`. FFTs and IQ. | `vcmla`/`vcadd` from Armv8.3, shuffles below that |
+| 11 | **Done** (`helium-build`). **Complex arithmetic:** `vcmulq`, `vcmlaq` (with rotations), `vcaddq`, `vhcaddq`. FFTs and IQ. | `vcmla`/`vcadd` from Armv8.3, shuffles below that |
 | 12 | **Bit-reversed addressing:** `vbrsrq` for FFT reordering indices. | per-lane bit reverse |
 | 13 | **Carry chains:** `vadcq`/`vsbcq` (add/subtract with carry across lanes) and `vshlcq` (whole-vector shift with carry). Bignum, crypto, bitstream packing. | scalar carry propagation |
 | 14 | **Gather-base with write-back:** `vldrwq_gather_base_wb`, a vector of addresses that advances on each load. Strided streams and walking several buffers at once. | per-lane loads |

@@ -593,6 +593,129 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #endif
   }
 
+  // ── Complex arithmetic ────────────────────────────────────────────────────────────────────────────────────
+  // Lanes 2i and 2i+1 hold the real and imaginary parts of a complex number. MVE has these as instructions
+  // (vcadd, vhcadd, vcmla); NEON has the float ones from Armv8.3 (FEAT_FCMA), and otherwise swaps each pair with a
+  // vrev and blends the even and odd lanes.
+
+  /// @brief a + i·b for each complex pair: re = a.re − b.im, im = a.im + b.re. MVE / FCMA: vcadd #90.
+  template <typename S = ScalarType>
+    requires(sizeof(S) <= 4)
+  ace Argon<S> ComplexAddRotate90(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (argon::lane_floating_point<S>) {
+      if constexpr (sizeof(S) == 2) {
+        return vcaddq_rot90_f16(this->vec_, b.vec());
+      } else {
+        return vcaddq_rot90_f32(this->vec_, b.vec());
+      }
+    } else {
+      return mve::complex_add_rotate_90(this->vec_, b.vec());
+    }
+#else
+#ifdef __ARM_FEATURE_COMPLEX
+    if constexpr (argon::lane_floating_point<S>) return neon::complex_add_rotate_90(this->vec_, b.vec());
+#endif
+    const auto swapped = SwapPairs(b);
+    return EvenLanes().Select(*this - swapped, *this + swapped);
+#endif
+  }
+
+  /// @brief a − i·b for each complex pair: re = a.re + b.im, im = a.im − b.re. MVE / FCMA: vcadd #270.
+  template <typename S = ScalarType>
+    requires(sizeof(S) <= 4)
+  ace Argon<S> ComplexAddRotate270(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (argon::lane_floating_point<S>) {
+      if constexpr (sizeof(S) == 2) {
+        return vcaddq_rot270_f16(this->vec_, b.vec());
+      } else {
+        return vcaddq_rot270_f32(this->vec_, b.vec());
+      }
+    } else {
+      return mve::complex_add_rotate_270(this->vec_, b.vec());
+    }
+#else
+#ifdef __ARM_FEATURE_COMPLEX
+    if constexpr (argon::lane_floating_point<S>) return neon::complex_add_rotate_270(this->vec_, b.vec());
+#endif
+    const auto swapped = SwapPairs(b);
+    return EvenLanes().Select(*this + swapped, *this - swapped);
+#endif
+  }
+
+  /// @brief (a + i·b) / 2 without overflow. Signed integer lanes. MVE: vhcadd #90.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_signed_v<S> && sizeof(S) <= 4)
+  ace Argon<S> ComplexAddRotate90Halve(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::complex_add_rotate_90_halve(this->vec_, b.vec());
+#else
+    const auto swapped = SwapPairs(b);
+    return EvenLanes().Select(this->SubtractHalve(swapped), this->AddHalve(swapped));
+#endif
+  }
+
+  /// @brief (a − i·b) / 2 without overflow. Signed integer lanes. MVE: vhcadd #270.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_signed_v<S> && sizeof(S) <= 4)
+  ace Argon<S> ComplexAddRotate270Halve(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::complex_add_rotate_270_halve(this->vec_, b.vec());
+#else
+    const auto swapped = SwapPairs(b);
+    return EvenLanes().Select(this->AddHalve(swapped), this->SubtractHalve(swapped));
+#endif
+  }
+
+  /// @brief Accumulate one rotation of the complex product of `b` and `c` into this vector, exactly as vcmla.
+  /// @details rotation 0: re += b.re·c.re, im += b.re·c.im. 90: re −= b.im·c.im, im += b.im·c.re.
+  /// 180: re −= b.re·c.re, im −= b.re·c.im. 270: re += b.im·c.im, im −= b.im·c.re.
+  /// Rotations 0 then 90 accumulate b·c; 0 then 270 with the operands swapped, a·conj(b). Float lanes.
+  template <int rotation, typename S = ScalarType>
+    requires(argon::lane_floating_point<S> && sizeof(S) <= 4 &&
+             (rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270))
+  ace Argon<S> ComplexMultiplyAdd(Argon<S> b, Argon<S> c) const {
+#if defined(ARGON_PLATFORM_MVE) || defined(__ARM_FEATURE_COMPLEX)
+    if constexpr (rotation == 0) {
+      return simd::complex_multiply_add(this->vec_, b.vec(), c.vec());
+    } else if constexpr (rotation == 90) {
+      return simd::complex_multiply_add_rotate_90(this->vec_, b.vec(), c.vec());
+    } else if constexpr (rotation == 180) {
+      return simd::complex_multiply_add_rotate_180(this->vec_, b.vec(), c.vec());
+    } else {
+      return simd::complex_multiply_add_rotate_270(this->vec_, b.vec(), c.vec());
+    }
+#else
+    const auto even = EvenLanes();
+    if constexpr (rotation == 0 || rotation == 180) {
+      const auto real = even.Select(b, SwapPairs(b));  // (b.re, b.re)
+      return rotation == 0 ? this->MultiplyAdd(real, c) : this->MultiplySubtract(real, c);
+    } else {
+      const auto imag = even.Select(SwapPairs(b), b);  // (b.im, b.im)
+      const auto swapped = SwapPairs(c);                // (c.im, c.re)
+      const auto minus = this->MultiplySubtract(imag, swapped), plus = this->MultiplyAdd(imag, swapped);
+      return rotation == 90 ? even.Select(minus, plus) : even.Select(plus, minus);
+    }
+#endif
+  }
+
+  /// @brief The complex product a·b of each pair. Float lanes. MVE / FCMA: two vcmla.
+  template <typename S = ScalarType>
+    requires(argon::lane_floating_point<S> && sizeof(S) <= 4)
+  ace Argon<S> ComplexMultiply(Argon<S> b) const {
+    const Argon<S> zero{S(0)};
+    return zero.template ComplexMultiplyAdd<0>(*this, b).template ComplexMultiplyAdd<90>(*this, b);
+  }
+
+  /// @brief The complex product a·conj(b) of each pair. Float lanes. MVE / FCMA: two vcmla.
+  template <typename S = ScalarType>
+    requires(argon::lane_floating_point<S> && sizeof(S) <= 4)
+  ace Argon<S> ComplexMultiplyConjugate(Argon<S> b) const {
+    const Argon<S> zero{S(0)};
+    return zero.template ComplexMultiplyAdd<0>(b, *this).template ComplexMultiplyAdd<270>(b, *this);
+  }
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
@@ -852,6 +975,25 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
                                                                Argon<W> wide) {
     using N = argon::helpers::NextSmaller_t<W>;
     return LowHalfMask<W>().Select(dest.template As<W>(), wide.template ShiftLeft<4 * sizeof(W)>()).template As<N>();
+  }
+
+  /// `v` with the two lanes of each complex pair swapped: (re, im) -> (im, re).
+  template <typename S>
+  ace static Argon<S> SwapPairs(Argon<S> v) {
+    if constexpr (sizeof(S) == 1) {
+      return v.Reverse16bit();
+    } else if constexpr (sizeof(S) == 2) {
+      return v.Reverse32bit();
+    } else {
+      return v.Reverse64bit();
+    }
+  }
+
+  /// A predicate active in the even (real) lanes.
+  ace static typename Argon<ScalarType>::argon_bool_type EvenLanes() {
+    using U = std::conditional_t<sizeof(ScalarType) == 1, uint8_t,
+                                 std::conditional_t<sizeof(ScalarType) == 2, uint16_t, uint32_t>>;
+    return (Argon<U>::Iota(0) & Argon<U>{U{1}}) == Argon<U>{U{0}};
   }
 
   /// The terms of a dot product of `this` and `b`, each exact (64-bit), negated where the form subtracts.
