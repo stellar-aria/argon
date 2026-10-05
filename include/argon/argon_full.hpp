@@ -749,6 +749,95 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #endif
   }
 
+  // ── Carry chains ──────────────────────────────────────────────────────────────────────────────────────────
+  // The vector as one 128-bit number, lane 0 least significant, for multi-word arithmetic and bitstreams. MVE has
+  // instructions for these (vadc, vsbc, vshlc); NEON works through the 32-bit words one at a time.
+
+  /// @brief Add `b` and `carry` (0 or 1) to the vector as 128-bit numbers; `carry` becomes the carry out.
+  /// MVE: vadc.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) == 4)
+  ace Argon<S> AddWithCarry(Argon<S> b, uint32_t& carry) const {
+#ifdef ARGON_PLATFORM_MVE
+    unsigned c = carry & 1;  // through a local: see CircularIndices
+    Argon<S> out;
+    if constexpr (std::is_signed_v<S>) {
+      out = vadcq_s32(this->vec_, b.vec(), &c);
+    } else {
+      out = vadcq_u32(this->vec_, b.vec(), &c);
+    }
+    carry = c;
+    return out;
+#else
+    const auto x = this->template As<uint32_t>().to_array(), y = b.template As<uint32_t>().to_array();
+    std::array<uint32_t, 4> sum{};
+    uint64_t c = carry & 1;
+    for (size_t i = 0; i < 4; ++i) {
+      c += uint64_t{x[i]} + y[i];
+      sum[i] = static_cast<uint32_t>(c);
+      c >>= 32;
+    }
+    carry = static_cast<uint32_t>(c);
+    return Argon<uint32_t>::Load(sum.data()).template As<S>();
+#endif
+  }
+
+  /// @brief Subtract `b` and `borrow` (0 or 1) from the vector as 128-bit numbers; `borrow` becomes the borrow
+  /// out. MVE: vsbc (whose carry flag is the inverse of a borrow).
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) == 4)
+  ace Argon<S> SubtractWithBorrow(Argon<S> b, uint32_t& borrow) const {
+#ifdef ARGON_PLATFORM_MVE
+    unsigned c = 1 - (borrow & 1);
+    Argon<S> out;
+    if constexpr (std::is_signed_v<S>) {
+      out = vsbcq_s32(this->vec_, b.vec(), &c);
+    } else {
+      out = vsbcq_u32(this->vec_, b.vec(), &c);
+    }
+    borrow = 1 - c;
+    return out;
+#else
+    const auto x = this->template As<uint32_t>().to_array(), y = b.template As<uint32_t>().to_array();
+    std::array<uint32_t, 4> difference{};
+    uint64_t owed = borrow & 1;
+    for (size_t i = 0; i < 4; ++i) {
+      const uint64_t subtrahend = uint64_t{y[i]} + owed;
+      difference[i] = static_cast<uint32_t>(uint64_t{x[i]} - subtrahend);
+      owed = subtrahend > x[i];
+    }
+    borrow = static_cast<uint32_t>(owed);
+    return Argon<uint32_t>::Load(difference.data()).template As<S>();
+#endif
+  }
+
+  /// @brief Shift the whole vector, as a 128-bit number, left by `n` bits: the low `n` bits of `carry` shift in at
+  /// the bottom, and `carry` becomes the `n` bits shifted out of the top. MVE: vshlc.
+  /// @tparam n 1 to 32.
+  template <int n, typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 4 && n >= 1 && n <= 32)
+  ace Argon<S> ShiftLeftWithCarry(uint32_t& carry) const {
+#ifdef ARGON_PLATFORM_MVE
+    uint32_t c = carry;
+    const auto words = this->template As<uint32_t>().vec();
+    const Argon<uint32_t> out = vshlcq_u32(words, &c, n);
+    carry = c;
+    return out.template As<S>();
+#else
+    const auto x = this->template As<uint32_t>().to_array();
+    std::array<uint32_t, 4> shifted{};
+    const uint64_t in_mask = n == 32 ? ~uint32_t{0} : ((uint32_t{1} << n) - 1);
+    uint64_t incoming = carry & in_mask;
+    for (size_t i = 0; i < 4; ++i) {
+      const uint64_t wide = (uint64_t{x[i]} << n) | incoming;
+      shifted[i] = static_cast<uint32_t>(wide);
+      incoming = wide >> 32;
+    }
+    carry = static_cast<uint32_t>(incoming);
+    return Argon<uint32_t>::Load(shifted.data()).template As<S>();
+#endif
+  }
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
