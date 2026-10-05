@@ -102,4 +102,11 @@ if(ARGON_TEST_CPU STREQUAL "M55")
   find_program(ARGON_ARM_NONE_OBJDUMP NAMES arm-none-eabi-objdump llvm-objdump REQUIRED)
   add_test(NAME tail_loops_use_dlstp
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_mve_tail.sh ${ARGON_ARM_NONE_OBJDUMP} $<TARGET_OBJECTS:argon_tail_codegen>)
+
+  # Float Max/Min and MultiplyAdd/MultiplySubtract must stay on Helium, fused, without -ffast-math.
+  add_library(argon_mve_float_codegen OBJECT codegen/mve_float_ops.cpp)
+  target_link_libraries(argon_mve_float_codegen PRIVATE argon)
+  target_compile_options(argon_mve_float_codegen PRIVATE -O2)
+  add_test(NAME float_ops_use_mve
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_mve_float.sh ${ARGON_ARM_NONE_OBJDUMP} $<TARGET_OBJECTS:argon_mve_float_codegen>)
 endif()

@@ -65,6 +65,8 @@ class Vector {
 #else
   static constexpr bool mve_platform = false;  ///< Whether this is the MVE (Helium) platform.
 #endif
+  /// Float lanes on Helium, which go through MVE intrinsics where GCC mishandles the vector extensions.
+  static constexpr bool mve_float = mve_platform && lane_floating_point<scalar_type>;
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
@@ -442,8 +444,14 @@ class Vector {
 #endif
 
   /// Multiply two vectors and add a third vector
-  /// @details Equivalent to a + (b * c).
+  /// @details Equivalent to a + (b * c). Fused (one rounding) for floats on Helium, whose only float
+  /// multiply-accumulate is vfma; GCC never contracts the vector-extension form into it.
   ace argon_type MultiplyAdd(argon_type b, argon_type c) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::multiply_add_fused(vec_, b.vec_, c.vec_);
+    } else
+#endif
     if constexpr (extension_arithmetic) {
       return vec_ + b.vec_ * c.vec_;
     } else {
@@ -452,10 +460,19 @@ class Vector {
   }
 
   /// Multiply a vector by a scalar value and add a third vector
-  /// @details Equivalent to a + (b * c).
+  /// @details Equivalent to a + (b * c). Fused for floats on Helium (vfma).
   ace argon_type MultiplyAdd(argon_type b, scalar_type c) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::multiply_add_fused(vec_, b.vec_, c);
+    } else
+#endif
     if constexpr (extension_arithmetic) {
-      return vec_ + b.vec_ * c;
+      if constexpr (is_half_float_v<scalar_type>) {
+        return vec_ + b.vec_ * argon_type{c}.vec_;  // a half scalar promotes to float against the vector
+      } else {
+        return vec_ + b.vec_ * c;
+      }
     } else {
       return simd::multiply_add(vec_, b, c);
     }
@@ -491,10 +508,14 @@ class Vector {
 #endif
 
   /// Multiply two vectors and subtract from a third vector
-  /// @details Equivalent to a - (b * c).
+  /// @details Equivalent to a - (b * c). Fused for floats on Helium (vfms).
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ - b.vec_ * c.vec_;  // MVE has no vector multiply-subtract
+    if constexpr (mve_float) {
+      return simd::multiply_subtract_fused(vec_, b.vec_, c.vec_);
+    } else {
+      return vec_ - b.vec_ * c.vec_;  // MVE has no integer vector multiply-subtract
+    }
 #else
     if constexpr (extension_arithmetic) {
       return vec_ - b.vec_ * c.vec_;
@@ -505,13 +526,21 @@ class Vector {
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
-  /// @details Equivalent to a - (b * c).
+  /// @details Equivalent to a - (b * c). Fused for floats on Helium (vfms).
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ - b.vec_ * c;  // MVE has no vector multiply-subtract
+    if constexpr (mve_float) {
+      return simd::multiply_subtract_fused(vec_, b.vec_, simd::duplicate(c));  // MVE has no vfms by a scalar
+    } else {
+      return vec_ - b.vec_ * c;  // MVE has no integer vector multiply-subtract
+    }
 #else
     if constexpr (extension_arithmetic) {
-      return vec_ - b.vec_ * c;
+      if constexpr (is_half_float_v<scalar_type>) {
+        return vec_ - b.vec_ * argon_type{c}.vec_;  // a half scalar promotes to float against the vector
+      } else {
+        return vec_ - b.vec_ * c;
+      }
     } else {
       return simd::multiply_subtract(vec_, b, c);
     }
@@ -714,6 +743,13 @@ class Vector {
   /// Compare the lanes of two vectors, copying the larger of each lane to the result
   /// @details Equivalent to a > b ? a : b
   ace argon_type Max(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      // GCC scalarises vector-extension float ?: on MVE; vcmp + vpsel keeps a > b ? a : b (vmaxnm would not).
+      return simd::predicate_select(vec_, b.vec_,
+                                    helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_));
+    } else
+#endif
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ > b.vec_ ? vec_ : b.vec_;
     } else {
@@ -723,6 +759,12 @@ class Vector {
   /// Compare the lanes of two vectors, copying the smaller of each lane to the result
   /// @details Equivalent to a < b ? a : b
   ace argon_type Min(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::predicate_select(vec_, b.vec_,
+                                    helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_));
+    } else
+#endif
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ < b.vec_ ? vec_ : b.vec_;
     } else {

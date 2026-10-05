@@ -249,6 +249,12 @@ none reported upstream as of 2026-10-05; Argon works around all of them on every
    these intrinsics' memory modelling was backported to 16.2, but not this form. `PointerVector` uses the
    write-back instructions with clang and a gather (or scatter) plus a `vadd` with GCC.
 
+GCC 16.2 also mishandles generic vector-extension float code on MVE without `-ffast-math` (as on AArch32 NEON):
+it scalarises float `?:` to VFP compares (`vcmpe` + `vmrs APSR_nzcv`, per lane) and never contracts `a + b * c`
+into `vfma`, even with `-ffp-contract=fast`. Float `Max`/`Min` therefore use `vcmp` + `vpsel` on MVE (keeping
+`a > b ? a : b`, which `vmaxnm` would not), and float `MultiplyAdd`/`MultiplySubtract` use `vfma`/`vfms`: fused,
+Helium's only float multiply-accumulate. CTest `float_ops_use_mve` (M55) checks both.
+
 ## Open questions
 
 1. ~~**Breaking change on NEON.**~~ Resolved: comparisons return `Predicate` everywhere, with a deprecated implicit

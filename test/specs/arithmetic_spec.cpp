@@ -147,6 +147,23 @@ auto describe_multiply_add = describe("MultiplyAdd", ${
     for (size_t i = 0; i < Argon<float>::lanes; ++i)
       expect(arr[i]).to_equal(float(1 + i) * float(2 + i));
   });
+
+#ifdef ARGON_PLATFORM_MVE
+  // b * c = 1 + 2^-11 + 2^-24 is a tie that rounds to 1 + 2^-11 on its own, so a + b * c is 0 unfused and
+  // 2^-24 when fused. Helium's only float multiply-accumulate is fused (vfma/vfms).
+  it("rounds once on Helium (vfma)", _{
+    const float b = 1.0f + 0x1p-12f, a = -(1.0f + 0x1p-11f);
+    expect(Argon<float>{a}.MultiplyAdd(Argon<float>{b}, Argon<float>{b}).to_array()[0]).to_equal(0x1p-24f);
+    expect(Argon<float>{a}.MultiplyAdd(Argon<float>{b}, b).to_array()[1]).to_equal(0x1p-24f);
+    expect(Argon<float>{a}.MultiplyAdd(b, Argon<float>{b}).to_array()[2]).to_equal(0x1p-24f);
+  });
+
+  it("multiply-subtract rounds once on Helium (vfms)", _{
+    const float b = 1.0f + 0x1p-12f, a = 1.0f + 0x1p-11f;
+    expect(Argon<float>{a}.MultiplySubtract(Argon<float>{b}, Argon<float>{b}).to_array()[0]).to_equal(-0x1p-24f);
+    expect(Argon<float>{a}.MultiplySubtract(Argon<float>{b}, b).to_array()[3]).to_equal(-0x1p-24f);
+  });
+#endif
 });
 
 // ── Negate ─────────────────────────────────────────────────────────────────

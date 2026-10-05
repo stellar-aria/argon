@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <cstdlib>
+#include <bit>
 #include <limits>
 
 // clang-format off
@@ -77,7 +78,39 @@ auto describe_abs = describe("ReduceMaxAbs / ReduceMinAbs / MaxAbs / MinAbs", ${
   });
 });
 
+// Float Max/Min are a > b ? a : b and a < b ? a : b lane by lane on every platform: a NaN in either operand
+// gives b, and of two zeros b wins. (vmaxnm/vminnm would return the number instead of the NaN.)
+static std::array<uint32_t, 4> bits(Argon<float> v) {
+  auto f = v.to_array();
+  return {std::bit_cast<uint32_t>(f[0]), std::bit_cast<uint32_t>(f[1]), std::bit_cast<uint32_t>(f[2]),
+          std::bit_cast<uint32_t>(f[3])};
+}
+
+static void check_float_minmax(auto& self, std::array<float, 4> a, std::array<float, 4> b) {
+  std::array<uint32_t, 4> max{}, min{};
+  for (size_t i = 0; i < 4; ++i) {
+    max[i] = std::bit_cast<uint32_t>(a[i] > b[i] ? a[i] : b[i]);
+    min[i] = std::bit_cast<uint32_t>(a[i] < b[i] ? a[i] : b[i]);
+  }
+  const auto va = Argon<float>::Load(a.data()), vb = Argon<float>::Load(b.data());
+  expect(bits(va.Max(vb))).to_equal(max);
+  expect(bits(va.Min(vb))).to_equal(min);
+}
+
+auto describe_float_minmax = describe("float Max / Min", ${
+  constexpr float nan = std::numeric_limits<float>::quiet_NaN();
+  constexpr float inf = std::numeric_limits<float>::infinity();
+  it("picks the larger and smaller lanes", _{ check_float_minmax(self, {1, -2, inf, -inf}, {-1, 3, 0, 5}); });
+  it("gives b where either lane is NaN", _{ check_float_minmax(self, {nan, 1, nan, -inf}, {1, nan, nan, nan}); });
+  it("gives b for two zeros", _{ check_float_minmax(self, {0.0f, -0.0f, 0.0f, -0.0f}, {-0.0f, 0.0f, 0.0f, -0.0f}); });
+  it("takes a scalar operand", _{
+    const auto v = Argon<float>{-3, 0.5f, 2, nan};
+    expect(bits(v.Max(-1.f).Min(1.f))).to_equal(bits(Argon<float>{-1, 0.5f, 1, -1}));  // NaN > -1 is false
+  });
+});
+
 CPPSPEC_MAIN(
   describe_reduce,
-  describe_abs
+  describe_abs,
+  describe_float_minmax
 );
