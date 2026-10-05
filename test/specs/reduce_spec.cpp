@@ -61,6 +61,16 @@ auto describe_reduce_max_float = describe("ReduceMax float", ${
     auto v = Argon<float>::Load(data.data());
     expect(v.ReduceMax()).to_equal(7.0f);
   });
+
+  it("finds the maximum and minimum in every lane", _{
+    for (size_t at = 0; at < 4; ++at) {
+      std::array<float, 4> data = {1.5f, -2.0f, 0.25f, 3.0f};
+      data[at] = 100.0f;
+      expect(Argon<float>::Load(data.data()).ReduceMax()).to_equal(100.0f);
+      data[at] = -100.0f;
+      expect(Argon<float>::Load(data.data()).ReduceMin()).to_equal(-100.0f);
+    }
+  });
 });
 
 // On the host (non-AArch64) path, ReduceAdd/ReduceMax fold via Reduce(), whose

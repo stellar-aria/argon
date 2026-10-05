@@ -77,6 +77,16 @@ auto describe_arithmetic = describe("Argon<float16_t> arithmetic", ${
     expect(floats(a.Negate())).to_equal(std::array<float, 8>{1, -2, 3, -4, 5, -6, 7, -8});
   });
 
+  it("finds the maximum and minimum in every lane", _{
+    for (size_t at = 0; at < 8; ++at) {
+      std::array<float, 8> values = {1.5f, -2, 0.25f, 3, -0.5f, 2, 1, -1};
+      values[at] = 100;
+      expect(static_cast<float>(halves(values).ReduceMax())).to_equal(100.0f);
+      values[at] = -100;
+      expect(static_cast<float>(halves(values).ReduceMin())).to_equal(-100.0f);
+    }
+  });
+
   it("sums the lanes", _{
     expect(static_cast<float>(halves({1, 2, 3, 4, 5, 6, 7, 8}).ReduceAdd())).to_equal(36.0f);
   });

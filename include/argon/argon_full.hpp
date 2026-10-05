@@ -996,6 +996,23 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   static constexpr bool mve_across_add = std::is_integral_v<ScalarType> && sizeof(ScalarType) < 8;
 #endif
 
+#ifdef ARGON_PLATFORM_MVE
+  /// @brief Fold float lanes pairwise, (0 op 1) op (2 op 3) and so on, without Reduce's doubleword swap: MVE has no
+  /// vext, so GCC does that swap through the stack. Neighbouring lanes are combined with vrev, and the two halves'
+  /// results as scalars. `op` must work on both vectors and scalars.
+  template <typename OpType>
+  ScalarType FoldFloatPairs(OpType op) const {
+    if constexpr (lanes == 4) {
+      Argon pairs = op(*this, this->Reverse64bit());  // lane 2k: (2k) op (2k + 1)
+      return static_cast<ScalarType>(op(pairs[0], pairs[2]));
+    } else {
+      Argon pairs = op(*this, this->Reverse32bit());  // lane 2k: (2k) op (2k + 1)
+      Argon quads = op(pairs, pairs.Reverse64bit());  // lane 4k: lanes 4k .. 4k + 3
+      return static_cast<ScalarType>(op(quads[0], quads[4]));
+    }
+  }
+#endif
+
   /// @brief Fold all lanes into a single scalar using a commutative binary operation.
   /// @tparam CommutableOpType A callable `(Argon, Argon) -> Argon` (e.g., addition, max).
   /// @param op The commutative binary operation.
@@ -1025,15 +1042,9 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #elifdef ARGON_PLATFORM_MVE
     if constexpr (mve_across_add) {
       return static_cast<ScalarType>(mve::reduce_add(this->vec_));  // vaddv
-    } else if constexpr (std::is_same_v<ScalarType, float>) {
-      // MVE has no float vaddv, and no vext for Reduce's doubleword swap (GCC goes through the stack): add pairs
-      // with vrev64, then the two halves' sums, ((0 + 1) + (2 + 3)) as AArch64's faddp does.
-      Argon pairs = *this + this->Reverse64bit();
-      return pairs[0] + pairs[2];
-    } else if constexpr (argon::is_half_float_v<ScalarType>) {
-      Argon pairs = *this + this->Reverse32bit();  // lane 4k: (4k) + (4k + 1)
-      Argon quads = pairs + pairs.Reverse64bit();  // lane 4k: the sum of lanes 4k .. 4k + 3
-      return static_cast<ScalarType>(quads[0] + quads[4]);
+    } else if constexpr (argon::lane_floating_point<ScalarType>) {
+      // MVE has no float vaddv: ((0 + 1) + (2 + 3)), as AArch64's faddp does.
+      return FoldFloatPairs([](auto a, auto b) { return a + b; });
     }
 #endif
     return this->Reduce([](auto a, auto b) { return a + b; });
@@ -1060,6 +1071,15 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
       return mve::maximum_across_vector(std::numeric_limits<ScalarType>::lowest(), this->vec_);  // vmaxv
+    } else if constexpr (argon::lane_floating_point<ScalarType>) {
+      // vmaxnmv would skip NaNs; keep Max's a > b ? a : b
+      return FoldFloatPairs([](auto a, auto b) {
+        if constexpr (requires { a.Max(b); }) {
+          return a.Max(b);
+        } else {
+          return a > b ? a : b;
+        }
+      });
     }
 #endif
     return this->Reduce([](auto a, auto b) { return a.Max(b); });
@@ -1074,6 +1094,15 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
       return mve::minimum_across_vector(std::numeric_limits<ScalarType>::max(), this->vec_);  // vminv
+    } else if constexpr (argon::lane_floating_point<ScalarType>) {
+      // vminnmv would skip NaNs; keep Min's a < b ? a : b
+      return FoldFloatPairs([](auto a, auto b) {
+        if constexpr (requires { a.Min(b); }) {
+          return a.Min(b);
+        } else {
+          return a < b ? a : b;
+        }
+      });
     }
 #endif
     auto arr = this->to_array();
