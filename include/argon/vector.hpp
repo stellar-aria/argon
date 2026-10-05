@@ -67,12 +67,12 @@ class Vector {
 #endif
   /// Float lanes on Helium, which go through MVE intrinsics where GCC mishandles the vector extensions.
   static constexpr bool mve_float = mve_platform && lane_floating_point<scalar_type>;
-#if ARGON_HAS_MAXNM
-  /// Whether vmaxnm/vminnm exist for these lanes: every float lane on Helium and Armv8 NEON, half lanes on NEON
-  /// only with FP16 vector arithmetic.
-  static constexpr bool native_maxnm =
-      lane_floating_point<scalar_type> && (mve_platform || !is_half_float_v<scalar_type> || ARGON_NEON_FP16_VECTOR);
-#endif
+  /// Whether MaxNumber/MinNumber are single instructions (vmaxnm/vminnm) for these lanes: every float lane on
+  /// Helium and Armv8 NEON, half lanes on NEON only with FP16 vector arithmetic. False on Armv7 NEON and on x86
+  /// (SIMDe), where they are emulated with compares and selects, and Max/Min are the cheap ones (x86's maxps is
+  /// exactly Max). For inputs that are never NaN, pick with `if constexpr (native_maxnm)`; see MaxNumber.
+  static constexpr bool native_maxnm = ARGON_HAS_MAXNM && lane_floating_point<scalar_type> &&
+                                       (mve_platform || !is_half_float_v<scalar_type> || ARGON_NEON_FP16_VECTOR);
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
@@ -747,7 +747,13 @@ class Vector {
   }
 
   /// Compare the lanes of two vectors, copying the larger of each lane to the result
-  /// @details Equivalent to a > b ? a : b
+  /// @details Equivalent to a > b ? a : b: a NaN in either lane gives b. One instruction on NEON and x86 (maxps);
+  /// on Helium a compare and a select. For floats that are never NaN, MaxNumber gives the same results and is one
+  /// instruction (vmaxnm) where `native_maxnm` is true, so a clamp can pick the cheaper per platform:
+  /// @code
+  /// if constexpr (Argon<float>::native_maxnm) x = x.MaxNumber(lo).MinNumber(hi);
+  /// else x = x.Max(lo).Min(hi);
+  /// @endcode
   ace argon_type Max(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (mve_float) {
@@ -763,7 +769,9 @@ class Vector {
     }
   }
   /// Compare the lanes of two vectors, copying the smaller of each lane to the result
-  /// @details Equivalent to a < b ? a : b
+  /// @details Equivalent to a < b ? a : b: a NaN in either lane gives b. One instruction on NEON and x86 (minps);
+  /// on Helium a compare and a select. For floats that are never NaN, MinNumber gives the same results and is one
+  /// instruction (vminnm) where `native_maxnm` is true; see Max for the clamp idiom.
   ace argon_type Min(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (mve_float) {
@@ -779,9 +787,14 @@ class Vector {
   }
 
   /// The larger of each lane by IEEE 754 maxNum, as Arm's vmaxnm: a quiet NaN in one operand gives the other
-  /// (NaN only where both are), and +0 is larger than -0. Max is a > b ? a : b, which passes a NaN in b through;
-  /// MaxNumber is for when NaNs should be ignored, or can't occur and one instruction (vmaxnm) beats Max's
-  /// compare and select. Native on Helium and Armv8 NEON; elsewhere a few compares and selects.
+  /// (NaN only where both are), and +0 is larger than -0. Max is a > b ? a : b, which passes a NaN in b through.
+  /// @details One instruction (vmaxnm) where `native_maxnm` is true: Helium and Armv8 NEON. Elsewhere (Armv7
+  /// NEON, x86 via SIMDe) it is emulated with several compares and selects, so use it there only when NaNs must
+  /// be ignored. For floats that are never NaN, Max and MaxNumber agree; choose the cheaper per platform:
+  /// @code
+  /// if constexpr (Argon<float>::native_maxnm) x = x.MaxNumber(lo).MinNumber(hi);
+  /// else x = x.Max(lo).Min(hi);
+  /// @endcode
   ace argon_type MaxNumber(argon_type b) const
     requires lane_floating_point<scalar_type>
   {
@@ -796,7 +809,9 @@ class Vector {
   }
 
   /// The smaller of each lane by IEEE 754 minNum, as Arm's vminnm: a quiet NaN in one operand gives the other
-  /// (NaN only where both are), and -0 is smaller than +0. See MaxNumber.
+  /// (NaN only where both are), and -0 is smaller than +0. Min is a < b ? a : b, which passes a NaN in b through.
+  /// @details One instruction (vminnm) where `native_maxnm` is true, emulated elsewhere; see MaxNumber for when
+  /// to use it and the clamp idiom.
   ace argon_type MinNumber(argon_type b) const
     requires lane_floating_point<scalar_type>
   {
