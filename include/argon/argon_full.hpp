@@ -523,6 +523,75 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     return {DotProduct<DotForm::Subtract>(b), DotProduct<DotForm::Exchange>(b)};
   }
 
+  // ── Circular-buffer indices ───────────────────────────────────────────────────────────────────────────────
+  // Index vectors for walking a ring buffer (a delay line, a wavetable), ready to feed a gather. MVE generates each
+  // in one instruction (viwdup / vdwdup); NEON replays the same lane-by-lane rule.
+
+  /// @brief The next `lanes` indices of a forward walk through a circular buffer of `size` elements.
+  /// @details Each lane takes `offset`, then `offset` advances by `step`, wrapping to 0 when it reaches `size`.
+  /// `offset` is left at the index after the last lane. As with the instruction, `offset` and `size` should be
+  /// multiples of `step` with `offset < size`; otherwise the index never equals `size`, and never wraps.
+  /// MVE: viwdup.
+  /// @tparam step 1, 2, 4 or 8.
+  template <int step = 1, typename S = ScalarType>
+    requires(std::is_unsigned_v<S> && sizeof(S) <= 4 && (step == 1 || step == 2 || step == 4 || step == 8))
+  ace static Argon<S> CircularIndices(uint32_t& offset, uint32_t size) {
+#ifdef ARGON_PLATFORM_MVE
+    // Write back through a local: GCC 16 at -O0 rejects the _wb intrinsics given any other pointer
+    // ("unrecognizable insn"), including through a wrapper.
+    uint32_t next = offset;
+    typename Argon<S>::vector_type indices;
+    if constexpr (sizeof(S) == 1) {
+      indices = viwdupq_wb_u8(&next, size, step);
+    } else if constexpr (sizeof(S) == 2) {
+      indices = viwdupq_wb_u16(&next, size, step);
+    } else {
+      indices = viwdupq_wb_u32(&next, size, step);
+    }
+    offset = next;
+    return indices;
+#else
+    std::array<S, lanes> out{};
+    for (auto& lane : out) {
+      lane = static_cast<S>(offset);
+      offset += step;
+      if (offset == size) offset = 0;
+    }
+    return Argon<S>::Load(out.data());
+#endif
+  }
+
+  /// @brief The next `lanes` indices of a backward walk through a circular buffer of `size` elements.
+  /// @details Each lane takes `offset`; then `offset` wraps to `size` if it is 0, and retreats by `step`. `offset`
+  /// is left at the index after the last lane. `offset` and `size` should be multiples of `step` with
+  /// `offset < size`. MVE: vdwdup.
+  /// @tparam step 1, 2, 4 or 8.
+  template <int step = 1, typename S = ScalarType>
+    requires(std::is_unsigned_v<S> && sizeof(S) <= 4 && (step == 1 || step == 2 || step == 4 || step == 8))
+  ace static Argon<S> CircularIndicesDown(uint32_t& offset, uint32_t size) {
+#ifdef ARGON_PLATFORM_MVE
+    uint32_t next = offset;  // see CircularIndices
+    typename Argon<S>::vector_type indices;
+    if constexpr (sizeof(S) == 1) {
+      indices = vdwdupq_wb_u8(&next, size, step);
+    } else if constexpr (sizeof(S) == 2) {
+      indices = vdwdupq_wb_u16(&next, size, step);
+    } else {
+      indices = vdwdupq_wb_u32(&next, size, step);
+    }
+    offset = next;
+    return indices;
+#else
+    std::array<S, lanes> out{};
+    for (auto& lane : out) {
+      lane = static_cast<S>(offset);
+      if (offset == 0) offset = size;
+      offset -= step;
+    }
+    return Argon<S>::Load(out.data());
+#endif
+  }
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
