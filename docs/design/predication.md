@@ -179,9 +179,10 @@ range-based code. `test/codegen/tail_loops.cpp` (CTest `tail_loops_use_dlstp`, M
 
 Zeroed inactive lanes are safe for sums but not for min/max/product reductions, so reductions take `active()`.
 
-An interleaved `for_each` would use `vld2`/`vld4` for whole groups and predicated gathers for the last one (a `dls`/
-`le` loop rather than `dlstp`, since structured loads can't be predicated), or predicated gathers throughout for
-stride 3 on MVE, which has no `vld3`. Data whose channels all get the same treatment can use `for_each` as flat data.
+`vectorize::for_each_interleaved<T, Stride>` uses `vld2`/`vld4` for whole groups and predicated gathers for the last
+one (a `dls`/`le` loop rather than `dlstp`, since structured loads can't be predicated), and predicated gathers
+throughout for stride 3 on MVE, which has no `vld3` — that one becomes `dlstp`/`letp` (for 8-bit lanes, with clang
+only). Data whose channels all get the same treatment can use `for_each` as flat data.
 
 ### 5. Predicated arithmetic and compares
 

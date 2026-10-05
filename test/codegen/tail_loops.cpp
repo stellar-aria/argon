@@ -77,4 +77,17 @@ void tail_for_each_widen_int16(int16_t* out, const int16_t* in, ptrdiff_t n) {
   argon::vectorize::for_each<int32_t>(n, [&](auto s) { s.StoreNarrow(out, (s.LoadWiden(in) * 3) >> 2); });
 }
 
+// ── vectorize::for_each_interleaved ──
+// Stride 3 on MVE (no vld3) gathers every group under a predicate, so it can tail-predicate. Strides 2 and 4 use
+// vld2/vld4, which can't be predicated: a dls/le loop by design, so they aren't checked here. GCC 16 doesn't form a
+// hardware loop for 8-bit stride 3 (clang does), so only the float case is checked.
+
+void tail_for_each_interleaved_rgb_float(float* rgb, ptrdiff_t pixels) {
+  argon::vectorize::for_each_interleaved<float, 3>(pixels, [&](auto s) {
+    auto c = s.Load(rgb);
+    c[0] = c[0] * 0.5f;
+    s.Store(rgb, c);
+  });
+}
+
 }  // extern "C"

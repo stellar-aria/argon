@@ -140,6 +140,25 @@ counts the remaining elements and predicates the last vector, with no compare-an
 that way. GCC tail-predicates float loops only with `-fno-trapping-math` (or `-ffast-math`), because the inactive
 lanes compute too; without it the loop is still predicated, just with an explicit loop counter.
 
+### Interleaved data (`vectorize::for_each_interleaved`)
+
+`for_each_interleaved<T, Stride>(frames, body)` does the same for frames of 2–4 interleaved elements (stereo
+samples, RGB pixels): `step.Load(ptr)` returns one vector per channel and `step.Store(ptr, channels)` interleaves them
+back.
+
+```cpp
+// swap the channels of interleaved stereo
+argon::vectorize::for_each_interleaved<int16_t, 2>(frames, [&](auto step) {
+  auto [left, right] = step.Load(stereo);
+  step.Store(stereo, {right, left});
+});
+```
+
+Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; the last, partial group gathers and scatters each
+channel under a predicate. On Helium the structured loads can't be predicated, so strides 2 and 4 make a `dls`/`le`
+loop rather than `dlstp`/`letp`. Stride 3 has no `vld3` on MVE, so there every group is gathered under a predicate,
+which can tail-predicate: float frames do with both compilers, 8-bit ones with clang only.
+
 ### `for_each` or `with_tail()`?
 
 Both handle every element, with the same results. Prefer `for_each` for hot loops: its loop is the tightest on every

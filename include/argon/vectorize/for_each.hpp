@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <type_traits>
+#include <array>
 #include "argon/argon_full.hpp"
+#include "argon/store.hpp"
 
 /// @file for_each.hpp
 /// @brief A loop over `n` elements a vector at a time, final partial vector included, shaped so that Helium
@@ -123,6 +125,123 @@ template <typename ScalarType, typename Body>
     body(Step<ScalarType, false>{i, n - i});
   }
 #endif
+}
+
+/// @brief One step of vectorize::for_each_interleaved: the frames [index(), index() + count()), each of `Stride`
+/// interleaved elements (a stereo pair, an RGB pixel), loaded as one vector per channel.
+/// @tparam full Whether every lane (frame) is in range: full steps use the structured loads and stores (vld2-vld4,
+/// vst2-vst4); partial ones gather and scatter each channel under a predicate, since those can't be predicated.
+template <typename ScalarType, size_t Stride, bool full>
+class InterleavedStep {
+ public:
+  using argon_type = Argon<ScalarType>;                          ///< The vector type of one channel.
+  using frame_type = std::array<argon_type, Stride>;             ///< One vector per channel.
+  using predicate_type = typename argon_type::argon_bool_type;  ///< The predicate type of active().
+  static constexpr std::ptrdiff_t lanes = argon_type::lanes;    ///< Frames per step.
+
+  [[gnu::always_inline]] InterleavedStep(std::ptrdiff_t index, std::ptrdiff_t remaining)
+      : index_{index}, remaining_{remaining} {}
+
+  /// @brief The index of this step's first frame.
+  [[gnu::always_inline]] std::ptrdiff_t index() const { return index_; }
+
+  /// @brief The number of this step's frames inside the range.
+  [[gnu::always_inline]] std::ptrdiff_t count() const {
+    if constexpr (full) {
+      return lanes;
+    } else {
+      return std::min(remaining_, lanes);
+    }
+  }
+
+  /// @brief The lanes (frames) inside the range.
+  [[gnu::always_inline]] predicate_type active() const {
+    if constexpr (full) {
+      return predicate_type::True();
+    } else {
+      return predicate_type::FirstN(static_cast<size_t>(remaining_));
+    }
+  }
+
+  /// @brief Load this step's frames of the interleaved array at `base`, one vector per channel; lanes past the end
+  /// of the range are zero and not read.
+  [[gnu::always_inline]] frame_type Load(const ScalarType* base) const {
+    const ScalarType* ptr = base + index_ * std::ptrdiff_t{Stride};
+    if constexpr (full) {
+      return argon_type::template LoadInterleaved<Stride>(ptr);
+    } else {
+      const auto offsets = Offsets();
+      const auto mask = active();
+      frame_type out;
+      for (size_t channel = 0; channel < Stride; ++channel) {
+        out[channel] = argon_type::LoadGatherOffsetIndex(ptr + channel, offsets, mask);
+      }
+      return out;
+    }
+  }
+
+  /// @brief Store one vector per channel, interleaved, to this step's frames of the array at `base`; frames past the
+  /// end of the range are not written.
+  [[gnu::always_inline]] void Store(ScalarType* base, const frame_type& channels) const {
+    ScalarType* ptr = base + index_ * std::ptrdiff_t{Stride};
+    if constexpr (full) {
+      argon::store_interleaved(ptr, channels);
+    } else {
+      const auto offsets = Offsets();
+      const auto mask = active();
+      for (size_t channel = 0; channel < Stride; ++channel) {
+        channels[channel].StoreScatterOffsetIndex(ptr + channel, offsets, mask);
+      }
+    }
+  }
+
+ private:
+  /// Element offsets {0, Stride, 2*Stride, ...} of each frame's first element.
+  [[gnu::always_inline]] static typename argon_type::offset_type Offsets() {
+    using offset_type = typename argon_type::offset_type;
+    return offset_type::Iota(0) * static_cast<typename offset_type::scalar_type>(Stride);
+  }
+
+  std::ptrdiff_t index_;
+  std::ptrdiff_t remaining_;
+};
+
+/// @brief Call `body` with an InterleavedStep for each vector's worth of the `frames` frames of `Stride`
+/// interleaved elements, the final partial group included.
+/// @tparam ScalarType The element type. @tparam Stride 2, 3 or 4 elements per frame.
+/// @param body A callable taking an InterleavedStep by value, generic in it (`[&](auto step) { ... }`).
+/// @details Whole groups use vld2-vld4 / vst2-vst4 in a low-overhead loop, and the last, partial group gathers and
+/// scatters each channel under a predicate (the structured loads can't be predicated, so this is a dls/le loop
+/// rather than dlstp/letp). On MVE, which has no vld3, stride 3 gathers every group under a predicate instead, which
+/// can become a tail-predicated dlstp/letp loop. If every channel gets the same treatment, `for_each` over the
+/// interleaved data as flat elements is simpler and faster.
+///
+/// @code
+/// // swap the channels of interleaved stereo
+/// argon::vectorize::for_each_interleaved<int16_t, 2>(frames, [&](auto step) {
+///   auto [left, right] = step.Load(stereo);
+///   step.Store(stereo, {right, left});
+/// });
+/// @endcode
+template <typename ScalarType, size_t Stride, typename Body>
+  requires(Stride >= 2 && Stride <= 4)
+[[gnu::always_inline]] inline void for_each_interleaved(std::ptrdiff_t frames, Body&& body) {
+  constexpr std::ptrdiff_t lanes = Argon<ScalarType>::lanes;
+#ifdef ARGON_PLATFORM_MVE
+  if constexpr (Stride == 3) {
+    for (std::ptrdiff_t i = 0; i < frames; i += lanes) {
+      body(InterleavedStep<ScalarType, Stride, false>{i, frames - i});
+    }
+    return;
+  }
+#endif
+  std::ptrdiff_t i = 0;
+  for (; i + lanes <= frames; i += lanes) {
+    body(InterleavedStep<ScalarType, Stride, true>{i, lanes});
+  }
+  if (i < frames) {
+    body(InterleavedStep<ScalarType, Stride, false>{i, frames - i});
+  }
 }
 
 }  // namespace argon::vectorize
