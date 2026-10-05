@@ -354,15 +354,31 @@ class Vector {
   ace const_lane_type<lanes - 1> LastLane() { return vec_; }
 
   /// Shift the elements of the vector to the right by a specified number of bits.
-  ace argon_type ShiftRight(const int i) const { return simd::shift_right(vec_, i); }
+  /// @details Arithmetic for signed lanes, logical for unsigned ones, as a >> i. Without the compiler's vector
+  /// extensions (MSVC) it is vshl by -i: NEON's shift-by-immediate needs a constant.
+  ace argon_type ShiftRight(const int i) const {
+    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+      return vec_ >> i;
+    } else {
+      return ShiftByVector(-i);
+    }
+  }
 
   /// Shift the elements of the vector to the left by a specified number of bits.
-  ace argon_type ShiftLeft(const int i) const { return simd::shift_left(vec_, i); }
+  ace argon_type ShiftLeft(const int i) const {
+    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+      return vec_ << i;
+    } else {
+      return ShiftByVector(i);
+    }
+  }
 
   /// Bitwise negate the vector and return the result.
   ace argon_type Negate() const {
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return -vec_;
+    } else if constexpr (std::is_unsigned_v<scalar_type>) {
+      return argon_type{scalar_type{0}}.Subtract(argon_type{vec_});  // NEON has no unsigned vneg: 0 - a wraps
     } else {
       return simd::negate(vec_);
     }
@@ -424,6 +440,12 @@ class Vector {
   ace argon_type Multiply(argon_type b) const {
     if constexpr (extension_arithmetic) {
       return vec_ * b.vec_;
+    } else if constexpr (std::is_integral_v<scalar_type> && sizeof(scalar_type) == 8) {
+      // NEON has no 64-bit lane multiply: lane by lane.
+      auto x = argon_type{vec_}.to_array();
+      const auto y = b.to_array();
+      for (size_t i = 0; i < x.size(); ++i) x[i] *= y[i];
+      return argon_type::Load(x.data());
     } else {
       return simd::multiply(vec_, b);
     }
@@ -764,6 +786,9 @@ class Vector {
 #endif
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ > b.vec_ ? vec_ : b.vec_;
+    } else if constexpr (lane_floating_point<scalar_type>) {
+      // vmax/vmin return NaN for a NaN in either lane; keep a > b ? a : b.
+      return (argon_type{vec_} > b).Select(argon_type{vec_}, b);
     } else {
       return simd::max(vec_, b);
     }
@@ -781,6 +806,9 @@ class Vector {
 #endif
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ < b.vec_ ? vec_ : b.vec_;
+    } else if constexpr (lane_floating_point<scalar_type>) {
+      // vmax/vmin return NaN for a NaN in either lane; keep a < b ? a : b.
+      return (argon_type{vec_} < b).Select(argon_type{vec_}, b);
     } else {
       return simd::min(vec_, b);
     }
@@ -918,6 +946,15 @@ class Vector {
       helpers::ArgonFor_t<simd::make_signed_t<VectorType>> b{n};
       return simd::shift_left(vec_, b.vec_);
     }
+  }
+
+  /// vshl by `count` in every lane: left for positive counts, right (arithmetic or logical) for negative ones.
+  ace argon_type ShiftByVector(int count) const
+    requires std::is_integral_v<scalar_type>
+  {
+    using signed_scalar = std::make_signed_t<scalar_type>;
+    const helpers::ArgonFor_t<simd::make_signed_t<VectorType>> b{static_cast<signed_scalar>(count)};
+    return simd::shift_left(vec_, b.vec());
   }
 
   /// Shift the elements of the vector to the left by a specified number of bits.
