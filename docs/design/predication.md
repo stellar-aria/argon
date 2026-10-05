@@ -148,6 +148,10 @@ These are the operations that `Select` cannot express. A blended load still faul
 | `v.ReduceAdd(Predicate p)`                     | `vaddvq_p`                   | `p.Select(v, 0).ReduceAdd()`          |
 | `LoadGatherOffset{Bytes,Index}(base, off, p)`  | `vldr*q_gather_offset_z`     | lane-by-lane                          |
 | `StoreScatterOffset{Bytes,Index}(base, off, p)`| `vstr*q_scatter_offset_p`    | lane-by-lane                          |
+| `Argon<W>::LoadWiden(const N*, p?)`            | `vldrbq` / `vldrhq` (`_z`)    | `vld1` + `vmovl` (2x), lane by lane   |
+| `v.StoreNarrow(N*, p?)`                        | `vstrbq` / `vstrhq` (`_p`)    | `vmovn` + `vst1` (2x), lane by lane   |
+| `LoadGatherOffset{Bytes,Index}Widen(N*, off, p?)` | `vldr{b,h}q_gather_*`     | lane-by-lane                          |
+| `StoreScatterOffset{Bytes,Index}Narrow(N*, off, p?)` | `vstr{b,h}q_scatter_*` | lane-by-lane                          |
 
 The NEON fallbacks are correct but slow by design. They exist so portable code compiles everywhere, not to be the
 NEON fast path.

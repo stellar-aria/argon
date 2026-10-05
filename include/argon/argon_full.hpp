@@ -28,6 +28,13 @@
 /// narrowing, widening multiplies, cross-half operations, reductions, and (optionally) AES acceleration.
 /// Use `ArgonHalf<ScalarType>` for the 64-bit sibling.
 namespace argon {
+/// @brief Whether lanes of integer type W can be loaded from (and stored as) the narrower integer type N, as MVE's
+/// widening loads and narrowing stores allow: 8-bit into 16- or 32-bit lanes, 16-bit into 32-bit lanes.
+template <typename N, typename W>
+concept widenable_from = std::is_integral_v<N> && std::is_integral_v<W> && sizeof(N) < sizeof(W) && sizeof(W) <= 4;
+}  // namespace argon
+
+namespace argon {
 /// @brief The forms of Argon::DotProduct and friends. See Argon::DotProduct.
 enum class DotForm { Plain, Exchange, Subtract, SubtractExchange };
 }  // namespace argon
@@ -597,6 +604,112 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #endif
   }
 
+  // ── Widening loads and narrowing stores ─────────────────────────────────────────────────────────────────
+  // Narrow data in memory, wide lanes in registers: int16 samples straight into int32 lanes and back, with the
+  // conversion folded into the memory access. Loads extend by the source type's signedness (so uint8 data loads
+  // into int32 lanes as 0..255); stores keep the low bits of each lane. MVE: one vldrb/vldrh / vstrb/vstrh (also as
+  // gathers and scatters); NEON: vld1 + vmovl / vmovn + vst1 for a 2x ratio, lane by lane otherwise.
+
+  /// @brief Load `lanes` elements of the narrower integer type N and extend each to a lane. MVE: vldrb / vldrh.
+  template <typename N, typename S = ScalarType>
+    requires argon::widenable_from<N, S>
+  ace static Argon<S> LoadWiden(const N* ptr) {
+#ifdef ARGON_PLATFORM_MVE
+    return Argon<S>{WidenMve<N, S>(ptr)};
+#else
+    if constexpr (sizeof(S) == 2 * sizeof(N)) {
+      // vld1 of the lanes' worth of narrow elements (64 bits), then vmovl
+      const auto wide = neon::move_long(neon::load1<neon::Vec64_t<N>>(ptr));
+      return Argon<std::conditional_t<std::is_signed_v<N>, std::make_signed_t<S>, std::make_unsigned_t<S>>>{wide}
+          .template As<S>();
+    } else {
+      std::array<S, lanes> out{};
+      for (size_t i = 0; i < lanes; ++i) out[i] = static_cast<S>(ptr[i]);
+      return Argon<S>::Load(out.data());
+    }
+#endif
+  }
+
+  /// @brief Load and extend the active lanes; inactive lanes are zero and their memory is not read. MVE: vldrb/vldrh
+  /// with a predicate.
+  template <typename N, typename S = ScalarType>
+    requires argon::widenable_from<N, S>
+  ace static Argon<S> LoadWiden(const N* ptr, typename Argon<S>::argon_bool_type active) {
+#ifdef ARGON_PLATFORM_MVE
+    return Argon<S>{WidenMve<N, S>(ptr, active.native())};
+#else
+    std::array<S, lanes> out{};
+    for (size_t i = 0; i < lanes; ++i) {
+      if (active.Active(i)) out[i] = static_cast<S>(ptr[i]);
+    }
+    return Argon<S>::Load(out.data());
+#endif
+  }
+
+  /// @brief Store the low bits of each lane as the narrower integer type N. MVE: vstrb / vstrh.
+  template <typename N, typename S = ScalarType>
+    requires argon::widenable_from<N, S>
+  [[gnu::always_inline]] inline void StoreNarrow(N* ptr) const {
+#ifdef ARGON_PLATFORM_MVE
+    NarrowMve<N>(ptr);
+#else
+    if constexpr (sizeof(S) == 2 * sizeof(N)) {
+      // vmovn, then vst1 of the 64-bit result
+      using SameSign = std::conditional_t<std::is_signed_v<N>, std::make_signed_t<S>, std::make_unsigned_t<S>>;
+      neon::store1(ptr, neon::move_narrow(this->template As<SameSign>().vec()));
+    } else {
+      const auto values = this->to_array();
+      for (size_t i = 0; i < lanes; ++i) ptr[i] = static_cast<N>(values[i]);
+    }
+#endif
+  }
+
+  /// @brief Store the low bits of the active lanes as N; memory for inactive lanes is not written.
+  template <typename N, typename S = ScalarType>
+    requires argon::widenable_from<N, S>
+  [[gnu::always_inline]] inline void StoreNarrow(N* ptr, typename Argon<S>::argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    NarrowMve<N>(ptr, active.native());
+#else
+    const auto values = this->to_array();
+    for (size_t i = 0; i < lanes; ++i) {
+      if (active.Active(i)) ptr[i] = static_cast<N>(values[i]);
+    }
+#endif
+  }
+
+  /// @brief Gather `base[offsets[i]]` of the narrower type N, extending each to a lane. MVE: vldrb / vldrh gather.
+  template <typename N, typename S = ScalarType, typename... PredicateType>
+    requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
+  ace static Argon<S> LoadGatherOffsetIndexWiden(const N* base, typename Argon<S>::offset_type offsets,
+                                                 PredicateType... active) {
+    return GatherWiden<false, N, S>(base, offsets, active...);
+  }
+
+  /// @brief Gather N from `base` plus a byte offset per lane, extending each to a lane.
+  template <typename N, typename S = ScalarType, typename... PredicateType>
+    requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
+  ace static Argon<S> LoadGatherOffsetBytesWiden(const N* base, typename Argon<S>::offset_type offsets,
+                                                 PredicateType... active) {
+    return GatherWiden<true, N, S>(base, offsets, active...);
+  }
+
+  /// @brief Scatter the low bits of each lane as N to `base[offsets[i]]`. MVE: vstrb / vstrh scatter.
+  template <typename N, typename S = ScalarType, typename... PredicateType>
+    requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
+  [[gnu::always_inline]] inline void StoreScatterOffsetIndexNarrow(N* base, typename Argon<S>::offset_type offsets,
+                                         PredicateType... active) const {
+    ScatterNarrow<false>(base, offsets, active...);
+  }
+
+  /// @brief Scatter the low bits of each lane as N to `base` plus a byte offset per lane.
+  template <typename N, typename S = ScalarType, typename... PredicateType>
+    requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
+  [[gnu::always_inline]] inline void StoreScatterOffsetBytesNarrow(N* base, typename Argon<S>::offset_type offsets,
+                                         PredicateType... active) const {
+    ScatterNarrow<true>(base, offsets, active...);
+  }
+
   // ── Complex arithmetic ────────────────────────────────────────────────────────────────────────────────────
   // Lanes 2i and 2i+1 hold the real and imaginary parts of a complex number. MVE has these as instructions
   // (vcadd, vhcadd, vcmla); NEON has the float ones from Armv8.3 (FEAT_FCMA), and otherwise swaps each pair with a
@@ -1154,6 +1267,87 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     }
   }
 #endif
+
+
+ private:
+  // ── Helpers for the widening loads and narrowing stores ──
+  /// The integer type with S's width and N's signedness: what extending an N produces.
+  template <typename N, typename S>
+  using ExtendedFrom = std::conditional_t<std::is_signed_v<N>, std::make_signed_t<S>, std::make_unsigned_t<S>>;
+
+#ifdef ARGON_PLATFORM_MVE
+  template <typename N, typename S, typename... P>
+  ace static Argon<S> WidenMve(const N* ptr, P... p) {
+    using native = typename Argon<ExtendedFrom<N, S>>::vector_type;
+    native v;
+    if constexpr (sizeof(N) == 1) {
+      v = mve::load_byte<native>(ptr, p...);
+    } else {
+      v = mve::load_halfword<native>(ptr, p...);
+    }
+    return Argon<ExtendedFrom<N, S>>{v}.template As<S>();
+  }
+
+  template <typename N, typename... P>
+  [[gnu::always_inline]] inline void NarrowMve(N* ptr, P... p) const {
+    const auto v = this->template As<ExtendedFrom<N, ScalarType>>().vec();
+    if constexpr (sizeof(N) == 1) {
+      mve::store_byte(ptr, v, p...);
+    } else {
+      mve::store_halfword(ptr, v, p...);
+    }
+  }
+#endif
+
+  template <bool byte_offsets, typename N, typename S, typename... PredicateType>
+  ace static Argon<S> GatherWiden(const N* base, typename Argon<S>::offset_type offsets, PredicateType... active) {
+#ifdef ARGON_PLATFORM_MVE
+    using native = ExtendedFrom<N, S>;
+    Argon<native> v;
+    if constexpr (sizeof(N) == 1) {
+      v = mve::load_byte_gather_offset(base, offsets.vec(), active.native()...);  // bytes: index == byte offset
+    } else if constexpr (byte_offsets) {
+      v = mve::load_halfword_gather_offset(base, offsets.vec(), active.native()...);
+    } else {
+      v = mve::load_halfword_gather_shifted_offset(base, offsets.vec(), active.native()...);
+    }
+    return v.template As<S>();
+#else
+    const auto off = offsets.to_array();
+    std::array<S, lanes> out{};
+    for (size_t i = 0; i < lanes; ++i) {
+      if ((active.Active(i) && ...)) {
+        const N* p = byte_offsets ? reinterpret_cast<const N*>(reinterpret_cast<const char*>(base) + off[i])
+                                  : base + off[i];
+        out[i] = static_cast<S>(*p);
+      }
+    }
+    return Argon<S>::Load(out.data());
+#endif
+  }
+
+  template <bool byte_offsets, typename N, typename... PredicateType>
+  [[gnu::always_inline]] inline void ScatterNarrow(N* base, typename Argon<ScalarType>::offset_type offsets, PredicateType... active) const {
+#ifdef ARGON_PLATFORM_MVE
+    const auto v = this->template As<ExtendedFrom<N, ScalarType>>().vec();
+    if constexpr (sizeof(N) == 1) {
+      mve::store_byte_scatter_offset(base, offsets.vec(), v, active.native()...);
+    } else if constexpr (byte_offsets) {
+      mve::store_halfword_scatter_offset(base, offsets.vec(), v, active.native()...);
+    } else {
+      mve::store_halfword_scatter_shifted_offset(base, offsets.vec(), v, active.native()...);
+    }
+#else
+    const auto off = offsets.to_array();
+    const auto values = this->to_array();
+    for (size_t i = 0; i < lanes; ++i) {
+      if ((active.Active(i) && ...)) {
+        N* p = byte_offsets ? reinterpret_cast<N*>(reinterpret_cast<char*>(base) + off[i]) : base + off[i];
+        *p = static_cast<N>(values[i]);
+      }
+    }
+#endif
+  }
 
 };
 
