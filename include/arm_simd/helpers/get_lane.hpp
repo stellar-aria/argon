@@ -12,8 +12,7 @@
 #include <arm_mve.h>
 #define simd mve
 #else
-#define SIMDE_ENABLE_NATIVE_ALIASES
-#include <arm/neon.h>
+#include "arm_simd/helpers/simde_neon.hpp"
 #define simd neon
 #endif
 

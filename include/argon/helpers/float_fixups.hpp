@@ -7,8 +7,7 @@
 #ifdef __ARM_NEON
 #include <arm_neon.h>
 #else
-#define SIMDE_ENABLE_NATIVE_ALIASES
-#include <arm/neon.h>
+#include "arm_simd/helpers/simde_neon.hpp"
 #endif
 
 /// Workarounds that keep Argon's float operations on NEON with the NEON instructions' semantics.
