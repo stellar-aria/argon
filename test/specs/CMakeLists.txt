@@ -1,7 +1,7 @@
 include(FetchContent)
 FetchContent_Declare(c++spec
   GIT_REPOSITORY https://github.com/toroidal-code/cppspec
-  GIT_TAG ddf0f86196d017750ad20d766d7de2c140d6df65
+  GIT_TAG 8fc585ca23288a8aa489ab6593f15651535771a9  # v1.0.1
   GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(c++spec)
