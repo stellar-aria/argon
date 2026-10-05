@@ -199,6 +199,10 @@ On MVE these are VPT-predicated instructions (`vpst; vaddt`); on NEON, `_x` is t
 form. In isolation `_m` is no shorter than `Select` (the destination needs `inactive` moved into it), so the gain
 depends on register allocation in real loops.
 
+`MultiplyAdd(b, c, active)` and `MultiplySubtract(b, c, active)` keep the accumulator (`this`) in the inactive lanes,
+as ACLE's `vfmaq_m`: on MVE one predicated `vfma`/`vfms`, which is what lets GCC tail-predicate an accumulating
+`for_each` (`tail_for_each_dot_float`); elsewhere the operation and a `Select`.
+
 Comparisons take a predicate as well: `x.LessThan(hi, x > lo)` is active where both hold. On MVE that is one
 predicated compare (`vpst; vcmpt`) instead of two compares whose predicates are ANDed through core registers.
 

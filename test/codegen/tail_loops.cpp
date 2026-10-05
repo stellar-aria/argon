@@ -73,6 +73,14 @@ int32_t tail_for_each_sum(const int32_t* d, ptrdiff_t n) {
   return sum;
 }
 
+// A float dot product: the predicated MultiplyAdd keeps the accumulator's inactive lanes (vfma under the tail
+// predicate), which GCC needs to tail-predicate a loop-carried accumulator.
+float tail_for_each_dot_float(const float* a, const float* b, ptrdiff_t n) {
+  Argon<float> acc{0.0f};
+  argon::vectorize::for_each<float>(n, [&](auto s) { acc = acc.MultiplyAdd(s.Load(a), s.Load(b), s.active()); });
+  return acc.ReduceAdd();
+}
+
 void tail_for_each_widen_int16(int16_t* out, const int16_t* in, ptrdiff_t n) {
   argon::vectorize::for_each<int32_t>(n, [&](auto s) { s.StoreNarrow(out, (s.LoadWiden(in) * 3) >> 2); });
 }

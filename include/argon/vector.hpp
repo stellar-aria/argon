@@ -1451,6 +1451,44 @@ class Vector {
 #undef ARGON_PREDICATED_BINARY
 #undef ARGON_PREDICATED_UNARY
 
+  /// MultiplyAdd under a predicate: lanes outside `active` keep this vector's value, the accumulator (as ACLE's
+  /// vfmaq_m). On MVE, floats are one predicated vfma, which lets GCC tail-predicate a vectorize::for_each
+  /// accumulation; elsewhere it is MultiplyAdd and a Select.
+  ace argon_type MultiplyAdd(argon_type b, argon_type c, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::multiply_add_fused(vec_, b.vec_, c.vec_, active.native());
+    } else
+#endif
+    {
+      return active.Select(MultiplyAdd(b, c), argon_type{vec_});
+    }
+  }
+
+  /// @copydoc MultiplyAdd(argon_type, argon_type, argon_bool_type) const
+  ace argon_type MultiplyAdd(argon_type b, scalar_type c, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::multiply_add_fused(vec_, b.vec_, c, active.native());
+    } else
+#endif
+    {
+      return active.Select(MultiplyAdd(b, c), argon_type{vec_});
+    }
+  }
+
+  /// MultiplySubtract under a predicate: lanes outside `active` keep this vector's value (as ACLE's vfmsq_m).
+  ace argon_type MultiplySubtract(argon_type b, argon_type c, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (mve_float) {
+      return simd::multiply_subtract_fused(vec_, b.vec_, c.vec_, active.native());
+    } else
+#endif
+    {
+      return active.Select(MultiplySubtract(b, c), argon_type{vec_});
+    }
+  }
+
   /// Compare only the lanes of `active`: a predicate active where `active` holds and a == b.
   /// @details MVE: one predicated compare (vcmpq_m), rather than a compare and a predicate AND through core registers.
   ace argon_bool_type Equal(argon_type b, argon_bool_type active) const {
