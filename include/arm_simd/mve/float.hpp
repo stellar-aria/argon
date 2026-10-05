@@ -1,5 +1,6 @@
 #pragma once
 #include <arm_mve.h>
+#include <type_traits>
 #include "neon_float.hpp"
 #ifdef __cplusplus
 #ifdef __clang__
@@ -196,8 +197,16 @@ template <int imm6>[[gnu::always_inline]] nce float16x8_t convert(float16x8_t in
 [[gnu::always_inline]] nce float32x4_t convert_top(float16x8_t a, mve_pred16_t p) { return vcvttq_x_f32_f16(a, p); }
 template <> [[gnu::always_inline]] nce int16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_s16_f16(a, p); }
 template <> [[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_u16_f16(a, p); }
-template <int imm6>[[gnu::always_inline]] nce int16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_n_s16_f16(a, imm6, p); }
-template <int imm6>[[gnu::always_inline]] nce uint16x8_t convert(float16x8_t a, mve_pred16_t p) { return vcvtq_x_n_u16_f16(a, imm6, p); }
+// The overloads differ only in their result type, so it is named explicitly: convert<T, imm6>(...).
+template <typename T, int imm6>[[gnu::always_inline]] nce T convert(float16x8_t a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int16x8_t>) {
+    return vcvtq_x_n_s16_f16(a, imm6, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vcvtq_x_n_u16_f16(a, imm6, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float16x8_t a, float16_t b) { return vcmpeqq_n_f16(a, b); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float16x8_t a, float16_t b, mve_pred16_t p) { return vcmpeqq_m_n_f16(a, b, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_not_equal(float16x8_t a, float16_t b) { return vcmpneq_n_f16(a, b); }
@@ -315,8 +324,16 @@ template <> [[gnu::always_inline]] nce int32x4_t convert_round_toward_negative_i
 template <> [[gnu::always_inline]] nce uint32x4_t convert_round_toward_negative_infinity(float32x4_t a, mve_pred16_t p) { return vcvtmq_x_u32_f32(a, p); }
 template <> [[gnu::always_inline]] nce int32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_s32_f32(a, p); }
 template <> [[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_u32_f32(a, p); }
-template <int imm6>[[gnu::always_inline]] nce int32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_n_s32_f32(a, imm6, p); }
-template <int imm6>[[gnu::always_inline]] nce uint32x4_t convert(float32x4_t a, mve_pred16_t p) { return vcvtq_x_n_u32_f32(a, imm6, p); }
+// The overloads differ only in their result type, so it is named explicitly: convert<T, imm6>(...).
+template <typename T, int imm6>[[gnu::always_inline]] nce T convert(float32x4_t a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int32x4_t>) {
+    return vcvtq_x_n_s32_f32(a, imm6, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vcvtq_x_n_u32_f32(a, imm6, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float32x4_t a, float32_t b) { return vcmpeqq_n_f32(a, b); }
 [[gnu::always_inline]] nce mve_pred16_t compare_equal(float32x4_t a, float32_t b, mve_pred16_t p) { return vcmpeqq_m_n_f32(a, b, p); }
 [[gnu::always_inline]] nce mve_pred16_t compare_not_equal(float32x4_t a, float32_t b) { return vcmpneq_n_f32(a, b); }
