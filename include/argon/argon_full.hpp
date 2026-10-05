@@ -716,6 +716,39 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     return zero.template ComplexMultiplyAdd<0>(b, *this).template ComplexMultiplyAdd<270>(b, *this);
   }
 
+  // ── Bit-reversed indices ──────────────────────────────────────────────────────────────────────────────────
+
+  /// @brief The low `bits` bits of each lane, reversed; the other bits are zero. For an FFT of 2^k points,
+  /// `Iota(i).BitReverse(k)` gives the bit-reversed permutation indices.
+  /// @details `bits` of the lane width or more reverses the whole lane, and 0 gives 0. MVE: vbrsr.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 4)
+  ace Argon<S> BitReverse(int bits) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::bit_reverse_shift_right(this->vec_, static_cast<int32_t>(bits));
+#else
+    using U = std::make_unsigned_t<S>;
+    constexpr int width = 8 * sizeof(S);
+    if (bits <= 0) return Argon<S>{S(0)};
+    // Reverse the bits of each byte, then the bytes of each lane.
+    Argon<uint8_t> bytes = this->template As<uint8_t>();
+#ifdef __aarch64__
+    bytes = neon::reverse_bits(bytes.vec());  // rbit
+#else
+    bytes = ((bytes >> 1) & Argon<uint8_t>{uint8_t{0x55}}) | ((bytes & Argon<uint8_t>{uint8_t{0x55}}) << 1);
+    bytes = ((bytes >> 2) & Argon<uint8_t>{uint8_t{0x33}}) | ((bytes & Argon<uint8_t>{uint8_t{0x33}}) << 2);
+    bytes = (bytes >> 4) | (bytes << 4);
+#endif
+    if constexpr (sizeof(S) == 2) {
+      bytes = bytes.Reverse16bit();
+    } else if constexpr (sizeof(S) == 4) {
+      bytes = bytes.Reverse32bit();
+    }
+    const auto reversed = bytes.template As<U>();
+    return (bits >= width ? reversed : reversed >> (width - bits)).template As<S>();  // logical shift
+#endif
+  }
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
