@@ -125,6 +125,34 @@ auto describe_select = describe("Predicate Select", ${
   });
 });
 
+// ── Vector truthiness ──────────────────────────────────────────────────────
+
+auto describe_truthiness = describe("any / all / TestNonzero", ${
+  it("any() is true when some lane is nonzero", _{
+    expect(Argon<int32_t>{0}.any()).to_be_false();
+    expect((Argon<int32_t>{0, 0, 2, 0}).any()).to_be_true();
+    expect(Argon<float>{0.0f}.any()).to_be_false();
+  });
+
+  it("all() is true only when every lane is nonzero", _{
+    expect((Argon<int32_t>{1, 2, 3, 4}).all()).to_be_true();
+    expect((Argon<int32_t>{1, 2, 0, 4}).all()).to_be_false();
+    expect(Argon<uint8_t>{0}.all()).to_be_false();
+  });
+
+  it("TestNonzero tests every bit, not just bit 0", _{
+    auto v = Argon<uint32_t>{0u, 1u, 2u, 0x80000000u};
+    expect(v.TestNonzero().to_array()).to_equal(std::array<bool, 4>{false, true, true, true});
+  });
+
+  it("CompareTestNonzero is active where a and b share a set bit", _{
+    auto a = Argon<uint16_t>{0b0011, 0b0100, 0b1000, 0, 0xFFFF, 1, 2, 4};
+    auto b = Argon<uint16_t>{0b0001, 0b0011, 0b1000, 0xFFFF, 0, 1, 1, 4};
+    expect(a.CompareTestNonzero(b).to_array())
+        .to_equal(std::array<bool, 8>{true, false, true, false, false, true, false, true});
+  });
+});
+
 // ── Compatibility ──────────────────────────────────────────────────────────
 
 #pragma GCC diagnostic push
@@ -158,6 +186,7 @@ CPPSPEC_MAIN(
   describe_logic,
   describe_queries,
   describe_select,
+  describe_truthiness,
   describe_compat
   NEON_ONLY_SPECS
 );

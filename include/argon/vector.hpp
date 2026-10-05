@@ -69,7 +69,9 @@ class Vector {
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
   using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
-  using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
+  using mask_type = Bool_t<VectorType>;  ///< The mask vector type (all ones / all zeros per lane), see Predicate::ToMask.
+  using predicate_type [[deprecated("predicate_type is the mask vector type; use mask_type, or argon_bool_type for "
+                                    "the Predicate comparisons return")]] = mask_type;
   using argon_bool_type = Predicate<VectorType>;                ///< The type comparisons return.
   using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;  ///< Per-lane gather/scatter offsets.
 
@@ -1321,14 +1323,24 @@ class Vector {
     return BitwiseSelect(true_value, false_value);
   }
 
-#ifndef ARGON_PLATFORM_MVE
-  /// Ands the current vector with the given vector, then checks if nonzero. If so, fills the lane with all ones
-  /// @details Equivalent to (a & b) != 0 ? 0xFFFFFFFF : 0x00000000
-  ace predicate_type CompareTestNonzero(argon_type b) const { return simd::compare_test_nonzero(vec_, b); }
-
-  /// @copydoc CompareTestNonzero
-  ace predicate_type TestNonzero() const { return simd::compare_test_nonzero(vec_, argon_type{1}); }
+  /// Compare the lanes of `(a & b)` with zero, returning a predicate active where they share a set bit.
+  /// @details NEON: vtst.
+  ace argon_bool_type CompareTestNonzero(argon_type b) const
+    requires std::is_integral_v<scalar_type>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    return ~(argon_type{vec_ & b.vec_} == argon_type{scalar_type{0}});
+#else
+    return argon_bool_type{simd::compare_test_nonzero(vec_, b.vec_)};
 #endif
+  }
+
+  /// Return a predicate active where the lane is nonzero.
+  ace argon_bool_type TestNonzero() const
+    requires std::is_integral_v<scalar_type>
+  {
+    return CompareTestNonzero(*this);
+  }
 
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
   /// @details Equivalent to std::countl_one(a).
@@ -1520,28 +1532,11 @@ class Vector {
     });
   }
 
-  ace bool any() {
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (vec_[i]) {
-        return true;
-      }
-    });
-    return false;
-  }
+  /// @brief Whether any lane is nonzero.
+  ace bool any() const { return !Equal(argon_type{scalar_type{0}}).All(); }
 
-  ace bool all() {
-#ifdef ARGON_PLATFORM_MVE
-    return mve::max_reduce_max(vec_, vec_) != 0;
-#else
-    auto nonzero = TestNonzero();
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (nonzero[i] == 0) {
-        return false;
-      }
-    });
-    return true;
-#endif
-  }
+  /// @brief Whether every lane is nonzero.
+  ace bool all() const { return Equal(argon_type{scalar_type{0}}).None(); }
 
   template <std::size_t Index>
   std::tuple_element_t<Index, argon_type> get() {
