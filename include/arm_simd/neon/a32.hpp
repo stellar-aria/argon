@@ -47,8 +47,6 @@ template <typename T> nce T load1_duplicate(poly64_t const *ptr);
 template <typename T> nce T load1_x2(poly64_t const *ptr);
 template <typename T> nce T load1_x3(poly64_t const *ptr);
 template <typename T> nce T load1_x4(poly64_t const *ptr);
-template <typename T> nce T store1(poly64_t *ptr, poly64x1_t val);
-template <typename T> nce T store1(poly64_t *ptr, poly64x2_t val);
 template <typename T> nce T convert(int32_t a);
 template <typename T> nce T convert(uint32_t a);
 template <typename T> nce T convert(float16_t a);
@@ -130,8 +128,6 @@ template <typename T> nce T load4_duplicate(poly64_t const *ptr);
 template <typename T> nce T load1_x2(bfloat16_t const *ptr);
 template <typename T> nce T load1_x3(bfloat16_t const *ptr);
 template <typename T> nce T load1_x4(bfloat16_t const *ptr);
-template <typename T> nce T store1(bfloat16_t *ptr, bfloat16x4_t val);
-template <typename T> nce T store1(bfloat16_t *ptr, bfloat16x8_t val);
 template <typename T> nce T store2(bfloat16_t *ptr, bfloat16x4x2_t val);
 template <typename T> nce T store2(bfloat16_t *ptr, bfloat16x8x2_t val);
 template <typename T> nce T store3(bfloat16_t *ptr, bfloat16x4x3_t val);
@@ -232,7 +228,7 @@ template <int lane>[[gnu::always_inline]] nce uint32x4_t dot_product_lane(uint32
 [[gnu::always_inline]] nce uint32x4_t sha1_majority(uint32x4_t hash_abcd, uint32_t hash_e, uint32x4_t wk) { return vsha1mq_u32(hash_abcd, hash_e, wk); }
 template <> [[gnu::always_inline]] nce bfloat16x8_t reinterpret(uint32x4_t a) { return vreinterpretq_bf16_u32(a); }
 [[gnu::always_inline]] nce poly64x1_t reinterpret(float16x4_t a) { return vreinterpret_p64_f16(a); }
-[[gnu::always_inline]] nce float16x4_t absolute(float16x4_t a) { return vabs_f16(a); }
+[[gnu::always_inline]] nce float16x4_t abs(float16x4_t a) { return vabs_f16(a); }
 [[gnu::always_inline]] nce float16x4_t subtract_absolute(float16x4_t a, float16x4_t b) { return vabd_f16(a, b); }
 [[gnu::always_inline]] nce float16x4_t reciprocal_estimate(float16x4_t a) { return vrecpe_f16(a); }
 [[gnu::always_inline]] nce float16x4_t reciprocal_sqrt_estimate(float16x4_t a) { return vrsqrte_f16(a); }
@@ -301,7 +297,7 @@ template <int lane>[[gnu::always_inline]] nce float16x4_t complex_multiply_add_r
 template <int lane>[[gnu::always_inline]] nce float16x4_t complex_multiply_add_rotate_270_lane(float16x4_t r, float16x4_t a, float16x8_t b) { return vcmla_rot270_laneq_f16(r, a, b, lane); }
 template <> [[gnu::always_inline]] nce poly64x2_t reinterpret(float16x8_t a) { return vreinterpretq_p64_f16(a); }
 template <> [[gnu::always_inline]] nce poly128_t reinterpret(float16x8_t a) { return vreinterpretq_p128_f16(a); }
-[[gnu::always_inline]] nce float16x8_t absolute(float16x8_t a) { return vabsq_f16(a); }
+[[gnu::always_inline]] nce float16x8_t abs(float16x8_t a) { return vabsq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_estimate(float16x8_t a) { return vrecpeq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_sqrt_estimate(float16x8_t a) { return vrsqrteq_f16(a); }
 [[gnu::always_inline]] nce float16x8_t reciprocal_sqrt_step(float16x8_t a, float16x8_t b) { return vrsqrtsq_f16(a, b); }
@@ -535,8 +531,8 @@ template <> [[gnu::always_inline]] inline poly64x2x3_t load1_x3(poly64_t const *
 template <> [[gnu::always_inline]] inline poly64x1x4_t load1_x4(poly64_t const *ptr) { return vld1_p64_x4(ptr); }
 template <> [[gnu::always_inline]] inline poly64x2x4_t load1_x4(poly64_t const *ptr) { return vld1q_p64_x4(ptr); }
 [[gnu::always_inline]] inline poly128_t load_register(poly128_t const *ptr) { return vldrq_p128(ptr); }
-template <> [[gnu::always_inline]] inline void store1(poly64_t *ptr, poly64x1_t val) { return vst1_p64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(poly64_t *ptr, poly64x2_t val) { return vst1q_p64(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly64_t *ptr, poly64x1_t val) { return vst1_p64(ptr, val); }
+[[gnu::always_inline]] inline void store1(poly64_t *ptr, poly64x2_t val) { return vst1q_p64(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, poly64x1_t val) { return vst1_lane_p64(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(poly64_t *ptr, poly64x2_t val) { return vst1q_lane_p64(ptr, val, lane); }
 [[gnu::always_inline]] inline void store2(poly64_t *ptr, poly64x1x2_t val) { return vst2_p64(ptr, val); }
@@ -598,8 +594,8 @@ template <> [[gnu::always_inline]] inline bfloat16x4x3_t load1_x3(bfloat16_t con
 template <> [[gnu::always_inline]] inline bfloat16x8x3_t load1_x3(bfloat16_t const *ptr) { return vld1q_bf16_x3(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x4x4_t load1_x4(bfloat16_t const *ptr) { return vld1_bf16_x4(ptr); }
 template <> [[gnu::always_inline]] inline bfloat16x8x4_t load1_x4(bfloat16_t const *ptr) { return vld1q_bf16_x4(ptr); }
-template <> [[gnu::always_inline]] inline void store1(bfloat16_t *ptr, bfloat16x4_t val) { return vst1_bf16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(bfloat16_t *ptr, bfloat16x8_t val) { return vst1q_bf16(ptr, val); }
+[[gnu::always_inline]] inline void store1(bfloat16_t *ptr, bfloat16x4_t val) { return vst1_bf16(ptr, val); }
+[[gnu::always_inline]] inline void store1(bfloat16_t *ptr, bfloat16x8_t val) { return vst1q_bf16(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(bfloat16_t *ptr, bfloat16x4_t val) { return vst1_lane_bf16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(bfloat16_t *ptr, bfloat16x8_t val) { return vst1q_lane_bf16(ptr, val, lane); }
 template <> [[gnu::always_inline]] inline void store2(bfloat16_t *ptr, bfloat16x4x2_t val) { return vst2_bf16(ptr, val); }

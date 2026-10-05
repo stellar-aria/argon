@@ -36,7 +36,7 @@
 
 namespace argon {
 template <typename T>
-concept arithmetic = std::is_arithmetic_v<T>;
+concept arithmetic = lane_scalar<T>;
 
 /// @brief Helper template to check if a type is one of the specified types.
 /// @tparam T The type to check.
@@ -573,7 +573,7 @@ class Vector {
   /// @note This is not a precise reciprocal, but it is fast and useful for many applications
   /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalEstimate() const
-    requires std::floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
+    requires lane_floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
     return 1.f / vec_;
@@ -586,7 +586,7 @@ class Vector {
   /// @note For greater precision, follow with ReciprocalSqrtStep iterations (Newton-Raphson).
   /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalSqrtEstimate() const
-    requires std::floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
+    requires lane_floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
     // MVE has no vrsqrte: take the bit-level initial guess, then one Newton-Raphson step, which lands within NEON's
@@ -603,7 +603,7 @@ class Vector {
   /// @details Feeds into the standard NR iteration: est = est * ReciprocalStep(value * est)
   /// @note Only defined for floating-point types.
   ace argon_type ReciprocalStep(argon_type b) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
 #ifdef ARGON_PLATFORM_MVE
     return 2.f - vec_ * b.vec_;
@@ -616,7 +616,7 @@ class Vector {
   /// @details Use after ReciprocalSqrtEstimate to increase precision.
   /// @note Only defined for floating-point types.
   ace argon_type ReciprocalSqrtStep(argon_type b) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
 #ifdef ARGON_PLATFORM_MVE
     return (3.f - vec_ * b.vec_) * 0.5f;
@@ -629,7 +629,7 @@ class Vector {
   /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
   /// @details Each iteration approximately doubles the number of correct mantissa bits.
   ace argon_type ReciprocalEstimateRefine(int n_iters = 1) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
     argon_type est = ReciprocalEstimate();
     for (int i = 0; i < n_iters; ++i) {
@@ -642,7 +642,7 @@ class Vector {
   /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
   /// @details Each iteration approximately doubles the number of correct mantissa bits.
   ace argon_type ReciprocalSqrtEstimateRefine(int n_iters = 1) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
     argon_type est = ReciprocalSqrtEstimate();
     for (int i = 0; i < n_iters; ++i) {
@@ -694,7 +694,7 @@ class Vector {
   ace argon_type Modulo(argon_type b) const {
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ % b.vec_;
-    } else if constexpr (std::floating_point<scalar_type>) {
+    } else if constexpr (lane_floating_point<scalar_type>) {
       return this->map2(b, [](scalar_type lane1, scalar_type lane2) { return std::fmod(lane1, lane2); });
     } else {
       return this->map2(b, [](scalar_type lane1, scalar_type lane2) { return lane1 % lane2; });
@@ -1747,7 +1747,7 @@ class Vector {
   /// @brief Convert an arithmetic constructor argument to the lane type, passing anything else through.
   template <typename ArgType>
   ace static decltype(auto) LaneValue(ArgType&& arg) {
-    if constexpr (std::is_arithmetic_v<std::remove_cvref_t<ArgType>>) {
+    if constexpr (lane_scalar<std::remove_cvref_t<ArgType>>) {
       return static_cast<scalar_type>(arg);
     } else {
       return std::forward<ArgType>(arg);

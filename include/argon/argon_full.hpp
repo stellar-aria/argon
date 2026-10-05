@@ -25,7 +25,7 @@
 /// narrowing, widening multiplies, cross-half operations, reductions, and (optionally) AES acceleration.
 /// Use `ArgonHalf<ScalarType>` for the 64-bit sibling.
 template <typename ScalarType>
-  requires std::is_arithmetic_v<ScalarType>
+  requires argon::lane_scalar<ScalarType>
 class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   using T = argon::Vector<simd::Vec128_t<ScalarType>>;
 
@@ -294,15 +294,15 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Sum all lanes and return the scalar result.
   ScalarType ReduceAdd() const {
 #if defined(__aarch64__)
-    return simd::reduce_add(this->vec_);
-#else
-#ifdef ARGON_PLATFORM_MVE
+    if constexpr (!argon::is_half_float_v<ScalarType>) {  // A64 has no across-vector f16 add
+      return simd::reduce_add(this->vec_);
+    }
+#elifdef ARGON_PLATFORM_MVE
     if constexpr (mve_across_add) {
       return static_cast<ScalarType>(mve::reduce_add(this->vec_));  // vaddv
     }
 #endif
     return this->Reduce([](auto a, auto b) { return a + b; });
-#endif
   }
 
   /// @brief Sum the active lanes and return the scalar result.

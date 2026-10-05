@@ -1,6 +1,7 @@
 #pragma once
 #include <type_traits>
 #include "argon/features.h"
+#include "argon/helpers/lane_scalar.hpp"
 #include "arm_simd/helpers/concepts.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 
@@ -14,7 +15,7 @@ template <typename T>
 class ArgonHalf;
 
 template <typename T>
-  requires std::is_arithmetic_v<T>
+  requires argon::lane_scalar<T>
 class Argon;
 
 namespace argon::helpers {

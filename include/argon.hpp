@@ -206,7 +206,7 @@ ace BranchType ternary(MaskType mask, BranchType true_value, BranchType false_va
 
 /// @copydoc ternary
 template <typename MaskType, typename ValueType>
-  requires std::is_unsigned_v<typename MaskType::scalar_type> && std::is_arithmetic_v<ValueType> &&
+  requires std::is_unsigned_v<typename MaskType::scalar_type> && lane_scalar<ValueType> &&
            (sizeof(ValueType) == sizeof(typename MaskType::scalar_type))
 ace auto ternary(MaskType mask, ValueType true_value, ValueType false_value) {
   using result_type = VectorFor_t<typename MaskType::vector_type, ValueType>;
@@ -225,7 +225,7 @@ ace BranchType ternary(CondType condition, BranchType true_value, BranchType fal
 
 /// @copydoc ternary
 template <typename VectorType, typename ValueType>
-  requires std::is_arithmetic_v<ValueType> && (sizeof(ValueType) == sizeof(simd::Scalar_t<VectorType>))
+  requires lane_scalar<ValueType> && (sizeof(ValueType) == sizeof(simd::Scalar_t<VectorType>))
 ace auto ternary(Predicate<VectorType> condition, ValueType true_value, ValueType false_value) {
   using result_type = VectorFor_t<VectorType, ValueType>;
   return ternary(condition, result_type{true_value}, result_type{false_value});
@@ -295,7 +295,7 @@ ace CondMonad<VectorType, ValueType> if_(Predicate<VectorType> condition, ValueT
 
 /// @copydoc if_
 template <typename VectorType, typename ScalarType>
-  requires std::is_arithmetic_v<ScalarType> && (sizeof(ScalarType) == sizeof(simd::Scalar_t<VectorType>))
+  requires lane_scalar<ScalarType> && (sizeof(ScalarType) == sizeof(simd::Scalar_t<VectorType>))
 ace auto if_(Predicate<VectorType> condition, ScalarType value) {
   using value_type = VectorFor_t<VectorType, ScalarType>;
   return CondMonad<VectorType, value_type>{condition, value_type{value}};
