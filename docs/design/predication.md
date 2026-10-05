@@ -214,10 +214,23 @@ NEON fallback so it stays portable. In order:
 | 11 | **Done** (`helium-build`). **Complex arithmetic:** `vcmulq`, `vcmlaq` (with rotations), `vcaddq`, `vhcaddq`. FFTs and IQ. | `vcmla`/`vcadd` from Armv8.3, shuffles below that |
 | 12 | **Done** (`helium-build`). **Bit-reversed addressing:** `vbrsrq` for FFT reordering indices. | per-lane bit reverse |
 | 13 | **Done** (`helium-build`). **Carry chains:** `vadcq`/`vsbcq` (add/subtract with carry across lanes) and `vshlcq` (whole-vector shift with carry). Bignum, crypto, bitstream packing. | scalar carry propagation |
-| 14 | **Gather-base with write-back:** `vldrwq_gather_base_wb`, a vector of addresses that advances on each load. Strided streams and walking several buffers at once. | per-lane loads |
+| 14 | **Done** (`helium-build`), as `argon::PointerVector`. **Gather-base with write-back:** `vldrwq_gather_base_wb`, a vector of addresses that advances on each load. Strided streams and walking several buffers at once. | per-lane loads |
 
 Out of scope: the Armv8.1-M 64-bit scalar shifts (`asrl`, `lsll`, `sqrshrl`); they help fixed-point code but are
 scalar instructions.
+
+## Known compiler issues
+
+Clang 23 compiles every MVE intrinsic Argon uses. GCC 16.2 has three bugs around the write-back (`_wb`) intrinsics,
+none reported upstream as of 2026-10-05; Argon works around all of them on every GCC version:
+
+1. At `-O0`, a `_wb` dup intrinsic (`viwdupq_wb_u32` etc.) whose write-back pointer is not the address of a local
+   fails with "unrecognizable insn". `CircularIndices` and the carry chains pass the address of a local.
+2. A predicated `_x_wb` dup intrinsic whose result is discarded segfaults the compiler. Argon always uses results.
+3. `vldrwq_gather_base_wb_*` / `vstrwq_scatter_base_wb_*` given a pointer parameter crash the compiler at every
+   optimisation level (an internal error in `expand_insn`). GCC compiles the testcase of PR 124870, whose fix to
+   these intrinsics' memory modelling was backported to 16.2, but not this form. `PointerVector` uses the
+   write-back instructions with clang and a gather (or scatter) plus a `vadd` with GCC.
 
 ## Open questions
 
