@@ -299,7 +299,7 @@ class Vector {
 
   /// @brief Convert the vector to an array of scalar values.
   /// @return An array of scalar values representing the vector.
-  ace std::array<scalar_type, lanes> to_array() {
+  ace std::array<scalar_type, lanes> to_array() const {
     std::array<scalar_type, lanes> out;
     simd::store1(out.data(), vec_);
     return out;

@@ -276,7 +276,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @param op The commutative binary operation.
   /// @return The scalar result after all lanes have been folded.
   template <typename CommutableOpType>
-  ScalarType Reduce(CommutableOpType op) {
+  ScalarType Reduce(CommutableOpType op) const {
     auto rev = this->SwapDoublewords();
     auto sum = op(*this, rev);
     if constexpr (lanes == 16) {
@@ -292,7 +292,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   }
 
   /// @brief Sum all lanes and return the scalar result.
-  ScalarType ReduceAdd() {
+  ScalarType ReduceAdd() const {
 #if defined(__aarch64__)
     return simd::reduce_add(this->vec_);
 #else
@@ -309,7 +309,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @details MVE (integer lanes up to 32 bits): vaddv with the predicate. Otherwise the inactive lanes are zeroed
   /// and the vector summed.
   /// @param active The lanes to sum.
-  ScalarType ReduceAdd(typename T::argon_bool_type active) {
+  ScalarType ReduceAdd(typename T::argon_bool_type active) const {
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (mve_across_add) {
       return static_cast<ScalarType>(mve::reduce_add(this->vec_, active.native()));
@@ -319,7 +319,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   }
 
   /// @brief Return the maximum value across all lanes.
-  ScalarType ReduceMax() {
+  ScalarType ReduceMax() const {
 #ifdef __aarch64__
     return simd::reduce_max(this->vec_);
 #else
@@ -328,7 +328,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   }
 
   /// @brief Return the minimum value across all lanes.
-  ScalarType ReduceMin() {
+  ScalarType ReduceMin() const {
 #ifdef __aarch64__
     return simd::reduce_min(this->vec_);
 #else
