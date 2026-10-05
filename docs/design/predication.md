@@ -198,9 +198,26 @@ predicated compare (`vpst; vcmpt`) instead of two compares whose predicates are 
 
 Steps 0 and 1 are prerequisites for everything else. Step 1 also fixes the silent `Equal` miscompile.
 
-Out of scope here, and worth separate documents: a Bottom/Top widening and narrowing API (MVE's interleaved
-alternative to NEON's high/low halves), accumulating reductions (`vmladavaq`, `vmlaldavaq`), `vidup`/`viwdup`
-circular-buffer indices, and wide-integer carry chains (`vadcq`, `vshlcq`).
+## Phase 2: Helium's DSP instructions
+
+With predication, gathers and tail loops in place, the remaining gap is the instruction groups that make Helium a
+DSP architecture. The `mve::` layer already wraps nearly all of them; the work is an `Argon` API for each, with a
+NEON fallback so it stays portable. In order:
+
+| Step | Work | NEON fallback |
+| ---- | ---- | ------------- |
+| 6  | **`float16` lanes on MVE.** MVE-F supports `f16` vectors, but nothing exercises `Argon<float16_t>` on M55. Specs first, then fix what they find. | n/a (already NEON) |
+| 7  | **Bottom/top widening and narrowing:** `vmovlb/t`, `vmullb/t`, `vshllb/t`, `vmovnb/t`, `vqmovnb/t`, `vshrnb/t`. Helium's replacement for NEON's high/low-half long and narrow ops, which are compiled out on MVE today, so there is no portable widen-accumulate-narrow path for integer audio. A `Bottom()`/`Top()` API. | zip/unzip around the long/narrow ops |
+| 8  | **Multiply-accumulate dot-product reductions:** `vmladavaq` (32-bit), `vmlaldavaq` (64-bit), `vrmlaldavhaq` (rounded high), and the exchange-pairs forms for complex dot products. FIR filters and convolution. | `vmlal` + pairwise add |
+| 9  | **Circular-buffer indices:** `viwdupq`/`vdwdupq` produce wrapping incrementing/decrementing indices in one instruction, feeding gathers: delay lines and wavetables. | `Iota` + compare-and-subtract |
+| 10 | **Across-vector min/max:** `ReduceMax`/`ReduceMin` via `vmaxvq`/`vminvq` (they use the shuffle fold on MVE today), plus `ReduceMaxAbs`/`ReduceMinAbs` (`vmaxavq`/`vminavq`, a peak meter in one instruction) and `MaxAbs`/`MinAbs` (`vmaxaq`/`vminaq`). | `vmaxv` on A64, fold on A32 |
+| 11 | **Complex arithmetic:** `vcmulq`, `vcmlaq` (with rotations), `vcaddq`, `vhcaddq`. FFTs and IQ. | `vcmla`/`vcadd` from Armv8.3, shuffles below that |
+| 12 | **Bit-reversed addressing:** `vbrsrq` for FFT reordering indices. | per-lane bit reverse |
+| 13 | **Carry chains:** `vadcq`/`vsbcq` (add/subtract with carry across lanes) and `vshlcq` (whole-vector shift with carry). Bignum, crypto, bitstream packing. | scalar carry propagation |
+| 14 | **Gather-base with write-back:** `vldrwq_gather_base_wb`, a vector of addresses that advances on each load. Strided streams and walking several buffers at once. | per-lane loads |
+
+Out of scope: the Armv8.1-M 64-bit scalar shifts (`asrl`, `lsll`, `sqrshrl`); they help fixed-point code but are
+scalar instructions.
 
 ## Open questions
 
