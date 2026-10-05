@@ -130,10 +130,22 @@ $(function(){initNavTree('neon__float_8hpp_source.html','',''); });
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>[[gnu::always_inline]] <span class="keyword">inline</span> float16x8_t load1(float16_t <span class="keyword">const</span> *ptr) { <span class="keywordflow">return</span> vld1q_f16(ptr); }</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>[[gnu::always_inline]] <span class="keyword">inline</span> float32x4_t load1(float32_t <span class="keyword">const</span> *ptr) { <span class="keywordflow">return</span> vld1q_f32(ptr); }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>[[gnu::always_inline]] <span class="keyword">inline</span> <span class="keywordtype">void</span> store1(float16_t *ptr, float16x8_t val) { <span class="keywordflow">return</span> vst1q_f16(ptr, val); }</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}  <span class="comment">// namespace mve</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#undef nce</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16x8_t c) { <span class="keywordflow">return</span> vfmaq_f16(a, b, c); }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16_t c) { <span class="keywordflow">return</span> vfmaq_n_f16(a, b, c); }</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>[[gnu::always_inline]] nce float16x8_t multiply_subtract_fused(float16x8_t a, float16x8_t b, float16x8_t c) { <span class="keywordflow">return</span> vfmsq_f16(a, b, c); }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { <span class="keywordflow">return</span> vfmaq_f32(a, b, c); }</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { <span class="keywordflow">return</span> vfmaq_n_f32(a, b, c); }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c) { <span class="keywordflow">return</span> vfmsq_f32(a, b, c); }</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16x8_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmaq_m_f16(a, b, c, p); }</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmaq_m_n_f16(a, b, c, p); }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>[[gnu::always_inline]] nce float16x8_t multiply_subtract_fused(float16x8_t a, float16x8_t b, float16x8_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmsq_m_f16(a, b, c, p); }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmaq_m_f32(a, b, c, p); }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmaq_m_n_f32(a, b, c, p); }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c, mve_pred16_t p) { <span class="keywordflow">return</span> vfmsq_m_f32(a, b, c, p); }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">// clang-format on</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}  <span class="comment">// namespace mve</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#undef nce</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

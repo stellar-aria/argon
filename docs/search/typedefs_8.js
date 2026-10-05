@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['value_5ftype_0',['value_type',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ab60d797c3bc758277f1f3029839dc293',1,'argon::vectorize::load::LoadIterator::value_type'],['../structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a14731459167438b56205e9644ecc92ab',1,'argon::vectorize::load_store::Iterator::value_type'],['../structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#ac741217b7d202ce2b6da9155fc15dce7',1,'argon::vectorize::load_store::ConstIterator::value_type']]],
-  ['vector_5ftype_1',['vector_type',['../classargon_1_1Vector.html#a076579834e2a423dbbf5ebfa42348752',1,'argon::Vector']]]
+  ['nextlarger_5ft_0',['NextLarger_t',['../namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5',1,'argon::helpers']]],
+  ['nextsmaller_5ft_1',['NextSmaller_t',['../namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0',1,'argon::helpers']]]
 ];

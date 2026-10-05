@@ -95,49 +95,52 @@ $(function(){initNavTree('argon__for_8hpp_source.html','',''); });
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="features_8h.html">argon/features.h</a>&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;arm_simd/helpers/concepts.hpp&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;arm_simd/helpers/scalar.hpp&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define simd mve</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define simd neon</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">class </span><a class="code hl_class" href="classArgonHalf.html">ArgonHalf</a>;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">requires</span> std::is_arithmetic_v&lt;T&gt;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">class </span><a class="code hl_class" href="classArgon.html">Argon</a>;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon_1_1helpers.html">argon::helpers</a> {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structargon_1_1helpers_1_1ArgonFor.html">   26</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;simd::is_quadword T&gt;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>&lt;T&gt; {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">using </span><a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">type</a> = <a class="code hl_class" href="classArgon.html">Argon&lt;simd::Scalar_t&lt;T&gt;</a>&gt;;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span> &lt;simd::is_<span class="keywordtype">double</span>word T&gt;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>&lt;T&gt; {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keyword">using </span><a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">type</a> = <a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;simd::Scalar_t&lt;T&gt;</a>&gt;;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>};</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">   45</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">ArgonFor_t</a> = <span class="keyword">typename</span> <a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor&lt;std::remove_cv_t&lt;T&gt;</a>&gt;<a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">::type</a>;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}  <span class="comment">// namespace argon::helpers</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#undef simd</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="lane__scalar_8hpp.html">argon/helpers/lane_scalar.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;arm_simd/helpers/concepts.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;arm_simd/helpers/scalar.hpp&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#ifdef __ARM_FEATURE_MVE</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define simd mve</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define simd neon</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">class </span><a class="code hl_class" href="classArgonHalf.html">ArgonHalf</a>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keyword">requires</span> <a class="code hl_concept" href="conceptargon_1_1lane__scalar.html">argon::lane_scalar&lt;T&gt;</a></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">class </span><a class="code hl_class" href="classArgon.html">Argon</a>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon_1_1helpers.html">argon::helpers</a> {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structargon_1_1helpers_1_1ArgonFor.html">   27</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;simd::is_quadword T&gt;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>&lt;T&gt; {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keyword">using </span><a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">type</a> = <a class="code hl_class" href="classArgon.html">Argon&lt;simd::Scalar_t&lt;T&gt;</a>&gt;;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>};</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#ifndef ARGON_PLATFORM_MVE</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span> &lt;simd::is_<span class="keywordtype">double</span>word T&gt;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">struct </span><a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>&lt;T&gt; {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">using </span><a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">type</a> = <a class="code hl_class" href="classArgonHalf.html">ArgonHalf&lt;simd::Scalar_t&lt;T&gt;</a>&gt;;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>};</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">   46</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">ArgonFor_t</a> = <span class="keyword">typename</span> <a class="code hl_struct" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor&lt;std::remove_cv_t&lt;T&gt;</a>&gt;<a class="code hl_class" href="structargon_1_1helpers_1_1NextLarger.html">::type</a>;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}  <span class="comment">// namespace argon::helpers</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#undef simd</span></div>
 <div class="ttc" id="aclassArgonHalf_html"><div class="ttname"><a href="classArgonHalf.html">ArgonHalf</a></div><div class="ttdef"><b>Definition</b> argon_half.hpp:11</div></div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon_full.hpp:29</div></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:44</div></div>
+<div class="ttc" id="aconceptargon_1_1lane__scalar_html"><div class="ttname"><a href="conceptargon_1_1lane__scalar.html">argon::lane_scalar</a></div><div class="ttdoc">A scalar type a vector lane can hold: an arithmetic type, or float16_t where half-float vectors exist...</div><div class="ttdef"><b>Definition</b> lane_scalar.hpp:31</div></div>
 <div class="ttc" id="afeatures_8h_html"><div class="ttname"><a href="features_8h.html">features.h</a></div><div class="ttdoc">Header file for SIMD features and platform detection.</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html"><div class="ttname"><a href="namespaceargon_1_1helpers.html">argon::helpers</a></div><div class="ttdoc">Contains helper templates and concepts for type manipulation and compile-time utilities.</div><div class="ttdef"><b>Definition</b> helpers.hpp:12</div></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:45</div></div>
-<div class="ttc" id="astructargon_1_1helpers_1_1ArgonFor_html"><div class="ttname"><a href="structargon_1_1helpers_1_1ArgonFor.html">argon::helpers::ArgonFor</a></div><div class="ttdoc">Helper template to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:26</div></div>
+<div class="ttc" id="alane__scalar_8hpp_html"><div class="ttname"><a href="lane__scalar_8hpp.html">lane_scalar.hpp</a></div><div class="ttdoc">Concepts for the scalar types a vector lane can hold.</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html"><div class="ttname"><a href="namespaceargon_1_1helpers.html">argon::helpers</a></div><div class="ttdoc">Contains helper templates and concepts for type manipulation and compile-time utilities.</div><div class="ttdef"><b>Definition</b> argon.hpp:156</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:46</div></div>
+<div class="ttc" id="astructargon_1_1helpers_1_1ArgonFor_html"><div class="ttname"><a href="structargon_1_1helpers_1_1ArgonFor.html">argon::helpers::ArgonFor</a></div><div class="ttdoc">Helper template to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:27</div></div>
 <div class="ttc" id="astructargon_1_1helpers_1_1NextLarger_html"><div class="ttname"><a href="structargon_1_1helpers_1_1NextLarger.html">argon::helpers::type</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.16.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Argon: argon::CondMonad&lt; CondType, ScalarType &gt; Class Template Reference</title>
+<title>Argon: argon::CondMonad&lt; VectorType, ValueType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,56 +89,184 @@ $(function(){initNavTree('classargon_1_1CondMonad.html','','classargon_1_1CondMo
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">argon::CondMonad&lt; CondType, ScalarType &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">argon::CondMonad&lt; VectorType, ValueType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for argon::CondMonad&lt; CondType, ScalarType &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classargon_1_1CondMonad__inherit__graph.png" border="0" usemap="#aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_inherit__map" loading="lazy" alt="Inheritance graph"/></div>
-<map name="aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_inherit__map" id="aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,93,232,133"/>
-<area shape="rect" title=" " alt="" coords="29,5,208,45"/>
-<area shape="poly" title=" " alt="" coords="121,59,121,93,116,93,116,59"/>
-</map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for argon::CondMonad&lt; CondType, ScalarType &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classargon_1_1CondMonad__coll__graph.png" border="0" usemap="#aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_coll__map" loading="lazy" alt="Collaboration graph"/></div>
-<map name="aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_coll__map" id="aargon_1_1CondMonad_3_01CondType_00_01ScalarType_01_4_coll__map">
-<area shape="rect" title=" " alt="" coords="5,93,232,133"/>
-<area shape="rect" title=" " alt="" coords="29,5,208,45"/>
-<area shape="poly" title=" " alt="" coords="121,59,121,93,116,93,116,59"/>
-</map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+
+<p>The result of <span class="tt">if_(...)</span> and each <span class="tt">else_if_(...)</span>: a value chosen per lane by a chain of conditions.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="argon_8hpp_source.html">argon.hpp</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-pub-types" class="groupheader"><a id="pub-types" name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a3c9fe89d5f841905c181cf9f0ea5ce9c" id="r_a3c9fe89d5f841905c181cf9f0ea5ce9c"><td class="memItemLeft"><a id="a3c9fe89d5f841905c181cf9f0ea5ce9c" name="a3c9fe89d5f841905c181cf9f0ea5ce9c"></a>
-using&#160;</td><td class="memItemRight"><b>PairType</b> = std::pair&lt;CondType, ArgonType&gt;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a37fd7cb9e9b12bd6ad4731e71d7f381b" id="r_a37fd7cb9e9b12bd6ad4731e71d7f381b"><td class="memItemLeft"><a id="a37fd7cb9e9b12bd6ad4731e71d7f381b" name="a37fd7cb9e9b12bd6ad4731e71d7f381b"></a>
-constexpr CondType&#160;</td><td class="memItemRight"><b>condition</b> () const</td></tr>
-<tr class="memitem:a449dfa03cffabdabf753465495ba4d31" id="r_a449dfa03cffabdabf753465495ba4d31"><td class="memItemLeft"><a id="a449dfa03cffabdabf753465495ba4d31" name="a449dfa03cffabdabf753465495ba4d31"></a>
-constexpr ArgonType&#160;</td><td class="memItemRight"><b>value</b> () const</td></tr>
-<tr class="memitem:af3e7a60a2e4f0b74d15d0d91d84e12df" id="r_af3e7a60a2e4f0b74d15d0d91d84e12df"><td class="memItemLeft"><a id="af3e7a60a2e4f0b74d15d0d91d84e12df" name="af3e7a60a2e4f0b74d15d0d91d84e12df"></a>
-<a class="el" href="classargon_1_1CondMonad.html">CondMonad</a>&#160;</td><td class="memItemRight"><b>else_if_</b> (CondType new_condition, ArgonType new_value) const</td></tr>
-<tr class="memitem:a5ec53637fd28180ae23bc3a83cb1358b" id="r_a5ec53637fd28180ae23bc3a83cb1358b"><td class="memTemplParams" colspan="2"><a id="a5ec53637fd28180ae23bc3a83cb1358b" name="a5ec53637fd28180ae23bc3a83cb1358b"></a>
-template&lt;typename FunctionType&gt; </td></tr>
-<tr class="memitem:a5ec53637fd28180ae23bc3a83cb1358b template"><td class="memItemLeft"><a class="el" href="classargon_1_1CondMonad.html">CondMonad</a>&#160;</td><td class="memItemRight"><b>else_if_</b> (CondType condition, FunctionType func) const</td></tr>
-<tr class="memitem:a77e247fa25b5ded58f5682bf2c08a844" id="r_a77e247fa25b5ded58f5682bf2c08a844"><td class="memItemLeft"><a id="a77e247fa25b5ded58f5682bf2c08a844" name="a77e247fa25b5ded58f5682bf2c08a844"></a>
-<a class="el" href="classargon_1_1CondMonad.html">CondMonad</a>&#160;</td><td class="memItemRight"><b>else_if_</b> (CondType condition, ScalarType value) const</td></tr>
-<tr class="memitem:a4dd16d29ac86f9c4b8215ba3ab4dc6a8" id="r_a4dd16d29ac86f9c4b8215ba3ab4dc6a8"><td class="memItemLeft"><a id="a4dd16d29ac86f9c4b8215ba3ab4dc6a8" name="a4dd16d29ac86f9c4b8215ba3ab4dc6a8"></a>
-ArgonType&#160;</td><td class="memItemRight"><b>else_</b> (ArgonType new_value) const</td></tr>
-<tr class="memitem:a967ab81a5c94105a6665866850aecf12" id="r_a967ab81a5c94105a6665866850aecf12"><td class="memTemplParams" colspan="2"><a id="a967ab81a5c94105a6665866850aecf12" name="a967ab81a5c94105a6665866850aecf12"></a>
-template&lt;typename FunctionType&gt; </td></tr>
-<tr class="memitem:a967ab81a5c94105a6665866850aecf12 template"><td class="memItemLeft">ArgonType&#160;</td><td class="memItemRight"><b>else_</b> (FunctionType func) const</td></tr>
-<tr class="memitem:abfd46e0e132d20c6ebd533339193cd43" id="r_abfd46e0e132d20c6ebd533339193cd43"><td class="memItemLeft"><a id="abfd46e0e132d20c6ebd533339193cd43" name="abfd46e0e132d20c6ebd533339193cd43"></a>
-ArgonType&#160;</td><td class="memItemRight"><b>else_</b> (ScalarType value) const</td></tr>
+<tr class="memitem:a0569510e3da9a030c439973be0faddc2" id="r_a0569510e3da9a030c439973be0faddc2"><td class="memItemLeft"><a id="a0569510e3da9a030c439973be0faddc2" name="a0569510e3da9a030c439973be0faddc2"></a>
+ace&#160;</td><td class="memItemRight"><b>CondMonad</b> (predicate_type <a class="el" href="#a9613cd986d7fc3d32c48e4b08bb2082f">condition</a>, ValueType <a class="el" href="#ab7661cc1a3dba4dff907079ddd34c712">value</a>)</td></tr>
+<tr class="memdesc:a0569510e3da9a030c439973be0faddc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a chain: <span class="tt"><a class="el" href="#ab7661cc1a3dba4dff907079ddd34c712" title="The values chosen so far; lanes no condition has claimed are unspecified until else_.">value</a></span> where <span class="tt"><a class="el" href="#a9613cd986d7fc3d32c48e4b08bb2082f" title="The lanes some condition in the chain has claimed so far.">condition</a></span> holds. <br /></td></tr>
+<tr class="memitem:a9613cd986d7fc3d32c48e4b08bb2082f" id="r_a9613cd986d7fc3d32c48e4b08bb2082f"><td class="memItemLeft"><a id="a9613cd986d7fc3d32c48e4b08bb2082f" name="a9613cd986d7fc3d32c48e4b08bb2082f"></a>
+ace predicate_type&#160;</td><td class="memItemRight"><b>condition</b> () const</td></tr>
+<tr class="memdesc:a9613cd986d7fc3d32c48e4b08bb2082f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lanes some condition in the chain has claimed so far. <br /></td></tr>
+<tr class="memitem:ab7661cc1a3dba4dff907079ddd34c712" id="r_ab7661cc1a3dba4dff907079ddd34c712"><td class="memItemLeft"><a id="ab7661cc1a3dba4dff907079ddd34c712" name="ab7661cc1a3dba4dff907079ddd34c712"></a>
+ace ValueType&#160;</td><td class="memItemRight"><b>value</b> () const</td></tr>
+<tr class="memdesc:ab7661cc1a3dba4dff907079ddd34c712"><td class="mdescLeft">&#160;</td><td class="mdescRight">The values chosen so far; lanes no condition has claimed are unspecified until else_. <br /></td></tr>
+<tr class="memitem:aa3099e09e8cd13bb37ffa8f302237125" id="r_aa3099e09e8cd13bb37ffa8f302237125"><td class="memItemLeft"><a id="aa3099e09e8cd13bb37ffa8f302237125" name="aa3099e09e8cd13bb37ffa8f302237125"></a>
+ace <a class="el" href="#a0569510e3da9a030c439973be0faddc2">CondMonad</a>&#160;</td><td class="memItemRight"><b>else_if_</b> (predicate_type new_condition, ValueType new_value) const</td></tr>
+<tr class="memdesc:aa3099e09e8cd13bb37ffa8f302237125"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes where <span class="tt">new_condition</span> holds and no earlier condition did. <br /></td></tr>
+<tr class="memitem:aa53077c9d62540c3f5353dabbc434d16" id="r_aa53077c9d62540c3f5353dabbc434d16"><td class="memItemLeft">ace <a class="el" href="#a0569510e3da9a030c439973be0faddc2">CondMonad</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa53077c9d62540c3f5353dabbc434d16">else_if_</a> (predicate_type new_condition, scalar_type new_value) const</td></tr>
+<tr class="memdesc:aa53077c9d62540c3f5353dabbc434d16"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes where <span class="tt">new_condition</span> holds and no earlier condition did.     <br /></td></tr>
+<tr class="memitem:a1564055d4f5c77b30c5031bf1b55711b" id="r_a1564055d4f5c77b30c5031bf1b55711b"><td class="memTemplParams" colspan="2">template&lt;std::invocable FunctionType&gt; </td></tr>
+<tr class="memitem:a1564055d4f5c77b30c5031bf1b55711b template"><td class="memItemLeft">ace <a class="el" href="#a0569510e3da9a030c439973be0faddc2">CondMonad</a>&#160;</td><td class="memItemRight"><a class="el" href="#a1564055d4f5c77b30c5031bf1b55711b">else_if_</a> (predicate_type new_condition, FunctionType func) const</td></tr>
+<tr class="memdesc:a1564055d4f5c77b30c5031bf1b55711b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes where <span class="tt">new_condition</span> holds and no earlier condition did.     <br /></td></tr>
+<tr class="memitem:a4a8ef8d8d059bc730145ec24895dfa62" id="r_a4a8ef8d8d059bc730145ec24895dfa62"><td class="memItemLeft"><a id="a4a8ef8d8d059bc730145ec24895dfa62" name="a4a8ef8d8d059bc730145ec24895dfa62"></a>
+ace ValueType&#160;</td><td class="memItemRight"><b>else_</b> (ValueType new_value) const</td></tr>
+<tr class="memdesc:a4a8ef8d8d059bc730145ec24895dfa62"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes no condition claimed; ends the chain. <br /></td></tr>
+<tr class="memitem:a096df1b615f92d343030ed3b3daeb84a" id="r_a096df1b615f92d343030ed3b3daeb84a"><td class="memItemLeft">ace ValueType&#160;</td><td class="memItemRight"><a class="el" href="#a096df1b615f92d343030ed3b3daeb84a">else_</a> (scalar_type new_value) const</td></tr>
+<tr class="memdesc:a096df1b615f92d343030ed3b3daeb84a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes no condition claimed; ends the chain.     <br /></td></tr>
+<tr class="memitem:ac651ba79fbcedd2bd3ec885c7d8c859e" id="r_ac651ba79fbcedd2bd3ec885c7d8c859e"><td class="memTemplParams" colspan="2">template&lt;std::invocable FunctionType&gt; </td></tr>
+<tr class="memitem:ac651ba79fbcedd2bd3ec885c7d8c859e template"><td class="memItemLeft">ace ValueType&#160;</td><td class="memItemRight"><a class="el" href="#ac651ba79fbcedd2bd3ec885c7d8c859e">else_</a> (FunctionType func) const</td></tr>
+<tr class="memdesc:ac651ba79fbcedd2bd3ec885c7d8c859e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">new_value</span> in the lanes no condition claimed; ends the chain.     <br /></td></tr>
 </table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename VectorType, typename ValueType&gt;<br />
+requires (ValueType::lanes == <a class="el" href="classargon_1_1Predicate.html">Predicate</a>&lt;VectorType&gt;::lanes)<br />
+class argon::CondMonad&lt; VectorType, ValueType &gt;</div><p>The result of <span class="tt">if_(...)</span> and each <span class="tt">else_if_(...)</span>: a value chosen per lane by a chain of conditions. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">VectorType</td><td>The vector type the conditions were computed from. </td></tr>
+    <tr><td class="paramname">ValueType</td><td>The <a class="el" href="classArgon.html">Argon</a> type of the values being chosen.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Lanes take the value of the first condition that holds for them, as in an if / else-if chain; <span class="tt"><a class="el" href="#a4a8ef8d8d059bc730145ec24895dfa62" title="new_value in the lanes no condition claimed; ends the chain.">else_</a></span> supplies the value for lanes where none held and ends the chain. Every branch is evaluated (see ternary). </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="ac651ba79fbcedd2bd3ec885c7d8c859e" name="ac651ba79fbcedd2bd3ec885c7d8c859e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac651ba79fbcedd2bd3ec885c7d8c859e">&#9670;&#160;</a></span>else_() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType, typename ValueType&gt; </div>
+<div class="memtemplate">
+template&lt;std::invocable FunctionType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace ValueType <a class="el" href="classargon_1_1CondMonad.html">argon::CondMonad</a>&lt; VectorType, ValueType &gt;::else_ </td>
+          <td>(</td>
+          <td class="paramtype">FunctionType</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><span class="tt">new_value</span> in the lanes no condition claimed; ends the chain.    </p>
+
+</div>
+</div>
+<a id="a096df1b615f92d343030ed3b3daeb84a" name="a096df1b615f92d343030ed3b3daeb84a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a096df1b615f92d343030ed3b3daeb84a">&#9670;&#160;</a></span>else_() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType, typename ValueType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace ValueType <a class="el" href="classargon_1_1CondMonad.html">argon::CondMonad</a>&lt; VectorType, ValueType &gt;::else_ </td>
+          <td>(</td>
+          <td class="paramtype">scalar_type</td>          <td class="paramname"><span class="paramname"><em>new_value</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><span class="tt">new_value</span> in the lanes no condition claimed; ends the chain.    </p>
+
+</div>
+</div>
+<a id="a1564055d4f5c77b30c5031bf1b55711b" name="a1564055d4f5c77b30c5031bf1b55711b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1564055d4f5c77b30c5031bf1b55711b">&#9670;&#160;</a></span>else_if_() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType, typename ValueType&gt; </div>
+<div class="memtemplate">
+template&lt;std::invocable FunctionType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a0569510e3da9a030c439973be0faddc2">CondMonad</a> <a class="el" href="classargon_1_1CondMonad.html">argon::CondMonad</a>&lt; VectorType, ValueType &gt;::else_if_ </td>
+          <td>(</td>
+          <td class="paramtype">predicate_type</td>          <td class="paramname"><span class="paramname"><em>new_condition</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FunctionType</td>          <td class="paramname"><span class="paramname"><em>func</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><span class="tt">new_value</span> in the lanes where <span class="tt">new_condition</span> holds and no earlier condition did.    </p>
+
+</div>
+</div>
+<a id="aa53077c9d62540c3f5353dabbc434d16" name="aa53077c9d62540c3f5353dabbc434d16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa53077c9d62540c3f5353dabbc434d16">&#9670;&#160;</a></span>else_if_() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType, typename ValueType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a0569510e3da9a030c439973be0faddc2">CondMonad</a> <a class="el" href="classargon_1_1CondMonad.html">argon::CondMonad</a>&lt; VectorType, ValueType &gt;::else_if_ </td>
+          <td>(</td>
+          <td class="paramtype">predicate_type</td>          <td class="paramname"><span class="paramname"><em>new_condition</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">scalar_type</td>          <td class="paramname"><span class="paramname"><em>new_value</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><span class="tt">new_value</span> in the lanes where <span class="tt">new_condition</span> holds and no earlier condition did.    </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/<a class="el" href="argon_8hpp_source.html">argon.hpp</a></li>
 </ul>
@@ -155,7 +283,7 @@ ArgonType&#160;</td><td class="memItemRight"><b>else_</b> (ScalarType value) con
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>argon</b></li><li class="navelem"><a href="classargon_1_1CondMonad.html">CondMonad</a></li>
+    <li class="navelem"><a href="namespaceargon.html">argon</a></li><li class="navelem"><a href="classargon_1_1CondMonad.html">CondMonad</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['handling_0',['Error Handling',['../md_docs_2vectorize.html#autotoc_md24',1,'']]],
+  ['handling_0',['Error Handling',['../md_docs_2vectorize.html#autotoc_md28',1,'']]],
   ['has_5flarger_1',['has_larger',['../conceptargon_1_1helpers_1_1has__larger.html',1,'argon::helpers']]],
   ['has_5flarger_5fv_2',['has_larger_v',['../namespaceargon_1_1helpers.html#a496aa311ea4aaaa0489be3c5c10d6c6b',1,'argon::helpers']]],
   ['has_5fsmaller_3',['has_smaller',['../conceptargon_1_1helpers_1_1has__smaller.html',1,'argon::helpers']]],

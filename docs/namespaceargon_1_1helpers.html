@@ -103,7 +103,7 @@ Classes</h2></td></tr>
 <tr class="memitem:NextSmaller" id="r_NextSmaller"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structargon_1_1helpers_1_1NextSmaller.html">NextSmaller</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper template to determine the next smaller type for a given type.  <a href="structargon_1_1helpers_1_1NextSmaller.html#details">More...</a><br /></td></tr>
 <tr class="memitem:ArgonFor" id="r_ArgonFor"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper template to get the <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> type for a given vector type.  <a href="structargon_1_1helpers_1_1ArgonFor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper template to get the <a class="el" href="classArgon.html">Argon</a> type for a given vector type.  <a href="structargon_1_1helpers_1_1ArgonFor.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-concepts" class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
@@ -113,6 +113,9 @@ Concepts</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:af9af993ac460373109df9336d6806685" id="r_af9af993ac460373109df9336d6806685"><td class="memTemplParams" colspan="2">template&lt;typename VectorType, typename ScalarType&gt; </td></tr>
+<tr class="memitem:af9af993ac460373109df9336d6806685 template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#af9af993ac460373109df9336d6806685">LaneFor_t</a></td></tr>
+<tr class="memdesc:af9af993ac460373109df9336d6806685"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lane type for a ScalarType value used alongside VectorType's lanes.  <br /></td></tr>
 <tr class="memitem:ae7872fcc8769f160ebc61fa2d4bc19e5" id="r_ae7872fcc8769f160ebc61fa2d4bc19e5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:ae7872fcc8769f160ebc61fa2d4bc19e5 template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#ae7872fcc8769f160ebc61fa2d4bc19e5">NextLarger_t</a> = <a class="el" href="structargon_1_1helpers_1_1NextLarger.html">NextLarger</a>&lt;T&gt;<a class="el" href="structargon_1_1helpers_1_1NextLarger.html">::type</a></td></tr>
 <tr class="memdesc:ae7872fcc8769f160ebc61fa2d4bc19e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper alias to get the next larger type for a given type.  <br /></td></tr>
@@ -121,7 +124,7 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:a8d075bdf1ee9f3d7bb5988ac4603f5a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper alias to get the next smaller type for a given type.  <br /></td></tr>
 <tr class="memitem:a78d315330017f0fe0a14cccd2d5b318a" id="r_a78d315330017f0fe0a14cccd2d5b318a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a78d315330017f0fe0a14cccd2d5b318a template"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="#a78d315330017f0fe0a14cccd2d5b318a">ArgonFor_t</a> = typename <a class="el" href="structargon_1_1helpers_1_1ArgonFor.html">ArgonFor</a>&lt;std::remove_cv_t&lt;T&gt;&gt;<a class="el" href="structargon_1_1helpers_1_1NextLarger.html">::type</a></td></tr>
-<tr class="memdesc:a78d315330017f0fe0a14cccd2d5b318a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper alias to get the <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> type for a given vector type.  <br /></td></tr>
+<tr class="memdesc:a78d315330017f0fe0a14cccd2d5b318a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper alias to get the <a class="el" href="classArgon.html">Argon</a> type for a given vector type.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -153,9 +156,9 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains helper templates and concepts for type manipulation and compile-time utilities. </p>
-<p>Workarounds that keep <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a>'s float operations on NEON with the NEON instructions' semantics.</p>
+<p>Workarounds that keep <a class="el" href="classArgon.html">Argon</a>'s float operations on NEON with the NEON instructions' semantics.</p>
 <ul>
-<li>GCC on AArch32 scalarises generic vector-extension float arithmetic, comparisons and <span class="tt">?:</span> to VFP unless -ffast-math is on (AArch32 NEON flushes denormals, so it is not IEEE), and its arm_neon.h implements vc{lt,gt,le,ge}{q}_f32 as such generic comparisons. <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> uses the NEON builtins behind the arithmetic intrinsics there (see <span class="tt"><a class="el" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08" title="True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...">ARGON_GCC_AARCH32_FLOAT</a></span>), and the inline vcgt/vcge below for comparisons.</li>
+<li>GCC on AArch32 scalarises generic vector-extension float arithmetic, comparisons and <span class="tt">?:</span> to VFP unless -ffast-math is on (AArch32 NEON flushes denormals, so it is not IEEE), and its arm_neon.h implements vc{lt,gt,le,ge}{q}_f32 as such generic comparisons. <a class="el" href="classArgon.html">Argon</a> uses the NEON builtins behind the arithmetic intrinsics there (see <span class="tt"><a class="el" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08" title="True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...">ARGON_GCC_AARCH32_FLOAT</a></span>), and the inline vcgt/vcge below for comparisons.</li>
 <li>clang on AArch32 lowers vcvt{q}_{s,u}32_f32 to IR fptosi/fptoui, which are poison for NaN and out-of-range inputs and get constant-folded to wrong values (AArch64 uses llvm.fpto{s,u}i.sat). The conversions below emit vcvt directly there, keeping its truncate/saturate/NaN→0 semantics.</li>
 <li>SIMDe (x86) converts float values between 2^31 and 2^32 to uint32 as 2^31; the conversions below convert per lane there. </li>
 </ul>
@@ -174,13 +177,36 @@ template&lt;typename T&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Helper alias to get the <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> type for a given vector type. </p>
+<p>Helper alias to get the <a class="el" href="classArgon.html">Argon</a> type for a given vector type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>The vector type to get the <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> type for. </td></tr>
+    <tr><td class="paramname">T</td><td>The vector type to get the <a class="el" href="classArgon.html">Argon</a> type for. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="af9af993ac460373109df9336d6806685" name="af9af993ac460373109df9336d6806685"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9af993ac460373109df9336d6806685">&#9670;&#160;</a></span>LaneFor_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType, typename ScalarType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#af9af993ac460373109df9336d6806685">argon::helpers::LaneFor_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">std::conditional_t&lt;std::is_integral_v&lt;ScalarType&gt; &amp;&amp; std::is_integral_v&lt;simd::Scalar_t&lt;VectorType&gt;&gt; &amp;&amp;</div>
+<div class="line">                                        <span class="keyword">sizeof</span>(ScalarType) == <span class="keyword">sizeof</span>(simd::Scalar_t&lt;VectorType&gt;) &amp;&amp;</div>
+<div class="line">                                        std::is_signed_v&lt;ScalarType&gt; == std::is_signed_v&lt;simd::Scalar_t&lt;VectorType&gt;&gt;,</div>
+<div class="line">                                    simd::Scalar_t&lt;VectorType&gt;, ScalarType&gt;</div>
+</div><!-- fragment -->
+<p>The lane type for a ScalarType value used alongside VectorType's lanes. </p>
+<p>An integer of the same size and signedness as VectorType's lanes becomes that lane type, so a literal like <span class="tt">3</span> (int) pairs with int32_t lanes even where int32_t is long (arm-none-eabi), which has no <a class="el" href="classArgon.html">Argon&lt;int&gt;</a>. </p>
 
 </div>
 </div>
@@ -416,7 +442,7 @@ template&lt;typename T&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>argon</b></li><li class="navelem"><a href="namespaceargon_1_1helpers.html">helpers</a></li>
+    <li class="navelem"><a href="namespaceargon.html">argon</a></li><li class="navelem"><a href="namespaceargon_1_1helpers.html">helpers</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>

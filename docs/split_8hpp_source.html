@@ -103,21 +103,28 @@ $(function(){initNavTree('split_8hpp_source.html','',''); });
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define simd neon</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> scalar_type&gt;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>std::pair&lt;std::span&lt;scalar_type&gt;, std::span&lt;scalar_type&gt;&gt; split_head_aligned(std::span&lt;scalar_type&gt; span) {</div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="namespaceargon.html#ac1069bfc7eae7d23563731531bdb3375">   18</a></span>std::pair&lt;std::span&lt;scalar_type&gt;, std::span&lt;scalar_type&gt;&gt; <a class="code hl_function" href="namespaceargon.html#ac1069bfc7eae7d23563731531bdb3375">split_head_aligned</a>(std::span&lt;scalar_type&gt; span) {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> lanes = <span class="keyword">sizeof</span>(simd::Vec128_t&lt;scalar_type&gt;) / <span class="keyword">sizeof</span>(scalar_type);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keywordflow">return</span> {span.first(span.size() &amp; ~(lanes - 1)), span.last(span.size() &amp; (lanes - 1))};</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>}</div>
+</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> scalar_type&gt;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>std::pair&lt;std::span&lt;scalar_type&gt;, std::span&lt;scalar_type&gt;&gt; split_tail_aligned(std::span&lt;scalar_type&gt; span) {</div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="}">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="namespaceargon.html#a4158e61f123d4a7d8e2c64d177a6ba42">   27</a></span>std::pair&lt;std::span&lt;scalar_type&gt;, std::span&lt;scalar_type&gt;&gt; <a class="code hl_function" href="namespaceargon.html#a4158e61f123d4a7d8e2c64d177a6ba42">split_tail_aligned</a>(std::span&lt;scalar_type&gt; span) {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> lanes = <span class="keyword">sizeof</span>(simd::Vec128_t&lt;scalar_type&gt;) / <span class="keyword">sizeof</span>(scalar_type);</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keywordflow">return</span> {span.first(span.size() &amp; (lanes - 1)), span.last(span.size() &amp; ~(lanes - 1))};</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
+</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}  <span class="comment">// namespace argon</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#undef simd</span></div>
+<div class="ttc" id="anamespaceargon_html"><div class="ttname"><a href="namespaceargon.html">argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon.hpp:30</div></div>
+<div class="ttc" id="anamespaceargon_html_a4158e61f123d4a7d8e2c64d177a6ba42"><div class="ttname"><a href="namespaceargon.html#a4158e61f123d4a7d8e2c64d177a6ba42">argon::split_tail_aligned</a></div><div class="ttdeci">std::pair&lt; std::span&lt; scalar_type &gt;, std::span&lt; scalar_type &gt; &gt; split_tail_aligned(std::span&lt; scalar_type &gt; span)</div><div class="ttdoc">Split a span into two spans, with the second span aligned to the vector size.</div><div class="ttdef"><b>Definition</b> split.hpp:27</div></div>
+<div class="ttc" id="anamespaceargon_html_ac1069bfc7eae7d23563731531bdb3375"><div class="ttname"><a href="namespaceargon.html#ac1069bfc7eae7d23563731531bdb3375">argon::split_head_aligned</a></div><div class="ttdeci">std::pair&lt; std::span&lt; scalar_type &gt;, std::span&lt; scalar_type &gt; &gt; split_head_aligned(std::span&lt; scalar_type &gt; span)</div><div class="ttdoc">Split a span into two spans, with the first span aligned to the vector size.</div><div class="ttdef"><b>Definition</b> split.hpp:18</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

@@ -1,0 +1,13 @@
+<map id="include/argon/helpers/lane_scalar.hpp" name="include/argon/helpers/lane_scalar.hpp">
+<area shape="rect" id="Node000001" title="Concepts for the scalar types a vector lane can hold." alt="" coords="141,5,304,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,85,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,48,85,90,83,85,179,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="110,93,202,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="209,47,177,84,173,81,205,44"/>
+<area shape="rect" id="Node000004" href="$features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="226,93,355,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="241,44,274,81,270,84,237,47"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="380,93,479,119"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="273,43,387,86,385,91,271,48"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="249,167,332,192"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="293,119,293,153,288,153,288,119"/>
+</map>

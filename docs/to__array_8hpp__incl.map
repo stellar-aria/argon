@@ -1,24 +1,32 @@
 <map id="include/argon/helpers/to_array.hpp" name="include/argon/helpers/to_array.hpp">
-<area shape="rect" id="Node000001" title="Helper functions to convert C&#45;style arrays to std::array of Argon types, mimicking std::to_array." alt="" coords="124,5,287,45"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="124,93,180,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,47,170,83,166,80,190,44"/>
-<area shape="rect" id="Node000003" href="$argon__for_8hpp_source.html" title=" " alt="" coords="205,93,315,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="221,44,246,80,242,84,216,47"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="86,240,178,265"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="205,120,87,143,38,157,14,169,9,178,9,187,22,205,47,221,78,233,76,238,44,225,18,209,4,189,4,177,10,165,36,152,86,138,204,114"/>
-<area shape="rect" id="Node000005" href="$features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="323,240,453,265"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="316,111,424,130,472,145,490,154,502,165,508,177,508,188,495,208,470,225,441,238,438,233,468,220,491,204,503,187,503,178,498,168,487,159,470,150,423,135,315,116"/>
-<area shape="rect" id="Node000007" href="$concepts_8hpp_source.html" title=" " alt="" coords="24,167,253,192"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="242,121,172,162,169,157,239,116"/>
-<area shape="rect" id="Node000009" href="$scalar_8hpp_source.html" title=" " alt="" coords="278,167,487,192"/>
-<area shape="poly" id="edge10_Node000003_Node000009" title=" " alt="" coords="281,116,352,157,350,162,278,121"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="347,313,429,339"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="391,266,391,300,385,300,385,266"/>
-<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="140,193,137,227,132,226,135,192"/>
-<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="180,189,335,234,334,239,178,195"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="203,240,299,265"/>
-<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="158,190,222,230,219,235,155,194"/>
-<area shape="poly" id="edge11_Node000009_Node000004" title=" " alt="" coords="343,195,187,239,185,234,342,189"/>
-<area shape="poly" id="edge12_Node000009_Node000005" title=" " alt="" coords="386,192,389,226,384,227,381,193"/>
-<area shape="poly" id="edge13_Node000009_Node000008" title=" " alt="" coords="363,194,286,236,283,231,360,190"/>
+<area shape="rect" id="Node000001" title="Helper functions to convert C&#45;style arrays to std::array of Argon types, mimicking std::to_array." alt="" coords="371,5,533,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="371,93,427,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="441,47,417,83,412,80,437,44"/>
+<area shape="rect" id="Node000003" href="$argon__for_8hpp_source.html" title=" " alt="" coords="451,93,562,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="467,44,493,80,489,84,463,47"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="322,255,414,280"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="509,119,504,161,496,186,483,208,455,234,421,252,419,247,452,230,479,205,492,184,499,160,504,119"/>
+<area shape="rect" id="Node000005" href="$features_8h.html" title="Header file for SIMD features and platform detection." alt="" coords="453,255,582,280"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="514,118,528,166,529,206,525,241,520,241,524,205,523,167,509,120"/>
+<area shape="rect" id="Node000007" href="$lane__scalar_8hpp.html" title="Concepts for the scalar types a vector lane can hold." alt="" coords="595,167,738,207"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="531,116,617,158,614,163,529,121"/>
+<area shape="rect" id="Node000010" href="$concepts_8hpp_source.html" title=" " alt="" coords="5,174,235,199"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="452,121,191,174,190,169,451,116"/>
+<area shape="rect" id="Node000012" href="$scalar_8hpp_source.html" title=" " alt="" coords="259,174,469,199"/>
+<area shape="poly" id="edge15_Node000003_Node000012" title=" " alt="" coords="487,121,398,170,396,165,484,117"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="476,328,559,353"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="520,280,520,314,515,314,515,280"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="596,209,425,254,424,249,594,204"/>
+<area shape="poly" id="edge9_Node000007_Node000005" title=" " alt="" coords="632,209,553,250,550,246,630,204"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="736,255,816,280"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="695,205,750,244,747,249,692,209"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="613,255,712,280"/>
+<area shape="poly" id="edge10_Node000007_Node000009" title=" " alt="" coords="668,207,667,241,661,241,663,207"/>
+<area shape="poly" id="edge12_Node000010_Node000004" title=" " alt="" coords="157,197,320,248,318,253,155,202"/>
+<area shape="poly" id="edge13_Node000010_Node000005" title=" " alt="" coords="178,197,447,249,446,255,177,202"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="139,255,235,280"/>
+<area shape="poly" id="edge14_Node000010_Node000011" title=" " alt="" coords="132,198,170,243,166,246,128,201"/>
+<area shape="poly" id="edge16_Node000012_Node000004" title=" " alt="" coords="367,199,369,241,364,241,362,200"/>
+<area shape="poly" id="edge17_Node000012_Node000005" title=" " alt="" coords="388,197,484,246,481,251,385,202"/>
+<area shape="poly" id="edge18_Node000012_Node000011" title=" " alt="" coords="339,202,226,252,224,247,337,197"/>
 </map>

@@ -96,7 +96,7 @@ $(function(){initNavTree('features_8h_source.html','',''); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">enum class</span> Platform {</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  NEON,</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  MVE,</div>
@@ -105,7 +105,7 @@ $(function(){initNavTree('features_8h_source.html','',''); });
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#ifdef __ARM_NEON</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">constexpr</span> Platform platform = Platform::NEON;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>}</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#define ARGON_PLATFORM_NEON true</span></div>
@@ -136,7 +136,7 @@ $(function(){initNavTree('features_8h_source.html','',''); });
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#elifdef __ARM_FEATURE_MVE</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">constexpr</span> Platform platform = Platform::MVE;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#define ARGON_PLATFORM_MVE true</span></div>
@@ -152,7 +152,7 @@ $(function(){initNavTree('features_8h_source.html','',''); });
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">constexpr</span> Platform platform = Platform::SIMDe;</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#define ARGON_PLATFORM_SIMDE true</span></div>
@@ -194,6 +194,7 @@ $(function(){initNavTree('features_8h_source.html','',''); });
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="comment">#pragma message &quot;__ARM_NEON_FP: &quot; XSTR(__ARM_NEON_FP)</span></div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="comment">#pragma message &quot;__ARM_FP: &quot; XSTR(__ARM_FP)</span></div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="comment">*/</span></div>
+<div class="ttc" id="anamespaceargon_html"><div class="ttname"><a href="namespaceargon.html">argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

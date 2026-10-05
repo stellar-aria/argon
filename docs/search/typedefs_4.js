@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lane_5ftype_0',['lane_type',['../classargon_1_1Vector.html#a03dd715936783524ec28dc59365db01f',1,'argon::Vector']]]
+  ['frame_5ftype_0',['frame_type',['../classargon_1_1vectorize_1_1InterleavedStep.html#a61a4d4baa078bdc8318fa19df4bb75b4',1,'argon::vectorize::InterleavedStep']]]
 ];

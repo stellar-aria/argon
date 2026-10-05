@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['scalar_5ftype_0',['scalar_type',['../classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9',1,'argon::Vector']]],
-  ['sentinel_1',['sentinel',['../structargon_1_1vectorize_1_1load.html#a7612e00731ee6b9db324f2c74a5683a4',1,'argon::vectorize::load']]]
+  ['mask_5fscalar_0',['mask_scalar',['../classargon_1_1Predicate.html#a558da079aa93fbbd07d01fb3a569f4e1',1,'argon::Predicate']]],
+  ['mask_5ftype_1',['mask_type',['../classargon_1_1Predicate.html#a7f7c1c6df4adb06b2598c51de7e1f261',1,'argon::Predicate::mask_type'],['../classargon_1_1Vector.html#a0c772416891b4c927045fd691ea74570',1,'argon::Vector::mask_type']]]
 ];

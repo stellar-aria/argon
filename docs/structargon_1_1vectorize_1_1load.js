@@ -8,5 +8,6 @@ var structargon_1_1vectorize_1_1load =
     [ "load", "structargon_1_1vectorize_1_1load.html#a8e065f6d25186dfd0b85e3064f7bb563", null ],
     [ "begin", "structargon_1_1vectorize_1_1load.html#a79422902332281fc7cfc764f16e6b2a4", null ],
     [ "end", "structargon_1_1vectorize_1_1load.html#a05737df50aae3d1fddf5396c8097fc69", null ],
-    [ "size", "structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898", null ]
+    [ "size", "structargon_1_1vectorize_1_1load.html#a237a24b1d081229250f573ff006b8898", null ],
+    [ "with_tail", "structargon_1_1vectorize_1_1load.html#a16abb094155b1cf81500b1602ba1a199", null ]
 ];

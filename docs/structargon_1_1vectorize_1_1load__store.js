@@ -13,5 +13,6 @@ var structargon_1_1vectorize_1_1load__store =
     [ "cbegin", "structargon_1_1vectorize_1_1load__store.html#af49b54b3edfaae46a3aed8bbfc8b62e9", null ],
     [ "cend", "structargon_1_1vectorize_1_1load__store.html#adfb6b90e9fa1e6c4717ac880fff05ca7", null ],
     [ "end", "structargon_1_1vectorize_1_1load__store.html#afed0dde768934b4fcd499fee6652ba4b", null ],
-    [ "size", "structargon_1_1vectorize_1_1load__store.html#a8d4bed782983aa29cd47ab0f1f7d9149", null ]
+    [ "size", "structargon_1_1vectorize_1_1load__store.html#a8d4bed782983aa29cd47ab0f1f7d9149", null ],
+    [ "with_tail", "structargon_1_1vectorize_1_1load__store.html#af1ca8689f2d8c95804a38274b32067e5", null ]
 ];

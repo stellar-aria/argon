@@ -49,8 +49,13 @@ var NAVTREE =
         [ "Storing Interleaved Data", "md_docs_2vectorize.html#autotoc_md21", null ]
       ] ],
       [ "Key Features", "md_docs_2vectorize.html#autotoc_md22", null ],
-      [ "Notes", "md_docs_2vectorize.html#autotoc_md23", null ],
-      [ "Error Handling", "md_docs_2vectorize.html#autotoc_md24", null ]
+      [ "Looping over a whole range (<span class=\"tt\">vectorize::for_each</span>)", "md_docs_2vectorize.html#autotoc_md23", [
+        [ "Interleaved data (<span class=\"tt\">vectorize::for_each_interleaved</span>)", "md_docs_2vectorize.html#autotoc_md24", null ],
+        [ "<span class=\"tt\">for_each</span> or <span class=\"tt\">with_tail()</span>?", "md_docs_2vectorize.html#autotoc_md25", null ]
+      ] ],
+      [ "Including the final partial vector (<span class=\"tt\">with_tail()</span>)", "md_docs_2vectorize.html#autotoc_md26", null ],
+      [ "Notes", "md_docs_2vectorize.html#autotoc_md27", null ],
+      [ "Error Handling", "md_docs_2vectorize.html#autotoc_md28", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -58,7 +63,8 @@ var NAVTREE =
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
-        [ "Typedefs", "namespacemembers_type.html", null ]
+        [ "Typedefs", "namespacemembers_type.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
     [ "Concepts", "concepts.html", "concepts" ],
@@ -87,8 +93,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
-"classargon_1_1Vector.html#a67afa3ff14121529d8ae26ff64ad646b",
-"lane_8hpp_source.html"
+"classargon_1_1Predicate.html#ae207760039f2ce7e2c9138670ba13508",
+"classargon_1_1Vector.html#acad81c4e41ec827ffc64a34761b0c41f",
+"namespaceargon.html#a599511189d1c9f9949643b3c1a33a06b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

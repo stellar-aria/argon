@@ -148,6 +148,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a276f7faa5662ff01b220f276139dc5c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a load from a range.  <br /></td></tr>
 <tr class="memitem:a8e065f6d25186dfd0b85e3064f7bb563" id="r_a8e065f6d25186dfd0b85e3064f7bb563"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a8e065f6d25186dfd0b85e3064f7bb563">load</a> (const std::span&lt; ScalarType &gt; span)</td></tr>
 <tr class="memdesc:a8e065f6d25186dfd0b85e3064f7bb563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a load from a span.  <br /></td></tr>
+<tr class="memitem:a16abb094155b1cf81500b1602ba1a199" id="r_a16abb094155b1cf81500b1602ba1a199"><td class="memItemLeft"><a class="el" href="classargon_1_1vectorize_1_1load__tail.html">load_tail</a>&lt; ScalarType &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a16abb094155b1cf81500b1602ba1a199">with_tail</a> () const</td></tr>
+<tr class="memdesc:a16abb094155b1cf81500b1602ba1a199"><td class="mdescLeft">&#160;</td><td class="mdescRight">A view of the same range that also visits the final, partial vector.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -333,6 +335,36 @@ template&lt;typename ScalarType&gt; </div>
 
 </div>
 </div>
+<a id="a16abb094155b1cf81500b1602ba1a199" name="a16abb094155b1cf81500b1602ba1a199"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16abb094155b1cf81500b1602ba1a199">&#9670;&#160;</a></span>with_tail()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ScalarType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classargon_1_1vectorize_1_1load__tail.html">load_tail</a>&lt; ScalarType &gt; <a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::with_tail </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A view of the same range that also visits the final, partial vector. </p>
+<p>This view skips elements after the last whole vector; <a class="el" href="#a16abb094155b1cf81500b1602ba1a199" title="A view of the same range that also visits the final, partial vector.">with_tail()</a> visits them too, as a vector whose lanes past the end are zero. Each element is a <a class="el" href="classargon_1_1vectorize_1_1Partial.html" title="One vector (or, for interleaved views, one group of Stride vectors) of a range, and how many of its l...">Partial</a>: <span class="tt">*p</span> is the vector, <span class="tt">p.active()</span> its in-range lanes. </p>
+
+</div>
+</div>
 <a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="a292aaa0e453c2cf8fa232993d3b55e18" name="a292aaa0e453c2cf8fa232993d3b55e18"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a292aaa0e453c2cf8fa232993d3b55e18">&#9670;&#160;</a></span>lanes</h2>
@@ -357,7 +389,7 @@ template&lt;typename ScalarType&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">                          =</div>
 <div class="line"><span class="keyword">sizeof</span>(<a class="code hl_typedef" href="#ae0feaae5cf7226742b5e794b4eeebb19">intrinsic_type</a>) / <span class="keyword">sizeof</span>(ScalarType)</div>
-<div class="ttc" id="astructargon_1_1vectorize_1_1load_html_ae0feaae5cf7226742b5e794b4eeebb19"><div class="ttname"><a href="#ae0feaae5cf7226742b5e794b4eeebb19">argon::vectorize::load::intrinsic_type</a></div><div class="ttdeci">simd::Vec128_t&lt; ScalarType &gt; intrinsic_type</div><div class="ttdoc">The SIMD vector type.</div><div class="ttdef"><b>Definition</b> load.hpp:37</div></div>
+<div class="ttc" id="astructargon_1_1vectorize_1_1load_html_ae0feaae5cf7226742b5e794b4eeebb19"><div class="ttname"><a href="#ae0feaae5cf7226742b5e794b4eeebb19">argon::vectorize::load::intrinsic_type</a></div><div class="ttdeci">simd::Vec128_t&lt; ScalarType &gt; intrinsic_type</div><div class="ttdoc">The SIMD vector type.</div><div class="ttdef"><b>Definition</b> load.hpp:38</div></div>
 </div><!-- fragment -->
 <p>The number of lanes in the SIMD vector. </p>
 
@@ -379,7 +411,7 @@ template&lt;typename ScalarType&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>argon</b></li><li class="navelem"><b>vectorize</b></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load.html">load</a></li>
+    <li class="navelem"><a href="namespaceargon.html">argon</a></li><li class="navelem"><b>vectorize</b></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load.html">load</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>

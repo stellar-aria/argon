@@ -134,8 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a13d5e38d4552938c4355a24fcdb39728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an integer to the iterator and returns a new iterator.  <br /></td></tr>
 <tr class="memitem:a8997efd5091aeae4007ad54b17bdf15c" id="r_a8997efd5091aeae4007ad54b17bdf15c"><td class="memItemLeft">LoadIterator&#160;</td><td class="memItemRight"><a class="el" href="#a8997efd5091aeae4007ad54b17bdf15c">operator-</a> (int n) const</td></tr>
 <tr class="memdesc:a8997efd5091aeae4007ad54b17bdf15c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtracts an integer from the iterator and returns a new iterator.  <br /></td></tr>
-<tr class="memitem:aef4644d68bcb8d9ab2e629a40af0e4c7" id="r_aef4644d68bcb8d9ab2e629a40af0e4c7"><td class="memItemLeft">LoadIterator &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aef4644d68bcb8d9ab2e629a40af0e4c7">operator[]</a> (int n) const</td></tr>
-<tr class="memdesc:aef4644d68bcb8d9ab2e629a40af0e4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the element at the given index.  <br /></td></tr>
+<tr class="memitem:adbfb7192550a3813223fb5bdcfdbaab2" id="r_adbfb7192550a3813223fb5bdcfdbaab2"><td class="memItemLeft"><a class="el" href="#ab60d797c3bc758277f1f3029839dc293">value_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#adbfb7192550a3813223fb5bdcfdbaab2">operator[]</a> (int n) const</td></tr>
+<tr class="memdesc:adbfb7192550a3813223fb5bdcfdbaab2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the element at the given index.  <br /></td></tr>
 <tr class="memitem:aa17d619cbb806477d43fc164f6bcf633" id="r_aa17d619cbb806477d43fc164f6bcf633"><td class="memItemLeft"><a class="el" href="#a3bb60a40e223043fee94328516d2bccb">difference_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa17d619cbb806477d43fc164f6bcf633">operator-</a> (const LoadIterator &amp;other) const</td></tr>
 <tr class="memdesc:aa17d619cbb806477d43fc164f6bcf633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the difference between two iterators.  <br /></td></tr>
 </table><table class="memberdecls">
@@ -225,7 +225,7 @@ template&lt;typename ScalarType&gt; </div>
 
 <p>Dereferences the iterator to get the SIMD vector. </p>
 <dl class="section return"><dt>Returns</dt><dd>The SIMD vector loaded from the data. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function <span class="tt">Load</span>s the data from the pointer and returns it as an <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> vector. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function <span class="tt">Load</span>s the data from the pointer and returns it as an <a class="el" href="classArgon.html">Argon</a> vector. </dd></dl>
 
 </div>
 </div>
@@ -529,8 +529,8 @@ template&lt;typename ScalarType&gt; </div>
 
 </div>
 </div>
-<a id="aef4644d68bcb8d9ab2e629a40af0e4c7" name="aef4644d68bcb8d9ab2e629a40af0e4c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef4644d68bcb8d9ab2e629a40af0e4c7">&#9670;&#160;</a></span>operator[]()</h2>
+<a id="adbfb7192550a3813223fb5bdcfdbaab2" name="adbfb7192550a3813223fb5bdcfdbaab2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbfb7192550a3813223fb5bdcfdbaab2">&#9670;&#160;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -541,7 +541,7 @@ template&lt;typename ScalarType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">LoadIterator &amp; <a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::LoadIterator::operator[] </td>
+          <td class="memname"><a class="el" href="#ab60d797c3bc758277f1f3029839dc293">value_type</a> <a class="el" href="structargon_1_1vectorize_1_1load.html">argon::vectorize::load</a>&lt; ScalarType &gt;::LoadIterator::operator[] </td>
           <td>(</td>
           <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
           <td> const</td>
@@ -689,7 +689,7 @@ template&lt;typename ScalarType&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>argon</b></li><li class="navelem"><b>vectorize</b></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load.html">load</a></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html">LoadIterator</a></li>
+    <li class="navelem"><a href="namespaceargon.html">argon</a></li><li class="navelem"><b>vectorize</b></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load.html">load</a></li><li class="navelem"><a href="structargon_1_1vectorize_1_1load_1_1LoadIterator.html">LoadIterator</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>

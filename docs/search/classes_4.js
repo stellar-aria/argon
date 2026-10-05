@@ -6,6 +6,8 @@ var searchData=
   ['load_3',['load',['../structargon_1_1vectorize_1_1load.html',1,'argon::vectorize']]],
   ['load_5finterleaved_4',['load_interleaved',['../structargon_1_1vectorize_1_1load__interleaved.html',1,'argon::vectorize']]],
   ['load_5fstore_5',['load_store',['../structargon_1_1vectorize_1_1load__store.html',1,'argon::vectorize']]],
-  ['loadinterleavediterator_6',['LoadInterleavedIterator',['../structargon_1_1vectorize_1_1load__interleaved_1_1LoadInterleavedIterator.html',1,'argon::vectorize::load_interleaved']]],
-  ['loaditerator_7',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html',1,'argon::vectorize::load']]]
+  ['load_5fstore_5ftail_6',['load_store_tail',['../classargon_1_1vectorize_1_1load__store__tail.html',1,'argon::vectorize']]],
+  ['load_5ftail_7',['load_tail',['../classargon_1_1vectorize_1_1load__tail.html',1,'argon::vectorize']]],
+  ['loadinterleavediterator_8',['LoadInterleavedIterator',['../structargon_1_1vectorize_1_1load__interleaved_1_1LoadInterleavedIterator.html',1,'argon::vectorize::load_interleaved']]],
+  ['loaditerator_9',['LoadIterator',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html',1,'argon::vectorize::load']]]
 ];

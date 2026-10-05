@@ -6,6 +6,7 @@ var namespaceargon_1_1helpers =
     [ "has_smaller", "conceptargon_1_1helpers_1_1has__smaller.html", null ],
     [ "has_larger", "conceptargon_1_1helpers_1_1has__larger.html", null ],
     [ "ArgonFor_t", "namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a", null ],
+    [ "LaneFor_t", "namespaceargon_1_1helpers.html#af9af993ac460373109df9336d6806685", null ],
     [ "NextLarger_t", "namespaceargon_1_1helpers.html#ae7872fcc8769f160ebc61fa2d4bc19e5", null ],
     [ "NextSmaller_t", "namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0", null ],
     [ "vectorizeable_size", "namespaceargon_1_1helpers.html#a4b9e3c8b4b56518879df473c4074abf3", null ],

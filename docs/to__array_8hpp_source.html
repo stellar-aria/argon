@@ -97,7 +97,7 @@ $(function(){initNavTree('to__array_8hpp_source.html','',''); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;argon_for.hpp&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>argon {</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceargon.html">argon</a> {</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">namespace </span>detail {</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>T, std::size_t N, std::size_t... I&gt;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">constexpr</span> std::array&lt;helpers::ArgonFor_t&lt;T&gt;, N&gt; to_array_impl(T (&amp;a)[N], std::index_sequence&lt;I...&gt;) {</div>
@@ -114,21 +114,22 @@ $(function(){initNavTree('to__array_8hpp_source.html','',''); });
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T, std::<span class="keywordtype">size_t</span> N&gt;</div>
 <div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be">   29</a></span><span class="keyword">constexpr</span> std::array&lt;helpers::ArgonFor_t&lt;T&gt;, N&gt; <a class="code hl_function" href="to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be">to_array</a>(T (&amp;a)[N]) {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="namespaceargon.html#adc56e0d4e158f60f7b34510bd49e10be">   29</a></span><span class="keyword">constexpr</span> std::array&lt;helpers::ArgonFor_t&lt;T&gt;, N&gt; <a class="code hl_function" href="namespaceargon.html#adc56e0d4e158f60f7b34510bd49e10be">to_array</a>(T (&amp;a)[N]) {</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keywordflow">return</span> detail::to_array_impl(a, std::make_index_sequence&lt;N&gt;{});</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
 </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T, std::<span class="keywordtype">size_t</span> N&gt;</div>
 <div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="to__array_8hpp.html#abd910c56341554adf4728e2f405bc192">   40</a></span><span class="keyword">constexpr</span> std::array&lt;helpers::ArgonFor_t&lt;T&gt;, N&gt; <a class="code hl_function" href="to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be">to_array</a>(T (&amp;&amp;a)[N]) {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="namespaceargon.html#abd910c56341554adf4728e2f405bc192">   40</a></span><span class="keyword">constexpr</span> std::array&lt;helpers::ArgonFor_t&lt;T&gt;, N&gt; <a class="code hl_function" href="namespaceargon.html#adc56e0d4e158f60f7b34510bd49e10be">to_array</a>(T (&amp;&amp;a)[N]) {</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">return</span> detail::to_array_impl(std::move(a), std::make_index_sequence&lt;N&gt;{});</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
 </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>}  <span class="comment">// namespace argon</span></div>
-<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:45</div></div>
-<div class="ttc" id="ato__array_8hpp_html_adc56e0d4e158f60f7b34510bd49e10be"><div class="ttname"><a href="to__array_8hpp.html#adc56e0d4e158f60f7b34510bd49e10be">argon::to_array</a></div><div class="ttdeci">constexpr std::array&lt; helpers::ArgonFor_t&lt; T &gt;, N &gt; to_array(T(&amp;a)[N])</div><div class="ttdoc">Convert a C-style array of vector types to a std::array of Argon types.</div><div class="ttdef"><b>Definition</b> to_array.hpp:29</div></div>
+<div class="ttc" id="anamespaceargon_1_1helpers_html_a78d315330017f0fe0a14cccd2d5b318a"><div class="ttname"><a href="namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a">argon::helpers::ArgonFor_t</a></div><div class="ttdeci">typename ArgonFor&lt; std::remove_cv_t&lt; T &gt; &gt;::type ArgonFor_t</div><div class="ttdoc">Helper alias to get the Argon type for a given vector type.</div><div class="ttdef"><b>Definition</b> argon_for.hpp:46</div></div>
+<div class="ttc" id="anamespaceargon_html"><div class="ttname"><a href="namespaceargon.html">argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon.hpp:30</div></div>
+<div class="ttc" id="anamespaceargon_html_adc56e0d4e158f60f7b34510bd49e10be"><div class="ttname"><a href="namespaceargon.html#adc56e0d4e158f60f7b34510bd49e10be">argon::to_array</a></div><div class="ttdeci">constexpr std::array&lt; helpers::ArgonFor_t&lt; T &gt;, N &gt; to_array(T(&amp;a)[N])</div><div class="ttdoc">Convert a C-style array of vector types to a std::array of Argon types.</div><div class="ttdef"><b>Definition</b> to_array.hpp:29</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

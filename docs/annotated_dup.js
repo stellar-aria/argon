@@ -1,25 +1,36 @@
 var annotated_dup =
 [
-    [ "argon", null, [
+    [ "argon", "namespaceargon.html", [
       [ "helpers", "namespaceargon_1_1helpers.html", [
         [ "NextLarger", "structargon_1_1helpers_1_1NextLarger.html", null ],
         [ "NextSmaller", "structargon_1_1helpers_1_1NextSmaller.html", null ],
         [ "ArgonFor", "structargon_1_1helpers_1_1ArgonFor.html", null ]
       ] ],
       [ "vectorize", null, [
+        [ "detail", null, [
+          [ "TailCursor", "structargon_1_1vectorize_1_1detail_1_1TailCursor.html", "structargon_1_1vectorize_1_1detail_1_1TailCursor" ]
+        ] ],
+        [ "Step", "classargon_1_1vectorize_1_1Step.html", "classargon_1_1vectorize_1_1Step" ],
+        [ "InterleavedStep", "classargon_1_1vectorize_1_1InterleavedStep.html", "classargon_1_1vectorize_1_1InterleavedStep" ],
         [ "interleaved", "structargon_1_1vectorize_1_1interleaved.html", "structargon_1_1vectorize_1_1interleaved" ],
         [ "load", "structargon_1_1vectorize_1_1load.html", "structargon_1_1vectorize_1_1load" ],
         [ "load_interleaved", "structargon_1_1vectorize_1_1load__interleaved.html", "structargon_1_1vectorize_1_1load__interleaved" ],
         [ "load_store", "structargon_1_1vectorize_1_1load__store.html", "structargon_1_1vectorize_1_1load__store" ],
         [ "ptr", "structargon_1_1vectorize_1_1ptr.html", "structargon_1_1vectorize_1_1ptr" ],
         [ "store", "structargon_1_1vectorize_1_1store.html", "structargon_1_1vectorize_1_1store" ],
-        [ "store_interleaved", "structargon_1_1vectorize_1_1store__interleaved.html", "structargon_1_1vectorize_1_1store__interleaved" ]
+        [ "store_interleaved", "structargon_1_1vectorize_1_1store__interleaved.html", "structargon_1_1vectorize_1_1store__interleaved" ],
+        [ "Partial", "classargon_1_1vectorize_1_1Partial.html", "classargon_1_1vectorize_1_1Partial" ],
+        [ "load_tail", "classargon_1_1vectorize_1_1load__tail.html", "classargon_1_1vectorize_1_1load__tail" ],
+        [ "store_tail", "classargon_1_1vectorize_1_1store__tail.html", "classargon_1_1vectorize_1_1store__tail" ],
+        [ "load_store_tail", "classargon_1_1vectorize_1_1load__store__tail.html", "classargon_1_1vectorize_1_1load__store__tail" ]
       ] ],
-      [ "CondMonad", "classargon_1_1CondMonad.html", null ],
+      [ "CondMonad", "classargon_1_1CondMonad.html", "classargon_1_1CondMonad" ],
       [ "Bool", "structargon_1_1Bool.html", null ],
       [ "Vector", "classargon_1_1Vector.html", "classargon_1_1Vector" ],
       [ "ConstLane", "classargon_1_1ConstLane.html", "classargon_1_1ConstLane" ],
-      [ "Lane", "classargon_1_1Lane.html", "classargon_1_1Lane" ]
+      [ "Lane", "classargon_1_1Lane.html", "classargon_1_1Lane" ],
+      [ "PointerVector", "classargon_1_1PointerVector.html", "classargon_1_1PointerVector" ],
+      [ "Predicate", "classargon_1_1Predicate.html", "classargon_1_1Predicate" ]
     ] ],
     [ "simd", null, [
       [ "make_signed", "structsimd_1_1make__signed.html", null ],

@@ -8,5 +8,6 @@ var structargon_1_1vectorize_1_1load__store_1_1ConstIterator =
     [ "operator++", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#af57b950ea9c07d5bfa93080b8921b712", null ],
     [ "operator++", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#a7866093ba1c823f65c150cdb9824f5bf", null ],
     [ "operator!=", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#ae2d098d75c9b9d94fed5c416aa4ca0cf", null ],
-    [ "operator==", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#adaf71c7726f80ad0a7b8046bc2e1db68", null ]
+    [ "operator==", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#adaf71c7726f80ad0a7b8046bc2e1db68", null ],
+    [ "operator==", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#a309330e40f4b902d98c6ce1af0b7fff8", null ]
 ];

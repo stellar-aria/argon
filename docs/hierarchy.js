@@ -4,12 +4,17 @@ var hierarchy =
     [ "ArgonHalf&lt; ScalarType &gt;", "classArgonHalf.html", null ],
     [ "ArgonPtr&lt; ScalarType &gt;", "structArgonPtr.html", null ],
     [ "argon::Bool&lt; T &gt;", "structargon_1_1Bool.html", null ],
+    [ "argon::CondMonad&lt; VectorType, ValueType &gt;", "classargon_1_1CondMonad.html", null ],
     [ "argon::vectorize::interleaved&lt; Stride, ScalarType &gt;::ConstIterator", "structargon_1_1vectorize_1_1interleaved_1_1ConstIterator.html", null ],
     [ "argon::vectorize::load_store&lt; ScalarType &gt;::ConstIterator", "structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html", null ],
     [ "argon::ConstLane&lt; LaneIndex, VectorType &gt;", "classargon_1_1ConstLane.html", null ],
+    [ "argon::vectorize::InterleavedStep&lt; ScalarType, Stride, full &gt;", "classargon_1_1vectorize_1_1InterleavedStep.html", null ],
     [ "argon::vectorize::interleaved&lt; Stride, ScalarType &gt;::Iterator", "structargon_1_1vectorize_1_1interleaved_1_1Iterator.html", null ],
     [ "argon::vectorize::load_store&lt; ScalarType &gt;::Iterator", "structargon_1_1vectorize_1_1load__store_1_1Iterator.html", null ],
+    [ "argon::vectorize::load_store_tail&lt; ScalarType, Stride &gt;::Iterator", "structargon_1_1vectorize_1_1load__store__tail_1_1Iterator.html", null ],
+    [ "argon::vectorize::load_tail&lt; ScalarType, Stride &gt;::Iterator", "structargon_1_1vectorize_1_1load__tail_1_1Iterator.html", null ],
     [ "argon::vectorize::ptr&lt; ScalarType &gt;::Iterator", "structargon_1_1vectorize_1_1ptr_1_1Iterator.html", null ],
+    [ "argon::vectorize::store_tail&lt; ScalarType, Stride &gt;::Iterator", "structargon_1_1vectorize_1_1store__tail_1_1Iterator.html", null ],
     [ "argon::Lane&lt; VectorType &gt;", "classargon_1_1Lane.html", null ],
     [ "argon::vectorize::load_interleaved&lt; ScalarType, Stride &gt;::LoadInterleavedIterator", "structargon_1_1vectorize_1_1load__interleaved_1_1LoadInterleavedIterator.html", null ],
     [ "argon::vectorize::load&lt; ScalarType &gt;::LoadIterator", "structargon_1_1vectorize_1_1load_1_1LoadIterator.html", null ],
@@ -18,12 +23,14 @@ var hierarchy =
     [ "simd::MultiVector&lt; T, size &gt;", "structsimd_1_1MultiVector.html", null ],
     [ "argon::helpers::NextLarger&lt; T &gt;", "structargon_1_1helpers_1_1NextLarger.html", null ],
     [ "argon::helpers::NextSmaller&lt; T &gt;", "structargon_1_1helpers_1_1NextSmaller.html", null ],
-    [ "std::pair", null, [
-      [ "argon::CondMonad< CondType, ScalarType >", "classargon_1_1CondMonad.html", null ]
-    ] ],
+    [ "argon::vectorize::Partial&lt; ScalarType, Stride &gt;", "classargon_1_1vectorize_1_1Partial.html", null ],
+    [ "argon::PointerVector&lt; T &gt;", "classargon_1_1PointerVector.html", null ],
+    [ "argon::Predicate&lt; VectorType &gt;", "classargon_1_1Predicate.html", null ],
     [ "simd::Scalar&lt; T &gt;", "structsimd_1_1Scalar.html", null ],
+    [ "argon::vectorize::Step&lt; ScalarType, full &gt;", "classargon_1_1vectorize_1_1Step.html", null ],
     [ "argon::vectorize::store_interleaved&lt; scalar_type, stride &gt;::StoreInterleavedIterator", "structargon_1_1vectorize_1_1store__interleaved_1_1StoreInterleavedIterator.html", null ],
     [ "argon::vectorize::store&lt; ScalarType &gt;::StoreIterator", "structargon_1_1vectorize_1_1store_1_1StoreIterator.html", null ],
+    [ "argon::vectorize::detail::TailCursor&lt; PointerType, Stride &gt;", "structargon_1_1vectorize_1_1detail_1_1TailCursor.html", null ],
     [ "std::tuple_element&lt; Index, argon::Vector&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01argon_1_1Vector_3_01T_01_4_01_4.html", null ],
     [ "std::tuple_element&lt; Index, Argon&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01Argon_3_01T_01_4_01_4.html", null ],
     [ "std::tuple_element&lt; Index, ArgonHalf&lt; T &gt; &gt;", "structstd_1_1tuple__element_3_01Index_00_01ArgonHalf_3_01T_01_4_01_4.html", null ],
@@ -33,7 +40,8 @@ var hierarchy =
     [ "simd::Vec128&lt; T &gt;", "structsimd_1_1Vec128.html", null ],
     [ "simd::Vec64&lt; T &gt;", "structsimd_1_1Vec64.html", null ],
     [ "argon::Vector&lt; VectorType &gt;", "classargon_1_1Vector.html", [
-      [ "Argon< next_larger >", "classArgon.html", null ]
+      [ "Argon< next_larger >", "classArgon.html", null ],
+      [ "Argon< value_type >", "classArgon.html", null ]
     ] ],
     [ "simd::Vector&lt; T, Lanes &gt;", "structsimd_1_1Vector.html", null ],
     [ "argon::Vector&lt; neon::Vec64_t&lt; ScalarType &gt; &gt;", "classargon_1_1Vector.html", [
@@ -49,8 +57,11 @@ var hierarchy =
       [ "argon::vectorize::load< ScalarType >", "structargon_1_1vectorize_1_1load.html", null ],
       [ "argon::vectorize::load_interleaved< ScalarType, Stride >", "structargon_1_1vectorize_1_1load__interleaved.html", null ],
       [ "argon::vectorize::load_store< ScalarType >", "structargon_1_1vectorize_1_1load__store.html", null ],
+      [ "argon::vectorize::load_store_tail< ScalarType, Stride >", "classargon_1_1vectorize_1_1load__store__tail.html", null ],
+      [ "argon::vectorize::load_tail< ScalarType, Stride >", "classargon_1_1vectorize_1_1load__tail.html", null ],
       [ "argon::vectorize::ptr< ScalarType >", "structargon_1_1vectorize_1_1ptr.html", null ],
       [ "argon::vectorize::store< ScalarType >", "structargon_1_1vectorize_1_1store.html", null ],
-      [ "argon::vectorize::store_interleaved< scalar_type, stride >", "structargon_1_1vectorize_1_1store__interleaved.html", null ]
+      [ "argon::vectorize::store_interleaved< scalar_type, stride >", "structargon_1_1vectorize_1_1store__interleaved.html", null ],
+      [ "argon::vectorize::store_tail< ScalarType, Stride >", "classargon_1_1vectorize_1_1store__tail.html", null ]
     ] ]
 ];

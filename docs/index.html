@@ -89,16 +89,16 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title"><a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> </div></div>
+  <div class="headertitle"><div class="title"><a class="el" href="classArgon.html">Argon</a> </div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a></p>
 <p><a href="https://choosealicense.com/licenses/mit/"><img src="https://img.shields.io/github/license/stellar-aria/argon.svg?style=flat-square&amp;color=FF0000&amp;label=License" alt="License" style="pointer-events: none;" class="inline"/></a> <img src="https://img.shields.io/badge/ARM-v7%20|%20v8+-orange.svg?style=flat-square" alt="Archs" style="pointer-events: none;" class="inline"/> <a href="https://en.wikipedia.org/wiki/C%2B%2B23"><img src="https://img.shields.io/badge/C++-23-yellow.svg?style=flat-square" alt="C++ Version" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/stellar-aria/argon/actions"><img src="https://img.shields.io/github/actions/workflow/status/stellar-aria/argon/tests.yml?style=flat-square&amp;label=Build" alt="GitHub Actions Workflow Status" class="inline"/></a> <a href="https://github.com/stellar-aria/argon/releases/latest"><img src="https://img.shields.io/github/v/release/stellar-aria/argon?style=flat-square&amp;color=blue&amp;label=Release" alt="GitHub Release" class="inline"/></a> <a href="https://github.com/stellar-aria/argon"><img src="https://img.shields.io/badge/Ar-18-8A2BE2?style=flat-square" alt="Argon" class="inline"/></a></p>
-<p><a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> is a library that provides a sane, minimal-overhead C++ interface to ARM's NEON SIMD intrinsics.</p>
+<p><a class="el" href="classArgon.html">Argon</a> is a library that provides a sane, minimal-overhead C++ interface to ARM's NEON SIMD intrinsics.</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
 Why?</h1>
-<p><a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> grew out of a desire to use C++ abstractions for vector intrinsics, without sacrificing expressiveness or specificity. Most C++ vector libraries (<a href="https://github.com/google/highway">highway</a>, <a href="https://github.com/xtensor-stack/xsimd">xsimd</a>) abstract away all platform uniqueness in favor of common denominators. When considering the use case of those libraries, namely HPC or multi-platform portability, that's a strength. Unfortunately, when you're targeting a very specific subset of those architectures, or you have one architecture that needs to be optimized above all others, such abstractions fall short.</p>
-<p>This is where <a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> was created to exist: A NEON-first, others-second zero-overhead abstraction library with modern constructs and capabilities.</p>
+<p><a class="el" href="classArgon.html">Argon</a> grew out of a desire to use C++ abstractions for vector intrinsics, without sacrificing expressiveness or specificity. Most C++ vector libraries (<a href="https://github.com/google/highway">highway</a>, <a href="https://github.com/xtensor-stack/xsimd">xsimd</a>) abstract away all platform uniqueness in favor of common denominators. When considering the use case of those libraries, namely HPC or multi-platform portability, that's a strength. Unfortunately, when you're targeting a very specific subset of those architectures, or you have one architecture that needs to be optimized above all others, such abstractions fall short.</p>
+<p>This is where <a class="el" href="classArgon.html">Argon</a> was created to exist: A NEON-first, others-second zero-overhead abstraction library with modern constructs and capabilities.</p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
 What Argon is:</h3>
 <ul>
@@ -121,7 +121,7 @@ Object-oriented Argon interface</h2>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> triangle(<a class="code hl_class" href="classArgon.html">Argon&lt;float&gt;</a> phase) {</div>
-<div class="line">  phase = argon::ternary(phase &gt; 0.5f, 1.f, 0.f) - phase;</div>
+<div class="line">  phase = <a class="code hl_function" href="namespaceargon.html#ac7e78a8f5259452f8a8c0c3d43b6b237">argon::ternary</a>(phase &gt; 0.5f, 1.f, 0.f) - phase;</div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_class" href="classArgon.html">Argon</a>{-1.f}.<a class="code hl_function" href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">MultiplyAdd</a>(phase.<a class="code hl_function" href="classargon_1_1Vector.html#ad91da6dc5608aae40cc630ac5b4fb731">Absolute</a>(), 4.f);</div>
 <div class="line">}</div>
 <div class="line"> </div>
@@ -136,10 +136,11 @@ Object-oriented Argon interface</h2>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Result[&quot;</span> &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot;]: &quot;</span> &lt;&lt; result[i] &lt;&lt; std::endl;</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdoc">A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...</div><div class="ttdef"><b>Definition</b> argon_full.hpp:29</div></div>
-<div class="ttc" id="aclassargon_1_1Vector_html_a136fe4f1f1e3bb707a9633ef6dcbbb4d"><div class="ttname"><a href="classargon_1_1Vector.html#a136fe4f1f1e3bb707a9633ef6dcbbb4d">argon::Vector&lt; simd::Vec128_t&lt; ScalarType &gt; &gt;::Iota</a></div><div class="ttdeci">static ace argon_type Iota(scalar_type start)</div><div class="ttdef"><b>Definition</b> vector.hpp:168</div></div>
-<div class="ttc" id="aclassargon_1_1Vector_html_a30eb1bff5f1953844facf92590d1d5ed"><div class="ttname"><a href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">argon::Vector::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdoc">Multiply two vectors and add a third vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:459</div></div>
-<div class="ttc" id="aclassargon_1_1Vector_html_ad91da6dc5608aae40cc630ac5b4fb731"><div class="ttname"><a href="classargon_1_1Vector.html#ad91da6dc5608aae40cc630ac5b4fb731">argon::Vector::Absolute</a></div><div class="ttdeci">ace argon_type Absolute() const</div><div class="ttdoc">Get the absolute value of the vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:575</div></div>
+<div class="ttc" id="aclassArgon_html"><div class="ttname"><a href="classArgon.html">Argon</a></div><div class="ttdef"><b>Definition</b> argon_full.hpp:44</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_a136fe4f1f1e3bb707a9633ef6dcbbb4d"><div class="ttname"><a href="classargon_1_1Vector.html#a136fe4f1f1e3bb707a9633ef6dcbbb4d">argon::Vector&lt; simd::Vec128_t&lt; ScalarType &gt; &gt;::Iota</a></div><div class="ttdeci">static ace argon_type Iota(scalar_type start)</div><div class="ttdef"><b>Definition</b> vector.hpp:181</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_a30eb1bff5f1953844facf92590d1d5ed"><div class="ttname"><a href="classargon_1_1Vector.html#a30eb1bff5f1953844facf92590d1d5ed">argon::Vector::MultiplyAdd</a></div><div class="ttdeci">ace argon_type MultiplyAdd(argon_type b, argon_type c) const</div><div class="ttdoc">Multiply two vectors and add a third vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:449</div></div>
+<div class="ttc" id="aclassargon_1_1Vector_html_ad91da6dc5608aae40cc630ac5b4fb731"><div class="ttname"><a href="classargon_1_1Vector.html#ad91da6dc5608aae40cc630ac5b4fb731">argon::Vector::Absolute</a></div><div class="ttdeci">ace argon_type Absolute() const</div><div class="ttdoc">Get the absolute value of the vector.</div><div class="ttdef"><b>Definition</b> vector.hpp:599</div></div>
+<div class="ttc" id="anamespaceargon_html_ac7e78a8f5259452f8a8c0c3d43b6b237"><div class="ttname"><a href="namespaceargon.html#ac7e78a8f5259452f8a8c0c3d43b6b237">argon::ternary</a></div><div class="ttdeci">ace BranchType ternary(Predicate&lt; VectorType &gt; condition, BranchType true_value, BranchType false_value)</div><div class="ttdoc">Create a new vector depending on the result of a conditional.</div><div class="ttdef"><b>Definition</b> argon.hpp:185</div></div>
 </div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
 Low-level NEON interface</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;argon/arm_simd.hpp&gt;</span></div>
@@ -205,7 +206,7 @@ Backend Support</h1>
 </table>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
 Compatibility</h1>
-<p><a class="el" href="classArgon.html" title="A 128-bit SIMD vector wrapping a scalar type, providing arithmetic, logical, and data-movement operat...">Argon</a> can be compiled using the following tool sets:</p>
+<p><a class="el" href="classArgon.html">Argon</a> can be compiled using the following tool sets:</p>
 <p>Compilers:</p>
 <ul>
 <li>GCC 14.2 or later</li>
