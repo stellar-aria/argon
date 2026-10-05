@@ -21,6 +21,7 @@ auto describe_multiply_subtract = describe("MultiplySubtract", ${
 
 // ── MultiplyLong (ArgonHalf -> widened): a * b ──────────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_multiply_long = describe("MultiplyLong", ${
   it("widens int16 -> int32 while multiplying", _{
     std::array<int16_t, 4> a_arr = {100, 200, 300, 400};
@@ -31,9 +32,11 @@ auto describe_multiply_long = describe("MultiplyLong", ${
     expect(result).to_equal(std::array<int32_t, 4>{200, 600, 1200, 2000});
   });
 });
+#endif
 
 // ── MultiplyAddLong / MultiplySubtractLong (Argon accumulator + narrow b,c) ──
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_multiply_add_long = describe("MultiplyAddLong", ${
   it("accumulates a + (b * c) widening int16 -> int32", _{
     std::array<int16_t, 4> b_arr = {2, 3, 4, 5};
@@ -45,7 +48,9 @@ auto describe_multiply_add_long = describe("MultiplyAddLong", ${
     expect(result).to_equal(std::array<int32_t, 4>{1020, 1030, 1040, 1050});
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_multiply_subtract_long = describe("MultiplySubtractLong", ${
   it("computes a - (b * c) widening int16 -> int32", _{
     std::array<int16_t, 4> b_arr = {2, 3, 4, 5};
@@ -57,9 +62,11 @@ auto describe_multiply_subtract_long = describe("MultiplySubtractLong", ${
     expect(result).to_equal(std::array<int32_t, 4>{980, 970, 960, 950});
   });
 });
+#endif
 
 // ── MultiplyDoubleSaturateLong / ...AddSaturateLong: saturate(2 * b * c) ─────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_multiply_double_saturate_long = describe("MultiplyDoubleSaturateLong", ${
   it("computes saturate(2 * a * b) widening int16 -> int32", _{
     std::array<int16_t, 4> a_arr = {2, 3, 4, 5};
@@ -80,7 +87,9 @@ auto describe_multiply_double_saturate_long = describe("MultiplyDoubleSaturateLo
       expect(v).to_equal(std::numeric_limits<int32_t>::max());
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_multiply_double_add_saturate_long = describe("MultiplyDoubleAddSaturateLong", ${
   it("computes a + saturate(2 * b * c) widening int16 -> int32", _{
     std::array<int16_t, 4> b_arr = {2, 3, 4, 5};
@@ -92,6 +101,7 @@ auto describe_multiply_double_add_saturate_long = describe("MultiplyDoubleAddSat
     expect(result).to_equal(std::array<int32_t, 4>{1040, 1060, 1080, 1100});
   });
 });
+#endif
 
 // ── MultiplyFixedQMax (VQDMULH): saturate((2 * a * b) >> 16) for int16 ───────
 
@@ -151,15 +161,18 @@ auto describe_multiply_round_add_fixed_qmax = describe("MultiplyRoundAddFixedQMa
   });
 });
 
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_multiply_long, describe_multiply_add_long, describe_multiply_subtract_long, describe_multiply_double_saturate_long, describe_multiply_double_add_saturate_long
+#else
+#define NEON_ONLY_SPECS
+#endif
+
 CPPSPEC_MAIN(
   describe_multiply_subtract,
-  describe_multiply_long,
-  describe_multiply_add_long,
-  describe_multiply_subtract_long,
-  describe_multiply_double_saturate_long,
-  describe_multiply_double_add_saturate_long,
   describe_multiply_fixed_qmax,
   describe_multiply_round_fixed_qmax,
   describe_multiply_add_fixed_qmax,
   describe_multiply_round_add_fixed_qmax
+  NEON_ONLY_SPECS
 );

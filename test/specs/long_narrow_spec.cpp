@@ -9,6 +9,7 @@
 
 // ── AddLong / SubtractLong / SubtractAbsoluteLong (ArgonHalf -> widened) ─────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_add_long = describe("AddLong", ${
   it("widens int16 -> int32 while adding", _{
     std::array<int16_t, 4> a_arr = {1, 2, 3, 4};
@@ -29,7 +30,9 @@ auto describe_add_long = describe("AddLong", ${
       expect(v).to_equal(uint16_t{400});
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_subtract_long = describe("SubtractLong", ${
   it("widens int16 -> int32 while subtracting", _{
     std::array<int16_t, 4> a_arr = {50, 60, 70, 80};
@@ -40,7 +43,9 @@ auto describe_subtract_long = describe("SubtractLong", ${
     expect(result).to_equal(std::array<int32_t, 4>{40, 40, 40, 40});
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_subtract_absolute_long = describe("SubtractAbsoluteLong", ${
   it("widens uint8 -> uint16 while taking |a - b|", _{
     std::array<uint8_t, 8> a_arr = {10, 200, 30, 40, 50, 60, 70, 80};
@@ -51,11 +56,13 @@ auto describe_subtract_absolute_long = describe("SubtractAbsoluteLong", ${
     expect(result).to_equal(std::array<uint16_t, 8>{20, 195, 0, 60, 0, 60, 185, 0});
   });
 });
+#endif
 
 // ── AddNarrow / AddRoundNarrow / SubtractNarrow / SubtractRoundNarrow ────────
 // These map to NEON ...HN ("returning high narrow"): the result is the *high*
 // half of each (a OP b) lane, narrowed to the next-smaller type.
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_add_narrow = describe("AddNarrow", ${
   it("returns the high half of (a + b), int32 -> int16", _{
     auto a = Argon<int32_t>{0x00010000, 0x00020000, 0x00030000, 0x00040000};
@@ -64,7 +71,9 @@ auto describe_add_narrow = describe("AddNarrow", ${
     expect(result).to_equal(std::array<int16_t, 4>{1, 2, 3, 4});
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_add_round_narrow = describe("AddRoundNarrow", ${
   it("rounds before taking the high half, int32 -> int16", _{
     // 0x00018000 >> 16 == 1, but rounded (+0x8000) it carries to 2
@@ -75,7 +84,9 @@ auto describe_add_round_narrow = describe("AddRoundNarrow", ${
       expect((int)v).to_equal(2);
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_subtract_narrow = describe("SubtractNarrow", ${
   it("returns the high half of (a - b), int32 -> int16", _{
     auto a = Argon<int32_t>::FromScalar(0x00050000);
@@ -85,7 +96,9 @@ auto describe_subtract_narrow = describe("SubtractNarrow", ${
       expect((int)v).to_equal(4);
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_subtract_round_narrow = describe("SubtractRoundNarrow", ${
   it("rounds before taking the high half, int32 -> int16", _{
     auto a = Argon<int32_t>::FromScalar(0x0005C000);
@@ -95,6 +108,7 @@ auto describe_subtract_round_narrow = describe("SubtractRoundNarrow", ${
       expect((int)v).to_equal(5);
   });
 });
+#endif
 
 // ── AddHalveRound / SubtractAbs / SubtractAbsAdd (base Vector ops) ───────────
 
@@ -126,15 +140,16 @@ auto describe_subtract_abs_add = describe("SubtractAbsAdd", ${
   });
 });
 
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_add_long, describe_subtract_long, describe_subtract_absolute_long, describe_add_narrow, describe_add_round_narrow, describe_subtract_narrow, describe_subtract_round_narrow
+#else
+#define NEON_ONLY_SPECS
+#endif
+
 CPPSPEC_MAIN(
-  describe_add_long,
-  describe_subtract_long,
-  describe_subtract_absolute_long,
-  describe_add_narrow,
-  describe_add_round_narrow,
-  describe_subtract_narrow,
-  describe_subtract_round_narrow,
   describe_add_halve_round,
   describe_subtract_abs,
   describe_subtract_abs_add
+  NEON_ONLY_SPECS
 );

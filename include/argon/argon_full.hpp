@@ -46,10 +46,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Construct by combining a low and high 64-bit half-vector.
   ace Argon(ArgonHalf<ScalarType> low, ArgonHalf<ScalarType> high) : T{Combine(low, high)} {};
 
-#ifndef ARGON_PLATFORM_MVE
   ace Argon(argon::Lane<vector_type> b) : T{b} {};
   ace Argon(argon::ConstLane<0, vector_type> b) : T{b} {};
-#endif
 
   template <simd::is_vector_type intrinsic_type>
   ace Argon(argon::Lane<intrinsic_type> b) : T{b} {};
@@ -265,8 +263,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Reverse the order of all elements in the 128-bit vector.
   /// @details Reverses elements within each 64-bit doubleword, then swaps the two doublewords.
   ace Argon<ScalarType> Reverse() const {
-    Argon<ScalarType> rev = this->Reverse64bit();  // rev within dword
-    return Argon{rev.GetHigh(), rev.GetLow()};     // swap dwords
+    return Argon<ScalarType>{this->Reverse64bit()}.SwapDoublewords();  // rev within dword, then swap dwords
   }
 
   /// @brief Fold all lanes into a single scalar using a commutative binary operation.
@@ -317,10 +314,16 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #endif
   }
 
-#ifndef ARGON_PLATFORM_MVE
   /// @brief Swap the upper and lower 64-bit halves of the vector.
-  ace Argon<ScalarType> SwapDoublewords() { return Combine(GetHigh(), GetLow()); }
+  ace Argon<ScalarType> SwapDoublewords() const {
+#ifdef ARGON_PLATFORM_MVE
+    // MVE has no half-vector registers or vext; swap the two 64-bit lanes instead.
+    uint64x2_t dwords = simd::reinterpret<uint64x2_t>(this->vec_);
+    return simd::reinterpret<vector_type>(uint64x2_t{dwords[1], dwords[0]});
+#else
+    return Combine(GetHigh(), GetLow());
 #endif
+  }
 
 #if ARGON_HAS_CRYPTO && !defined(ARGON_PLATFORM_MVE)
   /// @brief AES single-round encryption

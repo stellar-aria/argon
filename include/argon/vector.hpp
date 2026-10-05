@@ -15,6 +15,7 @@
 #include "helpers.hpp"
 #include "helpers/bool.hpp"
 #include "helpers/float_fixups.hpp"
+#include "helpers/mve_compare.hpp"
 #include "helpers/to_array.hpp"
 #include "lane.hpp"
 
@@ -58,6 +59,11 @@ class Vector {
   /// Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool extension_arithmetic =
       ARGON_USE_COMPILER_EXTENSIONS && !(ARGON_GCC_AARCH32_FLOAT && std::is_floating_point_v<scalar_type>);
+#ifdef ARGON_PLATFORM_MVE
+  static constexpr bool mve_platform = true;  ///< Whether this is the MVE (Helium) platform.
+#else
+  static constexpr bool mve_platform = false;  ///< Whether this is the MVE (Helium) platform.
+#endif
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
@@ -85,7 +91,6 @@ class Vector {
   /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
   ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
-#ifndef ARGON_PLATFORM_MVE
   /// @brief Constructs a Vector from a Lane object.
   /// @param lane The Lane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
@@ -97,7 +102,6 @@ class Vector {
   /// @param lane The ConstLane object to construct from.
   template <size_t LaneIndex>
   ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
-#endif
 
   template <typename... ArgTypes>
     requires(sizeof...(ArgTypes) > 1)
@@ -301,37 +305,21 @@ class Vector {
   /// @return The value of the specified lane in the SIMD vector.
   /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
   ace const lane_type GetLane(const size_t i) const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, static_cast<int>(i)};
-#endif
   }
   ace lane_type GetLane(const size_t i) {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, static_cast<int>(i)};
-#endif
   }
 
   /// @brief Get a single lane of the vector by index.
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   ace const lane_type GetLane(const int i) const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, i};
-#endif
   }
 
   ace lane_type GetLane(const int i) {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, i};
-#endif
   }
 
   /// @brief Get a single lane of the vector by index.
@@ -339,20 +327,12 @@ class Vector {
   /// @return The value of the specified lane in the SIMD vector.
   template <size_t LaneIndex>
   ace const const_lane_type<LaneIndex> GetLane() const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[LaneIndex];
-#else
     return vec_;
-#endif
   }
 
   template <size_t LaneIndex>
   ace const_lane_type<LaneIndex> GetLane() {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[LaneIndex];
-#else
     return vec_;
-#endif
   }
 
   /// Get the last lane of the vector.
@@ -506,21 +486,29 @@ class Vector {
   /// Multiply two vectors and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const {
-if constexpr (extension_arithmetic) {
-    return vec_ - b.vec_ * c.vec_;
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ - b.vec_ * c.vec_;  // MVE has no vector multiply-subtract
+#else
+    if constexpr (extension_arithmetic) {
+      return vec_ - b.vec_ * c.vec_;
     } else {
-    return simd::multiply_subtract(vec_, b, c);
+      return simd::multiply_subtract(vec_, b, c);
     }
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const {
-if constexpr (extension_arithmetic) {
-    return vec_ - b.vec_ * c;
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ - b.vec_ * c;  // MVE has no vector multiply-subtract
+#else
+    if constexpr (extension_arithmetic) {
+      return vec_ - b.vec_ * c;
     } else {
-    return simd::multiply_subtract(vec_, b, c);
+      return simd::multiply_subtract(vec_, b, c);
     }
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
@@ -576,15 +564,12 @@ if constexpr (extension_arithmetic) {
 
   /// @brief 1 / value, using an estimate for speed
   /// @note This is not a precise reciprocal, but it is fast and useful for many applications
+  /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalEstimate() const
-    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+    requires std::floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
-    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
-      std::numeric_limits<uint32_t>::max() / vec_;
-    } else {
-      return 1.f / vec_;
-    }
+    return 1.f / vec_;
 #else
     return simd::reciprocal_estimate(vec_);
 #endif
@@ -592,15 +577,16 @@ if constexpr (extension_arithmetic) {
 
   /// @brief 1 / sqrt(value), using an estimate for speed
   /// @note For greater precision, follow with ReciprocalSqrtStep iterations (Newton-Raphson).
+  /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalSqrtEstimate() const
-    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+    requires std::floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
-    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
-      return std::numeric_limits<uint32_t>::max() / (vec_ * vec_);
-    } else {
-      return 1.f / (vec_ * vec_);
-    }
+    // MVE has no vrsqrte: take the bit-level initial guess, then one Newton-Raphson step, which lands within NEON's
+    // estimate precision (~1/256).
+    const auto bits = std::bit_cast<Bool_t<VectorType>>(vec_);
+    const VectorType guess = std::bit_cast<VectorType>(0x5f3759dfu - (bits >> 1));
+    return guess * (1.5f - 0.5f * vec_ * guess * guess);
 #else
     return simd::reciprocal_sqrt_estimate(vec_);
 #endif
@@ -739,42 +725,64 @@ if constexpr (extension_arithmetic) {
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if are equal
   /// @details Equivalent to a == b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type Equal(argon_type b) const { return simd::equal(vec_, b); }
+  ace argon_bool_type Equal(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_));
+#else
+    return simd::equal(vec_, b);
+#endif
+  }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than or equal to b
   /// @details Equivalent to a >= b ? 0xFFFFFFFF : 0x00000000
   ace argon_bool_type GreaterThanOrEqual(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_));
+#else
 #if ARGON_GCC_AARCH32_FLOAT
     if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(vec_, b.vec_);
 #endif
     return simd::greater_than_or_equal(vec_, b);
+#endif
   }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than or equal to b
   /// @details Equivalent to a <= b ? 0xFFFFFFFF : 0x00000000
   ace argon_bool_type LessThanOrEqual(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(b.vec_, vec_));
+#else
 #if ARGON_GCC_AARCH32_FLOAT
     if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(b.vec_, vec_);
 #endif
     return simd::less_than_or_equal(vec_, b);
+#endif
   }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than b
   /// @details Equivalent to a > b ? 0xFFFFFFFF : 0x00000000
   ace argon_bool_type GreaterThan(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_));
+#else
 #if ARGON_GCC_AARCH32_FLOAT
     if constexpr (fixup_float_compare) return helpers::greater_than(vec_, b.vec_);
 #endif
     return simd::greater_than(vec_, b);
+#endif
   }
 
   /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than b
   /// @details Equivalent to a < b ? 0xFFFFFFFF : 0x00000000
   ace argon_bool_type LessThan(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_));
+#else
 #if ARGON_GCC_AARCH32_FLOAT
     if constexpr (fixup_float_compare) return helpers::greater_than(b.vec_, vec_);
 #endif
     return simd::less_than(vec_, b);
+#endif
   }
 
   /// Shift the elemnets of the vector to the left by a specified number of bits.
@@ -864,7 +872,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type ShiftRightAccumulate(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ + (b >> n);
+    return vec_ + (b >> n).vec();
 #else
     return simd::shift_right_accumulate<n>(vec_, b);
 #endif
@@ -876,7 +884,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type ShiftRightAccumulateRound(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ + mve::shift_right_round<n>(b);
+    return vec_ + mve::shift_right_round<n>(b.vec());
 #else
     return simd::shift_right_accumulate_round<n>(vec_, b);
 #endif
@@ -902,9 +910,7 @@ if constexpr (extension_arithmetic) {
   /// Load a vector from a pointer, duplicating the value across all lanes
   ace static argon_type LoadCopy(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    scalar_type val = *ptr;
-    VectorType vec;
-    utility::constexpr_for<0, lanes, 1>([val, &vec]<int i>() { vec[i] = val; });
+    return simd::duplicate(*ptr);
 #else
     return simd::load1_duplicate<VectorType>(ptr);
 #endif
@@ -994,10 +1000,15 @@ if constexpr (extension_arithmetic) {
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    static_assert(stride == 2 || stride == 4,
-                  "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
+    static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     if constexpr (stride == 2) {
       return argon::to_array(mve::load2(ptr).val);
+    } else if constexpr (stride == 3) {
+      // MVE has no vld3; gather each channel at indices {0, 3, 6, ...} instead.
+      using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;
+      const offset_type offsets = offset_type::Iota(0) * 3;
+      return {LoadGatherOffsetIndex(ptr, offsets), LoadGatherOffsetIndex(ptr + 1, offsets),
+              LoadGatherOffsetIndex(ptr + 2, offsets)};
     } else if constexpr (stride == 4) {
       return argon::to_array(mve::load4(ptr).val);
     }
@@ -1126,7 +1137,7 @@ if constexpr (extension_arithmetic) {
 #ifdef ARGON_PLATFORM_MVE
     std::array<argon_type, n> multi{};
     utility::constexpr_for<0, n, 1>([&]<int i>() {  //<
-      multi[i] = *ptr;
+      multi[i] = Load(ptr);
       ptr += lanes;
     });
     return multi;
@@ -1259,14 +1270,20 @@ if constexpr (extension_arithmetic) {
   /// @copydoc BitwiseAndNot
   ace argon_type BitwiseClear(argon_type b) const { return BitwiseAndNot(b); }
 
-#ifndef ARGON_PLATFORM_MVE
   /// Bitwise select between two vectors, using the current vector as a mask.
   /// @details Equivalent to (mask & b) | (~mask & c).
   /// @return A vector of the operands' type (not the mask's).
   template <typename ArgType>
     requires std::is_unsigned_v<scalar_type>
   ace ArgType BitwiseSelect(ArgType true_value, ArgType false_value) const {
+#ifdef ARGON_PLATFORM_MVE
+    // MVE has no vbsl; blend the bits of the operands through the mask's type.
+    const auto t = std::bit_cast<VectorType>(true_value.vec());
+    const auto f = std::bit_cast<VectorType>(false_value.vec());
+    return ArgType{std::bit_cast<typename ArgType::vector_type>((vec_ & t) | (f & ~vec_))};
+#else
     return ArgType{simd::bitwise_select(vec_, true_value, false_value)};
+#endif
   }
 
   /// @copydoc BitwiseSelect
@@ -1276,6 +1293,7 @@ if constexpr (extension_arithmetic) {
     return BitwiseSelect(true_value, false_value);
   }
 
+#ifndef ARGON_PLATFORM_MVE
   /// Ands the current vector with the given vector, then checks if nonzero. If so, fills the lane with all ones
   /// @details Equivalent to (a & b) != 0 ? 0xFFFFFFFF : 0x00000000
   ace predicate_type CompareTestNonzero(argon_type b) const { return simd::compare_test_nonzero(vec_, b); }
@@ -1319,13 +1337,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type Extract(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    auto new_vec = vec_;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i < n) {
-        new_vec[i] = b.vec_[i];
-      }
-    });
-    return new_vec;
+    return ShuffleConcat<[](size_t i) { return i + n; }>(vec_, b.vec_);
 #else
     return simd::extract<n>(vec_, b);
 #endif
@@ -1340,17 +1352,9 @@ if constexpr (extension_arithmetic) {
   /// the result is {{a0, b0, a1, b1}, {a2, b2, a3, b3}}
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i % 2 == 0) {
-        new_vec[0][i] = vec_[i / 2];
-        new_vec[1][i] = vec_[(i + lanes) / 2];
-      } else {
-        new_vec[0][i] = b.vec_[i / 2];
-        new_vec[1][i] = b.vec_[(i + lanes) / 2];
-      }
-    });
-    return new_vec;
+    // Lanes of {a, b}: even result lanes come from a, odd ones from b (offset by `lanes`).
+    return {ShuffleConcat<[](size_t i) { return i / 2 + (i % 2) * lanes; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return (i + lanes) / 2 + (i % 2) * lanes; }>(vec_, b.vec_)};
 #else
     return argon::to_array(neon::zip(vec_, b.vec()).val);
 #endif
@@ -1361,17 +1365,8 @@ if constexpr (extension_arithmetic) {
   /// the result is {{a0, a1, a2, a3}, {b0, b1, b2, b3}}
   std::array<argon_type, 2> UnzipWith(argon_type b) {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if ((i * 2) < lanes) {
-        new_vec[0][i] = vec_[i * 2];
-        new_vec[1][i] = vec_[i * 2 + 1];
-      } else {
-        new_vec[0][i] = b.vec_[i * 2];
-        new_vec[1][i] = b.vec_[i * 2 + 1];
-      }
-    });
-    return new_vec;
+    return {ShuffleConcat<[](size_t i) { return i * 2; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return i * 2 + 1; }>(vec_, b.vec_)};
 #else
     return argon::to_array(neon::unzip(vec_, b.vec()).val);
 #endif
@@ -1384,17 +1379,8 @@ if constexpr (extension_arithmetic) {
   //                                    {a1, b1, a3, b3}}
   std::array<argon_type, 2> TransposeWith(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i % 2 == 1) {
-        new_vec[0][i] = vec_[i];
-        new_vec[1][i] = vec_[i + 1];
-      } else {
-        new_vec[0][i] = b.vec_[i + 1];
-        new_vec[1][i] = b.vec_[i];
-      }
-    });
-    return new_vec;
+    return {ShuffleConcat<[](size_t i) { return i % 2 ? lanes + i - 1 : i; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return i % 2 ? lanes + i : i + 1; }>(vec_, b.vec_)};
 #else
     return argon::to_array(simd::transpose(vec_, b.vec()).val);
 #endif
@@ -1539,6 +1525,17 @@ if constexpr (extension_arithmetic) {
   }
 
  protected:
+#ifdef ARGON_PLATFORM_MVE
+  /// @brief Select lanes from the concatenation {a, b} by compile-time index (MVE has no vext/zip/uzp/trn).
+  /// @tparam index A constexpr callable mapping each result lane to a lane of {a, b}.
+  template <auto index>
+  ace static VectorType ShuffleConcat(VectorType a, VectorType b) {
+    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+      return VectorType(__builtin_shufflevector(a, b, index(Is)...));
+    }(std::make_index_sequence<lanes>{});
+  }
+#endif
+
   template <std::size_t... Ints>
   ace static argon_type IotaHelper(scalar_type start, std::index_sequence<Ints...>) {
     return VectorType{static_cast<scalar_type>(start + Ints)...};

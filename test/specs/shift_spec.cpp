@@ -121,6 +121,7 @@ auto describe_shift_right_insert = describe("ShiftRightInsert", ${
 
 // ── ShiftLeftLong<n> (ArgonHalf -> next-larger) ─────────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_shift_left_long = describe("ShiftLeftLong", ${
   it("shifts left by n and widens uint8 -> uint16", _{
     std::array<uint8_t, 8> data = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -129,9 +130,11 @@ auto describe_shift_left_long = describe("ShiftLeftLong", ${
     expect(result).to_equal(std::array<uint16_t, 8>{4, 8, 12, 16, 20, 24, 28, 32});
   });
 });
+#endif
 
 // ── ShiftRightRoundNarrow<n> (Argon -> ArgonHalf) ───────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_shift_right_round_narrow = describe("ShiftRightRoundNarrow", ${
   it("rounds, right-shifts, and narrows uint16 -> uint8", _{
     auto a = Argon<uint16_t>::FromScalar(31u);
@@ -140,9 +143,11 @@ auto describe_shift_right_round_narrow = describe("ShiftRightRoundNarrow", ${
       expect((int)v).to_equal(16);
   });
 });
+#endif
 
 // ── ShiftRightSaturateNarrow<n> (Argon -> ArgonHalf) ────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_shift_right_saturate_narrow = describe("ShiftRightSaturateNarrow", ${
   it("narrows uint16 -> uint8 in range", _{
     auto a = Argon<uint16_t>::FromScalar(0x0FF0u);
@@ -158,9 +163,11 @@ auto describe_shift_right_saturate_narrow = describe("ShiftRightSaturateNarrow",
       expect((int)v).to_equal(255);
   });
 });
+#endif
 
 // ── ShiftRightRoundSaturateNarrow<n> (Argon -> ArgonHalf) ───────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_shift_right_round_saturate_narrow = describe("ShiftRightRoundSaturateNarrow", ${
   it("rounds, saturates, and narrows uint16 -> uint8", _{
     auto a = Argon<uint16_t>::FromScalar(0x0FFEu);
@@ -169,6 +176,14 @@ auto describe_shift_right_round_saturate_narrow = describe("ShiftRightRoundSatur
       expect((int)v).to_equal(255);
   });
 });
+#endif
+
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_shift_left_long, describe_shift_right_round_narrow, describe_shift_right_saturate_narrow, describe_shift_right_round_saturate_narrow
+#else
+#define NEON_ONLY_SPECS
+#endif
 
 CPPSPEC_MAIN(
   describe_shift_left_round,
@@ -178,9 +193,6 @@ CPPSPEC_MAIN(
   describe_shift_right_round,
   describe_shift_right_accumulate,
   describe_shift_right_accumulate_round,
-  describe_shift_right_insert,
-  describe_shift_left_long,
-  describe_shift_right_round_narrow,
-  describe_shift_right_saturate_narrow,
-  describe_shift_right_round_saturate_narrow
+  describe_shift_right_insert
+  NEON_ONLY_SPECS
 );
