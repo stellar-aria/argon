@@ -1,5 +1,7 @@
 var NAVTREEINDEX3 =
 {
+"namespaceargon.html#a044c50f1ed509ffe2a204737941897e1":[7,0,0,30],
+"namespaceargon.html#a1333e67e079883e2a460915f5a5186e5":[7,0,0,16],
 "namespaceargon.html#a2333218a69549287679c3a063ba821f3":[7,0,0,20],
 "namespaceargon.html#a2cf549e466c207daca9d2f0192cd9c23":[7,0,0,22],
 "namespaceargon.html#a34d1f5852d330dce341c279610b53d62":[7,0,0,27],
@@ -58,6 +60,8 @@ var NAVTREEINDEX3 =
 "set__lane_8hpp_source.html":[10,0,0,1,0,9],
 "sha3_8hpp_source.html":[10,0,0,1,2,0,5],
 "sha512_8hpp_source.html":[10,0,0,1,2,0,6],
+"simde__neon_8hpp.html":[10,0,0,1,0,10],
+"simde__neon_8hpp_source.html":[10,0,0,1,0,10],
 "size_8hpp_source.html":[10,0,0,0,0,5],
 "sm3_8hpp_source.html":[10,0,0,1,2,0,7],
 "sm4_8hpp_source.html":[10,0,0,1,2,0,8],
@@ -203,8 +207,8 @@ var NAVTREEINDEX3 =
 "to__array_8hpp.html":[10,0,0,0,0,6],
 "to__array_8hpp_source.html":[10,0,0,0,0,6],
 "utility_8hpp_source.html":[10,0,0,0,11],
-"vec128_8hpp_source.html":[10,0,0,1,0,11],
-"vec64_8hpp_source.html":[10,0,0,1,0,12],
+"vec128_8hpp_source.html":[10,0,0,1,0,12],
+"vec64_8hpp_source.html":[10,0,0,1,0,13],
 "vfpv3_8hpp_source.html":[10,0,0,1,2,3],
 "vfpv3__float_8hpp_source.html":[10,0,0,1,3,1],
 "vfpv3__int_8hpp_source.html":[10,0,0,1,3,2],

@@ -255,9 +255,8 @@ template&lt;size_t LaneIndex&gt; </td></tr>
 <tr class="memitem:aa6b544fb855ffe0e00e9ce66d6ddd31d" id="r_aa6b544fb855ffe0e00e9ce66d6ddd31d"><td class="memItemLeft"><a id="aa6b544fb855ffe0e00e9ce66d6ddd31d" name="aa6b544fb855ffe0e00e9ce66d6ddd31d"></a>
 ace <a class="el" href="#a42b8f34739c804799a601bdeabedc7ec">const_lane_type</a>&lt; <a class="el" href="#ad92ce1a195a40c1f752ce0ddc524c9e4">lanes</a> - 1 &gt;&#160;</td><td class="memItemRight"><b>LastLane</b> ()</td></tr>
 <tr class="memdesc:aa6b544fb855ffe0e00e9ce66d6ddd31d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the last lane of the vector. <br /></td></tr>
-<tr class="memitem:a67afa3ff14121529d8ae26ff64ad646b" id="r_a67afa3ff14121529d8ae26ff64ad646b"><td class="memItemLeft"><a id="a67afa3ff14121529d8ae26ff64ad646b" name="a67afa3ff14121529d8ae26ff64ad646b"></a>
-ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><b>ShiftRight</b> (const int i) const</td></tr>
-<tr class="memdesc:a67afa3ff14121529d8ae26ff64ad646b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elements of the vector to the right by a specified number of bits. <br /></td></tr>
+<tr class="memitem:a67afa3ff14121529d8ae26ff64ad646b" id="r_a67afa3ff14121529d8ae26ff64ad646b"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a67afa3ff14121529d8ae26ff64ad646b">ShiftRight</a> (const int i) const</td></tr>
+<tr class="memdesc:a67afa3ff14121529d8ae26ff64ad646b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elements of the vector to the right by a specified number of bits.  <br /></td></tr>
 <tr class="memitem:a1f5174f52a764a872b5c4551ffbbcbc3" id="r_a1f5174f52a764a872b5c4551ffbbcbc3"><td class="memItemLeft"><a id="a1f5174f52a764a872b5c4551ffbbcbc3" name="a1f5174f52a764a872b5c4551ffbbcbc3"></a>
 ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><b>ShiftLeft</b> (const int i) const</td></tr>
 <tr class="memdesc:a1f5174f52a764a872b5c4551ffbbcbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elements of the vector to the left by a specified number of bits. <br /></td></tr>
@@ -393,6 +392,9 @@ ace <a class="el" href="#af9f6ff460f020118ee8cec9cecced301">argon_bool_type</a>&
 <tr class="memdesc:a235f1983552e5049a465dbce9301f0b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elemnets of the vector to the left by a specified number of bits.  <br /></td></tr>
 <tr class="memitem:a339ac134c3ae1143e6a7244e5bd490ff" id="r_a339ac134c3ae1143e6a7244e5bd490ff"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a339ac134c3ae1143e6a7244e5bd490ff">ShiftLeft</a> (std::make_signed_t&lt; simd::Scalar_t&lt; <a class="el" href="namespaceargon.html#aa5953ab7e525816eb653ffb344f07b36">Bool_t</a>&lt; VectorType &gt; &gt; &gt; n) const</td></tr>
 <tr class="memdesc:a339ac134c3ae1143e6a7244e5bd490ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elements of the vector to the left by a specified number of bits.  <br /></td></tr>
+<tr class="memitem:ae9a682f48dfc0965475bd3d9610024e6" id="r_ae9a682f48dfc0965475bd3d9610024e6"><td class="memItemLeft"><a id="ae9a682f48dfc0965475bd3d9610024e6" name="ae9a682f48dfc0965475bd3d9610024e6"></a>
+ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><b>ShiftByVector</b> (int count) const</td></tr>
+<tr class="memdesc:ae9a682f48dfc0965475bd3d9610024e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">vshl by <span class="tt">count</span> in every lane: left for positive counts, right (arithmetic or logical) for negative ones. <br /></td></tr>
 <tr class="memitem:aa519dbdec10abee1979bfa0dd01c18d6" id="r_aa519dbdec10abee1979bfa0dd01c18d6"><td class="memTemplParams" colspan="2">template&lt;int n&gt; </td></tr>
 <tr class="memitem:aa519dbdec10abee1979bfa0dd01c18d6 template"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa519dbdec10abee1979bfa0dd01c18d6">ShiftLeft</a> () const</td></tr>
 <tr class="memdesc:aa519dbdec10abee1979bfa0dd01c18d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift the elements of the vector to the left by a specified number of bits.  <br /></td></tr>
@@ -3703,6 +3705,36 @@ template&lt;int n&gt; </div>
 
 <p>Shift the elements of the vector to the left by a specified number of bits, and then OR the result with another vector masked to the number of shift bits. </p>
 <p>Equivalent to (a &lt;&lt; b) | (c &amp; ((1 &lt;&lt; b) - 1)). </p><dl class="section see"><dt>See also</dt><dd><a href="https://developer.arm.com/documentation/ddi0596/2021-03/SIMD-FP-Instructions/SLI&amp;ndash;Shift-Left-and-Insert&amp;ndash;immediate&amp;ndash;">https://developer.arm.com/documentation/ddi0596/2021-03/SIMD-FP-Instructions/SLI&amp;ndash;Shift-Left-and-Insert&amp;ndash;immediate&amp;ndash;</a> </dd></dl>
+
+</div>
+</div>
+<a id="a67afa3ff14121529d8ae26ff64ad646b" name="a67afa3ff14121529d8ae26ff64ad646b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67afa3ff14121529d8ae26ff64ad646b">&#9670;&#160;</a></span>ShiftRight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::ShiftRight </td>
+          <td>(</td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Shift the elements of the vector to the right by a specified number of bits. </p>
+<p>Arithmetic for signed lanes, logical for unsigned ones, as a &gt;&gt; i. Without the compiler's vector extensions (MSVC) it is vshl by -i: NEON's shift-by-immediate needs a constant. </p>
 
 </div>
 </div>

@@ -10,6 +10,7 @@ var dir_8f55dd3ded7944f08d54613532a6a0e1 =
     [ "multivector.hpp", "multivector_8hpp_source.html", null ],
     [ "scalar.hpp", "scalar_8hpp_source.html", null ],
     [ "set_lane.hpp", "set__lane_8hpp_source.html", null ],
+    [ "simde_neon.hpp", "simde__neon_8hpp.html", null ],
     [ "store.hpp", "arm__simd_2helpers_2store_8hpp_source.html", null ],
     [ "vec128.hpp", "vec128_8hpp_source.html", null ],
     [ "vec64.hpp", "vec64_8hpp_source.html", null ],

@@ -1,0 +1,5 @@
+<map id="include/arm_simd/helpers/simde_neon.hpp" name="include/arm_simd/helpers/simde_neon.hpp">
+<area shape="rect" id="Node000001" title="SIMDe&#39;s NEON implementation (x86 and other non&#45;Arm hosts) under the NEON intrinsic names." alt="" coords="5,5,196,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="53,93,149,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,46,103,79,98,79,98,46"/>
+</map>

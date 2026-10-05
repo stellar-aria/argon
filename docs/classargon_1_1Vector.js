@@ -122,6 +122,7 @@ var classargon_1_1Vector =
     [ "ReciprocalStep", "classargon_1_1Vector.html#aa202e894d800e7dca3a1f3cb2e2b8f5b", null ],
     [ "Scatter", "classargon_1_1Vector.html#a1b92dcf8852eb6ca9c8188414b2cd0ea", null ],
     [ "Select", "classargon_1_1Vector.html#ae729a48dfc0a6ef42848fcbda11add0f", null ],
+    [ "ShiftByVector", "classargon_1_1Vector.html#ae9a682f48dfc0965475bd3d9610024e6", null ],
     [ "ShiftLeft", "classargon_1_1Vector.html#aa519dbdec10abee1979bfa0dd01c18d6", null ],
     [ "ShiftLeft", "classargon_1_1Vector.html#a1f5174f52a764a872b5c4551ffbbcbc3", null ],
     [ "ShiftLeft", "classargon_1_1Vector.html#a235f1983552e5049a465dbce9301f0b1", null ],
