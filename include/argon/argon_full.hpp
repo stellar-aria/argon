@@ -52,7 +52,11 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Construct from a four-element array (loaded as a 128-bit vector).
   ace Argon(std::array<ScalarType, 4> value_list) : T{T::Load(value_list.data())} {};
   /// @brief Construct by combining a low and high 64-bit half-vector.
-  ace Argon(ArgonHalf<ScalarType> low, ArgonHalf<ScalarType> high) : T{Combine(low, high)} {};
+  /// @details A template, so that brace-initialising from two scalars (`Argon<int64_t>{a, b}`) doesn't need
+  /// ArgonHalf<ScalarType>, which can't exist for 64-bit lanes on AArch32.
+  template <typename S = ScalarType>
+    requires std::is_same_v<S, ScalarType>
+  ace Argon(ArgonHalf<S> low, ArgonHalf<S> high) : T{Combine(low, high)} {};
 
   ace Argon(argon::Lane<vector_type> b) : T{b} {};
   ace Argon(argon::ConstLane<0, vector_type> b) : T{b} {};

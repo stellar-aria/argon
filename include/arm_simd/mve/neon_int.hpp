@@ -21,6 +21,9 @@ namespace mve {
 [[gnu::always_inline]] inline uint8x16_t load1(uint8_t const *ptr) { return vld1q_u8(ptr); }
 [[gnu::always_inline]] inline uint16x8_t load1(uint16_t const *ptr) { return vld1q_u16(ptr); }
 [[gnu::always_inline]] inline uint32x4_t load1(uint32_t const *ptr) { return vld1q_u32(ptr); }
+// MVE has no vdupq_n for 64-bit lanes: build the vector from two copies of the scalar.
+[[gnu::always_inline]] inline int64x2_t duplicate(int64_t a) { return vcreateq_s64(static_cast<uint64_t>(a), static_cast<uint64_t>(a)); }
+[[gnu::always_inline]] inline uint64x2_t duplicate(uint64_t a) { return vcreateq_u64(a, a); }
 // MVE has no vld1q/vst1q for 64-bit lanes: move the same 16 bytes as 32-bit words. Predicates are per byte, so a
 // predicate for 64-bit lanes selects whole words.
 [[gnu::always_inline]] inline int64x2_t load1(int64_t const *ptr) { return vreinterpretq_s64_s32(vld1q_s32(reinterpret_cast<int32_t const *>(ptr))); }
