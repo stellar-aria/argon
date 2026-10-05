@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <limits>
 #include <numeric>
 #include <type_traits>
 #include "arm_simd.hpp"
@@ -230,6 +231,171 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   ace ArgonHalf<ScalarType> GetLow() const { return simd::get_low(this->vec_); }
 #endif
 
+  // ── Bottom / top widening and narrowing ─────────────────────────────────────────────────────────────────────
+  // Helium widens and narrows by lane parity rather than by vector half: the "bottom" lanes are the even ones
+  // (0, 2, 4, ...) and the "top" lanes the odd ones. Each pair of narrow lanes shares the bits of one wide lane, so
+  // a narrow vector splits into WidenBottom() and WidenTop(), and NarrowBottom()/NarrowTop() write a wide vector
+  // back into those lanes: hi.NarrowTop(lo.NarrowBottom(dest)) reassembles what WidenBottom/WidenTop took apart.
+  // MVE has an instruction for each; NEON views the narrow vector as the wide type, where the bottom lane is the
+  // low half of each wide lane, and widens with shifts and narrows with a bit select.
+
+  /// @brief Widen the even (bottom) lanes to the next larger type. MVE: vmovlb.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 2)
+  ace Argon<argon::helpers::NextLarger_t<S>> WidenBottom() const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_long_bottom(this->vec_);
+#else
+    constexpr int half = 8 * sizeof(S);
+    return this->template As<argon::helpers::NextLarger_t<S>>().template ShiftLeft<half>().template ShiftRight<half>();
+#endif
+  }
+
+  /// @brief Widen the odd (top) lanes to the next larger type. MVE: vmovlt.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 2)
+  ace Argon<argon::helpers::NextLarger_t<S>> WidenTop() const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_long_top(this->vec_);
+#else
+    constexpr int half = 8 * sizeof(S);
+    return this->template As<argon::helpers::NextLarger_t<S>>().template ShiftRight<half>();
+#endif
+  }
+
+  /// @brief Widen the even (bottom) lanes and shift them left by `n`. MVE: vshllb.
+  template <int n, typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 2 && n >= 1 && n <= 8 * int{sizeof(S)})
+  ace Argon<argon::helpers::NextLarger_t<S>> ShiftLeftLongBottom() const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::shift_left_long_bottom<n>(this->vec_);
+#else
+    return WidenBottom().template ShiftLeft<n>();
+#endif
+  }
+
+  /// @brief Widen the odd (top) lanes and shift them left by `n`. MVE: vshllt.
+  template <int n, typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 2 && n >= 1 && n <= 8 * int{sizeof(S)})
+  ace Argon<argon::helpers::NextLarger_t<S>> ShiftLeftLongTop() const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::shift_left_long_top<n>(this->vec_);
+#else
+    return WidenTop().template ShiftLeft<n>();
+#endif
+  }
+
+  /// @brief Multiply the even (bottom) lanes, producing full-width products. MVE: vmullb.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 4)
+  ace Argon<argon::helpers::NextLarger_t<S>> MultiplyLongBottom(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::multiply_long_bottom(this->vec_, b.vec());
+#else
+    return BottomLanes(*this) * BottomLanes(b);
+#endif
+  }
+
+  /// @brief Multiply the odd (top) lanes, producing full-width products. MVE: vmullt.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 4)
+  ace Argon<argon::helpers::NextLarger_t<S>> MultiplyLongTop(Argon<S> b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::multiply_long_top(this->vec_, b.vec());
+#else
+    return TopLanes(*this) * TopLanes(b);
+#endif
+  }
+
+  /// @brief Narrow each lane (keeping its low half) into the even (bottom) lanes of `dest`. MVE: vmovnb.
+  /// @param dest The narrow vector whose odd (top) lanes are kept.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4))
+  ace Argon<argon::helpers::NextSmaller_t<S>> NarrowBottom(Argon<argon::helpers::NextSmaller_t<S>> dest) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_narrow_bottom(dest.vec(), this->vec_);
+#else
+    return InsertBottom(dest, *this);
+#endif
+  }
+
+  /// @brief Narrow each lane (keeping its low half) into the odd (top) lanes of `dest`. MVE: vmovnt.
+  /// @param dest The narrow vector whose even (bottom) lanes are kept.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4))
+  ace Argon<argon::helpers::NextSmaller_t<S>> NarrowTop(Argon<argon::helpers::NextSmaller_t<S>> dest) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_narrow_top(dest.vec(), this->vec_);
+#else
+    return InsertTop(dest, *this);
+#endif
+  }
+
+  /// @brief Narrow each lane with saturation into the even (bottom) lanes of `dest`. MVE: vqmovnb.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4))
+  ace Argon<argon::helpers::NextSmaller_t<S>> SaturateNarrowBottom(
+      Argon<argon::helpers::NextSmaller_t<S>> dest) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_narrow_saturate_bottom(dest.vec(), this->vec_);
+#else
+    return InsertBottom(dest, SaturateToNarrow(*this));
+#endif
+  }
+
+  /// @brief Narrow each lane with saturation into the odd (top) lanes of `dest`. MVE: vqmovnt.
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4))
+  ace Argon<argon::helpers::NextSmaller_t<S>> SaturateNarrowTop(Argon<argon::helpers::NextSmaller_t<S>> dest) const {
+#ifdef ARGON_PLATFORM_MVE
+    return mve::move_narrow_saturate_top(dest.vec(), this->vec_);
+#else
+    return InsertTop(dest, SaturateToNarrow(*this));
+#endif
+  }
+
+#ifdef ARGON_PLATFORM_MVE
+#define ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value) return mve::mve_name<n>(dest.vec(), this->vec_);
+#else
+#define ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value) return Insert(dest, neon_value);
+#endif
+  // Shift right by n, optionally rounding and/or saturating, then narrow into the bottom or top lanes of dest.
+#define ARGON_SHIFT_NARROW(Name, mve_name, Insert, neon_value)                                                  \
+  template <int n, typename S = ScalarType>                                                                     \
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4) && n >= 1 && n <= 4 * int{sizeof(S)}) \
+  ace Argon<argon::helpers::NextSmaller_t<S>> Name(Argon<argon::helpers::NextSmaller_t<S>> dest) const {         \
+    ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value)                                                       \
+  }
+
+  /// @brief Shift each lane right by `n` and narrow it into the even (bottom) lanes of `dest`. MVE: vshrnb.
+  ARGON_SHIFT_NARROW(ShiftRightNarrowBottom, shift_right_narrow_bottom, InsertBottom,
+                     this->template ShiftRight<n>())
+  /// @brief Shift each lane right by `n` and narrow it into the odd (top) lanes of `dest`. MVE: vshrnt.
+  ARGON_SHIFT_NARROW(ShiftRightNarrowTop, shift_right_narrow_top, InsertTop, this->template ShiftRight<n>())
+  /// @brief Shift each lane right by `n` with rounding and narrow it into the bottom lanes of `dest`. MVE: vrshrnb.
+  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowBottom, shift_right_narrow_round_bottom, InsertBottom,
+                     this->template ShiftRightRound<n>())
+  /// @brief Shift each lane right by `n` with rounding and narrow it into the top lanes of `dest`. MVE: vrshrnt.
+  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowTop, shift_right_narrow_round_top, InsertTop,
+                     this->template ShiftRightRound<n>())
+  /// @brief Shift each lane right by `n` and narrow it with saturation into the bottom lanes of `dest`.
+  /// MVE: vqshrnb.
+  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowBottom, shift_right_narrow_saturate_bottom, InsertBottom,
+                     SaturateToNarrow(this->template ShiftRight<n>()))
+  /// @brief Shift each lane right by `n` and narrow it with saturation into the top lanes of `dest`. MVE: vqshrnt.
+  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowTop, shift_right_narrow_saturate_top, InsertTop,
+                     SaturateToNarrow(this->template ShiftRight<n>()))
+  /// @brief Shift each lane right by `n` with rounding and narrow it with saturation into the bottom lanes of
+  /// `dest`. MVE: vqrshrnb.
+  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowBottom, shift_right_narrow_round_saturate_bottom, InsertBottom,
+                     SaturateToNarrow(this->template ShiftRightRound<n>()))
+  /// @brief Shift each lane right by `n` with rounding and narrow it with saturation into the top lanes of `dest`.
+  /// MVE: vqrshrnt.
+  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowTop, shift_right_narrow_round_saturate_top, InsertTop,
+                     SaturateToNarrow(this->template ShiftRightRound<n>()))
+#undef ARGON_SHIFT_NARROW
+#undef ARGON_SHIFT_NARROW_BODY
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
@@ -387,6 +553,61 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     return neon::aes_inverse_mix_columns(this->vec_);
   }
 #endif
+
+ private:
+#ifndef ARGON_PLATFORM_MVE
+  // NEON helpers for the bottom/top operations. A narrow vector viewed as the next larger type has its bottom
+  // (even) lane in the low half of each wide lane and its top (odd) lane in the high half.
+
+  /// The even lanes of `v`, sign- or zero-extended to the next larger type.
+  template <typename S>
+  ace static Argon<argon::helpers::NextLarger_t<S>> BottomLanes(Argon<S> v) {
+    constexpr int half = 8 * sizeof(S);
+    return v.template As<argon::helpers::NextLarger_t<S>>().template ShiftLeft<half>().template ShiftRight<half>();
+  }
+
+  /// The odd lanes of `v`, sign- or zero-extended to the next larger type.
+  template <typename S>
+  ace static Argon<argon::helpers::NextLarger_t<S>> TopLanes(Argon<S> v) {
+    return v.template As<argon::helpers::NextLarger_t<S>>().template ShiftRight<8 * sizeof(S)>();
+  }
+
+  /// A mask of the low (bottom) half of each lane of the wide type W.
+  template <typename W>
+  ace static Argon<std::make_unsigned_t<W>> LowHalfMask() {
+    using U = std::make_unsigned_t<W>;
+    return Argon<U>{static_cast<U>((U{1} << (4 * sizeof(W))) - 1)};
+  }
+
+  /// `dest` with its bottom lanes replaced by the low half of each lane of `wide`.
+  template <typename W>
+  ace static Argon<argon::helpers::NextSmaller_t<W>> InsertBottom(Argon<argon::helpers::NextSmaller_t<W>> dest,
+                                                                  Argon<W> wide) {
+    using N = argon::helpers::NextSmaller_t<W>;
+    return LowHalfMask<W>().Select(wide, dest.template As<W>()).template As<N>();
+  }
+
+  /// `dest` with its top lanes replaced by the low half of each lane of `wide`.
+  template <typename W>
+  ace static Argon<argon::helpers::NextSmaller_t<W>> InsertTop(Argon<argon::helpers::NextSmaller_t<W>> dest,
+                                                               Argon<W> wide) {
+    using N = argon::helpers::NextSmaller_t<W>;
+    return LowHalfMask<W>().Select(dest.template As<W>(), wide.template ShiftLeft<4 * sizeof(W)>()).template As<N>();
+  }
+
+  /// `wide` clamped to the range of the next smaller type.
+  template <typename W>
+  ace static Argon<W> SaturateToNarrow(Argon<W> wide) {
+    using N = argon::helpers::NextSmaller_t<W>;
+    const Argon<W> high{static_cast<W>(std::numeric_limits<N>::max())};
+    if constexpr (std::is_signed_v<W>) {
+      return wide.Min(high).Max(Argon<W>{static_cast<W>(std::numeric_limits<N>::min())});
+    } else {
+      return wide.Min(high);
+    }
+  }
+#endif
+
 };
 
 template <typename... arg_types>

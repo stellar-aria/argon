@@ -189,8 +189,8 @@ template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vrshrntq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_bottom(uint8x16_t a, uint16x8_t b) { return vshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrnbq_m_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top_signed(uint8x16_t a, uint16x8_t b) { return vshrntq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top_signed(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrntq_m_n_u16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top(uint8x16_t a, uint16x8_t b) { return vshrntq_n_u16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrntq_m_n_u16(a, b, imm, p); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_bottom(uint8x16_t a, uint16x8_t b) { return vmovnbq_u16(a, b); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vmovnbq_m_u16(a, b, p); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_top(uint8x16_t a, uint16x8_t b) { return vmovntq_u16(a, b); }
@@ -375,8 +375,8 @@ template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vrshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_bottom(int8x16_t a, int16x8_t b) { return vshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrnbq_m_n_s16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top_signed(int8x16_t a, int16x8_t b) { return vshrntq_n_s16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top_signed(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrntq_m_n_s16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top(int8x16_t a, int16x8_t b) { return vshrntq_n_s16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_round(int8x16_t a, mve_pred16_t p) { return vrshrq_x_n_s8(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right(int8x16_t a, mve_pred16_t p) { return vshrq_x_n_s8(a, imm, p); }
 [[gnu::always_inline]] nce int8x16_t bit_reverse_shift_right(int8x16_t a, int32_t b) { return vbrsrq_n_s8(a, b); }
@@ -623,8 +623,8 @@ template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vrshrntq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_bottom(uint16x8_t a, uint32x4_t b) { return vshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrnbq_m_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top_signed(uint16x8_t a, uint32x4_t b) { return vshrntq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top_signed(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrntq_m_n_u32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top(uint16x8_t a, uint32x4_t b) { return vshrntq_n_u32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrntq_m_n_u32(a, b, imm, p); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_bottom(uint16x8_t a, uint32x4_t b) { return vmovnbq_u32(a, b); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vmovnbq_m_u32(a, b, p); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_top(uint16x8_t a, uint32x4_t b) { return vmovntq_u32(a, b); }
@@ -718,8 +718,8 @@ template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vrshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_bottom(int16x8_t a, int32x4_t b) { return vshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrnbq_m_n_s32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top_signed(int16x8_t a, int32x4_t b) { return vshrntq_n_s32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top_signed(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrntq_m_n_s32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top(int16x8_t a, int32x4_t b) { return vshrntq_n_s32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_round(int16x8_t a, mve_pred16_t p) { return vrshrq_x_n_s16(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right(int16x8_t a, mve_pred16_t p) { return vshrq_x_n_s16(a, imm, p); }
 [[gnu::always_inline]] nce int16x8_t bit_reverse_shift_right(int16x8_t a, int32_t b) { return vbrsrq_n_s16(a, b); }
