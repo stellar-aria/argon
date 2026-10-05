@@ -19,14 +19,6 @@
 #ifdef __cplusplus
 namespace neon {
 // clang-format off
-template <typename T> nce T max(float64x1_t a, float64x1_t b);
-template <typename T> nce T max(float64x2_t a, float64x2_t b);
-template <typename T> nce T min(float64x1_t a, float64x1_t b);
-template <typename T> nce T min(float64x2_t a, float64x2_t b);
-template <typename T> nce T max_strict(float64x1_t a, float64x1_t b);
-template <typename T> nce T max_strict(float64x2_t a, float64x2_t b);
-template <typename T> nce T min_strict(float64x1_t a, float64x1_t b);
-template <typename T> nce T min_strict(float64x2_t a, float64x2_t b);
 
 template <typename T> nce T shift_right_saturate_narrow(int16_t a);
 template <typename T> nce T shift_right_saturate_narrow(int32_t a);
@@ -123,23 +115,6 @@ template <typename T> nce T load4_duplicate(float64_t const *ptr);
 template <typename T> nce T load1_x2(float64_t const *ptr);
 template <typename T> nce T load1_x3(float64_t const *ptr);
 template <typename T> nce T load1_x4(float64_t const *ptr);
-template <typename T> nce T store1(float64_t *ptr, float64x1_t val);
-template <typename T> nce T store1(float64_t *ptr, float64x2_t val);
-template <typename T> nce T store2(int64_t *ptr, int64x2x2_t val);
-template <typename T> nce T store2(uint64_t *ptr, uint64x2x2_t val);
-template <typename T> nce T store2(poly64_t *ptr, poly64x2x2_t val);
-template <typename T> nce T store2(float64_t *ptr, float64x1x2_t val);
-template <typename T> nce T store2(float64_t *ptr, float64x2x2_t val);
-template <typename T> nce T store3(int64_t *ptr, int64x2x3_t val);
-template <typename T> nce T store3(uint64_t *ptr, uint64x2x3_t val);
-template <typename T> nce T store3(poly64_t *ptr, poly64x2x3_t val);
-template <typename T> nce T store3(float64_t *ptr, float64x1x3_t val);
-template <typename T> nce T store3(float64_t *ptr, float64x2x3_t val);
-template <typename T> nce T store4(int64_t *ptr, int64x2x4_t val);
-template <typename T> nce T store4(uint64_t *ptr, uint64x2x4_t val);
-template <typename T> nce T store4(poly64_t *ptr, poly64x2x4_t val);
-template <typename T> nce T store4(float64_t *ptr, float64x1x4_t val);
-template <typename T> nce T store4(float64_t *ptr, float64x2x4_t val);
 template <typename T> nce T convert(int16_t a);
 template <typename T> nce T convert(uint16_t a);
 template <typename T> nce T convert(float16_t a);
@@ -150,8 +125,6 @@ template <typename T> nce T convert_round_toward_positive_infinity(float16_t a);
 template <typename T> nce T duplicate(float16x8_t vec);
 template <typename T> nce T reinterpret(bfloat16x4_t a);
 template <typename T> nce T reinterpret(bfloat16x8_t a);
-template <typename T> nce T get_high(float64x2_t a);
-template <typename T> nce T get_low(float64x2_t a);
 
 
 
@@ -874,10 +847,10 @@ template <int lane>[[gnu::always_inline]] nce float64x1_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x1_t subtract(float64x1_t a, float64x1_t b) { return vsub_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t subtract_absolute(float64x1_t a, float64x1_t b) { return vabd_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t absolute(float64x1_t a) { return vabs_f64(a); }
-template <> [[gnu::always_inline]] nce float64x1_t max(float64x1_t a, float64x1_t b) { return vmax_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x1_t min(float64x1_t a, float64x1_t b) { return vmin_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x1_t max_strict(float64x1_t a, float64x1_t b) { return vmaxnm_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x1_t min_strict(float64x1_t a, float64x1_t b) { return vminnm_f64(a, b); }
+[[gnu::always_inline]] nce float64x1_t max(float64x1_t a, float64x1_t b) { return vmax_f64(a, b); }
+[[gnu::always_inline]] nce float64x1_t min(float64x1_t a, float64x1_t b) { return vmin_f64(a, b); }
+[[gnu::always_inline]] nce float64x1_t max_strict(float64x1_t a, float64x1_t b) { return vmaxnm_f64(a, b); }
+[[gnu::always_inline]] nce float64x1_t min_strict(float64x1_t a, float64x1_t b) { return vminnm_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t round(float64x1_t a) { return vrnd_f64(a); }
 [[gnu::always_inline]] nce float64x1_t round_toward_negative_infinity(float64x1_t a) { return vrndm_f64(a); }
 [[gnu::always_inline]] nce float64x1_t round_toward_positive_infinity(float64x1_t a) { return vrndp_f64(a); }
@@ -965,10 +938,10 @@ template <int lane>[[gnu::always_inline]] nce float64x2_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x2_t subtract(float64x2_t a, float64x2_t b) { return vsubq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t subtract_absolute(float64x2_t a, float64x2_t b) { return vabdq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t absolute(float64x2_t a) { return vabsq_f64(a); }
-template <> [[gnu::always_inline]] nce float64x2_t max(float64x2_t a, float64x2_t b) { return vmaxq_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x2_t min(float64x2_t a, float64x2_t b) { return vminq_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x2_t max_strict(float64x2_t a, float64x2_t b) { return vmaxnmq_f64(a, b); }
-template <> [[gnu::always_inline]] nce float64x2_t min_strict(float64x2_t a, float64x2_t b) { return vminnmq_f64(a, b); }
+[[gnu::always_inline]] nce float64x2_t max(float64x2_t a, float64x2_t b) { return vmaxq_f64(a, b); }
+[[gnu::always_inline]] nce float64x2_t min(float64x2_t a, float64x2_t b) { return vminq_f64(a, b); }
+[[gnu::always_inline]] nce float64x2_t max_strict(float64x2_t a, float64x2_t b) { return vmaxnmq_f64(a, b); }
+[[gnu::always_inline]] nce float64x2_t min_strict(float64x2_t a, float64x2_t b) { return vminnmq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t round(float64x2_t a) { return vrndq_f64(a); }
 [[gnu::always_inline]] nce float64x2_t round_toward_negative_infinity(float64x2_t a) { return vrndmq_f64(a); }
 [[gnu::always_inline]] nce float64x2_t round_toward_positive_infinity(float64x2_t a) { return vrndpq_f64(a); }
@@ -1045,8 +1018,8 @@ template <int lane>[[gnu::always_inline]] nce float64x2_t multiply_lane(float64x
 [[gnu::always_inline]] nce float64x2_t negate(float64x2_t a) { return vnegq_f64(a); }
 template <int lane>[[gnu::always_inline]] nce float64x1_t duplicate_lane(float64x2_t vec) { return vdup_laneq_f64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce float64x2_t duplicate_lane_quad(float64x2_t vec) { return vdupq_laneq_f64(vec, lane); }
-template <> [[gnu::always_inline]] nce float64x1_t get_high(float64x2_t a) { return vget_high_f64(a); }
-template <> [[gnu::always_inline]] nce float64x1_t get_low(float64x2_t a) { return vget_low_f64(a); }
+[[gnu::always_inline]] nce float64x1_t get_high(float64x2_t a) { return vget_high_f64(a); }
+[[gnu::always_inline]] nce float64x1_t get_low(float64x2_t a) { return vget_low_f64(a); }
 template <int lane>[[gnu::always_inline]] nce float64_t duplicate_lane(float64x2_t vec) { return vdupd_laneq_f64(vec, lane); }
 template <int lane>[[gnu::always_inline]] nce float64_t get_lane(float64x2_t v) { return vgetq_lane_f64(v, lane); }
 template <int n>[[gnu::always_inline]] nce float64x2_t extract(float64x2_t a, float64x2_t b) { return vextq_f64(a, b, n); }
@@ -1555,25 +1528,25 @@ template <> [[gnu::always_inline]] inline float64x1x3_t load1_x3(float64_t const
 template <> [[gnu::always_inline]] inline float64x2x3_t load1_x3(float64_t const *ptr) { return vld1q_f64_x3(ptr); }
 template <> [[gnu::always_inline]] inline float64x1x4_t load1_x4(float64_t const *ptr) { return vld1_f64_x4(ptr); }
 template <> [[gnu::always_inline]] inline float64x2x4_t load1_x4(float64_t const *ptr) { return vld1q_f64_x4(ptr); }
-template <> [[gnu::always_inline]] inline void store1(float64_t *ptr, float64x1_t val) { return vst1_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store1(float64_t *ptr, float64x2_t val) { return vst1q_f64(ptr, val); }
+[[gnu::always_inline]] inline void store1(float64_t *ptr, float64x1_t val) { return vst1_f64(ptr, val); }
+[[gnu::always_inline]] inline void store1(float64_t *ptr, float64x2_t val) { return vst1q_f64(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(float64_t *ptr, float64x1_t val) { return vst1_lane_f64(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(float64_t *ptr, float64x2_t val) { return vst1q_lane_f64(ptr, val, lane); }
-template <> [[gnu::always_inline]] inline void store2(int64_t *ptr, int64x2x2_t val) { return vst2q_s64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(uint64_t *ptr, uint64x2x2_t val) { return vst2q_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(poly64_t *ptr, poly64x2x2_t val) { return vst2q_p64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(float64_t *ptr, float64x1x2_t val) { return vst2_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(float64_t *ptr, float64x2x2_t val) { return vst2q_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(int64_t *ptr, int64x2x3_t val) { return vst3q_s64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(uint64_t *ptr, uint64x2x3_t val) { return vst3q_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(poly64_t *ptr, poly64x2x3_t val) { return vst3q_p64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float64_t *ptr, float64x1x3_t val) { return vst3_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float64_t *ptr, float64x2x3_t val) { return vst3q_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(int64_t *ptr, int64x2x4_t val) { return vst4q_s64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(uint64_t *ptr, uint64x2x4_t val) { return vst4q_u64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(poly64_t *ptr, poly64x2x4_t val) { return vst4q_p64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float64_t *ptr, float64x1x4_t val) { return vst4_f64(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float64_t *ptr, float64x2x4_t val) { return vst4q_f64(ptr, val); }
+[[gnu::always_inline]] inline void store2(int64_t *ptr, int64x2x2_t val) { return vst2q_s64(ptr, val); }
+[[gnu::always_inline]] inline void store2(uint64_t *ptr, uint64x2x2_t val) { return vst2q_u64(ptr, val); }
+[[gnu::always_inline]] inline void store2(poly64_t *ptr, poly64x2x2_t val) { return vst2q_p64(ptr, val); }
+[[gnu::always_inline]] inline void store2(float64_t *ptr, float64x1x2_t val) { return vst2_f64(ptr, val); }
+[[gnu::always_inline]] inline void store2(float64_t *ptr, float64x2x2_t val) { return vst2q_f64(ptr, val); }
+[[gnu::always_inline]] inline void store3(int64_t *ptr, int64x2x3_t val) { return vst3q_s64(ptr, val); }
+[[gnu::always_inline]] inline void store3(uint64_t *ptr, uint64x2x3_t val) { return vst3q_u64(ptr, val); }
+[[gnu::always_inline]] inline void store3(poly64_t *ptr, poly64x2x3_t val) { return vst3q_p64(ptr, val); }
+[[gnu::always_inline]] inline void store3(float64_t *ptr, float64x1x3_t val) { return vst3_f64(ptr, val); }
+[[gnu::always_inline]] inline void store3(float64_t *ptr, float64x2x3_t val) { return vst3q_f64(ptr, val); }
+[[gnu::always_inline]] inline void store4(int64_t *ptr, int64x2x4_t val) { return vst4q_s64(ptr, val); }
+[[gnu::always_inline]] inline void store4(uint64_t *ptr, uint64x2x4_t val) { return vst4q_u64(ptr, val); }
+[[gnu::always_inline]] inline void store4(poly64_t *ptr, poly64x2x4_t val) { return vst4q_p64(ptr, val); }
+[[gnu::always_inline]] inline void store4(float64_t *ptr, float64x1x4_t val) { return vst4_f64(ptr, val); }
+[[gnu::always_inline]] inline void store4(float64_t *ptr, float64x2x4_t val) { return vst4q_f64(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store2_lane(int8_t *ptr, int8x16x2_t val) { return vst2q_lane_s8(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store2_lane(uint8_t *ptr, uint8x16x2_t val) { return vst2q_lane_u8(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store2_lane(poly8_t *ptr, poly8x16x2_t val) { return vst2q_lane_p8(ptr, val, lane); }

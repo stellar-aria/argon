@@ -44,12 +44,6 @@ template <typename T> nce T load4_duplicate(float16_t const *ptr);
 template <typename T> nce T load1_x2(float16_t const *ptr);
 template <typename T> nce T load1_x3(float16_t const *ptr);
 template <typename T> nce T load1_x4(float16_t const *ptr);
-template <typename T> nce T store2(float16_t *ptr, float16x4x2_t val);
-template <typename T> nce T store2(float16_t *ptr, float16x8x2_t val);
-template <typename T> nce T store3(float16_t *ptr, float16x4x3_t val);
-template <typename T> nce T store3(float16_t *ptr, float16x8x3_t val);
-template <typename T> nce T store4(float16_t *ptr, float16x4x4_t val);
-template <typename T> nce T store4(float16_t *ptr, float16x8x4_t val);
 template <typename T> nce T duplicate(float16_t value);
 template <typename T> nce T duplicate(float16x4_t vec);
 template <typename T> nce T move(float16_t value);
@@ -148,12 +142,12 @@ template <> [[gnu::always_inline]] inline float16x8x4_t load1_x4(float16_t const
 [[gnu::always_inline]] inline void store1(float16_t *ptr, float16x8_t val) { return vst1q_f16(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(float16_t *ptr, float16x4_t val) { return vst1_lane_f16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store1_lane(float16_t *ptr, float16x8_t val) { return vst1q_lane_f16(ptr, val, lane); }
-template <> [[gnu::always_inline]] inline void store2(float16_t *ptr, float16x4x2_t val) { return vst2_f16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store2(float16_t *ptr, float16x8x2_t val) { return vst2q_f16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float16_t *ptr, float16x4x3_t val) { return vst3_f16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store3(float16_t *ptr, float16x8x3_t val) { return vst3q_f16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float16_t *ptr, float16x4x4_t val) { return vst4_f16(ptr, val); }
-template <> [[gnu::always_inline]] inline void store4(float16_t *ptr, float16x8x4_t val) { return vst4q_f16(ptr, val); }
+[[gnu::always_inline]] inline void store2(float16_t *ptr, float16x4x2_t val) { return vst2_f16(ptr, val); }
+[[gnu::always_inline]] inline void store2(float16_t *ptr, float16x8x2_t val) { return vst2q_f16(ptr, val); }
+[[gnu::always_inline]] inline void store3(float16_t *ptr, float16x4x3_t val) { return vst3_f16(ptr, val); }
+[[gnu::always_inline]] inline void store3(float16_t *ptr, float16x8x3_t val) { return vst3q_f16(ptr, val); }
+[[gnu::always_inline]] inline void store4(float16_t *ptr, float16x4x4_t val) { return vst4_f16(ptr, val); }
+[[gnu::always_inline]] inline void store4(float16_t *ptr, float16x8x4_t val) { return vst4q_f16(ptr, val); }
 template <int lane>[[gnu::always_inline]] nce void store2_lane(float16_t *ptr, float16x4x2_t val) { return vst2_lane_f16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store2_lane(float16_t *ptr, float16x8x2_t val) { return vst2q_lane_f16(ptr, val, lane); }
 template <int lane>[[gnu::always_inline]] nce void store3_lane(float16_t *ptr, float16x4x3_t val) { return vst3_lane_f16(ptr, val, lane); }
