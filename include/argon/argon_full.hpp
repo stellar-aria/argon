@@ -3,6 +3,7 @@
 #include <limits>
 #include <numeric>
 #include <type_traits>
+#include <utility>
 #include "arm_simd.hpp"
 #include "helpers.hpp"
 #include "helpers/argon_for.hpp"
@@ -25,6 +26,11 @@
 /// @details Inherits all lane-wise operations from `argon::Vector` and adds 128-bit-specific operations such as
 /// narrowing, widening multiplies, cross-half operations, reductions, and (optionally) AES acceleration.
 /// Use `ArgonHalf<ScalarType>` for the 64-bit sibling.
+namespace argon {
+/// @brief The forms of Argon::DotProduct and friends. See Argon::DotProduct.
+enum class DotForm { Plain, Exchange, Subtract, SubtractExchange };
+}  // namespace argon
+
 template <typename ScalarType>
   requires argon::lane_scalar<ScalarType>
 class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
@@ -396,6 +402,127 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #undef ARGON_SHIFT_NARROW
 #undef ARGON_SHIFT_NARROW_BODY
 
+  // ── Dot products ──────────────────────────────────────────────────────────────────────────────────────────
+  // Multiply-accumulate across the vector into a scalar, Helium's vmladav family: FIR filters, convolution and
+  // complex dot products in one instruction. The forms besides Plain treat lanes 2i and 2i+1 as a pair (the real
+  // and imaginary parts of a complex number) and, like the instructions, are signed-only.
+
+  using DotForm = argon::DotForm;  ///< The forms of DotProduct and friends.
+  /// The 32-bit accumulator of DotProduct: int32_t for signed lanes, uint32_t for unsigned.
+  using dot_type = std::conditional_t<std::is_signed_v<ScalarType>, int32_t, uint32_t>;
+  /// The 64-bit accumulator of DotProductLong and DotProductRoundHigh.
+  using dot_long_type = std::conditional_t<std::is_signed_v<ScalarType>, int64_t, uint64_t>;
+
+  /// @brief Sum `acc` and the products of every lane of this vector with the matching lane of `b`.
+  /// @tparam form Plain: Σ a[i]·b[i]. Exchange: Σ a[2i]·b[2i+1] + a[2i+1]·b[2i]. Subtract: Σ a[2i]·b[2i] −
+  /// a[2i+1]·b[2i+1]. SubtractExchange: Σ a[2i+1]·b[2i] − a[2i]·b[2i+1].
+  /// @details Products and the sum wrap at 32 bits. MVE: vmladav[a][x], vmlsdav[a][x].
+  template <DotForm form = DotForm::Plain, typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) <= 4 && (form == DotForm::Plain || std::is_signed_v<S>))
+  ace dot_type DotProduct(Argon<S> b, dot_type acc = 0) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (form == DotForm::Plain) {
+      return mve::multiply_add_dual_reduce_add_accumulate(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Exchange) {
+      return mve::multiply_add_dual_reduce_add_accumulate_exchange_pairs(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Subtract) {
+      return mve::multiply_subtract_dual_reduce_add_accumulate(acc, this->vec_, b.vec());
+    } else {
+      return mve::multiply_subtract_dual_reduce_add_accumulate_exchange_pairs(acc, this->vec_, b.vec());
+    }
+#else
+    using U = std::make_unsigned_t<dot_type>;  // wrapping arithmetic
+    if constexpr (form == DotForm::Plain) {
+      // A sum doesn't care about lane order, so use NEON's own shape: multiply-long the low and high halves
+      // (smull/smull2), widen pairwise (vpaddl), and reduce the 32-bit lanes.
+      dot_type lanes_sum;
+      if constexpr (sizeof(S) == 1) {
+        auto low = this->GetLow().MultiplyLong(b.GetLow()), high = this->GetHigh().MultiplyLong(b.GetHigh());
+        lanes_sum = (Argon<dot_type>{neon::pairwise_add_long(low.vec())} +
+                     Argon<dot_type>{neon::pairwise_add_long(high.vec())})
+                        .ReduceAdd();
+      } else if constexpr (sizeof(S) == 2) {
+        lanes_sum = (this->GetLow().MultiplyLong(b.GetLow()) + this->GetHigh().MultiplyLong(b.GetHigh())).ReduceAdd();
+      } else {
+        lanes_sum = (*this * b).ReduceAdd();
+      }
+      return static_cast<dot_type>(static_cast<U>(acc) + static_cast<U>(lanes_sum));
+    } else {
+      U sum = static_cast<U>(acc);
+      for (auto p : DotProducts<form>(b)) sum += static_cast<U>(p);
+      return static_cast<dot_type>(sum);
+    }
+#endif
+  }
+
+  /// @brief As DotProduct, with products and sum in 64 bits. 16- and 32-bit lanes.
+  /// @details MVE: vmlaldav[a][x], vmlsldav[a][x].
+  template <DotForm form = DotForm::Plain, typename S = ScalarType>
+    requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4) &&
+             (form == DotForm::Plain || std::is_signed_v<S>))
+  ace dot_long_type DotProductLong(Argon<S> b, dot_long_type acc = 0) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (form == DotForm::Plain) {
+      return mve::multiply_add_long_dual_reduce_add_accumulate(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Exchange) {
+      return mve::multiply_add_long_dual_reduce_add_accumulate_exchange_pairs(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Subtract) {
+      return mve::multiply_subtract_long_dual_reduce_add_accumulate(acc, this->vec_, b.vec());
+    } else {
+      return mve::multiply_subtract_long_dual_reduce_add_accumulate_exchange_pairs(acc, this->vec_, b.vec());
+    }
+#else
+    if constexpr (form == DotForm::Plain && sizeof(S) == 2) {
+      // smull/smull2, then widen pairwise into 64-bit lanes (vpaddl) and reduce.
+      const auto low = this->GetLow().MultiplyLong(b.GetLow()), high = this->GetHigh().MultiplyLong(b.GetHigh());
+      const auto lanes_sum = (Argon<dot_long_type>{neon::pairwise_add_long(low.vec())} +
+                              Argon<dot_long_type>{neon::pairwise_add_long(high.vec())})
+                                 .ReduceAdd();
+      return static_cast<dot_long_type>(static_cast<uint64_t>(acc) + static_cast<uint64_t>(lanes_sum));
+    } else {
+      uint64_t sum = static_cast<uint64_t>(acc);
+      for (auto p : DotProducts<form>(b)) sum += static_cast<uint64_t>(static_cast<dot_long_type>(p));
+      return static_cast<dot_long_type>(sum);
+    }
+#endif
+  }
+
+  /// @brief As DotProductLong, but with each product divided by 256 and rounded: `acc` + Σ ⌊(pᵢ + 128) / 256⌋.
+  /// This keeps the high bits of 32×32-bit products, for high-precision Q31 filters. 32-bit lanes.
+  /// @details MVE: vrmlaldavh[a][x], vrmlsldavh[a][x]. The rounding is per product (so 128 + 128 gives 2, not 1),
+  /// as QEMU models the instruction.
+  template <DotForm form = DotForm::Plain, typename S = ScalarType>
+    requires(std::is_integral_v<S> && sizeof(S) == 4 && (form == DotForm::Plain || std::is_signed_v<S>))
+  ace dot_long_type DotProductRoundHigh(Argon<S> b, dot_long_type acc = 0) const {
+#ifdef ARGON_PLATFORM_MVE
+    if constexpr (form == DotForm::Plain) {
+      return mve::multiply_add_long_round_dual_reduce_add_high_accumulate(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Exchange) {
+      return mve::multiply_add_long_round_dual_reduce_add_high_accumulate_exchange_pairs(acc, this->vec_, b.vec());
+    } else if constexpr (form == DotForm::Subtract) {
+      return mve::multiply_subtract_long_round_dual_reduce_add_high_accumulate(acc, this->vec_, b.vec());
+    } else {
+      return mve::multiply_subtract_long_round_dual_reduce_add_high_accumulate_exchange_pairs(acc, this->vec_,
+                                                                                            b.vec());
+    }
+#else
+    uint64_t sum = static_cast<uint64_t>(acc);
+    for (auto p : DotProducts<form>(b)) {
+      sum += static_cast<uint64_t>((p + 128) >> 8);  // arithmetic shift for signed lanes; no overflow at 32x32 bits
+    }
+    return static_cast<dot_long_type>(sum);
+#endif
+  }
+
+  /// @brief The complex dot product Σ a·b of vectors of interleaved (real, imaginary) pairs, as {real, imaginary}.
+  /// @details Real: DotProduct<Subtract>. Imaginary: DotProduct<Exchange>. For Σ a·conj(b), the real part is
+  /// DotProduct() and the imaginary part DotProduct<SubtractExchange>().
+  template <typename S = ScalarType>
+    requires(std::is_integral_v<S> && std::is_signed_v<S> && sizeof(S) <= 4)
+  ace std::pair<dot_type, dot_type> ComplexDotProduct(Argon<S> b) const {
+    return {DotProduct<DotForm::Subtract>(b), DotProduct<DotForm::Exchange>(b)};
+  }
+
   /// @brief Convert each lane to a different element type.
   /// @tparam U The destination element type.
   template <typename U>
@@ -510,7 +637,9 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     uint64x2_t dwords = simd::reinterpret<uint64x2_t>(this->vec_);
     return simd::reinterpret<vector_type>(uint64x2_t{dwords[1], dwords[0]});
 #else
-    return Combine(GetHigh(), GetLow());
+    // vext by half the lanes: no detour through ArgonHalf, which can't exist for 64-bit lanes on A32 (where
+    // int64x1_t is a plain integer).
+    return this->template Extract<lanes / 2>(*this);
 #endif
   }
 
@@ -593,6 +722,26 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
                                                                Argon<W> wide) {
     using N = argon::helpers::NextSmaller_t<W>;
     return LowHalfMask<W>().Select(dest.template As<W>(), wide.template ShiftLeft<4 * sizeof(W)>()).template As<N>();
+  }
+
+  /// The terms of a dot product of `this` and `b`, each exact (64-bit), negated where the form subtracts.
+  template <DotForm form, typename S>
+  ace std::array<std::conditional_t<std::is_signed_v<S>, int64_t, uint64_t>, Argon<S>::lanes> DotProducts(
+      Argon<S> b) const {
+    using T = std::conditional_t<std::is_signed_v<S>, int64_t, uint64_t>;
+    constexpr bool exchange = form == DotForm::Exchange || form == DotForm::SubtractExchange;
+    const auto x = this->to_array();
+    const auto y = b.to_array();
+    std::array<T, Argon<S>::lanes> out{};
+    for (size_t i = 0; i < out.size(); ++i) {
+      const size_t j = exchange ? (i ^ 1) : i;  // the other lane of the pair
+      T p = static_cast<T>(x[i]) * static_cast<T>(y[j]);
+      // Subtract negates the odd lanes' products; SubtractExchange the even lanes' (a[2i+1]·b[2i] − a[2i]·b[2i+1]).
+      const bool negate = form == DotForm::Subtract ? (i & 1) : (form == DotForm::SubtractExchange && !(i & 1));
+      if (negate) p = static_cast<T>(T{0} - p);
+      out[i] = p;
+    }
+    return out;
   }
 
   /// `wide` clamped to the range of the next smaller type.
