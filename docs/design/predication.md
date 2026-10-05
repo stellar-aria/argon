@@ -199,6 +199,10 @@ On MVE these are VPT-predicated instructions (`vpst; vaddt`); on NEON, `_x` is t
 form. In isolation `_m` is no shorter than `Select` (the destination needs `inactive` moved into it), so the gain
 depends on register allocation in real loops.
 
+`MultiplyAdd(b, c, active)` and `MultiplySubtract(b, c, active)` keep the accumulator (`this`) in the inactive lanes,
+as ACLE's `vfmaq_m`: on MVE one predicated `vfma`/`vfms`, which is what lets GCC tail-predicate an accumulating
+`for_each` (`tail_for_each_dot_float`); elsewhere the operation and a `Select`.
+
 Comparisons take a predicate as well: `x.LessThan(hi, x > lo)` is active where both hold. On MVE that is one
 predicated compare (`vpst; vcmpt`) instead of two compares whose predicates are ANDed through core registers.
 
@@ -248,6 +252,14 @@ none reported upstream as of 2026-10-05; Argon works around all of them on every
    optimisation level (an internal error in `expand_insn`). GCC compiles the testcase of PR 124870, whose fix to
    these intrinsics' memory modelling was backported to 16.2, but not this form. `PointerVector` uses the
    write-back instructions with clang and a gather (or scatter) plus a `vadd` with GCC.
+
+GCC 16.2 also mishandles generic vector-extension float code on MVE without `-ffast-math` (as on AArch32 NEON):
+it scalarises float `?:` to VFP compares (`vcmpe` + `vmrs APSR_nzcv`, per lane) and never contracts `a + b * c`
+into `vfma`, even with `-ffp-contract=fast`. Float `Max`/`Min` therefore use `vcmp` + `vpsel` on MVE (keeping
+`a > b ? a : b`, which `vmaxnm` would not), and float `MultiplyAdd`/`MultiplySubtract` use `vfma`/`vfms`: fused,
+Helium's only float multiply-accumulate. MVE has no float `vaddv` and no `vext`, so the generic `Reduce` fold's
+doubleword swap goes through the stack; float and half `ReduceAdd` add pairs with `vrev` instead (pairwise order, as
+AArch64's `faddp`). CTest `float_ops_use_mve` (M55) checks all three.
 
 ## Open questions
 

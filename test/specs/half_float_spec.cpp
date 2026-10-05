@@ -60,6 +60,14 @@ auto describe_arithmetic = describe("Argon<float16_t> arithmetic", ${
     expect(floats(r)).to_equal(std::array<float, 8>{3, 5, 7, 9, 11, 13, 15, 17});
   });
 
+  it("multiply-adds and multiply-subtracts by a scalar", _{
+    auto acc = halves({1, 1, 1, 1, 1, 1, 1, 1});
+    auto b = halves({1, 2, 3, 4, 5, 6, 7, 8});
+    expect(floats(acc.MultiplyAdd(b, static_cast<float16_t>(2)))).to_equal(std::array<float, 8>{3, 5, 7, 9, 11, 13, 15, 17});
+    expect(floats(acc.MultiplySubtract(b, static_cast<float16_t>(2)))).to_equal(std::array<float, 8>{-1, -3, -5, -7, -9, -11, -13, -15});
+    expect(floats(acc.MultiplySubtract(b, halves({2, 2, 2, 2, 2, 2, 2, 2})))).to_equal(std::array<float, 8>{-1, -3, -5, -7, -9, -11, -13, -15});
+  });
+
   it("takes max, min, abs and negates", _{
     auto a = halves({-1, 2, -3, 4, -5, 6, -7, 8});
     auto z = halves({0, 0, 0, 0, 0, 0, 0, 0});

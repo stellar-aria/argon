@@ -36,6 +36,18 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t convert_n_unsigned(float32
 [[gnu::always_inline]] inline float16x8_t load1(float16_t const *ptr) { return vld1q_f16(ptr); }
 [[gnu::always_inline]] inline float32x4_t load1(float32_t const *ptr) { return vld1q_f32(ptr); }
 [[gnu::always_inline]] inline void store1(float16_t *ptr, float16x8_t val) { return vst1q_f16(ptr, val); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16x8_t c) { return vfmaq_f16(a, b, c); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16_t c) { return vfmaq_n_f16(a, b, c); }
+[[gnu::always_inline]] nce float16x8_t multiply_subtract_fused(float16x8_t a, float16x8_t b, float16x8_t c) { return vfmsq_f16(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmaq_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { return vfmaq_n_f32(a, b, c); }
+[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return vfmsq_f32(a, b, c); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16x8_t c, mve_pred16_t p) { return vfmaq_m_f16(a, b, c, p); }
+[[gnu::always_inline]] nce float16x8_t multiply_add_fused(float16x8_t a, float16x8_t b, float16_t c, mve_pred16_t p) { return vfmaq_m_n_f16(a, b, c, p); }
+[[gnu::always_inline]] nce float16x8_t multiply_subtract_fused(float16x8_t a, float16x8_t b, float16x8_t c, mve_pred16_t p) { return vfmsq_m_f16(a, b, c, p); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c, mve_pred16_t p) { return vfmaq_m_f32(a, b, c, p); }
+[[gnu::always_inline]] nce float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c, mve_pred16_t p) { return vfmaq_m_n_f32(a, b, c, p); }
+[[gnu::always_inline]] nce float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c, mve_pred16_t p) { return vfmsq_m_f32(a, b, c, p); }
 // clang-format on
 }  // namespace mve
 #endif

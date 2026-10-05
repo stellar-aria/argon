@@ -42,6 +42,17 @@ auto describe_merging = describe("Predicated operations (merging)", ${
     expect(a.Min(b, all, a).to_array()).to_equal(a.Min(b).to_array());
   });
 
+  it("MultiplyAdd and MultiplySubtract keep the accumulator in the inactive lanes", _{
+    auto acc = Argon<float>{1.0f, 2.0f, 3.0f, 4.0f};
+    auto b = Argon<float>{10.0f, 20.0f, 30.0f, 40.0f};
+    auto active = argon::Predicate<Argon<float>::vector_type>::FirstN(2);
+    expect(acc.MultiplyAdd(b, Argon<float>{2.0f}, active).to_array()).to_equal(std::array<float, 4>{21.0f, 42.0f, 3.0f, 4.0f});
+    expect(acc.MultiplyAdd(b, 2.0f, active).to_array()).to_equal(std::array<float, 4>{21.0f, 42.0f, 3.0f, 4.0f});
+    expect(acc.MultiplySubtract(b, Argon<float>{2.0f}, active).to_array()).to_equal(std::array<float, 4>{-19.0f, -38.0f, 3.0f, 4.0f});
+    auto i = Argon<int32_t>{1, 2, 3, 4};
+    expect(i.MultiplyAdd(Argon<int32_t>{5}, Argon<int32_t>{2}, P32::FirstN(3)).to_array()).to_equal(std::array<int32_t, 4>{11, 12, 13, 4});
+  });
+
   it("covers the bitwise operations", _{
     auto a = Argon<uint8_t>{0b1100};
     auto b = Argon<uint8_t>{0b1010};
