@@ -189,7 +189,7 @@ on MVE.
 | 0    | **Done** (`helium-build`). Fix the M55 build: `MultiplySubtract` as `a - b*c`, comparison name mapping, gate `Reverse` and lane assignment, guard NEON-only specs; re-enable the M55 CI runner | Small  |
 | 1    | **Done** (`helium-build`). `Predicate<V>`, comparisons return it; specs for logic, `Select`, `Any`/`All`/`Count`, `FirstN` on both platforms | Medium |
 | 2    | **Done** (`helium-build`). Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
-| 3    | Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
+| 3    | **Done** (`helium-build`). Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
 | 4    | Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
 | 5    | Predicated arithmetic overloads and predicated compares                                           | Medium |
 
@@ -203,9 +203,9 @@ circular-buffer indices, and wide-integer carry chains (`vadcq`, `vshlcq`).
 
 1. ~~**Breaking change on NEON.**~~ Resolved: comparisons return `Predicate` everywhere, with a deprecated implicit
    conversion to the mask vector.
-2. **Predicate granularity on MVE.** `mve_pred16_t` is byte-granular, so a predicate built for `int32` lanes is
-   reusable for `uint8` with different meaning. Should `Predicate<V>` be strictly typed by `V`, which this document
-   assumes, with an explicit `Reinterpret<V2>()`?
+2. ~~**Predicate granularity on MVE.**~~ Resolved: `Predicate<V>` is typed by `V`, and converts implicitly to the
+   predicate of any vector type with the same lane count and width (an `int32` comparison can mask a `float` store).
+   Other conversions, such as reusing an `int32` predicate for `uint8` lanes, don't compile.
 3. **SVE.** This API is shaped to fit SVE's `svbool_t` later. Is SVE a goal, and if so, should the type be named and
    specified with that in mind now?
 4. **NEON tail API.** Is `view.tail()` as a scalar range the right shape, or would an overlapping final vector (where

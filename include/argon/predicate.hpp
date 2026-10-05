@@ -3,6 +3,7 @@
 #include <bit>
 #include <cstddef>
 #include <cstdint>
+#include <type_traits>
 #include "arm_simd.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 #include "features.h"
@@ -54,6 +55,13 @@ class Predicate {
 
   /// @brief Construct from the native predicate representation (see storage_type).
   ace explicit Predicate(storage_type p) : p_{p} {}
+
+  /// @brief Convert from the predicate of another vector type with the same lanes, e.g. an int32 comparison used to
+  /// mask a float32 store. The lanes mean the same thing, so the conversion is free.
+  template <typename OtherVectorType>
+    requires(!std::is_same_v<OtherVectorType, VectorType> && Predicate<OtherVectorType>::lanes == lanes &&
+             sizeof(OtherVectorType) == sizeof(VectorType))
+  ace Predicate(Predicate<OtherVectorType> other) : p_{std::bit_cast<storage_type>(other.native())} {}
 
   /// @brief A predicate with every lane active.
   ace static Predicate True() {

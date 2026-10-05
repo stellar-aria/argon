@@ -71,6 +71,7 @@ class Vector {
   using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
   using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
   using argon_bool_type = Predicate<VectorType>;                ///< The type comparisons return.
+  using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;  ///< Per-lane gather/scatter offsets.
 
   /// @brief The number of lanes in the SIMD vector.
   static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
@@ -915,71 +916,56 @@ class Vector {
 #endif
   }
 
-  ///@brief Using a base address and a vector of offset bytes and a base pointer, create a new vector
-  ///@note On NEON this incurs a writeback + load penalty
-  ///@param base The address to index from
-  ///@param offset_vector A vector of offset indices
-  ///@return A new vector constructed from the various indices
-  ace static argon_type LoadGatherOffsetBytes(
-      const scalar_type* base,
-      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+  /// @brief Load the active lanes of a vector from a pointer; inactive lanes are zero and their memory is not read.
+  /// @details MVE: vld1q_z, so a tail past the end of a buffer cannot fault. NEON: loads the active lanes one by one.
+  /// @param ptr The address of lane 0.
+  /// @param active The lanes to load.
+  ace static argon_type Load(const scalar_type* ptr, argon_bool_type active) {
 #ifdef ARGON_PLATFORM_MVE
-    static_assert(
-        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
-        "Unsupported size for gather load");
-
-    if constexpr (sizeof(scalar_type) == 1) {
-      return mve::load_byte_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 2) {
-      return mve::load_halfword_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 4) {
-      return mve::load_word_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 8) {
-      return mve::load_doubleword_gather_offset(base, offset_vector);
-    }
+    return mve::load1(ptr, active.native());
 #else
-    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
+    argon_type destination{scalar_type{0}};
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = neon::get_lane<i>(offset_vector);
-      // lane_val is a *byte* offset; address by bytes (scalar_type* arithmetic
-      // would scale by sizeof a second time).
-      auto* addr = reinterpret_cast<const scalar_type*>(reinterpret_cast<const char*>(base) + lane_val);
-      destination = destination.template LoadToLane<i>(addr);
+      if (active.Active(i)) {
+        destination = destination.template LoadToLane<i>(ptr + i);
+      }
     });
     return destination;
 #endif
   }
 
-  ///@brief Using a base address and a vector of offset indices and a base pointer, create a new vector
-  ///@note On NEON this incurs a writeback + load penalty
-  ///@param base The address to index from
-  ///@param offset_vector A vector of offset indices
-  ///@return A new vector constructed from the various indices
-  ace static argon_type LoadGatherOffsetIndex(
-      const scalar_type* base,
-      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
-#ifdef ARGON_PLATFORM_MVE
-    static_assert(
-        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
-        "Unsupported size for gather load");
+  /// @brief Gather a vector from `base` plus a byte offset per lane.
+  /// @note On NEON this loads lane by lane.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @return A new vector constructed from the addressed elements.
+  ace static argon_type LoadGatherOffsetBytes(const scalar_type* base, offset_type offsets) {
+    return Gather<true>(base, offsets);
+  }
 
-    if constexpr (sizeof(scalar_type) == 1) {
-      return mve::load_byte_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 2) {
-      return mve::load_halfword_gather_offset(base, offset_vector * sizeof(scalar_type));
-    } else if constexpr (sizeof(scalar_type) == 4) {
-      return mve::load_word_gather_offset(base, offset_vector * sizeof(scalar_type));
-    } else if constexpr (sizeof(scalar_type) == 8) {
-      return mve::load_doubleword_gather_offset(base, offset_vector * sizeof(scalar_type));
-    }
-#else
-    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = neon::get_lane<i>(offset_vector);
-      destination = destination.template LoadToLane<i>(base + lane_val);
-    });
-    return destination;
-#endif
+  /// @brief Gather the active lanes from `base` plus a byte offset per lane; inactive lanes are zero and not read.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @param active The lanes to load.
+  ace static argon_type LoadGatherOffsetBytes(const scalar_type* base, offset_type offsets, argon_bool_type active) {
+    return Gather<true>(base, offsets, active);
+  }
+
+  /// @brief Gather a vector from `base[offsets[i]]`.
+  /// @note On NEON this loads lane by lane. On MVE the index is scaled by the lane size in hardware.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @return A new vector constructed from the indexed elements.
+  ace static argon_type LoadGatherOffsetIndex(const scalar_type* base, offset_type offsets) {
+    return Gather<false>(base, offsets);
+  }
+
+  /// @brief Gather the active lanes from `base[offsets[i]]`; inactive lanes are zero and not read.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @param active The lanes to load.
+  ace static argon_type LoadGatherOffsetIndex(const scalar_type* base, offset_type offsets, argon_bool_type active) {
+    return Gather<false>(base, offsets, active);
   }
 
   /// @brief Load a lane from a pointer
@@ -1004,7 +990,6 @@ class Vector {
       return argon::to_array(mve::load2(ptr).val);
     } else if constexpr (stride == 3) {
       // MVE has no vld3; gather each channel at indices {0, 3, 6, ...} instead.
-      using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;
       const offset_type offsets = offset_type::Iota(0) * 3;
       return {LoadGatherOffsetIndex(ptr, offsets), LoadGatherOffsetIndex(ptr + 1, offsets),
               LoadGatherOffsetIndex(ptr + 2, offsets)};
@@ -1176,6 +1161,50 @@ class Vector {
   /// @brief Store the vector to a pointer
   /// @param ptr The pointer to store to
   ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
+
+  /// @brief Store the active lanes of the vector to a pointer; memory for inactive lanes is not written.
+  /// @details MVE: vst1q_p. NEON: stores the active lanes one by one.
+  /// @param ptr The address of lane 0.
+  /// @param active The lanes to store.
+  ace void StoreTo(scalar_type* ptr, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    mve::store1(ptr, vec_, active.native());
+#else
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if (active.Active(i)) {
+        ptr[i] = simd::get_lane<i>(vec_);
+      }
+    });
+#endif
+  }
+
+  /// @brief Scatter the lanes to `base` plus a byte offset per lane.
+  /// @note On NEON this stores lane by lane. Lanes addressing the same element are stored in lane order.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  ace void StoreScatterOffsetBytes(scalar_type* base, offset_type offsets) const { Scatter<true>(base, offsets); }
+
+  /// @brief Scatter the active lanes to `base` plus a byte offset per lane; inactive lanes are not written.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @param active The lanes to store.
+  ace void StoreScatterOffsetBytes(scalar_type* base, offset_type offsets, argon_bool_type active) const {
+    Scatter<true>(base, offsets, active);
+  }
+
+  /// @brief Scatter the lanes to `base[offsets[i]]`.
+  /// @note On NEON this stores lane by lane. On MVE the index is scaled by the lane size in hardware.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  ace void StoreScatterOffsetIndex(scalar_type* base, offset_type offsets) const { Scatter<false>(base, offsets); }
+
+  /// @brief Scatter the active lanes to `base[offsets[i]]`; inactive lanes are not written.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @param active The lanes to store.
+  ace void StoreScatterOffsetIndex(scalar_type* base, offset_type offsets, argon_bool_type active) const {
+    Scatter<false>(base, offsets, active);
+  }
 
   /// @brief Store a lane of the vector to a pointer
   /// @param ptr The pointer to store to
@@ -1524,6 +1553,92 @@ class Vector {
   }
 
  protected:
+  /// @brief The address of one gathered / scattered lane: base plus a byte offset, or base indexed by an element offset.
+  template <bool byte_offsets, typename PointerType, typename OffsetType>
+  ace static PointerType* LaneAddress(PointerType* base, OffsetType offset) {
+    if constexpr (byte_offsets) {
+      using byte_type = std::conditional_t<std::is_const_v<PointerType>, const char, char>;
+      return reinterpret_cast<PointerType*>(reinterpret_cast<byte_type*>(base) + offset);
+    } else {
+      return base + offset;
+    }
+  }
+
+  /// @brief Gather by byte or element offsets, optionally only the lanes of one predicate (inactive lanes are zero).
+  template <bool byte_offsets, typename... PredicateType>
+  ace static argon_type Gather(const scalar_type* base, offset_type offsets, PredicateType... active) {
+    static_assert(sizeof...(PredicateType) <= 1);
+#ifdef ARGON_PLATFORM_MVE
+    const auto off = offsets.vec();
+    if constexpr (sizeof(scalar_type) == 1) {
+      return mve::load_byte_gather_offset(base, off, active.native()...);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      if constexpr (byte_offsets) {
+        return mve::load_halfword_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_halfword_gather_shifted_offset(base, off, active.native()...);
+      }
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      if constexpr (byte_offsets) {
+        return mve::load_word_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_word_gather_shifted_offset(base, off, active.native()...);
+      }
+    } else {
+      if constexpr (byte_offsets) {
+        return mve::load_doubleword_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_doubleword_gather_shifted_offset(base, off, active.native()...);
+      }
+    }
+#else
+    argon_type destination{scalar_type{0}};  // inactive lanes stay zero
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if ((active.Active(i) && ...)) {
+        const auto offset = simd::get_lane<i>(offsets.vec());
+        destination = destination.template LoadToLane<i>(LaneAddress<byte_offsets>(base, offset));
+      }
+    });
+    return destination;
+#endif
+  }
+
+  /// @brief Scatter by byte or element offsets, optionally only the lanes of one predicate.
+  template <bool byte_offsets, typename... PredicateType>
+  ace void Scatter(scalar_type* base, offset_type offsets, PredicateType... active) const {
+    static_assert(sizeof...(PredicateType) <= 1);
+#ifdef ARGON_PLATFORM_MVE
+    const auto off = offsets.vec();
+    if constexpr (sizeof(scalar_type) == 1) {
+      mve::store_byte_scatter_offset(base, off, vec_, active.native()...);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      if constexpr (byte_offsets) {
+        mve::store_halfword_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_halfword_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      if constexpr (byte_offsets) {
+        mve::store_word_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_word_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    } else {
+      if constexpr (byte_offsets) {
+        mve::store_doubleword_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_doubleword_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    }
+#else
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if ((active.Active(i) && ...)) {
+        *LaneAddress<byte_offsets>(base, simd::get_lane<i>(offsets.vec())) = simd::get_lane<i>(vec_);
+      }
+    });
+#endif
+  }
+
   /// @brief Convert an arithmetic constructor argument to the lane type, passing anything else through.
   template <typename ArgType>
   ace static decltype(auto) LaneValue(ArgType&& arg) {
