@@ -33,8 +33,10 @@ ace void store_interleaved(scalar_type* ptr, simd::MultiVector_t<intrinsic_type,
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
   if constexpr (stride == 2) {
     simd::store2(ptr, multi_vec);
-#ifndef ARGON_PLATFORM_MVE
   } else if constexpr (stride == 3) {
+#ifdef ARGON_PLATFORM_MVE
+    static_assert(stride != 3, "MVE has no vst3; store a std::array of vectors instead, which scatters");
+#else
     simd::store3(ptr, multi_vec);
 #endif
   } else if constexpr (stride == 4) {
@@ -48,17 +50,30 @@ ace void store_interleaved(scalar_type* ptr, simd::MultiVector_t<intrinsic_type,
 /// @param multi_vec The multi-vector to store
 template <size_t stride, typename scalar_type, typename argon_type>
 ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> multi_vec) {
-  using intrinsic_type = typename argon_type::vector_type;
-  using multivec_type = simd::MultiVector_t<intrinsic_type, stride>;
-  using array_type = std::array<argon_type, stride>;
+#ifdef ARGON_PLATFORM_MVE
+  if constexpr (stride == 3) {
+    // MVE has no vst3: scatter each channel to elements {0, 3, 6, ...} past its start.
+    using offset_type = typename argon_type::offset_type;
+    const auto offsets = offset_type::Iota(0) * static_cast<typename offset_type::scalar_type>(3);
+    for (size_t channel = 0; channel < 3; ++channel) {
+      multi_vec[channel].StoreScatterOffsetIndex(ptr + channel, offsets);
+    }
+    return;
+  } else
+#endif
+  {
+    using intrinsic_type = typename argon_type::vector_type;
+    using multivec_type = simd::MultiVector_t<intrinsic_type, stride>;
+    using array_type = std::array<argon_type, stride>;
 
-  // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
-  // the validity and POD-ness of std::array needs to be verified
-  static_assert(std::is_standard_layout_v<array_type>);
-  static_assert(sizeof(multivec_type) == sizeof(array_type),
-                "std::array isn't layout-compatible with this NEON multi-vector.");
+    // Since we're using a dirty ugly hack of reinterpreting a C array as a std::array,
+    // the validity and POD-ness of std::array needs to be verified
+    static_assert(std::is_standard_layout_v<array_type>);
+    static_assert(sizeof(multivec_type) == sizeof(array_type),
+                  "std::array isn't layout-compatible with this NEON multi-vector.");
 
-  store_interleaved<stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
+    store_interleaved<stride, scalar_type, intrinsic_type>(ptr, *(multivec_type*)multi_vec.data());
+  }
 }
 
 /// @brief Store vectors to a location in memory with interleaving

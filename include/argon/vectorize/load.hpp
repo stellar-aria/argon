@@ -20,6 +20,7 @@
 #include <ranges>
 #include "argon/argon_full.hpp"
 #include "argon/helpers/size.hpp"
+#include "argon/vectorize/tail.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -125,12 +126,12 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
     /// @brief Accesses the element at the given index.
     /// @param n The index of the element to access.
     /// @return A reference to the element at the given index.
-    LoadIterator& operator[](int n) const { return *(*this + n); }
+    value_type operator[](int n) const { return *(*this + n); }
 
     /// @brief Calculates the difference between two iterators.
     /// @param other The other iterator to subtract from this one.
     /// @return The difference between the two iterators.
-    difference_type operator-(const LoadIterator& other) const { return ptr_ - other.ptr_; }
+    difference_type operator-(const LoadIterator& other) const { return (ptr_ - other.ptr_) / difference_type{lanes}; }
 
     /// @brief Adds an integer to the iterator and returns a new iterator.
     /// @param n The number of steps to add.
@@ -180,16 +181,24 @@ struct load : std::ranges::view_interface<load<ScalarType>> {
   /// @param r The range to load data from.
   template <std::ranges::contiguous_range R>
   load(R&& r)
-      : start_{&*std::ranges::begin(r)}, size_{helpers::vectorizeable_size<ScalarType>(std::ranges::size(r)) / lanes} {}
+      : start_{&*std::ranges::begin(r)},
+        size_{helpers::vectorizeable_size<ScalarType>(std::ranges::size(r)) / lanes},
+        count_{std::ranges::size(r)} {}
 
   /// @brief Construct a load from a span
   /// @param span The span to load data from.
   load(const std::span<ScalarType> span)
-      : start_{span.data()}, size_{helpers::vectorizeable_size<ScalarType>(span.size()) / lanes} {}
+      : start_{span.data()}, size_{helpers::vectorizeable_size<ScalarType>(span.size()) / lanes}, count_{span.size()} {}
+
+  /// @brief A view of the same range that also visits the final, partial vector.
+  /// @details This view skips elements after the last whole vector; with_tail() visits them too, as a vector whose
+  /// lanes past the end are zero. Each element is a Partial: `*p` is the vector, `p.active()` its in-range lanes.
+  load_tail<ScalarType> with_tail() const { return {start_, count_}; }
 
  private:
   const ScalarType* start_;
   size_t size_;
+  size_t count_;  ///< Number of elements in the range, including any after the last whole vector.
 };
 
 static_assert(std::ranges::range<load<int32_t>>);

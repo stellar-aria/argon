@@ -24,19 +24,6 @@ namespace argon {
 template <typename T>
 class Vector;
 
-#ifdef ARGON_PLATFORM_MVE
-
-// MVE does not support lane manipulators, so we use the scalar type directly
-// for the lane type.
-
-template <size_t, typename VectorType>
-using ConstLane = simd::Scalar_t<VectorType>;
-
-template <typename VectorType>
-using Lane = simd::Scalar_t<VectorType>;
-
-#else
-
 /// @brief Represents a single lane of a SIMD vector with the lane index known at compile time.
 /// @tparam LaneIndex Compile-time lane index within the vector.
 /// @tparam VectorType The intrinsic SIMD vector type (e.g., `int32x4_t`).
@@ -179,7 +166,6 @@ class Lane {
 
   // friend class Vector<VectorType>;
 };
-#endif
 }  // namespace argon
 
 #undef ace

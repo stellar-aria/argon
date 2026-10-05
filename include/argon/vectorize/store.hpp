@@ -3,6 +3,7 @@
 #include <ranges>
 #include "argon.hpp"
 #include "argon/argon_full.hpp"
+#include "argon/vectorize/tail.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -89,7 +90,7 @@ struct store : std::ranges::view_interface<store<ScalarType>> {
       return it;
     }
 
-    difference_type operator-(const StoreIterator& other) const { return ptr_ - other.ptr_; }
+    difference_type operator-(const StoreIterator& other) const { return (ptr_ - other.ptr_) / difference_type{lanes}; }
 
     /// @brief Adds an integer to the iterator and returns a new iterator.
     /// @param n The number of steps to add.
@@ -117,11 +118,18 @@ struct store : std::ranges::view_interface<store<ScalarType>> {
   size_t size() const { return size_ / lanes; }
 
   template <std::ranges::contiguous_range R>
-  store(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+  store(R&& r)
+      : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))}, count_{std::ranges::size(r)} {}
+
+  /// @brief A view of the same range that also writes the final, partial vector.
+  /// @details This view skips elements after the last whole vector; with_tail() writes them too. Each element is a
+  /// Partial to assign; only its lanes inside the range are stored.
+  store_tail<ScalarType> with_tail() const { return {start_, count_}; }
 
  private:
   ScalarType* start_;
   size_t size_;
+  size_t count_;  ///< Number of elements in the range, including any after the last whole vector.
 };
 static_assert(std::ranges::range<store<int32_t>>);
 static_assert(std::ranges::view<store<int32_t>>);

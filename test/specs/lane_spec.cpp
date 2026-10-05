@@ -80,6 +80,7 @@ auto describe_lane_load = describe("Lane::Load", ${
     expect(v.to_array()).to_equal(src);
   });
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no 64-bit vectors
   it("loads into a uint16 half-vector (oscillator strength type)", _{
     std::array<uint16_t, 4> data = {0, 0, 0, 0};
     std::array<uint16_t, 4> src = {11, 22, 33, 44};
@@ -88,6 +89,7 @@ auto describe_lane_load = describe("Lane::Load", ${
       v[i].Load(&src[i]);
     expect(v.to_array()).to_equal(src);
   });
+#endif
 });
 
 // ── Lane mutation — operator= / Set write in place ─────────────────────────
@@ -104,12 +106,14 @@ auto describe_lane_mutation = describe("Lane mutation", ${
     expect(v.to_array()).to_equal(std::array<int32_t, 4>{0, 0, 0, 7});
   });
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no 64-bit vectors
   it("half-vector lane assignment mutates in place", _{
     auto v = ArgonHalf<uint16_t>::FromScalar(0);
     for (uint16_t i = 0; i < 4; ++i)
       v[i] = static_cast<uint16_t>(i * 10 + 1);
     expect(v.to_array()).to_equal(std::array<uint16_t, 4>{1, 11, 21, 31});
   });
+#endif
 });
 
 // ── ArgonHalf<float> — SIMDe MMX-ABI regression ────────────────────────────
@@ -125,6 +129,7 @@ auto describe_lane_mutation = describe("Lane mutation", ${
 // wrappers always-inlined under SIMDe so no half-vector crosses a real call in
 // an MMX register; these pin the broadcast / lane-access contract. (The other
 // widths are 128-bit or already covered; float32x2 was the uncovered gap.)
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_half_float_simde = describe("ArgonHalf<float> broadcast + lane access", ${
   it("FromScalar broadcasts the value across both lanes", _{
     auto v = ArgonHalf<float>::FromScalar(16.0f);
@@ -160,6 +165,7 @@ auto describe_half_float_simde = describe("ArgonHalf<float> broadcast + lane acc
     expect((float)prod[1]).to_equal(8.0f);
   });
 });
+#endif
 
 // ── DuplicateLane ──────────────────────────────────────────────────────────
 
@@ -299,6 +305,7 @@ auto describe_swap_doublewords = describe("SwapDoublewords", ${
 
 // ── CombineWith (ArgonHalf -> Argon) ────────────────────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_combine_with = describe("CombineWith", ${
   it("combines two doublewords into a full vector (low, then high)", _{
     std::array<int32_t, 2> lo = {1, 2};
@@ -309,6 +316,7 @@ auto describe_combine_with = describe("CombineWith", ${
     expect(result).to_equal(std::array<int32_t, 4>{1, 2, 3, 4});
   });
 });
+#endif
 
 // ── LastLane / FromLane ─────────────────────────────────────────────────────
 
@@ -330,12 +338,18 @@ auto describe_from_lane = describe("FromLane", ${
   });
 });
 
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_half_float_simde, describe_combine_with
+#else
+#define NEON_ONLY_SPECS
+#endif
+
 CPPSPEC_MAIN(
   describe_get_lane,
   describe_set_lane,
   describe_lane_load,
   describe_lane_mutation,
-  describe_half_float_simde,
   describe_duplicate_lane,
   describe_extract,
   describe_reverse,
@@ -343,11 +357,11 @@ CPPSPEC_MAIN(
   describe_reverse_32bit,
   describe_reverse_16bit,
   describe_swap_doublewords,
-  describe_combine_with,
   describe_last_lane,
   describe_from_lane,
   describe_zip,
   describe_unzip,
   describe_transpose
+  NEON_ONLY_SPECS
 );
 

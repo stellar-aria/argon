@@ -93,3 +93,13 @@ if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
   add_test(NAME float_ops_use_neon
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_float.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_float_codegen>)
 endif()
+
+# Helium: with_tail() views and FirstN loops must compile to low-overhead tail-predicated loops (dlstp/letp).
+if(ARGON_TEST_CPU STREQUAL "M55")
+  add_library(argon_tail_codegen OBJECT codegen/tail_loops.cpp)
+  target_link_libraries(argon_tail_codegen PRIVATE argon)
+  target_compile_options(argon_tail_codegen PRIVATE -O2 -fno-trapping-math)
+  find_program(ARGON_ARM_NONE_OBJDUMP NAMES arm-none-eabi-objdump llvm-objdump REQUIRED)
+  add_test(NAME tail_loops_use_dlstp
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_mve_tail.sh ${ARGON_ARM_NONE_OBJDUMP} $<TARGET_OBJECTS:argon_tail_codegen>)
+endif()

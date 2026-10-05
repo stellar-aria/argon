@@ -5,6 +5,7 @@
 #include <ranges>
 #include <span>
 #include "argon.hpp"
+#include "argon/vectorize/tail.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -30,16 +31,25 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
     using difference_type = std::ptrdiff_t;
 
     Iterator() = default;
-    Iterator(ScalarType* ptr) : ptr{ptr}, vec{argon_type::template LoadInterleaved<Stride>(ptr)} {}
+    Iterator(ScalarType* ptr) : ptr{ptr} {}
 
-    value_type& operator*() { return vec; }
-    value_type* operator->() { return &vec; }
-    const value_type& operator*() const { return vec; }
-    const value_type* operator->() const { return &vec; }
+    value_type& operator*() {
+      load();
+      dirty_ = true;
+      return vec;
+    }
+    value_type* operator->() { return &**this; }
+    const value_type& operator*() const {
+      load();
+      return vec;
+    }
+    const value_type* operator->() const { return &**this; }
     Iterator& operator++() {
-      argon::store_interleaved(ptr, vec);  // store before increment
+      if (dirty_) {
+        argon::store_interleaved(ptr, vec);  // store before increment
+      }
       ptr += lanes * Stride;
-      vec = argon_type::template LoadInterleaved<Stride>(ptr);
+      loaded_ = dirty_ = false;  // load lazily: the end position is never read
       return *this;
     }
 
@@ -55,8 +65,17 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
     friend bool operator!=(const Iterator& a, const ScalarType* ptr) { return a.ptr != ptr; }
 
    private:
+    void load() const {
+      if (!loaded_) {
+        vec = argon_type::template LoadInterleaved<Stride>(ptr);
+        loaded_ = true;
+      }
+    }
+
     ScalarType* ptr = nullptr;
-    value_type vec;
+    mutable value_type vec;
+    mutable bool loaded_ = false;
+    bool dirty_ = false;
   };
   static_assert(std::input_or_output_iterator<Iterator>);
   struct ConstIterator {
@@ -66,12 +85,11 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
     using difference_type = std::ptrdiff_t;
 
     ConstIterator() = default;
-    ConstIterator(const ScalarType* ptr) : ptr{ptr}, vec{argon_type::template LoadInterleaved<Stride>(ptr)} {}
+    ConstIterator(const ScalarType* ptr) : ptr{ptr} {}
 
-    const value_type operator*() const { return vec; }
+    const value_type operator*() const { return argon_type::template LoadInterleaved<Stride>(ptr); }
     ConstIterator& operator++() {
       ptr += lanes * Stride;
-      vec = argon_type::template LoadInterleaved<Stride>(ptr);
       return *this;
     }
     ConstIterator operator++(int) {
@@ -81,29 +99,39 @@ struct interleaved : public std::ranges::view_interface<interleaved<Stride, Scal
     }
     friend bool operator==(const ConstIterator& a, const ConstIterator& b) { return a.ptr == b.ptr; }
     friend bool operator!=(const ConstIterator& a, const ConstIterator& b) { return a.ptr != b.ptr; }
+    friend bool operator==(const ConstIterator& a, const ScalarType* ptr) { return a.ptr == ptr; }
 
    private:
     const ScalarType* ptr = nullptr;
-    value_type vec;
   };
   static_assert(std::input_iterator<ConstIterator>);
 
   using iterator = Iterator;
   using const_iterator = ConstIterator;
 
-  interleaved(ScalarType* start, ScalarType* end) : start_{start}, size_{vectorizeable_size(end - start)} {};
-  interleaved(ScalarType* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)} {};
-  interleaved(const std::span<ScalarType> span) : start_{span.data()}, size_{vectorizeable_size(span.size())} {};
+  interleaved(ScalarType* start, ScalarType* end)
+      : start_{start}, size_{vectorizeable_size(end - start)}, count_{static_cast<size_t>(end - start)} {};
+  interleaved(ScalarType* start, const size_t size) : start_{start}, size_{vectorizeable_size(size)}, count_{size} {};
+  interleaved(const std::span<ScalarType> span)
+      : start_{span.data()}, size_{vectorizeable_size(span.size())}, count_{span.size()} {};
 
   iterator begin() const { return Iterator(start_); }
   const ScalarType* end() const { return start_ + size_; }
   const_iterator cbegin() const { return ConstIterator(start_); }
   const ScalarType* cend() const { return start_ + size_; }
-  size_t size() const { return size_; }
+  /// @brief The number of iterations (groups of Stride vectors).
+  size_t size() const { return size_ / (lanes * Stride); }
+
+  /// @brief A view of the same range that also visits the final, partial group of vectors.
+  /// @details This view skips frames after the last whole group; with_tail() visits them too. Each element is a
+  /// Partial whose value is one vector per channel; lanes past the end load as zero and are never stored. Elements
+  /// that don't complete a frame of `Stride` are not visited.
+  load_store_tail<ScalarType, Stride> with_tail() const { return {start_, count_ / Stride}; }
 
  private:
   ScalarType* start_;
   size_t size_;
+  size_t count_;  ///< Number of elements in the range, including any after the last whole group.
 };
 
 // template <size_t stride, std::ranges::contiguous_range R>

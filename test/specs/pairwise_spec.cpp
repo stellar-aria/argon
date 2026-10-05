@@ -3,6 +3,8 @@
 #include "helpers/type_matrix.hpp"
 #include <array>
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no pairwise instructions
+
 // clang-format off
 
 // Coverage for the pairwise-reduction family (entirely untested).
@@ -86,3 +88,15 @@ CPPSPEC_MAIN(
   describe_pairwise_min,
   describe_pairwise_add_long
 );
+#else
+template <typename T>
+concept has_pairwise = requires(Argon<T> a) { a.PairwiseAdd(a); };
+
+auto describe_pairwise_unavailable = describe("Pairwise on MVE", ${
+  it("is compiled out, since MVE has no pairwise instructions", _{
+    expect(has_pairwise<int16_t>).to_be_false();
+  });
+});
+
+CPPSPEC_MAIN(describe_pairwise_unavailable)
+#endif

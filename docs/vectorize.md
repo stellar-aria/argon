@@ -1,6 +1,6 @@
 # Vectorized Views
 
-The Argon library provides several vectorized views for processing data using SIMD operations. These views work with contiguous ranges and provide iterator-based access to the vectorized data.
+The Argon library provides several vectorized views for processing data using SIMD operations. These views work with contiguous ranges and provide iterator-based access to the vectorized data. For hot loops, and for Helium's hardware loops, see also [`vectorize::for_each`](#looping-over-a-whole-range-vectorizefor_each).
 
 ## Vectorized read (vectorize::load)
 
@@ -108,11 +108,110 @@ int main() {
 - Iterator-based interface compatible with C++ ranges
 - Support for different data types (int32_t, float, etc.)
 
+## Looping over a whole range (`vectorize::for_each`)
+
+`for_each<T>(n, body)` visits the elements `[0, n)` a vector at a time, final partial vector included. The body
+receives a step: `step.Load(ptr)` and `step.Store(ptr, v)` access its elements of any array, `step.LoadWiden` and
+`step.StoreNarrow` do so through a narrower integer type, and `step.index()`, `step.count()` and `step.active()`
+describe it. Lanes past the end of the range load as zero and are never written.
+
+```cpp
+#include <argon/vectorize/for_each.hpp>
+
+// out = a + (b - a) * t, for any n
+void mix(float* out, const float* a, const float* b, std::ptrdiff_t n, float t) {
+  argon::vectorize::for_each<float>(n, [&](auto step) {
+    step.Store(out, step.Load(a) + (step.Load(b) - step.Load(a)) * t);
+  });
+}
+
+// int16 samples processed in int32 lanes: widened on load, narrowed on store
+void gain(int16_t* samples, std::ptrdiff_t n) {
+  argon::vectorize::for_each<int32_t>(n, [&](auto step) {
+    step.StoreNarrow(samples, (step.LoadWiden(samples) * 3) >> 2);
+  });
+}
+```
+
+Write the body as a generic lambda (`auto step`): on NEON it runs with plain whole-vector steps and then once with a
+partial step, so the main loop has no predication at all. On Helium every step is predicated, and the loop is
+written in the shape GCC and clang turn into a low-overhead tail-predicated loop (`dlstp`/`letp`): the hardware
+counts the remaining elements and predicates the last vector, with no compare-and-branch and no scalar epilogue. A CTest codegen check (`tail_loops_use_dlstp`) keeps it
+that way. GCC tail-predicates float loops only with `-fno-trapping-math` (or `-ffast-math`), because the inactive
+lanes compute too; without it the loop is still predicated, just with an explicit loop counter.
+
+### Interleaved data (`vectorize::for_each_interleaved`)
+
+`for_each_interleaved<T, Stride>(frames, body)` does the same for frames of 2–4 interleaved elements (stereo
+samples, RGB pixels): `step.Load(ptr)` returns one vector per channel and `step.Store(ptr, channels)` interleaves them
+back.
+
+```cpp
+// swap the channels of interleaved stereo
+argon::vectorize::for_each_interleaved<int16_t, 2>(frames, [&](auto step) {
+  auto [left, right] = step.Load(stereo);
+  step.Store(stereo, {right, left});
+});
+```
+
+Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; the last, partial group gathers and scatters each
+channel under a predicate. On Helium the structured loads can't be predicated, so strides 2 and 4 make a `dls`/`le`
+loop rather than `dlstp`/`letp`. Stride 3 has no `vld3` on MVE, so there every group is gathered under a predicate,
+which can tail-predicate: float frames do with both compilers, 8-bit ones with clang only.
+
+### `for_each` or `with_tail()`?
+
+Both handle every element, with the same results. Prefer `for_each` for hot loops: its loop is the tightest on every
+platform (on AArch64, `ldr q`/op/`str q`/`cmp`/`bne`), it reliably becomes a hardware loop on Helium, and it works
+over any number of arrays. Use the `with_tail()` views when you want a range — range-for, `std::ranges`
+algorithms, or adding tail handling to existing view-based code. Their loop checks for the partial vector on every
+iteration (a well-predicted branch), and on Helium whether they become `dlstp`/`letp` depends on the compiler: GCC
+16 converts them for 16- and 32-bit lanes but not 8-bit ones, and clang 23 keeps them predicated but doesn't form a
+hardware loop.
+
+If every channel of interleaved data gets the same treatment (a gain, a clamp, a mix), treat it as flat data:
+`for_each<int16_t>(frames * 2, ...)` needs no de-interleaving and keeps the hardware loop.
+
+## Including the final partial vector (`with_tail()`)
+
+`load`, `store` and `load_store` skip any elements after the last whole vector. Call `with_tail()` on them to visit
+those too, as one final partial vector. Each element is then an `argon::vectorize::Partial`: `*p` is the vector,
+`p.count()` how many of its leading lanes are in the range, and `p.active()` those lanes as an `argon::Predicate`.
+Lanes past the end of the range load as zero and are never written.
+
+```cpp
+#include <argon/vectorize/load.hpp>
+#include <argon/vectorize/load_store.hpp>
+
+int32_t sum(std::span<const int32_t> data) {
+  int32_t total = 0;
+  for (auto p : argon::vectorize::load(data).with_tail()) {
+    total += p->ReduceAdd(p.active());  // the zeroed lanes would be harmless here, but not for a minimum
+  }
+  return total;
+}
+
+void scale(std::span<float> data) {
+  for (auto& p : argon::vectorize::load_store(data).with_tail()) {
+    *p = *p * 3.0f;  // only the lanes inside the range are stored
+  }
+}
+```
+
+On Helium (MVE) every vector is loaded and stored under a `vctp` predicate, so there is no scalar epilogue; whether
+the loop also becomes `dlstp`/`letp` depends on the compiler (see above). On NEON the whole vectors use plain loads
+and stores; only the final partial vector is loaded and stored lane by lane.
+
+`load_interleaved`, `store_interleaved` and `interleaved` have `with_tail()` too. Their lanes are frames of `Stride`
+elements, each element is a `Partial` whose value is one vector per channel, and elements that don't complete a frame
+are not visited. Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; since those can't be predicated, even
+on Helium, the final partial group is gathered and scattered per channel.
+
 ## Notes
 
 1. The number of elements processed in each iteration depends on the SIMD vector size for the target architecture
 2. Data size should ideally be aligned to the SIMD vector size
-3. Non-aligned sizes are handled automatically (remaining elements are not processed)
+3. Elements after the last whole vector are not processed, unless you use `with_tail()` or `for_each` (see above)
 4. Interleaved operations support strides of 2, 3, or 4
 
 ## Error Handling
@@ -121,4 +220,4 @@ The views handle common errors gracefully:
 
 - Non-contiguous ranges: Will not compile
 - Invalid strides: Static assertions prevent invalid stride values
-- Misaligned sizes: Automatically handled by processing only aligned portions
+- Sizes that aren't a multiple of the lane count: only whole vectors are processed, unless you use `with_tail()`

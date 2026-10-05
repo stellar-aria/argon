@@ -15,8 +15,10 @@
 #include "helpers.hpp"
 #include "helpers/bool.hpp"
 #include "helpers/float_fixups.hpp"
+#include "helpers/mve_compare.hpp"
 #include "helpers/to_array.hpp"
 #include "lane.hpp"
+#include "predicate.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd mve
@@ -34,7 +36,7 @@
 
 namespace argon {
 template <typename T>
-concept arithmetic = std::is_arithmetic_v<T>;
+concept arithmetic = lane_scalar<T>;
 
 /// @brief Helper template to check if a type is one of the specified types.
 /// @tparam T The type to check.
@@ -58,12 +60,20 @@ class Vector {
   /// Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool extension_arithmetic =
       ARGON_USE_COMPILER_EXTENSIONS && !(ARGON_GCC_AARCH32_FLOAT && std::is_floating_point_v<scalar_type>);
+#ifdef ARGON_PLATFORM_MVE
+  static constexpr bool mve_platform = true;  ///< Whether this is the MVE (Helium) platform.
+#else
+  static constexpr bool mve_platform = false;  ///< Whether this is the MVE (Helium) platform.
+#endif
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
   using vector_type = VectorType;                               ///< The SIMD vector type.
   using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
-  using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
-  using argon_bool_type = helpers::ArgonFor_t<predicate_type>;  ///< The Argon type for the boolean vector.
+  using mask_type = Bool_t<VectorType>;  ///< The mask vector type (all ones / all zeros per lane), see Predicate::ToMask.
+  using predicate_type [[deprecated("predicate_type is the mask vector type; use mask_type, or argon_bool_type for "
+                                    "the Predicate comparisons return")]] = mask_type;
+  using argon_bool_type = Predicate<VectorType>;                ///< The type comparisons return.
+  using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;  ///< Per-lane gather/scatter offsets.
 
   /// @brief The number of lanes in the SIMD vector.
   static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
@@ -85,7 +95,6 @@ class Vector {
   /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
   ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
 
-#ifndef ARGON_PLATFORM_MVE
   /// @brief Constructs a Vector from a Lane object.
   /// @param lane The Lane object to construct from.
   /// @details This constructor duplicates the lane value across all lanes of the SIMD vector.
@@ -97,11 +106,13 @@ class Vector {
   /// @param lane The ConstLane object to construct from.
   template <size_t LaneIndex>
   ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
-#endif
 
+  /// @brief Constructs a Vector from one value per lane.
+  /// @details Arithmetic arguments are converted to the lane type, so `Argon<uint16_t>{1, 2, ...}` does not narrow
+  /// (an error in braced initialisation under Clang).
   template <typename... ArgTypes>
     requires(sizeof...(ArgTypes) > 1)
-  ace Vector(ArgTypes... args) : vec_{std::forward<ArgTypes>(args)...} {}
+  ace Vector(ArgTypes... args) : vec_{LaneValue(std::forward<ArgTypes>(args))...} {}
 
   /// @brief Constructs a Vector from a scalar pointer.
   /// @param ptr The pointer to the scalar value to construct from.
@@ -290,7 +301,7 @@ class Vector {
 
   /// @brief Convert the vector to an array of scalar values.
   /// @return An array of scalar values representing the vector.
-  ace std::array<scalar_type, lanes> to_array() {
+  ace std::array<scalar_type, lanes> to_array() const {
     std::array<scalar_type, lanes> out;
     simd::store1(out.data(), vec_);
     return out;
@@ -301,37 +312,21 @@ class Vector {
   /// @return The value of the specified lane in the SIMD vector.
   /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
   ace const lane_type GetLane(const size_t i) const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, static_cast<int>(i)};
-#endif
   }
   ace lane_type GetLane(const size_t i) {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, static_cast<int>(i)};
-#endif
   }
 
   /// @brief Get a single lane of the vector by index.
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   ace const lane_type GetLane(const int i) const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, i};
-#endif
   }
 
   ace lane_type GetLane(const int i) {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[i];
-#else
     return {vec_, i};
-#endif
   }
 
   /// @brief Get a single lane of the vector by index.
@@ -339,20 +334,12 @@ class Vector {
   /// @return The value of the specified lane in the SIMD vector.
   template <size_t LaneIndex>
   ace const const_lane_type<LaneIndex> GetLane() const {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[LaneIndex];
-#else
     return vec_;
-#endif
   }
 
   template <size_t LaneIndex>
   ace const_lane_type<LaneIndex> GetLane() {
-#ifdef ARGON_PLATFORM_MVE
-    return vec_[LaneIndex];
-#else
     return vec_;
-#endif
   }
 
   /// Get the last lane of the vector.
@@ -506,21 +493,29 @@ class Vector {
   /// Multiply two vectors and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, argon_type c) const {
-if constexpr (extension_arithmetic) {
-    return vec_ - b.vec_ * c.vec_;
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ - b.vec_ * c.vec_;  // MVE has no vector multiply-subtract
+#else
+    if constexpr (extension_arithmetic) {
+      return vec_ - b.vec_ * c.vec_;
     } else {
-    return simd::multiply_subtract(vec_, b, c);
+      return simd::multiply_subtract(vec_, b, c);
     }
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(argon_type b, scalar_type c) const {
-if constexpr (extension_arithmetic) {
-    return vec_ - b.vec_ * c;
+#ifdef ARGON_PLATFORM_MVE
+    return vec_ - b.vec_ * c;  // MVE has no vector multiply-subtract
+#else
+    if constexpr (extension_arithmetic) {
+      return vec_ - b.vec_ * c;
     } else {
-    return simd::multiply_subtract(vec_, b, c);
+      return simd::multiply_subtract(vec_, b, c);
     }
+#endif
   }
 
   /// Multiply a vector by a scalar value and subtract from a third vector
@@ -576,15 +571,12 @@ if constexpr (extension_arithmetic) {
 
   /// @brief 1 / value, using an estimate for speed
   /// @note This is not a precise reciprocal, but it is fast and useful for many applications
+  /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalEstimate() const
-    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+    requires lane_floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
-    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
-      std::numeric_limits<uint32_t>::max() / vec_;
-    } else {
-      return 1.f / vec_;
-    }
+    return 1.f / vec_;
 #else
     return simd::reciprocal_estimate(vec_);
 #endif
@@ -592,15 +584,16 @@ if constexpr (extension_arithmetic) {
 
   /// @brief 1 / sqrt(value), using an estimate for speed
   /// @note For greater precision, follow with ReciprocalSqrtStep iterations (Newton-Raphson).
+  /// @note The unsigned fixed-point form is NEON-only.
   ace argon_type ReciprocalSqrtEstimate() const
-    requires std::floating_point<scalar_type> || std::is_same_v<scalar_type, uint32_t>
+    requires lane_floating_point<scalar_type> || (std::is_same_v<scalar_type, uint32_t> && !mve_platform)
   {
 #ifdef ARGON_PLATFORM_MVE
-    if constexpr (std::is_same_v<scalar_type, uint32_t>) {
-      return std::numeric_limits<uint32_t>::max() / (vec_ * vec_);
-    } else {
-      return 1.f / (vec_ * vec_);
-    }
+    // MVE has no vrsqrte: take the bit-level initial guess, then one Newton-Raphson step, which lands within NEON's
+    // estimate precision (~1/256).
+    const auto bits = std::bit_cast<Bool_t<VectorType>>(vec_);
+    const VectorType guess = std::bit_cast<VectorType>(0x5f3759dfu - (bits >> 1));
+    return guess * (1.5f - 0.5f * vec_ * guess * guess);
 #else
     return simd::reciprocal_sqrt_estimate(vec_);
 #endif
@@ -610,7 +603,7 @@ if constexpr (extension_arithmetic) {
   /// @details Feeds into the standard NR iteration: est = est * ReciprocalStep(value * est)
   /// @note Only defined for floating-point types.
   ace argon_type ReciprocalStep(argon_type b) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
 #ifdef ARGON_PLATFORM_MVE
     return 2.f - vec_ * b.vec_;
@@ -623,7 +616,7 @@ if constexpr (extension_arithmetic) {
   /// @details Use after ReciprocalSqrtEstimate to increase precision.
   /// @note Only defined for floating-point types.
   ace argon_type ReciprocalSqrtStep(argon_type b) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
 #ifdef ARGON_PLATFORM_MVE
     return (3.f - vec_ * b.vec_) * 0.5f;
@@ -636,7 +629,7 @@ if constexpr (extension_arithmetic) {
   /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
   /// @details Each iteration approximately doubles the number of correct mantissa bits.
   ace argon_type ReciprocalEstimateRefine(int n_iters = 1) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
     argon_type est = ReciprocalEstimate();
     for (int i = 0; i < n_iters; ++i) {
@@ -649,7 +642,7 @@ if constexpr (extension_arithmetic) {
   /// @param n_iters Number of refinement iterations (1 gives ~23-bit precision for float32).
   /// @details Each iteration approximately doubles the number of correct mantissa bits.
   ace argon_type ReciprocalSqrtEstimateRefine(int n_iters = 1) const
-    requires std::floating_point<scalar_type>
+    requires lane_floating_point<scalar_type>
   {
     argon_type est = ReciprocalSqrtEstimate();
     for (int i = 0; i < n_iters; ++i) {
@@ -701,7 +694,7 @@ if constexpr (extension_arithmetic) {
   ace argon_type Modulo(argon_type b) const {
     if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ % b.vec_;
-    } else if constexpr (std::floating_point<scalar_type>) {
+    } else if constexpr (lane_floating_point<scalar_type>) {
       return this->map2(b, [](scalar_type lane1, scalar_type lane2) { return std::fmod(lane1, lane2); });
     } else {
       return this->map2(b, [](scalar_type lane1, scalar_type lane2) { return lane1 % lane2; });
@@ -737,44 +730,61 @@ if constexpr (extension_arithmetic) {
     }
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if are equal
-  /// @details Equivalent to a == b ? 0xFFFFFFFF : 0x00000000
-  ace argon_bool_type Equal(argon_type b) const { return simd::equal(vec_, b); }
+  /// Compare the lanes of two vectors, returning a predicate active where a == b.
+  ace argon_bool_type Equal(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_)};
+#else
+    return argon_bool_type{simd::equal(vec_, b.vec_)};
+#endif
+  }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than or equal to b
-  /// @details Equivalent to a >= b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is greater than or equal to b.
   ace argon_bool_type GreaterThanOrEqual(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_)};
+#else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(vec_, b.vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(vec_, b.vec_)};
 #endif
-    return simd::greater_than_or_equal(vec_, b);
+    return argon_bool_type{simd::greater_than_or_equal(vec_, b.vec_)};
+#endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than or equal to b
-  /// @details Equivalent to a <= b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is less than or equal to b.
   ace argon_bool_type LessThanOrEqual(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(b.vec_, vec_)};
+#else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(b.vec_, vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(b.vec_, vec_)};
 #endif
-    return simd::less_than_or_equal(vec_, b);
+    return argon_bool_type{simd::less_than_or_equal(vec_, b.vec_)};
+#endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than b
-  /// @details Equivalent to a > b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is greater than b.
   ace argon_bool_type GreaterThan(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_)};
+#else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than(vec_, b.vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(vec_, b.vec_)};
 #endif
-    return simd::greater_than(vec_, b);
+    return argon_bool_type{simd::greater_than(vec_, b.vec_)};
+#endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than b
-  /// @details Equivalent to a < b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is less than b.
   ace argon_bool_type LessThan(argon_type b) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_)};
+#else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than(b.vec_, vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(b.vec_, vec_)};
 #endif
-    return simd::less_than(vec_, b);
+    return argon_bool_type{simd::less_than(vec_, b.vec_)};
+#endif
   }
 
   /// Shift the elemnets of the vector to the left by a specified number of bits.
@@ -864,7 +874,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type ShiftRightAccumulate(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ + (b >> n);
+    return vec_ + (b >> n).vec();
 #else
     return simd::shift_right_accumulate<n>(vec_, b);
 #endif
@@ -876,7 +886,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type ShiftRightAccumulateRound(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return vec_ + mve::shift_right_round<n>(b);
+    return vec_ + mve::shift_right_round<n>(b.vec());
 #else
     return simd::shift_right_accumulate_round<n>(vec_, b);
 #endif
@@ -902,79 +912,62 @@ if constexpr (extension_arithmetic) {
   /// Load a vector from a pointer, duplicating the value across all lanes
   ace static argon_type LoadCopy(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    scalar_type val = *ptr;
-    VectorType vec;
-    utility::constexpr_for<0, lanes, 1>([val, &vec]<int i>() { vec[i] = val; });
+    return simd::duplicate(*ptr);
 #else
     return simd::load1_duplicate<VectorType>(ptr);
 #endif
   }
 
-  ///@brief Using a base address and a vector of offset bytes and a base pointer, create a new vector
-  ///@note On NEON this incurs a writeback + load penalty
-  ///@param base The address to index from
-  ///@param offset_vector A vector of offset indices
-  ///@return A new vector constructed from the various indices
-  ace static argon_type LoadGatherOffsetBytes(
-      const scalar_type* base,
-      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
+  /// @brief Load the active lanes of a vector from a pointer; inactive lanes are zero and their memory is not read.
+  /// @details MVE: vld1q_z, so a tail past the end of a buffer cannot fault. NEON: loads the active lanes one by one.
+  /// @param ptr The address of lane 0.
+  /// @param active The lanes to load.
+  ace static argon_type Load(const scalar_type* ptr, argon_bool_type active) {
 #ifdef ARGON_PLATFORM_MVE
-    static_assert(
-        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
-        "Unsupported size for gather load");
-
-    if constexpr (sizeof(scalar_type) == 1) {
-      return mve::load_byte_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 2) {
-      return mve::load_halfword_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 4) {
-      return mve::load_word_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 8) {
-      return mve::load_doubleword_gather_offset(base, offset_vector);
-    }
+    return mve::load1(ptr, active.native());
 #else
-    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
+    argon_type destination{scalar_type{0}};
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = neon::get_lane<i>(offset_vector);
-      // lane_val is a *byte* offset; address by bytes (scalar_type* arithmetic
-      // would scale by sizeof a second time).
-      auto* addr = reinterpret_cast<const scalar_type*>(reinterpret_cast<const char*>(base) + lane_val);
-      destination = destination.template LoadToLane<i>(addr);
+      if (active.Active(i)) {
+        destination = destination.template LoadToLane<i>(ptr + i);
+      }
     });
     return destination;
 #endif
   }
 
-  ///@brief Using a base address and a vector of offset indices and a base pointer, create a new vector
-  ///@note On NEON this incurs a writeback + load penalty
-  ///@param base The address to index from
-  ///@param offset_vector A vector of offset indices
-  ///@return A new vector constructed from the various indices
-  ace static argon_type LoadGatherOffsetIndex(
-      const scalar_type* base,
-      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>> offset_vector) {
-#ifdef ARGON_PLATFORM_MVE
-    static_assert(
-        sizeof(scalar_type) == 1 || sizeof(scalar_type) == 2 || sizeof(scalar_type) == 4 || sizeof(scalar_type) == 8,
-        "Unsupported size for gather load");
+  /// @brief Gather a vector from `base` plus a byte offset per lane.
+  /// @note On NEON this loads lane by lane.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @return A new vector constructed from the addressed elements.
+  ace static argon_type LoadGatherOffsetBytes(const scalar_type* base, offset_type offsets) {
+    return Gather<true>(base, offsets);
+  }
 
-    if constexpr (sizeof(scalar_type) == 1) {
-      return mve::load_byte_gather_offset(base, offset_vector);
-    } else if constexpr (sizeof(scalar_type) == 2) {
-      return mve::load_halfword_gather_offset(base, offset_vector * sizeof(scalar_type));
-    } else if constexpr (sizeof(scalar_type) == 4) {
-      return mve::load_word_gather_offset(base, offset_vector * sizeof(scalar_type));
-    } else if constexpr (sizeof(scalar_type) == 8) {
-      return mve::load_doubleword_gather_offset(base, offset_vector * sizeof(scalar_type));
-    }
-#else
-    argon_type destination{scalar_type{0}};  // every lane is loaded below; the start value just avoids reading an indeterminate vector
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      auto lane_val = neon::get_lane<i>(offset_vector);
-      destination = destination.template LoadToLane<i>(base + lane_val);
-    });
-    return destination;
-#endif
+  /// @brief Gather the active lanes from `base` plus a byte offset per lane; inactive lanes are zero and not read.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @param active The lanes to load.
+  ace static argon_type LoadGatherOffsetBytes(const scalar_type* base, offset_type offsets, argon_bool_type active) {
+    return Gather<true>(base, offsets, active);
+  }
+
+  /// @brief Gather a vector from `base[offsets[i]]`.
+  /// @note On NEON this loads lane by lane. On MVE the index is scaled by the lane size in hardware.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @return A new vector constructed from the indexed elements.
+  ace static argon_type LoadGatherOffsetIndex(const scalar_type* base, offset_type offsets) {
+    return Gather<false>(base, offsets);
+  }
+
+  /// @brief Gather the active lanes from `base[offsets[i]]`; inactive lanes are zero and not read.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @param active The lanes to load.
+  ace static argon_type LoadGatherOffsetIndex(const scalar_type* base, offset_type offsets, argon_bool_type active) {
+    return Gather<false>(base, offsets, active);
   }
 
   /// @brief Load a lane from a pointer
@@ -994,10 +987,14 @@ if constexpr (extension_arithmetic) {
   template <size_t stride>
   ace static std::array<argon_type, stride> LoadInterleaved(const scalar_type* ptr) {
 #ifdef ARGON_PLATFORM_MVE
-    static_assert(stride == 2 || stride == 4,
-                  "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
+    static_assert(stride > 1 && stride < 5, "De-interleaving Loads can only be performed with a stride of 2, 3, or 4");
     if constexpr (stride == 2) {
       return argon::to_array(mve::load2(ptr).val);
+    } else if constexpr (stride == 3) {
+      // MVE has no vld3; gather each channel at indices {0, 3, 6, ...} instead.
+      const offset_type offsets = offset_type::Iota(0) * 3;
+      return {LoadGatherOffsetIndex(ptr, offsets), LoadGatherOffsetIndex(ptr + 1, offsets),
+              LoadGatherOffsetIndex(ptr + 2, offsets)};
     } else if constexpr (stride == 4) {
       return argon::to_array(mve::load4(ptr).val);
     }
@@ -1126,7 +1123,7 @@ if constexpr (extension_arithmetic) {
 #ifdef ARGON_PLATFORM_MVE
     std::array<argon_type, n> multi{};
     utility::constexpr_for<0, n, 1>([&]<int i>() {  //<
-      multi[i] = *ptr;
+      multi[i] = Load(ptr);
       ptr += lanes;
     });
     return multi;
@@ -1166,6 +1163,50 @@ if constexpr (extension_arithmetic) {
   /// @brief Store the vector to a pointer
   /// @param ptr The pointer to store to
   ace void StoreTo(scalar_type* ptr) const { simd::store1(ptr, vec_); }
+
+  /// @brief Store the active lanes of the vector to a pointer; memory for inactive lanes is not written.
+  /// @details MVE: vst1q_p. NEON: stores the active lanes one by one.
+  /// @param ptr The address of lane 0.
+  /// @param active The lanes to store.
+  ace void StoreTo(scalar_type* ptr, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    mve::store1(ptr, vec_, active.native());
+#else
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if (active.Active(i)) {
+        ptr[i] = simd::get_lane<i>(vec_);
+      }
+    });
+#endif
+  }
+
+  /// @brief Scatter the lanes to `base` plus a byte offset per lane.
+  /// @note On NEON this stores lane by lane. Lanes addressing the same element are stored in lane order.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  ace void StoreScatterOffsetBytes(scalar_type* base, offset_type offsets) const { Scatter<true>(base, offsets); }
+
+  /// @brief Scatter the active lanes to `base` plus a byte offset per lane; inactive lanes are not written.
+  /// @param base The address the offsets are relative to.
+  /// @param offsets The byte offset of each lane.
+  /// @param active The lanes to store.
+  ace void StoreScatterOffsetBytes(scalar_type* base, offset_type offsets, argon_bool_type active) const {
+    Scatter<true>(base, offsets, active);
+  }
+
+  /// @brief Scatter the lanes to `base[offsets[i]]`.
+  /// @note On NEON this stores lane by lane. On MVE the index is scaled by the lane size in hardware.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  ace void StoreScatterOffsetIndex(scalar_type* base, offset_type offsets) const { Scatter<false>(base, offsets); }
+
+  /// @brief Scatter the active lanes to `base[offsets[i]]`; inactive lanes are not written.
+  /// @param base The array to index.
+  /// @param offsets The element index of each lane.
+  /// @param active The lanes to store.
+  ace void StoreScatterOffsetIndex(scalar_type* base, offset_type offsets, argon_bool_type active) const {
+    Scatter<false>(base, offsets, active);
+  }
 
   /// @brief Store a lane of the vector to a pointer
   /// @param ptr The pointer to store to
@@ -1259,14 +1300,20 @@ if constexpr (extension_arithmetic) {
   /// @copydoc BitwiseAndNot
   ace argon_type BitwiseClear(argon_type b) const { return BitwiseAndNot(b); }
 
-#ifndef ARGON_PLATFORM_MVE
   /// Bitwise select between two vectors, using the current vector as a mask.
   /// @details Equivalent to (mask & b) | (~mask & c).
   /// @return A vector of the operands' type (not the mask's).
   template <typename ArgType>
     requires std::is_unsigned_v<scalar_type>
   ace ArgType BitwiseSelect(ArgType true_value, ArgType false_value) const {
+#ifdef ARGON_PLATFORM_MVE
+    // MVE has no vbsl; blend the bits of the operands through the mask's type.
+    const auto t = std::bit_cast<VectorType>(true_value.vec());
+    const auto f = std::bit_cast<VectorType>(false_value.vec());
+    return ArgType{std::bit_cast<typename ArgType::vector_type>((vec_ & t) | (f & ~vec_))};
+#else
     return ArgType{simd::bitwise_select(vec_, true_value, false_value)};
+#endif
   }
 
   /// @copydoc BitwiseSelect
@@ -1276,13 +1323,134 @@ if constexpr (extension_arithmetic) {
     return BitwiseSelect(true_value, false_value);
   }
 
-  /// Ands the current vector with the given vector, then checks if nonzero. If so, fills the lane with all ones
-  /// @details Equivalent to (a & b) != 0 ? 0xFFFFFFFF : 0x00000000
-  ace predicate_type CompareTestNonzero(argon_type b) const { return simd::compare_test_nonzero(vec_, b); }
-
-  /// @copydoc CompareTestNonzero
-  ace predicate_type TestNonzero() const { return simd::compare_test_nonzero(vec_, argon_type{1}); }
+  /// Compare the lanes of `(a & b)` with zero, returning a predicate active where they share a set bit.
+  /// @details NEON: vtst.
+  ace argon_bool_type CompareTestNonzero(argon_type b) const
+    requires std::is_integral_v<scalar_type>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    return ~(argon_type{vec_ & b.vec_} == argon_type{scalar_type{0}});
+#else
+    return argon_bool_type{simd::compare_test_nonzero(vec_, b.vec_)};
 #endif
+  }
+
+  /// Return a predicate active where the lane is nonzero.
+  ace argon_bool_type TestNonzero() const
+    requires std::is_integral_v<scalar_type>
+  {
+    return CompareTestNonzero(*this);
+  }
+
+  // ── Predicated operations ──────────────────────────────────────────────────────────────────────────────────
+  // Each operation has two predicated forms, after ACLE's:
+  //   Op(b, active)            "_x": lanes outside `active` are unspecified (on NEON, simply Op(b)).
+  //   Op(b, active, inactive)  "_m": lanes outside `active` are taken from `inactive` (pass zero for "_z").
+  // On MVE these are the VPT-predicated instructions; on NEON, the operation followed by vbsl. They are worth using
+  // on MVE with GCC, which doesn't fold Select(op, ...) into a predicated instruction the way clang does.
+
+#ifdef ARGON_PLATFORM_MVE
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
+  ace argon_type Name(argon_type b, argon_bool_type active) const {                                      \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(vec_, b.vec_, active.native());                                                \
+    } else {                                                                                              \
+      return Name(b);                                                                                     \
+    }                                                                                                     \
+  }                                                                                                       \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(inactive.vec_, vec_, b.vec_, active.native());                                 \
+    } else {                                                                                              \
+      return active.Select(Name(b), inactive);                                                            \
+    }                                                                                                     \
+  }
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
+  ace argon_type Name(argon_bool_type active) const {                                                    \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(vec_, active.native());                                                        \
+    } else {                                                                                              \
+      return Name();                                                                                      \
+    }                                                                                                     \
+  }                                                                                                       \
+  ace argon_type Name(argon_bool_type active, argon_type inactive) const {                               \
+    if constexpr (mve_has_it) {                                                                               \
+      return mve::mve_name(inactive.vec_, vec_, active.native());                                         \
+    } else {                                                                                              \
+      return active.Select(Name(), inactive);                                                             \
+    }                                                                                                     \
+  }
+#else
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
+  ace argon_type Name(argon_type b, argon_bool_type /*active*/) const { return Name(b); }                 \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
+    return active.Select(Name(b), inactive);                                                              \
+  }
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
+  ace argon_type Name(argon_bool_type /*active*/) const { return Name(); }                               \
+  ace argon_type Name(argon_bool_type active, argon_type inactive) const { return active.Select(Name(), inactive); }
+#endif
+
+  ARGON_PREDICATED_BINARY(Add, add, true)
+  ARGON_PREDICATED_BINARY(Subtract, subtract, true)
+  ARGON_PREDICATED_BINARY(Multiply, multiply, true)
+  // Float Max/Min would be vmaxnm/vminnm, whose NaN handling differs from the unpredicated a > b ? a : b.
+  ARGON_PREDICATED_BINARY(Max, max, std::is_integral_v<scalar_type>)
+  ARGON_PREDICATED_BINARY(Min, min, std::is_integral_v<scalar_type>)
+  ARGON_PREDICATED_BINARY(SubtractAbs, subtract_absolute, true)
+  ARGON_PREDICATED_BINARY(BitwiseAnd, bitwise_and, true)
+  ARGON_PREDICATED_BINARY(BitwiseOr, bitwise_or, true)
+  ARGON_PREDICATED_BINARY(BitwiseXor, bitwise_xor, true)
+  ARGON_PREDICATED_BINARY(BitwiseAndNot, bitwise_clear, true)
+  // MVE has no unsigned vneg/vabs.
+  ARGON_PREDICATED_UNARY(Negate, negate, !std::is_unsigned_v<scalar_type>)
+  ARGON_PREDICATED_UNARY(Absolute, abs, !std::is_unsigned_v<scalar_type>)
+
+#undef ARGON_PREDICATED_BINARY
+#undef ARGON_PREDICATED_UNARY
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a == b.
+  /// @details MVE: one predicated compare (vcmpq_m), rather than a compare and a predicate AND through core registers.
+  ace argon_bool_type Equal(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_, active.native())};
+#else
+    return active & Equal(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a > b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type GreaterThan(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_, active.native())};
+#else
+    return active & GreaterThan(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a >= b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type GreaterThanOrEqual(argon_type b, argon_bool_type active) const {
+#ifdef ARGON_PLATFORM_MVE
+    return argon_bool_type{
+        helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_, active.native())};
+#else
+    return active & GreaterThanOrEqual(b);
+#endif
+  }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a < b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type LessThan(argon_type b, argon_bool_type active) const { return b.GreaterThan(*this, active); }
+
+  /// Compare only the lanes of `active`: a predicate active where `active` holds and a <= b.
+  /// @copydetails Equal(argon_type, argon_bool_type) const
+  ace argon_bool_type LessThanOrEqual(argon_type b, argon_bool_type active) const {
+    return b.GreaterThanOrEqual(*this, active);
+  }
 
   /// Count the number of consecutive bits following the sign bit that are set to the same value as the sign bit.
   /// @details Equivalent to std::countl_one(a).
@@ -1319,13 +1487,7 @@ if constexpr (extension_arithmetic) {
   template <int n>
   ace argon_type Extract(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    auto new_vec = vec_;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i < n) {
-        new_vec[i] = b.vec_[i];
-      }
-    });
-    return new_vec;
+    return ShuffleConcat<[](size_t i) { return i + n; }>(vec_, b.vec_);
 #else
     return simd::extract<n>(vec_, b);
 #endif
@@ -1340,17 +1502,9 @@ if constexpr (extension_arithmetic) {
   /// the result is {{a0, b0, a1, b1}, {a2, b2, a3, b3}}
   ace std::array<argon_type, 2> ZipWith(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i % 2 == 0) {
-        new_vec[0][i] = vec_[i / 2];
-        new_vec[1][i] = vec_[(i + lanes) / 2];
-      } else {
-        new_vec[0][i] = b.vec_[i / 2];
-        new_vec[1][i] = b.vec_[(i + lanes) / 2];
-      }
-    });
-    return new_vec;
+    // Lanes of {a, b}: even result lanes come from a, odd ones from b (offset by `lanes`).
+    return {ShuffleConcat<[](size_t i) { return i / 2 + (i % 2) * lanes; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return (i + lanes) / 2 + (i % 2) * lanes; }>(vec_, b.vec_)};
 #else
     return argon::to_array(neon::zip(vec_, b.vec()).val);
 #endif
@@ -1361,17 +1515,8 @@ if constexpr (extension_arithmetic) {
   /// the result is {{a0, a1, a2, a3}, {b0, b1, b2, b3}}
   std::array<argon_type, 2> UnzipWith(argon_type b) {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if ((i * 2) < lanes) {
-        new_vec[0][i] = vec_[i * 2];
-        new_vec[1][i] = vec_[i * 2 + 1];
-      } else {
-        new_vec[0][i] = b.vec_[i * 2];
-        new_vec[1][i] = b.vec_[i * 2 + 1];
-      }
-    });
-    return new_vec;
+    return {ShuffleConcat<[](size_t i) { return i * 2; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return i * 2 + 1; }>(vec_, b.vec_)};
 #else
     return argon::to_array(neon::unzip(vec_, b.vec()).val);
 #endif
@@ -1384,17 +1529,8 @@ if constexpr (extension_arithmetic) {
   //                                    {a1, b1, a3, b3}}
   std::array<argon_type, 2> TransposeWith(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    std::array<argon_type, 2> new_vec;
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (i % 2 == 1) {
-        new_vec[0][i] = vec_[i];
-        new_vec[1][i] = vec_[i + 1];
-      } else {
-        new_vec[0][i] = b.vec_[i + 1];
-        new_vec[1][i] = b.vec_[i];
-      }
-    });
-    return new_vec;
+    return {ShuffleConcat<[](size_t i) { return i % 2 ? lanes + i - 1 : i; }>(vec_, b.vec_),
+            ShuffleConcat<[](size_t i) { return i % 2 ? lanes + i : i + 1; }>(vec_, b.vec_)};
 #else
     return argon::to_array(simd::transpose(vec_, b.vec()).val);
 #endif
@@ -1506,28 +1642,11 @@ if constexpr (extension_arithmetic) {
     });
   }
 
-  ace bool any() {
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (vec_[i]) {
-        return true;
-      }
-    });
-    return false;
-  }
+  /// @brief Whether any lane is nonzero.
+  ace bool any() const { return !Equal(argon_type{scalar_type{0}}).All(); }
 
-  ace bool all() {
-#ifdef ARGON_PLATFORM_MVE
-    return mve::max_reduce_max(vec_, vec_) != 0;
-#else
-    auto nonzero = TestNonzero();
-    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
-      if (nonzero[i] == 0) {
-        return false;
-      }
-    });
-    return true;
-#endif
-  }
+  /// @brief Whether every lane is nonzero.
+  ace bool all() const { return Equal(argon_type{scalar_type{0}}).None(); }
 
   template <std::size_t Index>
   std::tuple_element_t<Index, argon_type> get() {
@@ -1539,6 +1658,113 @@ if constexpr (extension_arithmetic) {
   }
 
  protected:
+  /// @brief The address of one gathered / scattered lane: base plus a byte offset, or base indexed by an element offset.
+  template <bool byte_offsets, typename PointerType, typename OffsetType>
+  ace static PointerType* LaneAddress(PointerType* base, OffsetType offset) {
+    if constexpr (byte_offsets) {
+      using byte_type = std::conditional_t<std::is_const_v<PointerType>, const char, char>;
+      return reinterpret_cast<PointerType*>(reinterpret_cast<byte_type*>(base) + offset);
+    } else {
+      return base + offset;
+    }
+  }
+
+  /// @brief Gather by byte or element offsets, optionally only the lanes of one predicate (inactive lanes are zero).
+  template <bool byte_offsets, typename... PredicateType>
+  ace static argon_type Gather(const scalar_type* base, offset_type offsets, PredicateType... active) {
+    static_assert(sizeof...(PredicateType) <= 1);
+#ifdef ARGON_PLATFORM_MVE
+    const auto off = offsets.vec();
+    if constexpr (sizeof(scalar_type) == 1) {
+      return mve::load_byte_gather_offset(base, off, active.native()...);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      if constexpr (byte_offsets) {
+        return mve::load_halfword_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_halfword_gather_shifted_offset(base, off, active.native()...);
+      }
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      if constexpr (byte_offsets) {
+        return mve::load_word_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_word_gather_shifted_offset(base, off, active.native()...);
+      }
+    } else {
+      if constexpr (byte_offsets) {
+        return mve::load_doubleword_gather_offset(base, off, active.native()...);
+      } else {
+        return mve::load_doubleword_gather_shifted_offset(base, off, active.native()...);
+      }
+    }
+#else
+    argon_type destination{scalar_type{0}};  // inactive lanes stay zero
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if ((active.Active(i) && ...)) {
+        const auto offset = simd::get_lane<i>(offsets.vec());
+        destination = destination.template LoadToLane<i>(LaneAddress<byte_offsets>(base, offset));
+      }
+    });
+    return destination;
+#endif
+  }
+
+  /// @brief Scatter by byte or element offsets, optionally only the lanes of one predicate.
+  template <bool byte_offsets, typename... PredicateType>
+  ace void Scatter(scalar_type* base, offset_type offsets, PredicateType... active) const {
+    static_assert(sizeof...(PredicateType) <= 1);
+#ifdef ARGON_PLATFORM_MVE
+    const auto off = offsets.vec();
+    if constexpr (sizeof(scalar_type) == 1) {
+      mve::store_byte_scatter_offset(base, off, vec_, active.native()...);
+    } else if constexpr (sizeof(scalar_type) == 2) {
+      if constexpr (byte_offsets) {
+        mve::store_halfword_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_halfword_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    } else if constexpr (sizeof(scalar_type) == 4) {
+      if constexpr (byte_offsets) {
+        mve::store_word_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_word_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    } else {
+      if constexpr (byte_offsets) {
+        mve::store_doubleword_scatter_offset(base, off, vec_, active.native()...);
+      } else {
+        mve::store_doubleword_scatter_shifted_offset(base, off, vec_, active.native()...);
+      }
+    }
+#else
+    utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
+      if ((active.Active(i) && ...)) {
+        *LaneAddress<byte_offsets>(base, simd::get_lane<i>(offsets.vec())) = simd::get_lane<i>(vec_);
+      }
+    });
+#endif
+  }
+
+  /// @brief Convert an arithmetic constructor argument to the lane type, passing anything else through.
+  template <typename ArgType>
+  ace static decltype(auto) LaneValue(ArgType&& arg) {
+    if constexpr (lane_scalar<std::remove_cvref_t<ArgType>>) {
+      return static_cast<scalar_type>(arg);
+    } else {
+      return std::forward<ArgType>(arg);
+    }
+  }
+
+#ifdef ARGON_PLATFORM_MVE
+  /// @brief Select lanes from the concatenation {a, b} by compile-time index (MVE has no vext/zip/uzp/trn).
+  /// @tparam index A constexpr callable mapping each result lane to a lane of {a, b}.
+  template <auto index>
+  ace static VectorType ShuffleConcat(VectorType a, VectorType b) {
+    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+      return VectorType(__builtin_shufflevector(a, b, index(Is)...));
+    }(std::make_index_sequence<lanes>{});
+  }
+#endif
+
   template <std::size_t... Ints>
   ace static argon_type IotaHelper(scalar_type start, std::index_sequence<Ints...>) {
     return VectorType{static_cast<scalar_type>(start + Ints)...};

@@ -1,5 +1,6 @@
 #pragma once
 #include <arm_mve.h>
+#include <type_traits>
 #include "neon_int.hpp"
 #ifdef __cplusplus
 #ifdef __clang__
@@ -11,22 +12,6 @@
 namespace mve {
 // clang-format off
 template <typename T> nce T create(uint64_t a, uint64_t b);
-template <typename T> nce T decrement_duplicate(uint32_t a);
-template <typename T> nce T decrement_duplicate(uint32_t *a);
-template <typename T> nce T decrement_duplicate(uint32_t a, mve_pred16_t p);
-template <typename T> nce T decrement_duplicate(uint32_t *a, mve_pred16_t p);
-template <typename T> nce T decrement_wrap_duplicate(uint32_t a, uint32_t b);
-template <typename T> nce T decrement_wrap_duplicate(uint32_t *a, uint32_t b);
-template <typename T> nce T decrement_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p);
-template <typename T> nce T decrement_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p);
-template <typename T> nce T increment_duplicate(uint32_t a);
-template <typename T> nce T increment_duplicate(uint32_t *a);
-template <typename T> nce T increment_duplicate(uint32_t a, mve_pred16_t p);
-template <typename T> nce T increment_duplicate(uint32_t *a, mve_pred16_t p);
-template <typename T> nce T increment_wrap_duplicate(uint32_t a, uint32_t b);
-template <typename T> nce T increment_wrap_duplicate(uint32_t *a, uint32_t b);
-template <typename T> nce T increment_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p);
-template <typename T> nce T increment_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p);
 template <typename T> nce T uninitialized();
 template <typename T> nce T load_byte(int8_t const *base);
 template <typename T> nce T load_byte(uint8_t const *base);
@@ -36,14 +21,6 @@ template <typename T> nce T load_halfword(int16_t const *base);
 template <typename T> nce T load_halfword(uint16_t const *base);
 template <typename T> nce T load_halfword(int16_t const *base, mve_pred16_t p);
 template <typename T> nce T load_halfword(uint16_t const *base, mve_pred16_t p);
-template <typename T> nce T load_word_gather_base(uint32x4_t addr);
-template <typename T> nce T load_word_gather_base(uint32x4_t addr, mve_pred16_t p);
-template <typename T> nce T load_word_gather_base(uint32x4_t *addr);
-template <typename T> nce T load_word_gather_base(uint32x4_t *addr, mve_pred16_t p);
-template <typename T> nce T load_doubleword_gather_base(uint64x2_t addr);
-template <typename T> nce T load_doubleword_gather_base(uint64x2_t addr, mve_pred16_t p);
-template <typename T> nce T load_doubleword_gather_base(uint64x2_t *addr);
-template <typename T> nce T load_doubleword_gather_base(uint64x2_t *addr, mve_pred16_t p);
 [[gnu::always_inline]] nce uint8x16_t reverse_16bit(uint8x16_t inactive, uint8x16_t a, mve_pred16_t p) { return vrev16q_m_u8(inactive, a, p); }
 [[gnu::always_inline]] nce uint8x16_t reverse_32bit(uint8x16_t inactive, uint8x16_t a, mve_pred16_t p) { return vrev32q_m_u8(inactive, a, p); }
 [[gnu::always_inline]] nce uint8x16_t reverse_64bit(uint8x16_t inactive, uint8x16_t a, mve_pred16_t p) { return vrev64q_m_u8(inactive, a, p); }
@@ -177,8 +154,8 @@ template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_left_insert(uint8x
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_left_unsigned_saturate(uint8x16_t inactive, int8x16_t a, mve_pred16_t p) { return vqshluq_m_n_s8(inactive, a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_bottom(uint8x16_t a, uint16x8_t b) { return vqrshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrnbq_m_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shight_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b) { return vqrshrntq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shight_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_u16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b) { return vqrshrntq_n_u16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_saturate_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_bottom(uint8x16_t a, uint16x8_t b) { return vqshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vqshrnbq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_saturate_top(uint8x16_t a, uint16x8_t b) { return vqshrntq_n_u16(a, b, imm); }
@@ -189,8 +166,8 @@ template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_round_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vrshrntq_m_n_u16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_bottom(uint8x16_t a, uint16x8_t b) { return vshrnbq_n_u16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrnbq_m_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top_signed(uint8x16_t a, uint16x8_t b) { return vshrntq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top_signed(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrntq_m_n_u16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top(uint8x16_t a, uint16x8_t b) { return vshrntq_n_u16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint8x16_t shift_right_narrow_top(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vshrntq_m_n_u16(a, b, imm, p); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_bottom(uint8x16_t a, uint16x8_t b) { return vmovnbq_u16(a, b); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_bottom(uint8x16_t a, uint16x8_t b, mve_pred16_t p) { return vmovnbq_m_u16(a, b, p); }
 [[gnu::always_inline]] nce uint8x16_t move_narrow_top(uint8x16_t a, uint16x8_t b) { return vmovntq_u16(a, b); }
@@ -363,8 +340,8 @@ template <int imm>[[gnu::always_inline]] nce int8x16_t shift_left_saturate(int8x
 [[gnu::always_inline]] nce int8x16_t bit_reverse_shift_right(int8x16_t inactive, int8x16_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_s8(inactive, a, b, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_bottom(int8x16_t a, int16x8_t b) { return vqrshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrnbq_m_n_s16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shight_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b) { return vqrshrntq_n_s16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shight_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_s16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b) { return vqrshrntq_n_s16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_saturate_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqrshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_bottom(int8x16_t a, int16x8_t b) { return vqshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vqshrnbq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_saturate_top(int8x16_t a, int16x8_t b) { return vqshrntq_n_s16(a, b, imm); }
@@ -375,8 +352,8 @@ template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_round_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vrshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_bottom(int8x16_t a, int16x8_t b) { return vshrnbq_n_s16(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_bottom(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrnbq_m_n_s16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top_signed(int8x16_t a, int16x8_t b) { return vshrntq_n_s16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top_signed(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrntq_m_n_s16(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top(int8x16_t a, int16x8_t b) { return vshrntq_n_s16(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_narrow_top(int8x16_t a, int16x8_t b, mve_pred16_t p) { return vshrntq_m_n_s16(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right_round(int8x16_t a, mve_pred16_t p) { return vrshrq_x_n_s8(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int8x16_t shift_right(int8x16_t a, mve_pred16_t p) { return vshrq_x_n_s8(a, imm, p); }
 [[gnu::always_inline]] nce int8x16_t bit_reverse_shift_right(int8x16_t a, int32_t b) { return vbrsrq_n_s8(a, b); }
@@ -611,8 +588,8 @@ template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_satur
 [[gnu::always_inline]] nce uint16x8_t move_narrow_saturate_top(uint16x8_t a, int32x4_t b, mve_pred16_t p) { return vqmovuntq_m_s32(a, b, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_bottom(uint16x8_t a, uint32x4_t b) { return vqrshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrnbq_m_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shight_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b) { return vqrshrntq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shight_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_u32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b) { return vqrshrntq_n_u32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_saturate_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_bottom(uint16x8_t a, uint32x4_t b) { return vqshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vqshrnbq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_saturate_top(uint16x8_t a, uint32x4_t b) { return vqshrntq_n_u32(a, b, imm); }
@@ -623,8 +600,8 @@ template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_round_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vrshrntq_m_n_u32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_bottom(uint16x8_t a, uint32x4_t b) { return vshrnbq_n_u32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrnbq_m_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top_signed(uint16x8_t a, uint32x4_t b) { return vshrntq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top_signed(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrntq_m_n_u32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top(uint16x8_t a, uint32x4_t b) { return vshrntq_n_u32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_right_narrow_top(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vshrntq_m_n_u32(a, b, imm, p); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_bottom(uint16x8_t a, uint32x4_t b) { return vmovnbq_u32(a, b); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_bottom(uint16x8_t a, uint32x4_t b, mve_pred16_t p) { return vmovnbq_m_u32(a, b, p); }
 [[gnu::always_inline]] nce uint16x8_t move_narrow_top(uint16x8_t a, uint32x4_t b) { return vmovntq_u32(a, b); }
@@ -649,11 +626,11 @@ template <int imm>[[gnu::always_inline]] nce uint16x8_t shift_left(uint16x8_t a,
 [[gnu::always_inline]] nce uint16x8_t subtract_halve(uint16x8_t a, uint16_t b) { return vhsubq_n_u16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t subtract_halve(uint16x8_t a, uint16_t b, mve_pred16_t p) { return vhsubq_x_n_u16(a, b, p); }
 [[gnu::always_inline]] nce uint16x8_t subtract_saturate(uint16x8_t a, uint16_t b) { return vqsubq_n_u16(a, b); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_clear(uint16x8_t a, const uint16_t imm) { return vbicq_n_u16(a, imm); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_clear(uint16x8_t a, const uint16_t imm, mve_pred16_t p) { return vbicq_m_n_u16(a, imm, p); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_not(uint16x8_t inactive, const uint16_t imm, mve_pred16_t p) { return vmvnq_m_n_u16(inactive, imm, p); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_or(uint16x8_t a, const uint16_t imm) { return vorrq_n_u16(a, imm); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_or(uint16x8_t a, const uint16_t imm, mve_pred16_t p) { return vorrq_m_n_u16(a, imm, p); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_clear(uint16x8_t a, const uint16_t imm) { return vbicq_u16(a, vdupq_n_u16(imm)); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_clear(uint16x8_t a, const uint16_t imm, mve_pred16_t p) { return vbicq_m_u16(a, a, vdupq_n_u16(imm), p); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_not(uint16x8_t inactive, const uint16_t imm, mve_pred16_t p) { return vmvnq_m_u16(inactive, vdupq_n_u16(imm), p); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_or(uint16x8_t a, const uint16_t imm) { return vorrq_u16(a, vdupq_n_u16(imm)); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_or(uint16x8_t a, const uint16_t imm, mve_pred16_t p) { return vorrq_m_u16(a, a, vdupq_n_u16(imm), p); }
 [[gnu::always_inline]] nce uint16x8_t bit_reverse_shift_right(uint16x8_t a, int32_t b) { return vbrsrq_n_u16(a, b); }
 [[gnu::always_inline]] nce uint16x8_t bit_reverse_shift_right(uint16x8_t a, int32_t b, mve_pred16_t p) { return vbrsrq_x_n_u16(a, b, p); }
 [[gnu::always_inline]] nce uint16x8_t shift_left_round_saturate(uint16x8_t a, int32_t b) { return vqrshlq_n_u16(a, b); }
@@ -706,8 +683,8 @@ template <int imm>[[gnu::always_inline]] nce int16x8_t shift_left_saturate(int16
 [[gnu::always_inline]] nce int16x8_t bit_reverse_shift_right(int16x8_t inactive, int16x8_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_s16(inactive, a, b, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_bottom(int16x8_t a, int32x4_t b) { return vqrshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrnbq_m_n_s32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shight_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b) { return vqrshrntq_n_s32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shight_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_s32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b) { return vqrshrntq_n_s32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_saturate_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqrshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_bottom(int16x8_t a, int32x4_t b) { return vqshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vqshrnbq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_saturate_top(int16x8_t a, int32x4_t b) { return vqshrntq_n_s32(a, b, imm); }
@@ -718,8 +695,8 @@ template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_round_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vrshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_bottom(int16x8_t a, int32x4_t b) { return vshrnbq_n_s32(a, b, imm); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_bottom(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrnbq_m_n_s32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top_signed(int16x8_t a, int32x4_t b) { return vshrntq_n_s32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top_signed(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrntq_m_n_s32(a, b, imm, p); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top(int16x8_t a, int32x4_t b) { return vshrntq_n_s32(a, b, imm); }
+template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_narrow_top(int16x8_t a, int32x4_t b, mve_pred16_t p) { return vshrntq_m_n_s32(a, b, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right_round(int16x8_t a, mve_pred16_t p) { return vrshrq_x_n_s16(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce int16x8_t shift_right(int16x8_t a, mve_pred16_t p) { return vshrq_x_n_s16(a, imm, p); }
 [[gnu::always_inline]] nce int16x8_t bit_reverse_shift_right(int16x8_t a, int32_t b) { return vbrsrq_n_s16(a, b); }
@@ -895,11 +872,11 @@ template <int imm>[[gnu::always_inline]] nce int16x8_t shift_left(int16x8_t a, m
 [[gnu::always_inline]] nce int16x8_t subtract_halve(int16x8_t a, int16_t b) { return vhsubq_n_s16(a, b); }
 [[gnu::always_inline]] nce int16x8_t subtract_halve(int16x8_t a, int16_t b, mve_pred16_t p) { return vhsubq_x_n_s16(a, b, p); }
 [[gnu::always_inline]] nce int16x8_t subtract_saturate(int16x8_t a, int16_t b) { return vqsubq_n_s16(a, b); }
-[[gnu::always_inline]] nce int16x8_t bitwise_clear(int16x8_t a, const int16_t imm) { return vbicq_n_s16(a, imm); }
-[[gnu::always_inline]] nce int16x8_t bitwise_clear(int16x8_t a, const int16_t imm, mve_pred16_t p) { return vbicq_m_n_s16(a, imm, p); }
-[[gnu::always_inline]] nce int16x8_t bitwise_not(int16x8_t inactive, const int16_t imm, mve_pred16_t p) { return vmvnq_m_n_s16(inactive, imm, p); }
-[[gnu::always_inline]] nce int16x8_t bitwise_or(int16x8_t a, const int16_t imm) { return vorrq_n_s16(a, imm); }
-[[gnu::always_inline]] nce int16x8_t bitwise_or(int16x8_t a, const int16_t imm, mve_pred16_t p) { return vorrq_m_n_s16(a, imm, p); }
+[[gnu::always_inline]] nce int16x8_t bitwise_clear(int16x8_t a, const int16_t imm) { return vbicq_s16(a, vdupq_n_s16(imm)); }
+[[gnu::always_inline]] nce int16x8_t bitwise_clear(int16x8_t a, const int16_t imm, mve_pred16_t p) { return vbicq_m_s16(a, a, vdupq_n_s16(imm), p); }
+[[gnu::always_inline]] nce int16x8_t bitwise_not(int16x8_t inactive, const int16_t imm, mve_pred16_t p) { return vmvnq_m_s16(inactive, vdupq_n_s16(imm), p); }
+[[gnu::always_inline]] nce int16x8_t bitwise_or(int16x8_t a, const int16_t imm) { return vorrq_s16(a, vdupq_n_s16(imm)); }
+[[gnu::always_inline]] nce int16x8_t bitwise_or(int16x8_t a, const int16_t imm, mve_pred16_t p) { return vorrq_m_s16(a, a, vdupq_n_s16(imm), p); }
 [[gnu::always_inline]] nce int16x8_t shift_left(int16x8_t a, int32_t b) { return vshlq_r_s16(a, b); }
 [[gnu::always_inline]] nce int16x8_t shift_left(int16x8_t a, int32_t b, mve_pred16_t p) { return vshlq_m_r_s16(a, b, p); }
 [[gnu::always_inline]] nce int32x4_t reverse_64bit(int32x4_t inactive, int32x4_t a, mve_pred16_t p) { return vrev64q_m_s32(inactive, a, p); }
@@ -1123,20 +1100,44 @@ template <int imm>[[gnu::always_inline]] nce int32x4_t shift_left(int32x4_t a, m
 [[gnu::always_inline]] nce int32x4_t subtract_halve(int32x4_t a, int32_t b) { return vhsubq_n_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t subtract_halve(int32x4_t a, int32_t b, mve_pred16_t p) { return vhsubq_x_n_s32(a, b, p); }
 [[gnu::always_inline]] nce int32x4_t subtract_saturate(int32x4_t a, int32_t b) { return vqsubq_n_s32(a, b); }
-[[gnu::always_inline]] nce int32x4_t bitwise_clear(int32x4_t a, const int32_t imm) { return vbicq_n_s32(a, imm); }
-[[gnu::always_inline]] nce int32x4_t bitwise_clear(int32x4_t a, const int32_t imm, mve_pred16_t p) { return vbicq_m_n_s32(a, imm, p); }
-[[gnu::always_inline]] nce int32x4_t bitwise_not(int32x4_t inactive, const int32_t imm, mve_pred16_t p) { return vmvnq_m_n_s32(inactive, imm, p); }
-[[gnu::always_inline]] nce int32x4_t bitwise_or(int32x4_t a, const int32_t imm) { return vorrq_n_s32(a, imm); }
-[[gnu::always_inline]] nce int32x4_t bitwise_or(int32x4_t a, const int32_t imm, mve_pred16_t p) { return vorrq_m_n_s32(a, imm, p); }
+[[gnu::always_inline]] nce int32x4_t bitwise_clear(int32x4_t a, const int32_t imm) { return vbicq_s32(a, vdupq_n_s32(imm)); }
+[[gnu::always_inline]] nce int32x4_t bitwise_clear(int32x4_t a, const int32_t imm, mve_pred16_t p) { return vbicq_m_s32(a, a, vdupq_n_s32(imm), p); }
+[[gnu::always_inline]] nce int32x4_t bitwise_not(int32x4_t inactive, const int32_t imm, mve_pred16_t p) { return vmvnq_m_s32(inactive, vdupq_n_s32(imm), p); }
+[[gnu::always_inline]] nce int32x4_t bitwise_or(int32x4_t a, const int32_t imm) { return vorrq_s32(a, vdupq_n_s32(imm)); }
+[[gnu::always_inline]] nce int32x4_t bitwise_or(int32x4_t a, const int32_t imm, mve_pred16_t p) { return vorrq_m_s32(a, a, vdupq_n_s32(imm), p); }
 [[gnu::always_inline]] nce int32x4_t shift_left(int32x4_t a, int32_t b) { return vshlq_r_s32(a, b); }
 [[gnu::always_inline]] nce int32x4_t shift_left(int32x4_t a, int32_t b, mve_pred16_t p) { return vshlq_m_r_s32(a, b, p); }
 [[gnu::always_inline]] nce uint64x2_t uninitialized(uint64x2_t t) { return vuninitializedq(t); }
-template <int offset>[[gnu::always_inline]] nce int64x2_t load_doubleword_gather_base(uint64x2_t addr) { return vldrdq_gather_base_s64(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce uint64x2_t load_doubleword_gather_base(uint64x2_t addr) { return vldrdq_gather_base_u64(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce int64x2_t load_doubleword_gather_base(uint64x2_t addr, mve_pred16_t p) { return vldrdq_gather_base_z_s64(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce uint64x2_t load_doubleword_gather_base(uint64x2_t addr, mve_pred16_t p) { return vldrdq_gather_base_z_u64(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce int64x2_t load_doubleword_gather_base(uint64x2_t *addr) { return vldrdq_gather_base_wb_s64(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce uint64x2_t load_doubleword_gather_base(uint64x2_t *addr) { return vldrdq_gather_base_wb_u64(addr, offset); }
+// The overloads differ only in their result type, so it is named explicitly: load_doubleword_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_doubleword_gather_base(uint64x2_t addr) {
+  if constexpr (std::is_same_v<T, int64x2_t>) {
+    return vldrdq_gather_base_s64(addr, offset);
+  } else if constexpr (std::is_same_v<T, uint64x2_t>) {
+    return vldrdq_gather_base_u64(addr, offset);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: load_doubleword_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_doubleword_gather_base(uint64x2_t addr, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int64x2_t>) {
+    return vldrdq_gather_base_z_s64(addr, offset, p);
+  } else if constexpr (std::is_same_v<T, uint64x2_t>) {
+    return vldrdq_gather_base_z_u64(addr, offset, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: load_doubleword_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_doubleword_gather_base(uint64x2_t *addr) {
+  if constexpr (std::is_same_v<T, int64x2_t>) {
+    return vldrdq_gather_base_wb_s64(addr, offset);
+  } else if constexpr (std::is_same_v<T, uint64x2_t>) {
+    return vldrdq_gather_base_wb_u64(addr, offset);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t addr, uint64x2_t value) { return vstrdq_scatter_base_u64(addr, offset, value); }
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t addr, uint64x2_t value, mve_pred16_t p) { return vstrdq_scatter_base_p_u64(addr, offset, value, p); }
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t *addr, uint64x2_t value) { return vstrdq_scatter_base_wb_u64(addr, offset, value); }
@@ -1144,8 +1145,16 @@ template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_ba
 [[gnu::always_inline]] nce uint64x2_t predicate_select(uint64x2_t a, uint64x2_t b, mve_pred16_t p) { return vpselq_u64(a, b, p); }
 [[gnu::always_inline]] nce uint64x2_t multiply_long_bottom(uint64x2_t inactive, uint32x4_t a, uint32x4_t b, mve_pred16_t p) { return vmullbq_int_m_u32(inactive, a, b, p); }
 [[gnu::always_inline]] nce uint64x2_t multiply_long_top(uint64x2_t inactive, uint32x4_t a, uint32x4_t b, mve_pred16_t p) { return vmulltq_int_m_u32(inactive, a, b, p); }
-template <int offset>[[gnu::always_inline]] nce int64x2_t load_doubleword_gather_base(uint64x2_t *addr, mve_pred16_t p) { return vldrdq_gather_base_wb_z_s64(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce uint64x2_t load_doubleword_gather_base(uint64x2_t *addr, mve_pred16_t p) { return vldrdq_gather_base_wb_z_u64(addr, offset, p); }
+// The overloads differ only in their result type, so it is named explicitly: load_doubleword_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_doubleword_gather_base(uint64x2_t *addr, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int64x2_t>) {
+    return vldrdq_gather_base_wb_z_s64(addr, offset, p);
+  } else if constexpr (std::is_same_v<T, uint64x2_t>) {
+    return vldrdq_gather_base_wb_z_u64(addr, offset, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t addr, int64x2_t value) { return vstrdq_scatter_base_s64(addr, offset, value); }
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t addr, int64x2_t value, mve_pred16_t p) { return vstrdq_scatter_base_p_s64(addr, offset, value, p); }
 template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_base(uint64x2_t *addr, int64x2_t value) { return vstrdq_scatter_base_wb_s64(addr, offset, value); }
@@ -1180,12 +1189,36 @@ template <int offset>[[gnu::always_inline]] nce void store_doubleword_scatter_ba
 [[gnu::always_inline]] nce uint32x4_t subtract_saturate(uint32x4_t inactive, uint32x4_t a, uint32_t b, mve_pred16_t p) { return vqsubq_m_n_u32(inactive, a, b, p); }
 [[gnu::always_inline]] nce uint32x4_t count_leading_zero_bits(uint32x4_t a, mve_pred16_t p) { return vclzq_x_u32(a, p); }
 [[gnu::always_inline]] nce uint32x4_t bitwise_not(uint32x4_t a, mve_pred16_t p) { return vmvnq_x_u32(a, p); }
-template <int offset>[[gnu::always_inline]] nce int32x4_t load_word_gather_base(uint32x4_t addr) { return vldrwq_gather_base_s32(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce uint32x4_t load_word_gather_base(uint32x4_t addr) { return vldrwq_gather_base_u32(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce int32x4_t load_word_gather_base(uint32x4_t addr, mve_pred16_t p) { return vldrwq_gather_base_z_s32(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce uint32x4_t load_word_gather_base(uint32x4_t addr, mve_pred16_t p) { return vldrwq_gather_base_z_u32(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce int32x4_t load_word_gather_base(uint32x4_t *addr) { return vldrwq_gather_base_wb_s32(addr, offset); }
-template <int offset>[[gnu::always_inline]] nce uint32x4_t load_word_gather_base(uint32x4_t *addr) { return vldrwq_gather_base_wb_u32(addr, offset); }
+// The overloads differ only in their result type, so it is named explicitly: load_word_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_word_gather_base(uint32x4_t addr) {
+  if constexpr (std::is_same_v<T, int32x4_t>) {
+    return vldrwq_gather_base_s32(addr, offset);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vldrwq_gather_base_u32(addr, offset);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: load_word_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_word_gather_base(uint32x4_t addr, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int32x4_t>) {
+    return vldrwq_gather_base_z_s32(addr, offset, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vldrwq_gather_base_z_u32(addr, offset, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: load_word_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_word_gather_base(uint32x4_t *addr) {
+  if constexpr (std::is_same_v<T, int32x4_t>) {
+    return vldrwq_gather_base_wb_s32(addr, offset);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vldrwq_gather_base_wb_u32(addr, offset);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_left_long_bottom(uint32x4_t inactive, uint16x8_t a, mve_pred16_t p) { return vshllbq_m_n_u16(inactive, a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_left_long_top(uint32x4_t inactive, uint16x8_t a, mve_pred16_t p) { return vshlltq_m_n_u16(inactive, a, imm, p); }
 [[gnu::always_inline]] nce uint32x4_t shift_left_round(uint32x4_t a, int32x4_t b, mve_pred16_t p) { return vrshlq_x_u32(a, b, p); }
@@ -1305,8 +1338,16 @@ template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_left_insert(uint32
 [[gnu::always_inline]] nce uint32x4_t subtract_with_carry_initialized(uint32x4_t a, uint32x4_t b, unsigned *carry_out) { return vsbciq_u32(a, b, carry_out); }
 [[gnu::always_inline]] nce uint32x4_t bit_reverse_shift_right(uint32x4_t inactive, uint32x4_t a, int32_t b, mve_pred16_t p) { return vbrsrq_m_n_u32(inactive, a, b, p); }
 [[gnu::always_inline]] nce uint32_t reduce_add(uint32x4_t a, mve_pred16_t p) { return vaddvq_p_u32(a, p); }
-template <int offset>[[gnu::always_inline]] nce int32x4_t load_word_gather_base(uint32x4_t *addr, mve_pred16_t p) { return vldrwq_gather_base_wb_z_s32(addr, offset, p); }
-template <int offset>[[gnu::always_inline]] nce uint32x4_t load_word_gather_base(uint32x4_t *addr, mve_pred16_t p) { return vldrwq_gather_base_wb_z_u32(addr, offset, p); }
+// The overloads differ only in their result type, so it is named explicitly: load_word_gather_base<T, offset>(...).
+template <typename T, int offset>[[gnu::always_inline]] nce T load_word_gather_base(uint32x4_t *addr, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, int32x4_t>) {
+    return vldrwq_gather_base_wb_z_s32(addr, offset, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vldrwq_gather_base_wb_z_u32(addr, offset, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_right_round(uint32x4_t a, mve_pred16_t p) { return vrshrq_x_n_u32(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_right(uint32x4_t a, mve_pred16_t p) { return vshrq_x_n_u32(a, imm, p); }
 template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_left(uint32x4_t a, mve_pred16_t p) { return vshlq_x_n_u32(a, imm, p); }
@@ -1319,11 +1360,11 @@ template <int imm>[[gnu::always_inline]] nce uint32x4_t shift_left(uint32x4_t a,
 [[gnu::always_inline]] nce uint32x4_t subtract_halve(uint32x4_t a, uint32_t b) { return vhsubq_n_u32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t subtract_halve(uint32x4_t a, uint32_t b, mve_pred16_t p) { return vhsubq_x_n_u32(a, b, p); }
 [[gnu::always_inline]] nce uint32x4_t subtract_saturate(uint32x4_t a, uint32_t b) { return vqsubq_n_u32(a, b); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_clear(uint32x4_t a, const uint32_t imm) { return vbicq_n_u32(a, imm); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_clear(uint32x4_t a, const uint32_t imm, mve_pred16_t p) { return vbicq_m_n_u32(a, imm, p); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_not(uint32x4_t inactive, const uint32_t imm, mve_pred16_t p) { return vmvnq_m_n_u32(inactive, imm, p); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_or(uint32x4_t a, const uint32_t imm) { return vorrq_n_u32(a, imm); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_or(uint32x4_t a, const uint32_t imm, mve_pred16_t p) { return vorrq_m_n_u32(a, imm, p); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_clear(uint32x4_t a, const uint32_t imm) { return vbicq_u32(a, vdupq_n_u32(imm)); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_clear(uint32x4_t a, const uint32_t imm, mve_pred16_t p) { return vbicq_m_u32(a, a, vdupq_n_u32(imm), p); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_not(uint32x4_t inactive, const uint32_t imm, mve_pred16_t p) { return vmvnq_m_u32(inactive, vdupq_n_u32(imm), p); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_or(uint32x4_t a, const uint32_t imm) { return vorrq_u32(a, vdupq_n_u32(imm)); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_or(uint32x4_t a, const uint32_t imm, mve_pred16_t p) { return vorrq_m_u32(a, a, vdupq_n_u32(imm), p); }
 [[gnu::always_inline]] nce uint32x4_t bit_reverse_shift_right(uint32x4_t a, int32_t b) { return vbrsrq_n_u32(a, b); }
 [[gnu::always_inline]] nce uint32x4_t bit_reverse_shift_right(uint32x4_t a, int32_t b, mve_pred16_t p) { return vbrsrq_x_n_u32(a, b, p); }
 [[gnu::always_inline]] nce uint32x4_t shift_left_round_saturate(uint32x4_t a, int32_t b) { return vqrshlq_n_u32(a, b); }
@@ -1341,54 +1382,198 @@ template <> [[gnu::always_inline]] nce uint8x16_t create(uint64_t a, uint64_t b)
 template <> [[gnu::always_inline]] nce uint16x8_t create(uint64_t a, uint64_t b) { return vcreateq_u16(a, b); }
 template <> [[gnu::always_inline]] nce uint32x4_t create(uint64_t a, uint64_t b) { return vcreateq_u32(a, b); }
 template <> [[gnu::always_inline]] nce uint64x2_t create(uint64_t a, uint64_t b) { return vcreateq_u64(a, b); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_duplicate(uint32_t a) { return vddupq_n_u8(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_duplicate(uint32_t a) { return vddupq_n_u16(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_duplicate(uint32_t a) { return vddupq_n_u32(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_duplicate(uint32_t *a) { return vddupq_wb_u8(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_duplicate(uint32_t *a) { return vddupq_wb_u16(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_duplicate(uint32_t *a) { return vddupq_wb_u32(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_duplicate(uint32_t a, mve_pred16_t p) { return vddupq_x_n_u8(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_duplicate(uint32_t a, mve_pred16_t p) { return vddupq_x_n_u16(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_duplicate(uint32_t a, mve_pred16_t p) { return vddupq_x_n_u32(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_duplicate(uint32_t *a, mve_pred16_t p) { return vddupq_x_wb_u8(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_duplicate(uint32_t *a, mve_pred16_t p) { return vddupq_x_wb_u16(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_duplicate(uint32_t *a, mve_pred16_t p) { return vddupq_x_wb_u32(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_wrap_duplicate(uint32_t a, uint32_t b) { return vdwdupq_n_u8(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_wrap_duplicate(uint32_t a, uint32_t b) { return vdwdupq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_wrap_duplicate(uint32_t a, uint32_t b) { return vdwdupq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_wrap_duplicate(uint32_t *a, uint32_t b) { return vdwdupq_wb_u8(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_wrap_duplicate(uint32_t *a, uint32_t b) { return vdwdupq_wb_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_wrap_duplicate(uint32_t *a, uint32_t b) { return vdwdupq_wb_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_n_u8(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t decrement_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_wb_u8(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t decrement_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_wb_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t decrement_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return vdwdupq_x_wb_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_duplicate(uint32_t a) { return vidupq_n_u8(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_duplicate(uint32_t a) { return vidupq_n_u16(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_duplicate(uint32_t a) { return vidupq_n_u32(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_duplicate(uint32_t *a) { return vidupq_wb_u8(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_duplicate(uint32_t *a) { return vidupq_wb_u16(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_duplicate(uint32_t *a) { return vidupq_wb_u32(a, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_duplicate(uint32_t a, mve_pred16_t p) { return vidupq_x_n_u8(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_duplicate(uint32_t a, mve_pred16_t p) { return vidupq_x_n_u16(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_duplicate(uint32_t a, mve_pred16_t p) { return vidupq_x_n_u32(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_duplicate(uint32_t *a, mve_pred16_t p) { return vidupq_x_wb_u8(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_duplicate(uint32_t *a, mve_pred16_t p) { return vidupq_x_wb_u16(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_duplicate(uint32_t *a, mve_pred16_t p) { return vidupq_x_wb_u32(a, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_wrap_duplicate(uint32_t a, uint32_t b) { return viwdupq_n_u8(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_wrap_duplicate(uint32_t a, uint32_t b) { return viwdupq_n_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_wrap_duplicate(uint32_t a, uint32_t b) { return viwdupq_n_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_wrap_duplicate(uint32_t *a, uint32_t b) { return viwdupq_wb_u8(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_wrap_duplicate(uint32_t *a, uint32_t b) { return viwdupq_wb_u16(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_wrap_duplicate(uint32_t *a, uint32_t b) { return viwdupq_wb_u32(a, b, imm); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return viwdupq_x_n_u8(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return viwdupq_x_n_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) { return viwdupq_x_n_u32(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint8x16_t increment_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return viwdupq_x_wb_u8(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint16x8_t increment_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return viwdupq_x_wb_u16(a, b, imm, p); }
-template <int imm>[[gnu::always_inline]] nce uint32x4_t increment_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) { return viwdupq_x_wb_u32(a, b, imm, p); }
+// The overloads differ only in their result type, so it is named explicitly: decrement_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_duplicate(uint32_t a) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vddupq_n_u8(a, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vddupq_n_u16(a, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vddupq_n_u32(a, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_duplicate(uint32_t *a) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vddupq_wb_u8(a, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vddupq_wb_u16(a, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vddupq_wb_u32(a, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_duplicate(uint32_t a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vddupq_x_n_u8(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vddupq_x_n_u16(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vddupq_x_n_u32(a, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_duplicate(uint32_t *a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vddupq_x_wb_u8(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vddupq_x_wb_u16(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vddupq_x_wb_u32(a, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_wrap_duplicate(uint32_t a, uint32_t b) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vdwdupq_n_u8(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vdwdupq_n_u16(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vdwdupq_n_u32(a, b, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_wrap_duplicate(uint32_t *a, uint32_t b) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vdwdupq_wb_u8(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vdwdupq_wb_u16(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vdwdupq_wb_u32(a, b, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vdwdupq_x_n_u8(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vdwdupq_x_n_u16(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vdwdupq_x_n_u32(a, b, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: decrement_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T decrement_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vdwdupq_x_wb_u8(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vdwdupq_x_wb_u16(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vdwdupq_x_wb_u32(a, b, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_duplicate(uint32_t a) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vidupq_n_u8(a, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vidupq_n_u16(a, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vidupq_n_u32(a, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_duplicate(uint32_t *a) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vidupq_wb_u8(a, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vidupq_wb_u16(a, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vidupq_wb_u32(a, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_duplicate(uint32_t a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vidupq_x_n_u8(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vidupq_x_n_u16(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vidupq_x_n_u32(a, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_duplicate(uint32_t *a, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return vidupq_x_wb_u8(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return vidupq_x_wb_u16(a, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return vidupq_x_wb_u32(a, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_wrap_duplicate(uint32_t a, uint32_t b) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return viwdupq_n_u8(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return viwdupq_n_u16(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return viwdupq_n_u32(a, b, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_wrap_duplicate(uint32_t *a, uint32_t b) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return viwdupq_wb_u8(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return viwdupq_wb_u16(a, b, imm);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return viwdupq_wb_u32(a, b, imm);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_wrap_duplicate(uint32_t a, uint32_t b, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return viwdupq_x_n_u8(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return viwdupq_x_n_u16(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return viwdupq_x_n_u32(a, b, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
+// The overloads differ only in their result type, so it is named explicitly: increment_wrap_duplicate<T, imm>(...).
+template <typename T, int imm>[[gnu::always_inline]] nce T increment_wrap_duplicate(uint32_t *a, uint32_t b, mve_pred16_t p) {
+  if constexpr (std::is_same_v<T, uint8x16_t>) {
+    return viwdupq_x_wb_u8(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint16x8_t>) {
+    return viwdupq_x_wb_u16(a, b, imm, p);
+  } else if constexpr (std::is_same_v<T, uint32x4_t>) {
+    return viwdupq_x_wb_u32(a, b, imm, p);
+  } else {
+    static_assert(sizeof(T) == 0, "unsupported result type");
+  }
+}
 [[gnu::always_inline]] nce int8x16_t duplicate(int8_t a, mve_pred16_t p) { return vdupq_x_n_s8(a, p); }
 [[gnu::always_inline]] nce int16x8_t duplicate(int16_t a, mve_pred16_t p) { return vdupq_x_n_s16(a, p); }
 [[gnu::always_inline]] nce int32x4_t duplicate(int32_t a, mve_pred16_t p) { return vdupq_x_n_s32(a, p); }
@@ -1534,14 +1719,14 @@ template <> [[gnu::always_inline]] nce uint64x2_t uninitialized() { return vunin
 [[gnu::always_inline]] nce int64_t multiply_subtract_long_round_dual_reduce_add_high_accumulate(int64_t a, int32x4_t b, int32x4_t c, mve_pred16_t p) { return vrmlsldavhaq_p_s32(a, b, c, p); }
 [[gnu::always_inline]] nce int64_t multiply_subtract_long_round_dual_reduce_add_high_accumulate_exchange_pairs(int64_t a, int32x4_t b, int32x4_t c) { return vrmlsldavhaxq_s32(a, b, c); }
 [[gnu::always_inline]] nce int64_t multiply_subtract_long_round_dual_reduce_add_high_accumulate_exchange_pairs(int64_t a, int32x4_t b, int32x4_t c, mve_pred16_t p) { return vrmlsldavhaxq_p_s32(a, b, c, p); }
-[[gnu::always_inline]] nce int16x8_t bitwise_not(const int16_t imm) { return vmvnq_n_s16(imm); }
-[[gnu::always_inline]] nce int32x4_t bitwise_not(const int32_t imm) { return vmvnq_n_s32(imm); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_not(const uint16_t imm) { return vmvnq_n_u16(imm); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_not(const uint32_t imm) { return vmvnq_n_u32(imm); }
-[[gnu::always_inline]] nce int16x8_t bitwise_not(const int16_t imm, mve_pred16_t p) { return vmvnq_x_n_s16(imm, p); }
-[[gnu::always_inline]] nce int32x4_t bitwise_not(const int32_t imm, mve_pred16_t p) { return vmvnq_x_n_s32(imm, p); }
-[[gnu::always_inline]] nce uint16x8_t bitwise_not(const uint16_t imm, mve_pred16_t p) { return vmvnq_x_n_u16(imm, p); }
-[[gnu::always_inline]] nce uint32x4_t bitwise_not(const uint32_t imm, mve_pred16_t p) { return vmvnq_x_n_u32(imm, p); }
+[[gnu::always_inline]] nce int16x8_t bitwise_not(const int16_t imm) { return vmvnq_s16(vdupq_n_s16(imm)); }
+[[gnu::always_inline]] nce int32x4_t bitwise_not(const int32_t imm) { return vmvnq_s32(vdupq_n_s32(imm)); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_not(const uint16_t imm) { return vmvnq_u16(vdupq_n_u16(imm)); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_not(const uint32_t imm) { return vmvnq_u32(vdupq_n_u32(imm)); }
+[[gnu::always_inline]] nce int16x8_t bitwise_not(const int16_t imm, mve_pred16_t p) { return vmvnq_x_s16(vdupq_n_s16(imm), p); }
+[[gnu::always_inline]] nce int32x4_t bitwise_not(const int32_t imm, mve_pred16_t p) { return vmvnq_x_s32(vdupq_n_s32(imm), p); }
+[[gnu::always_inline]] nce uint16x8_t bitwise_not(const uint16_t imm, mve_pred16_t p) { return vmvnq_x_u16(vdupq_n_u16(imm), p); }
+[[gnu::always_inline]] nce uint32x4_t bitwise_not(const uint32_t imm, mve_pred16_t p) { return vmvnq_x_u32(vdupq_n_u32(imm), p); }
 [[gnu::always_inline]] inline int8x16x2_t load2(int8_t const *addr) { return vld2q_s8(addr); }
 [[gnu::always_inline]] inline int16x8x2_t load2(int16_t const *addr) { return vld2q_s16(addr); }
 [[gnu::always_inline]] inline int32x4x2_t load2(int32_t const *addr) { return vld2q_s32(addr); }

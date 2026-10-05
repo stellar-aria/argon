@@ -3,6 +3,8 @@
 #include "helpers/type_matrix.hpp"
 #include <array>
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no table-lookup (vtbl/vtbx) instructions
+
 // clang-format off
 
 // Coverage for the NEON table-lookup family (entirely untested).
@@ -45,3 +47,15 @@ CPPSPEC_MAIN(
   describe_table_lookup,
   describe_table_extension
 );
+#else
+template <typename T>
+concept is_complete = requires { sizeof(T); };
+
+auto describe_table_unavailable = describe("Table lookup on MVE", ${
+  it("is compiled out with ArgonHalf, since MVE has no 64-bit vectors or vtbl", _{
+    expect(is_complete<ArgonHalf<uint8_t>>).to_be_false();
+  });
+});
+
+CPPSPEC_MAIN(describe_table_unavailable)
+#endif

@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <concepts>
 #include <cstddef>
 #include <ranges>
 #include <span>
@@ -152,10 +153,26 @@ ace ArgonHalf<T> load_half(const T* ptr) {
   return ArgonHalf<T>::Load(ptr);
 }
 
+namespace helpers {
+/// @brief The lane type for a ScalarType value used alongside VectorType's lanes.
+/// @details An integer of the same size and signedness as VectorType's lanes becomes that lane type, so a literal
+/// like `3` (int) pairs with int32_t lanes even where int32_t is long (arm-none-eabi), which has no Argon<int>.
+template <typename VectorType, typename ScalarType>
+using LaneFor_t = std::conditional_t<std::is_integral_v<ScalarType> && std::is_integral_v<simd::Scalar_t<VectorType>> &&
+                                         sizeof(ScalarType) == sizeof(simd::Scalar_t<VectorType>) &&
+                                         std::is_signed_v<ScalarType> == std::is_signed_v<simd::Scalar_t<VectorType>>,
+                                     simd::Scalar_t<VectorType>, ScalarType>;
+}  // namespace helpers
+
+/// @brief The Argon type holding ScalarType values with the same width as VectorType (Argon or ArgonHalf).
+template <typename VectorType, typename ScalarType>
+using VectorFor_t = std::conditional_t<sizeof(VectorType) == 16, Argon<helpers::LaneFor_t<VectorType, ScalarType>>,
+                                       ArgonHalf<helpers::LaneFor_t<VectorType, ScalarType>>>;
+
 /// @brief Create a new vector depending on the result of a conditional
+/// @tparam VectorType The vector type the condition was computed from
 /// @tparam BranchType The type of the branches
-/// @tparam CondType The type of the conditional
-/// @param condition The condition to check
+/// @param condition The predicate to select by
 /// @param true_value The vector to select lanes from if the condition is true
 /// @param false_value The vector to select lanes from if the condition is false
 /// @return The new vector
@@ -163,18 +180,41 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 /// Due to the way the NEON pipeline works (i.e. without conditional execution flags the way that VFP has),
 /// we're required to execute _both_ branches of the conditional and then select the lanes we want, _even if_ one of the
 /// branches is completely unused.
-template <typename BranchType, typename CondType>
-  requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_bool_type>
-ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_value, Argon<BranchType> false_value) {
-  if constexpr (Argon<BranchType>::extension_arithmetic) {
-    return condition.vec() ? true_value.vec() : false_value.vec();
+template <typename VectorType, typename BranchType>
+  requires(BranchType::lanes == Predicate<VectorType>::lanes)
+ace BranchType ternary(Predicate<VectorType> condition, BranchType true_value, BranchType false_value) {
+#ifndef ARGON_PLATFORM_MVE
+  if constexpr (BranchType::extension_arithmetic) {
+    return condition.native() ? true_value.vec() : false_value.vec();
+  }
+#endif
+  return condition.Select(true_value, false_value);
+}
+
+/// @copydoc ternary
+/// @details Selects by a mask vector (all ones / all zeros per lane), e.g. from Predicate::ToMask().
+template <typename MaskType, typename BranchType>
+  requires std::is_unsigned_v<typename MaskType::scalar_type> && (MaskType::lanes == BranchType::lanes) &&
+           (sizeof(typename MaskType::vector_type) == sizeof(typename BranchType::vector_type))
+ace BranchType ternary(MaskType mask, BranchType true_value, BranchType false_value) {
+  if constexpr (BranchType::extension_arithmetic) {
+    return mask.vec() ? true_value.vec() : false_value.vec();
   } else {
-    return condition.Select(true_value, false_value);
+    return mask.Select(true_value, false_value);
   }
 }
 
+/// @copydoc ternary
+template <typename MaskType, typename ValueType>
+  requires std::is_unsigned_v<typename MaskType::scalar_type> && lane_scalar<ValueType> &&
+           (sizeof(ValueType) == sizeof(typename MaskType::scalar_type))
+ace auto ternary(MaskType mask, ValueType true_value, ValueType false_value) {
+  using result_type = VectorFor_t<typename MaskType::vector_type, ValueType>;
+  return ternary(mask, result_type{true_value}, result_type{false_value});
+}
+
 template <typename BranchType, typename CondType>
-  requires(sizeof(CondType) == sizeof(BranchType))
+  requires simd::is_vector_type<CondType> && (sizeof(CondType) == sizeof(BranchType))
 ace BranchType ternary(CondType condition, BranchType true_value, BranchType false_value) {
   if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
     return condition ? true_value.vec() : false_value.vec();
@@ -184,70 +224,87 @@ ace BranchType ternary(CondType condition, BranchType true_value, BranchType fal
 }
 
 /// @copydoc ternary
-template <typename ValueType, typename CondType>
-  requires std::is_arithmetic_v<ValueType> &&
-           std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_bool_type>
-ace Argon<ValueType> ternary(Argon<CondType> condition, ValueType true_value, ValueType false_value) {
-  if constexpr (Argon<ValueType>::extension_arithmetic) {
-    return condition.vec() ? true_value : false_value;
-  } else {
-    return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
-  }
+template <typename VectorType, typename ValueType>
+  requires lane_scalar<ValueType> && (sizeof(ValueType) == sizeof(simd::Scalar_t<VectorType>))
+ace auto ternary(Predicate<VectorType> condition, ValueType true_value, ValueType false_value) {
+  using result_type = VectorFor_t<VectorType, ValueType>;
+  return ternary(condition, result_type{true_value}, result_type{false_value});
 }
 
-template <typename CondType, typename ScalarType>
-  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
-class CondMonad : public std::pair<CondType, Argon<ScalarType>> {
-  using ArgonType = Argon<ScalarType>;
+/// @brief The result of `if_(...)` and each `else_if_(...)`: a value chosen per lane by a chain of conditions.
+/// @tparam VectorType The vector type the conditions were computed from.
+/// @tparam ValueType The Argon type of the values being chosen.
+/// @details Lanes take the value of the first condition that holds for them, as in an if / else-if chain;
+/// `else_` supplies the value for lanes where none held and ends the chain. Every branch is evaluated (see ternary).
+template <typename VectorType, typename ValueType>
+  requires(ValueType::lanes == Predicate<VectorType>::lanes)
+class CondMonad {
+  using predicate_type = Predicate<VectorType>;
+  using scalar_type = typename ValueType::scalar_type;
 
  public:
-  using PairType = std::pair<CondType, ArgonType>;
-  using PairType::PairType;
+  /// @brief Start a chain: `value` where `condition` holds.
+  ace CondMonad(predicate_type condition, ValueType value) : condition_{condition}, value_{value} {}
 
-  constexpr CondType condition() const { return this->first; }
-  constexpr ArgonType value() const { return this->second; }
+  /// @brief The lanes some condition in the chain has claimed so far.
+  ace predicate_type condition() const { return condition_; }
 
-  CondMonad else_if_(CondType new_condition, ArgonType new_value) const {
-    return {
-        new_condition | condition(),
-        (new_condition & ~condition()).Select(new_value, value()),
-    };
+  /// @brief The values chosen so far; lanes no condition has claimed are unspecified until else_.
+  ace ValueType value() const { return value_; }
+
+  /// @brief `new_value` in the lanes where `new_condition` holds and no earlier condition did.
+  ace CondMonad else_if_(predicate_type new_condition, ValueType new_value) const {
+    return {condition_ | new_condition, condition_.Select(value_, new_value)};
   }
 
-  template <typename FunctionType>
-  CondMonad else_if_(CondType condition, FunctionType func) const {
-    return else_if_(condition, func());
+  /// @copydoc else_if_
+  ace CondMonad else_if_(predicate_type new_condition, scalar_type new_value) const {
+    return else_if_(new_condition, ValueType{new_value});
   }
 
-  CondMonad else_if_(CondType condition, ScalarType value) const { return else_if_(condition, ArgonType{value}); }
-
-  ArgonType else_(ArgonType new_value) const { return condition().Select(new_value, value()); }
-
-  template <typename FunctionType>
-  ArgonType else_(FunctionType func) const {
-    return else_(func());
+  /// @copydoc else_if_
+  template <std::invocable FunctionType>
+  ace CondMonad else_if_(predicate_type new_condition, FunctionType func) const {
+    return else_if_(new_condition, ValueType{func()});
   }
 
-  ArgonType else_(ScalarType value) const { return else_(ArgonType{value}); }
+  /// @brief `new_value` in the lanes no condition claimed; ends the chain.
+  ace ValueType else_(ValueType new_value) const { return condition_.Select(value_, new_value); }
+
+  /// @copydoc else_
+  ace ValueType else_(scalar_type new_value) const { return else_(ValueType{new_value}); }
+
+  /// @copydoc else_
+  template <std::invocable FunctionType>
+  ace ValueType else_(FunctionType func) const {
+    return else_(ValueType{func()});
+  }
+
+ private:
+  predicate_type condition_;
+  ValueType value_;
 };
 
-template <typename ScalarType, typename CondType>
-  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
-ace CondMonad<CondType, ScalarType> if_(CondType condition, Argon<ScalarType> value) {
+/// @brief Start a per-lane if / else-if / else chain: `value` in the lanes where `condition` holds.
+/// @details `argon::if_(x < lo, lo).else_if_(x > hi, hi).else_(x)` clamps x to [lo, hi].
+template <typename VectorType, typename ValueType>
+  requires(ValueType::lanes == Predicate<VectorType>::lanes)
+ace CondMonad<VectorType, ValueType> if_(Predicate<VectorType> condition, ValueType value) {
   return {condition, value};
 }
 
-template <typename ScalarType, typename CondType>
-  requires std::is_arithmetic_v<ScalarType> && std::is_same_v<CondType, typename Argon<ScalarType>::argon_result_type>
-ace CondMonad<CondType, ScalarType> if_(CondType condition, ScalarType value) {
-  return {condition, value};
+/// @copydoc if_
+template <typename VectorType, typename ScalarType>
+  requires lane_scalar<ScalarType> && (sizeof(ScalarType) == sizeof(simd::Scalar_t<VectorType>))
+ace auto if_(Predicate<VectorType> condition, ScalarType value) {
+  using value_type = VectorFor_t<VectorType, ScalarType>;
+  return CondMonad<VectorType, value_type>{condition, value_type{value}};
 }
 
-template <typename FunctionType, typename CondType>
-  requires std::is_arithmetic_v<decltype(std::declval<FunctionType>()())> &&
-           std::is_same_v<CondType, decltype(std::declval<FunctionType>()())>
-ace CondMonad<CondType, decltype(std::declval<FunctionType>()())> if_(CondType condition, FunctionType func) {
-  return {condition, func()};
+/// @copydoc if_
+template <typename VectorType, std::invocable FunctionType>
+ace auto if_(Predicate<VectorType> condition, FunctionType func) {
+  return if_(condition, func());
 }
 
 }  // namespace argon

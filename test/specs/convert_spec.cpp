@@ -56,6 +56,7 @@ auto describe_as_bitcast = describe("As bitcast", ${
 
 // ── Narrow / Widen chain ───────────────────────────────────────────────────
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_saturate_narrow = describe("SaturateNarrow int32→int16", ${
   it("saturate-narrows int32 vector into int16 (values stay in range)", _{
     // Values in [-32768, 32767] should be preserved
@@ -78,7 +79,9 @@ auto describe_saturate_narrow = describe("SaturateNarrow int32→int16", ${
     expect(narrow[3]).to_equal(std::numeric_limits<int16_t>::min());
   });
 });
+#endif
 
+#ifndef ARGON_PLATFORM_MVE  // ArgonHalf / NEON long-narrow forms; MVE has no 64-bit vectors
 auto describe_shift_right_narrow = describe("ShiftRightNarrow int32→int16", ${
   it("shifts right by 8 and narrows int32 to int16", _{
     std::array<int32_t, 4> data = {256, 512, 1024, 2048};
@@ -90,6 +93,7 @@ auto describe_shift_right_narrow = describe("ShiftRightNarrow int32→int16", ${
     expect(result[3]).to_equal(int16_t{8});
   });
 });
+#endif
 
 
 // ── ConvertTo float→int32/uint32: vcvt semantics (truncate, saturate, NaN → 0) ──
@@ -132,11 +136,17 @@ auto describe_convert_saturation = describe("ConvertTo float32→int saturation"
   });
 });
 
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_saturate_narrow, describe_shift_right_narrow
+#else
+#define NEON_ONLY_SPECS
+#endif
+
 CPPSPEC_MAIN(
   describe_convert_int_to_float,
   describe_convert_float_to_int,
   describe_convert_saturation,
-  describe_as_bitcast,
-  describe_saturate_narrow,
-  describe_shift_right_narrow
+  describe_as_bitcast
+  NEON_ONLY_SPECS
 );
