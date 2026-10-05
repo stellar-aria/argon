@@ -18,6 +18,7 @@
 #include "helpers/mve_compare.hpp"
 #include "helpers/to_array.hpp"
 #include "lane.hpp"
+#include "predicate.hpp"
 
 #ifdef __ARM_FEATURE_MVE
 #define simd mve
@@ -69,7 +70,7 @@ class Vector {
   using vector_type = VectorType;                               ///< The SIMD vector type.
   using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
   using predicate_type = Bool_t<VectorType>;                    ///< The type of a boolean SIMD vector.
-  using argon_bool_type = helpers::ArgonFor_t<predicate_type>;  ///< The Argon type for the boolean vector.
+  using argon_bool_type = Predicate<VectorType>;                ///< The type comparisons return.
 
   /// @brief The number of lanes in the SIMD vector.
   static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
@@ -103,9 +104,12 @@ class Vector {
   template <size_t LaneIndex>
   ace Vector(argon::ConstLane<LaneIndex, VectorType> lane) : vec_(FromLane(lane)) {};
 
+  /// @brief Constructs a Vector from one value per lane.
+  /// @details Arithmetic arguments are converted to the lane type, so `Argon<uint16_t>{1, 2, ...}` does not narrow
+  /// (an error in braced initialisation under Clang).
   template <typename... ArgTypes>
     requires(sizeof...(ArgTypes) > 1)
-  ace Vector(ArgTypes... args) : vec_{std::forward<ArgTypes>(args)...} {}
+  ace Vector(ArgTypes... args) : vec_{LaneValue(std::forward<ArgTypes>(args))...} {}
 
   /// @brief Constructs a Vector from a scalar pointer.
   /// @param ptr The pointer to the scalar value to construct from.
@@ -723,65 +727,60 @@ class Vector {
     }
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if are equal
-  /// @details Equivalent to a == b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a == b.
   ace argon_bool_type Equal(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_));
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_)};
 #else
-    return simd::equal(vec_, b);
+    return argon_bool_type{simd::equal(vec_, b.vec_)};
 #endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than or equal to b
-  /// @details Equivalent to a >= b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is greater than or equal to b.
   ace argon_bool_type GreaterThanOrEqual(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_));
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(vec_, b.vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(vec_, b.vec_)};
 #endif
-    return simd::greater_than_or_equal(vec_, b);
+    return argon_bool_type{simd::greater_than_or_equal(vec_, b.vec_)};
 #endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than or equal to b
-  /// @details Equivalent to a <= b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is less than or equal to b.
   ace argon_bool_type LessThanOrEqual(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(b.vec_, vec_));
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(b.vec_, vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than_or_equal(b.vec_, vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(b.vec_, vec_)};
 #endif
-    return simd::less_than_or_equal(vec_, b);
+    return argon_bool_type{simd::less_than_or_equal(vec_, b.vec_)};
 #endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is greater than b
-  /// @details Equivalent to a > b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is greater than b.
   ace argon_bool_type GreaterThan(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_));
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than(vec_, b.vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(vec_, b.vec_)};
 #endif
-    return simd::greater_than(vec_, b);
+    return argon_bool_type{simd::greater_than(vec_, b.vec_)};
 #endif
   }
 
-  /// Compare the lanes of two vectors, setting the result lane's bits to ON if a is less than b
-  /// @details Equivalent to a < b ? 0xFFFFFFFF : 0x00000000
+  /// Compare the lanes of two vectors, returning a predicate active where a is less than b.
   ace argon_bool_type LessThan(argon_type b) const {
 #ifdef ARGON_PLATFORM_MVE
-    return helpers::mve_mask<VectorType>(helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_));
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return helpers::greater_than(b.vec_, vec_);
+    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(b.vec_, vec_)};
 #endif
-    return simd::less_than(vec_, b);
+    return argon_bool_type{simd::less_than(vec_, b.vec_)};
 #endif
   }
 
@@ -1525,6 +1524,16 @@ class Vector {
   }
 
  protected:
+  /// @brief Convert an arithmetic constructor argument to the lane type, passing anything else through.
+  template <typename ArgType>
+  ace static decltype(auto) LaneValue(ArgType&& arg) {
+    if constexpr (std::is_arithmetic_v<std::remove_cvref_t<ArgType>>) {
+      return static_cast<scalar_type>(arg);
+    } else {
+      return std::forward<ArgType>(arg);
+    }
+  }
+
 #ifdef ARGON_PLATFORM_MVE
   /// @brief Select lanes from the concatenation {a, b} by compile-time index (MVE has no vext/zip/uzp/trn).
   /// @tparam index A constexpr callable mapping each result lane to a lane of {a, b}.

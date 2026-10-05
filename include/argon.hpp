@@ -153,9 +153,9 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 }
 
 /// @brief Create a new vector depending on the result of a conditional
+/// @tparam VectorType The vector type the condition was computed from
 /// @tparam BranchType The type of the branches
-/// @tparam CondType The type of the conditional
-/// @param condition The condition to check
+/// @param condition The predicate to select by
 /// @param true_value The vector to select lanes from if the condition is true
 /// @param false_value The vector to select lanes from if the condition is false
 /// @return The new vector
@@ -163,18 +163,42 @@ ace ArgonHalf<T> load_half(const T* ptr) {
 /// Due to the way the NEON pipeline works (i.e. without conditional execution flags the way that VFP has),
 /// we're required to execute _both_ branches of the conditional and then select the lanes we want, _even if_ one of the
 /// branches is completely unused.
-template <typename BranchType, typename CondType>
-  requires std::is_same_v<Argon<CondType>, typename Argon<BranchType>::argon_bool_type>
-ace Argon<BranchType> ternary(Argon<CondType> condition, Argon<BranchType> true_value, Argon<BranchType> false_value) {
-  if constexpr (Argon<BranchType>::extension_arithmetic) {
-    return condition.vec() ? true_value.vec() : false_value.vec();
+template <typename VectorType, typename BranchType>
+  requires(BranchType::lanes == Predicate<VectorType>::lanes)
+ace BranchType ternary(Predicate<VectorType> condition, BranchType true_value, BranchType false_value) {
+#ifndef ARGON_PLATFORM_MVE
+  if constexpr (BranchType::extension_arithmetic) {
+    return condition.native() ? true_value.vec() : false_value.vec();
+  }
+#endif
+  return condition.Select(true_value, false_value);
+}
+
+/// @copydoc ternary
+/// @details Selects by a mask vector (all ones / all zeros per lane), e.g. from Predicate::ToMask().
+template <typename MaskType, typename BranchType>
+  requires std::is_unsigned_v<typename MaskType::scalar_type> && (MaskType::lanes == BranchType::lanes) &&
+           (sizeof(typename MaskType::vector_type) == sizeof(typename BranchType::vector_type))
+ace BranchType ternary(MaskType mask, BranchType true_value, BranchType false_value) {
+  if constexpr (BranchType::extension_arithmetic) {
+    return mask.vec() ? true_value.vec() : false_value.vec();
   } else {
-    return condition.Select(true_value, false_value);
+    return mask.Select(true_value, false_value);
   }
 }
 
+/// @copydoc ternary
+template <typename MaskType, typename ValueType>
+  requires std::is_unsigned_v<typename MaskType::scalar_type> && std::is_arithmetic_v<ValueType> &&
+           (sizeof(ValueType) == sizeof(typename MaskType::scalar_type))
+ace auto ternary(MaskType mask, ValueType true_value, ValueType false_value) {
+  using result_type =
+      std::conditional_t<sizeof(typename MaskType::vector_type) == 16, Argon<ValueType>, ArgonHalf<ValueType>>;
+  return ternary(mask, result_type{true_value}, result_type{false_value});
+}
+
 template <typename BranchType, typename CondType>
-  requires(sizeof(CondType) == sizeof(BranchType))
+  requires simd::is_vector_type<CondType> && (sizeof(CondType) == sizeof(BranchType))
 ace BranchType ternary(CondType condition, BranchType true_value, BranchType false_value) {
   if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
     return condition ? true_value.vec() : false_value.vec();
@@ -184,15 +208,11 @@ ace BranchType ternary(CondType condition, BranchType true_value, BranchType fal
 }
 
 /// @copydoc ternary
-template <typename ValueType, typename CondType>
-  requires std::is_arithmetic_v<ValueType> &&
-           std::is_same_v<Argon<CondType>, typename Argon<ValueType>::argon_bool_type>
-ace Argon<ValueType> ternary(Argon<CondType> condition, ValueType true_value, ValueType false_value) {
-  if constexpr (Argon<ValueType>::extension_arithmetic) {
-    return condition.vec() ? true_value : false_value;
-  } else {
-    return ternary(condition, Argon<ValueType>{true_value}, Argon<ValueType>{false_value});
-  }
+template <typename VectorType, typename ValueType>
+  requires std::is_arithmetic_v<ValueType> && (sizeof(ValueType) == sizeof(simd::Scalar_t<VectorType>))
+ace auto ternary(Predicate<VectorType> condition, ValueType true_value, ValueType false_value) {
+  using result_type = std::conditional_t<sizeof(VectorType) == 16, Argon<ValueType>, ArgonHalf<ValueType>>;
+  return ternary(condition, result_type{true_value}, result_type{false_value});
 }
 
 template <typename CondType, typename ScalarType>

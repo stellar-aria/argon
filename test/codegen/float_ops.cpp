@@ -13,9 +13,9 @@ F multiply_scalar(F a, float b) { return a * b; }
 F multiply_add(F a, F b, F c) { return a.MultiplyAdd(b, c); }
 F multiply_add_scalar(F a, F b, float c) { return a.MultiplyAdd(b, c); }
 F multiply_subtract(F a, F b, F c) { return a.MultiplySubtract(b, c); }
-U less_than(F a, F b) { return a < b; }
-U greater_than(F a, F b) { return a > b; }
-U less_equal(F a, F b) { return a <= b; }
-U greater_equal(F a, F b) { return a >= b; }
+U less_than(F a, F b) { return (a < b).ToMask(); }
+U greater_than(F a, F b) { return (a > b).ToMask(); }
+U less_equal(F a, F b) { return (a <= b).ToMask(); }
+U greater_equal(F a, F b) { return (a >= b).ToMask(); }
 F select(U m, F a, F b) { return argon::ternary(m, a, b); }
 F select_scalars(U m, float a, float b) { return argon::ternary(m, a, b); }
