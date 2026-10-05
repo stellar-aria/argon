@@ -150,6 +150,17 @@ static void check_number_minmax(auto& self) {
 }
 
 auto describe_number_minmax = describe("MaxNumber / MinNumber", ${
+  // A kernel whose inputs are never NaN picks MaxNumber where it is one instruction, and Max elsewhere (x86's
+  // maxps is Max exactly; Armv7 NEON has no vmaxnm).
+  it("reports whether vmaxnm/vminnm are native: Helium and Armv8 NEON", _{
+#if (defined(__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE & 2)) || (defined(__ARM_NEON) && __ARM_ARCH >= 8)
+    expect(Argon<float>::native_maxnm).to_be_true();
+#else
+    expect(Argon<float>::native_maxnm).to_be_false();
+#endif
+    expect(Argon<int32_t>::native_maxnm).to_be_false();
+  });
+
   it("float: IEEE maxNum / minNum", _{ check_number_minmax<float>(self); });
 #if defined(__aarch64__)
   it("double: IEEE maxNum / minNum", _{ check_number_minmax<double>(self); });
