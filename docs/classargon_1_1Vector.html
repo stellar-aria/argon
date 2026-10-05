@@ -366,6 +366,14 @@ ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;
 <tr class="memdesc:a51663230ed752a2cff604c1d380a547f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, copying the larger of each lane to the result.  <br /></td></tr>
 <tr class="memitem:ae9fded6d76878d39a236435acccb3eeb" id="r_ae9fded6d76878d39a236435acccb3eeb"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#ae9fded6d76878d39a236435acccb3eeb">Min</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:ae9fded6d76878d39a236435acccb3eeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, copying the smaller of each lane to the result.  <br /></td></tr>
+<tr class="memitem:a0f156f70c680bc1132c4f3ed82248d36" id="r_a0f156f70c680bc1132c4f3ed82248d36"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a0f156f70c680bc1132c4f3ed82248d36">MaxNumber</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memdesc:a0f156f70c680bc1132c4f3ed82248d36"><td class="mdescLeft">&#160;</td><td class="mdescRight">The larger of each lane by IEEE 754 maxNum, as Arm's vmaxnm: a quiet NaN in one operand gives the other (NaN only where both are), and +0 is larger than -0.  <br /></td></tr>
+<tr class="memitem:a7eab288a60867f11d98167351b7fea46" id="r_a7eab288a60867f11d98167351b7fea46"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a7eab288a60867f11d98167351b7fea46">MinNumber</a> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memdesc:a7eab288a60867f11d98167351b7fea46"><td class="mdescLeft">&#160;</td><td class="mdescRight">The smaller of each lane by IEEE 754 minNum, as Arm's vminnm: a quiet NaN in one operand gives the other (NaN only where both are), and -0 is smaller than +0.  <br /></td></tr>
+<tr class="memitem:acbd5e0f1d906b7e1b913c342c9c2770c" id="r_acbd5e0f1d906b7e1b913c342c9c2770c"><td class="memTemplParams" colspan="2"><a id="acbd5e0f1d906b7e1b913c342c9c2770c" name="acbd5e0f1d906b7e1b913c342c9c2770c"></a>
+template&lt;bool max&gt; </td></tr>
+<tr class="memitem:acbd5e0f1d906b7e1b913c342c9c2770c template"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><b>NumberMinMax</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
+<tr class="memdesc:acbd5e0f1d906b7e1b913c342c9c2770c"><td class="mdescLeft">&#160;</td><td class="mdescRight">MaxNumber/MinNumber from compares and selects, where there is no vmaxnm/vminnm. <br /></td></tr>
 <tr class="memitem:a3decc478c1472bc120da30c8cbd349b0" id="r_a3decc478c1472bc120da30c8cbd349b0"><td class="memItemLeft"><a id="a3decc478c1472bc120da30c8cbd349b0" name="a3decc478c1472bc120da30c8cbd349b0"></a>
 ace <a class="el" href="#af9f6ff460f020118ee8cec9cecced301">argon_bool_type</a>&#160;</td><td class="memItemRight"><b>Equal</b> (<a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> b) const</td></tr>
 <tr class="memdesc:a3decc478c1472bc120da30c8cbd349b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the lanes of two vectors, returning a predicate active where a == b. <br /></td></tr>
@@ -2356,6 +2364,36 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
+<a id="a0f156f70c680bc1132c4f3ed82248d36" name="a0f156f70c680bc1132c4f3ed82248d36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f156f70c680bc1132c4f3ed82248d36">&#9670;&#160;</a></span>MaxNumber()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::MaxNumber </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The larger of each lane by IEEE 754 maxNum, as Arm's vmaxnm: a quiet NaN in one operand gives the other (NaN only where both are), and +0 is larger than -0. </p>
+<p>Max is a &gt; b ? a : b, which passes a NaN in b through; MaxNumber is for when NaNs should be ignored, or can't occur and one instruction (vmaxnm) beats Max's compare and select. Native on Helium and Armv8 NEON; elsewhere a few compares and selects. </p>
+
+</div>
+</div>
 <a id="ae9fded6d76878d39a236435acccb3eeb" name="ae9fded6d76878d39a236435acccb3eeb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae9fded6d76878d39a236435acccb3eeb">&#9670;&#160;</a></span>Min()</h2>
 
@@ -2383,6 +2421,36 @@ template&lt;typename VectorType&gt; </div>
 
 <p>Compare the lanes of two vectors, copying the smaller of each lane to the result. </p>
 <p>Equivalent to a &lt; b ? a : b </p>
+
+</div>
+</div>
+<a id="a7eab288a60867f11d98167351b7fea46" name="a7eab288a60867f11d98167351b7fea46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eab288a60867f11d98167351b7fea46">&#9670;&#160;</a></span>MinNumber()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::MinNumber </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The smaller of each lane by IEEE 754 minNum, as Arm's vminnm: a quiet NaN in one operand gives the other (NaN only where both are), and -0 is smaller than +0. </p>
+<p>See MaxNumber. </p>
 
 </div>
 </div>
@@ -4257,7 +4325,7 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">                                       =</div>
 <div class="line">ARGON_USE_COMPILER_EXTENSIONS &amp;&amp; !(<a class="code hl_define" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a> &amp;&amp; std::is_floating_point_v&lt;scalar_type&gt;)</div>
-<div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:88</div></div>
+<div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:102</div></div>
 </div><!-- fragment -->
 <p>Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT). </p>
 

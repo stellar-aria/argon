@@ -94,8 +94,8 @@ var NAVTREEINDEX =
 [
 "a32_8hpp_source.html",
 "classargon_1_1Predicate.html#ae207760039f2ce7e2c9138670ba13508",
-"classargon_1_1Vector.html#acad81c4e41ec827ffc64a34761b0c41f",
-"namespaceargon.html#a599511189d1c9f9949643b3c1a33a06b"
+"classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9",
+"namespaceargon.html#a2333218a69549287679c3a063ba821f3"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

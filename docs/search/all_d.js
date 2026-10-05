@@ -14,5 +14,6 @@ var searchData=
   ['nextsmaller_5ft_11',['NextSmaller_t',['../namespaceargon_1_1helpers.html#a8d075bdf1ee9f3d7bb5988ac4603f5a0',1,'argon::helpers']]],
   ['none_12',['None',['../classargon_1_1Predicate.html#a71df1c639e0fda1881b2653d5c832da4',1,'argon::Predicate']]],
   ['not_20yet_20_3a_13',['What Argon is not (yet?):',['../index.html#autotoc_md3',1,'']]],
-  ['notes_14',['Notes',['../md_docs_2vectorize.html#autotoc_md27',1,'']]]
+  ['notes_14',['Notes',['../md_docs_2vectorize.html#autotoc_md27',1,'']]],
+  ['numberminmax_15',['NumberMinMax',['../classargon_1_1Vector.html#acbd5e0f1d906b7e1b913c342c9c2770c',1,'argon::Vector']]]
 ];
