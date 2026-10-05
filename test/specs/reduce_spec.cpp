@@ -27,6 +27,16 @@ auto describe_reduce_add_float = describe("ReduceAdd float", ${
     auto v = Argon<float>::Load(data.data());
     expect(v.ReduceAdd()).to_equal(10.0f);
   });
+
+  // (1 + 2^-24) rounds to 1 and -1 + 2^-24 is exact, so the pairwise sum is 2^-24; (1 - 1) + (2^-24 + 2^-24) is 2^-23.
+  it("adds in pairs, (0 + 1) + (2 + 3), on AArch64 and Helium; (0 + 2) + (1 + 3) elsewhere", _{
+    const auto v = Argon<float>{1.0f, 0x1p-24f, -1.0f, 0x1p-24f};
+#if defined(__aarch64__) || defined(ARGON_PLATFORM_MVE)
+    expect(v.ReduceAdd()).to_equal(0x1p-24f);
+#else
+    expect(v.ReduceAdd()).to_equal(0x1p-23f);
+#endif
+  });
 });
 
 // ── ReduceMax ──────────────────────────────────────────────────────────────

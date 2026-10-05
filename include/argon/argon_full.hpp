@@ -1025,6 +1025,15 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #elifdef ARGON_PLATFORM_MVE
     if constexpr (mve_across_add) {
       return static_cast<ScalarType>(mve::reduce_add(this->vec_));  // vaddv
+    } else if constexpr (std::is_same_v<ScalarType, float>) {
+      // MVE has no float vaddv, and no vext for Reduce's doubleword swap (GCC goes through the stack): add pairs
+      // with vrev64, then the two halves' sums, ((0 + 1) + (2 + 3)) as AArch64's faddp does.
+      Argon pairs = *this + this->Reverse64bit();
+      return pairs[0] + pairs[2];
+    } else if constexpr (argon::is_half_float_v<ScalarType>) {
+      Argon pairs = *this + this->Reverse32bit();  // lane 4k: (4k) + (4k + 1)
+      Argon quads = pairs + pairs.Reverse64bit();  // lane 4k: the sum of lanes 4k .. 4k + 3
+      return static_cast<ScalarType>(quads[0] + quads[4]);
     }
 #endif
     return this->Reduce([](auto a, auto b) { return a + b; });

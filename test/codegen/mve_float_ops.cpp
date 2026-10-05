@@ -1,11 +1,15 @@
 // Every Argon<float> / Argon<float16_t> operation here must compile to Helium vector instructions on the M55
 // (checked by check_mve_float.sh): no scalar VFP float arithmetic or comparisons, and every fma_* function must
-// use a fused multiply-accumulate. GCC scalarises vector-extension float `?:` on MVE, and never contracts
+// use a fused multiply-accumulate. The reduce_* functions end in a scalar add, but must not go through the stack. GCC scalarises vector-extension float `?:` on MVE, and never contracts
 // vector-extension `a + b * c` into vfma there.
 #include "argon.hpp"
 
 using F = Argon<float>;
 using H = Argon<float16_t>;
+
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"  // C names for the checker, C++ types
+#endif
 
 extern "C" {
 
@@ -25,4 +29,7 @@ F fma_subtract_scalar(F a, F b, float c) { return a.MultiplySubtract(b, c); }
 H fma_half_vector(H a, H b, H c) { return a.MultiplyAdd(b, c); }
 H fma_half_scalar(H a, H b, float16_t c) { return a.MultiplyAdd(b, c); }
 H fma_half_subtract_vector(H a, H b, H c) { return a.MultiplySubtract(b, c); }
+
+float reduce_add(F a) { return a.ReduceAdd(); }
+float16_t reduce_add_half(H a) { return a.ReduceAdd(); }
 }

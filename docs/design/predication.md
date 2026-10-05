@@ -257,7 +257,9 @@ GCC 16.2 also mishandles generic vector-extension float code on MVE without `-ff
 it scalarises float `?:` to VFP compares (`vcmpe` + `vmrs APSR_nzcv`, per lane) and never contracts `a + b * c`
 into `vfma`, even with `-ffp-contract=fast`. Float `Max`/`Min` therefore use `vcmp` + `vpsel` on MVE (keeping
 `a > b ? a : b`, which `vmaxnm` would not), and float `MultiplyAdd`/`MultiplySubtract` use `vfma`/`vfms`: fused,
-Helium's only float multiply-accumulate. CTest `float_ops_use_mve` (M55) checks both.
+Helium's only float multiply-accumulate. MVE has no float `vaddv` and no `vext`, so the generic `Reduce` fold's
+doubleword swap goes through the stack; float and half `ReduceAdd` add pairs with `vrev` instead (pairwise order, as
+AArch64's `faddp`). CTest `float_ops_use_mve` (M55) checks all three.
 
 ## Open questions
 
