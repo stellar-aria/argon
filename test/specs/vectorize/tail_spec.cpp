@@ -1,12 +1,16 @@
 #include "argon.hpp"
+#include "argon/vectorize/interleaved.hpp"
 #include "argon/vectorize/load.hpp"
+#include "argon/vectorize/load_interleaved.hpp"
 #include "argon/vectorize/load_store.hpp"
 #include "argon/vectorize/store.hpp"
+#include "argon/vectorize/store_interleaved.hpp"
 #include "cppspec.hpp"
 #include <array>
 #include <limits>
 #include <numeric>
 #include <span>
+#include <vector>
 
 // clang-format off
 
@@ -140,9 +144,84 @@ auto describe_iterators = describe("vectorize iterators", ${
   });
 });
 
+// ── Interleaved views ──────────────────────────────────────────────────────
+
+auto describe_interleaved_tail = describe("interleaved views with_tail()", ${
+  it("load_interleaved().with_tail() de-interleaves a partial final group", _{
+    // 5 stereo frames of int32: one whole group of 4 frames, then 1 frame
+    std::array<int32_t, 10> data = {1, -1, 2, -2, 3, -3, 4, -4, 5, -5};
+    std::vector<std::array<int32_t, 4>> left, right;
+    std::vector<size_t> counts;
+    for (auto p : argon::vectorize::load_interleaved<int32_t, 2>(data).with_tail()) {
+      left.push_back((*p)[0].to_array());
+      right.push_back((*p)[1].to_array());
+      counts.push_back(p.count());
+    }
+    expect(counts).to_equal(std::vector<size_t>{4, 1});
+    expect(left[1]).to_equal(std::array<int32_t, 4>{5, 0, 0, 0});
+    expect(right[1]).to_equal(std::array<int32_t, 4>{-5, 0, 0, 0});
+  });
+
+  it("store_interleaved().with_tail() writes a partial final group and nothing after it", _{
+    std::array<int16_t, 24> out{};
+    out.fill(99);
+    // 11 frames of stride 2 (22 elements) in a 24-element buffer
+    for (auto& p : argon::vectorize::store_interleaved<int16_t, 2>(std::span{out}.first(22)).with_tail()) {
+      p = {Argon<int16_t>{1}, Argon<int16_t>{2}};
+    }
+    std::array<int16_t, 24> expected{};
+    for (size_t i = 0; i < 22; ++i) expected[i] = static_cast<int16_t>(i % 2 ? 2 : 1);
+    expected[22] = expected[23] = 99;
+    expect(out).to_equal(expected);
+  });
+
+  it("interleaved<3>().with_tail() updates RGB frames in place, including a partial group", _{
+    // 6 RGB frames of float: one group of 4 frames, then 2
+    std::array<float, 19> rgb{};
+    for (size_t i = 0; i < 18; ++i) rgb[i] = static_cast<float>(i);
+    rgb[18] = -1.0f;  // past the range
+    for (auto& p : argon::vectorize::interleaved<3, float>(rgb.data(), 18).with_tail()) {
+      (*p)[1] = (*p)[1] * 10.0f;  // scale green
+    }
+    for (size_t frame = 0; frame < 6; ++frame) {
+      expect(rgb[frame * 3 + 0]).to_equal(static_cast<float>(frame * 3 + 0));
+      expect(rgb[frame * 3 + 1]).to_equal(static_cast<float>(frame * 3 + 1) * 10.0f);
+      expect(rgb[frame * 3 + 2]).to_equal(static_cast<float>(frame * 3 + 2));
+    }
+    expect(rgb[18]).to_equal(-1.0f);
+  });
+
+  it("whole groups only: plain views stop at the last whole group of lanes * stride", _{
+    // 12 int32 at stride 2 is one whole group of 8; the old rounding (to a multiple of 4) never reached end()
+    std::array<int32_t, 12> data{};
+    std::iota(data.begin(), data.end(), 0);
+    size_t groups = 0;
+    for (auto group : argon::vectorize::load_interleaved<int32_t, 2>(data)) { (void)group; ++groups; }
+    expect(groups).to_equal(size_t{1});
+    std::array<int32_t, 12> out{};
+    size_t stores = 0;
+    for (auto& group : argon::vectorize::store_interleaved<int32_t, 2>(out)) {
+      group = {Argon<int32_t>{7}, Argon<int32_t>{8}};
+      ++stores;
+    }
+    expect(stores).to_equal(size_t{1});
+    expect(out[7]).to_equal(8);
+    expect(out[8]).to_equal(0);
+  });
+
+  it("stores stride-3 groups (scattered on MVE, which has no vst3)", _{
+    std::array<uint8_t, 48> out{};
+    argon::store_interleaved(out.data(), std::array<Argon<uint8_t>, 3>{Argon<uint8_t>{1}, Argon<uint8_t>{2}, Argon<uint8_t>{3}});
+    std::array<uint8_t, 48> expected{};
+    for (size_t i = 0; i < 48; ++i) expected[i] = static_cast<uint8_t>(i % 3 + 1);
+    expect(out).to_equal(expected);
+  });
+});
+
 CPPSPEC_MAIN(
   describe_load_tail,
   describe_store_tail,
   describe_load_store_tail,
-  describe_iterators
+  describe_iterators,
+  describe_interleaved_tail
 );

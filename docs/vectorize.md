@@ -138,7 +138,10 @@ On Helium (MVE) every vector is loaded and stored under a `vctp` predicate, and 
 low-overhead tail-predicated loops (`dlstp`/`letp`) with no scalar epilogue. On NEON the whole vectors use plain
 loads and stores; only the final partial vector is loaded and stored lane by lane.
 
-The interleaved views do not have `with_tail()` yet.
+`load_interleaved`, `store_interleaved` and `interleaved` have `with_tail()` too. Their lanes are frames of `Stride`
+elements, each element is a `Partial` whose value is one vector per channel, and elements that don't complete a frame
+are not visited. Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; since those can't be predicated, even
+on Helium, the final partial group is gathered and scattered per channel.
 
 ## Notes
 

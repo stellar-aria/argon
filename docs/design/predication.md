@@ -164,7 +164,8 @@ vectors everywhere:
 - **NEON:** whole vectors use plain loads and stores; only the final partial vector goes lane by lane.
 
 Zeroed inactive lanes are safe for sums but not for min/max/product reductions, so reductions take `p.active()`.
-The interleaved views don't have `with_tail()` yet.
+The interleaved views have `with_tail()` too: whole groups use `vld2`-`vld4`, which can't be predicated, and the
+final partial group is gathered and scattered per channel.
 
 ### 5. Predicated arithmetic (later, optional)
 

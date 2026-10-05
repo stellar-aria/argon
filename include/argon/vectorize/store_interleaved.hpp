@@ -1,6 +1,7 @@
 #pragma once
 #include <ranges>
 #include "argon.hpp"
+#include "argon/vectorize/tail.hpp"
 #include "arm_simd/helpers/vec128.hpp"
 
 #ifdef __ARM_FEATURE_MVE
@@ -15,7 +16,8 @@ template <typename scalar_type, size_t stride = 2>
 struct store_interleaved : std::ranges::view_interface<store_interleaved<scalar_type, stride>> {
   using intrinsic_type = simd::Vec128_t<scalar_type>;
   static constexpr size_t lanes = sizeof(intrinsic_type) / sizeof(scalar_type);
-  static constexpr size_t vectorizeable_size(size_t size) { return size & ~(lanes - 1); }
+  // Round down to a whole number of iterations; each iteration spans lanes * stride elements.
+  static constexpr size_t vectorizeable_size(size_t size) { return size - (size % (lanes * stride)); }
 
   static_assert(stride > 1 && stride < 5, "Interleaving Stores can only be performed with a stride of 2, 3, or 4");
 
@@ -43,6 +45,7 @@ struct store_interleaved : std::ranges::view_interface<store_interleaved<scalar_
     }
 
     StoreInterleavedIterator& operator--() {
+      argon::store_interleaved(ptr_, vecs_);  // store before moving, as operator++ does
       ptr_ -= lanes * stride;
       vecs_ = {};
       return *this;
@@ -54,7 +57,9 @@ struct store_interleaved : std::ranges::view_interface<store_interleaved<scalar_
       return tmp;
     }
 
-    difference_type operator-(const StoreInterleavedIterator& other) const { return ptr_ - other.ptr_; }
+    difference_type operator-(const StoreInterleavedIterator& other) const {
+      return (ptr_ - other.ptr_) / difference_type{lanes * stride};
+    }
 
     friend bool operator==(const StoreInterleavedIterator& a, const StoreInterleavedIterator& b) {
       return a.ptr_ == b.ptr_;
@@ -82,11 +87,19 @@ struct store_interleaved : std::ranges::view_interface<store_interleaved<scalar_
   size_t size() const { return size_ / (lanes * stride); }
 
   template <std::ranges::contiguous_range R>
-  store_interleaved(R&& r) : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))} {}
+  store_interleaved(R&& r)
+      : start_{&*std::ranges::begin(r)}, size_{vectorizeable_size(std::ranges::size(r))}, count_{std::ranges::size(r)} {}
+
+  /// @brief A view of the same range that also writes the final, partial group of vectors.
+  /// @details This view skips frames after the last whole group; with_tail() writes them too. Each element is a
+  /// Partial whose value is one vector per channel; only lanes inside the range are stored. Elements that don't
+  /// complete a frame of `stride` are not written.
+  store_tail<scalar_type, stride> with_tail() const { return {start_, count_ / stride}; }
 
  private:
   scalar_type* start_;
   size_t size_;
+  size_t count_;  ///< Number of elements in the range, including any after the last whole group.
 };
 
 static_assert(std::ranges::range<store_interleaved<int32_t, 2>>);
