@@ -19,7 +19,9 @@ execution, tail-predicated loops, and scatter/gather — while keeping NEON code
 | Loop tails          | Scalar epilogue                          | `vctp` + `dlstp`/`letp` low-overhead loops            |
 | Scatter/gather      | None (lane-by-lane emulation)            | Native, with offset, base, and write-back forms      |
 
-### Current state
+### State before this work
+
+Everything in this section has since been fixed on `helium-build` (steps 0–2); it is kept as the starting point.
 
 - **The M55 build is broken.** Every spec fails to compile with `arm-none-eabi-g++ -mcpu=cortex-m55` (169 errors,
   mostly from `vector.hpp` and `argon_full.hpp`). The M55 CI runner was disabled in `0eb585a`, so this went unnoticed.
@@ -158,18 +160,28 @@ NEON fast path.
 
 ### 4. Tail handling in `vectorize::`
 
-Opt-in, so existing loops keep their documented behaviour: `load`, `store` and `load_store` gain `with_tail()`, a view
-that also visits the final partial vector. Each element is a `Partial` (`*p`, `p.count()`, `p.active()`); lanes past
-the end load as zero and are never stored. The tail is predicated on both platforms, so portable code sees the same
-vectors everywhere:
+Two ways to visit every element, with the same results:
 
-- **MVE:** every vector is loaded and stored under `FirstN(remaining)` (`vctp`), unclamped; the loops compile to
-  `dlstp`/`letp` with no scalar epilogue.
-- **NEON:** whole vectors use plain loads and stores; only the final partial vector goes lane by lane.
+- **`with_tail()`**, opt-in on every view so existing loops keep their documented behaviour: each element is a
+  `Partial` (`*p`, `p.count()`, `p.active()`); lanes past the end load as zero and are never stored. The interleaved
+  views have it too: whole groups use `vld2`–`vld4`, which can't be predicated, and the final partial group is
+  gathered and scattered per channel.
+- **`vectorize::for_each<T>(n, body)`**, a loop helper whose body gets a step (`Load`/`Store`, `LoadWiden`/
+  `StoreNarrow`, `index()`, `count()`, `active()`). On MVE it is a signed counter, a `vctp` of the remaining count
+  and predicated accesses — the shape the compilers' tail-predication passes match — and both GCC 16 and clang 23
+  turn it into `dlstp`/`letp` for every lane type (floats need `-fno-trapping-math` with GCC). On NEON the body runs
+  with plain whole-vector steps and once with a partial step, so the main loop is the tightest of the two.
 
-Zeroed inactive lanes are safe for sums but not for min/max/product reductions, so reductions take `p.active()`.
-The interleaved views have `with_tail()` too: whole groups use `vld2`-`vld4`, which can't be predicated, and the
-final partial group is gathered and scattered per channel.
+The views' loop control and predicates are spread across iterator operations, so whether they become `dlstp`/`letp`
+depends on how the inlined code simplifies: GCC converts them for 16- and 32-bit lanes but not 8-bit ones, and clang
+not at all (it keeps them predicated, with an explicit counter). Hence `for_each` for hot loops, the views for
+range-based code. `test/codegen/tail_loops.cpp` (CTest `tail_loops_use_dlstp`, M55) checks the loops GCC converts.
+
+Zeroed inactive lanes are safe for sums but not for min/max/product reductions, so reductions take `active()`.
+
+An interleaved `for_each` would use `vld2`/`vld4` for whole groups and predicated gathers for the last one (a `dls`/
+`le` loop rather than `dlstp`, since structured loads can't be predicated), or predicated gathers throughout for
+stride 3 on MVE, which has no `vld3`. Data whose channels all get the same treatment can use `for_each` as flat data.
 
 ### 5. Predicated arithmetic and compares
 
@@ -196,8 +208,8 @@ predicated compare (`vpst; vcmpt`) instead of two compares whose predicates are 
 | 0    | **Done** (`helium-build`). Fix the M55 build: `MultiplySubtract` as `a - b*c`, comparison name mapping, gate `Reverse` and lane assignment, guard NEON-only specs; re-enable the M55 CI runner | Small  |
 | 1    | **Done** (`helium-build`). `Predicate<V>`, comparisons return it; specs for logic, `Select`, `Any`/`All`/`Count`, `FirstN` on both platforms | Medium |
 | 2    | **Done** (`helium-build`). Rebuild `CondMonad` on `Predicate`, fix `else_`, add specs                                        | Small  |
-| 3    | **Done** (`helium-build`). Predicated load/store/reduce; complete scatter/gather (stores, predicated, widening)              | Medium |
-| 4    | **Done** (`helium-build`), as opt-in `with_tail()` on `load`/`store`/`load_store`. Tail handling in `vectorize::` views, with a `dlstp`/`letp` codegen check                         | Medium |
+| 3    | **Done** (`helium-build`). Predicated load/store/reduce; complete scatter/gather (stores, predicated); widening loads and narrowing stores, contiguous and as gathers/scatters (`LoadWiden`, `StoreNarrow`, `…Widen`/`…Narrow`) | Medium |
+| 4    | **Done** (`helium-build`): opt-in `with_tail()` on every view, and `vectorize::for_each`, the loop that reliably becomes `dlstp`/`letp`; CTest codegen check `tail_loops_use_dlstp` | Medium |
 | 5    | **Done** (`helium-build`). Predicated arithmetic overloads and predicated compares                                           | Medium |
 
 Steps 0 and 1 are prerequisites for everything else. Step 1 also fixes the silent `Equal` miscompile.
