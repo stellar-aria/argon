@@ -63,7 +63,6 @@ elseif(ARGON_TEST_CPU STREQUAL "M55")
   # qemu-system-arm -cpu cortex-m55 -machine mps3-an547 -nographic -monitor none -serial none -semihosting -semihosting-config enable=on,target=native -kernel .\gather_spec
 elseif(ARGON_TEST_CPU STREQUAL "SIMDe" OR NOT ARGON_TEST_CPU)
   message(STATUS "Building for host (SIMDe fallback)")
-  add_compile_definitions(SIMDE_ENABLE_NATIVE_ALIASES)
 endif()
 
 include(FetchContent)
