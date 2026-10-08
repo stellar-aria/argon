@@ -73,8 +73,10 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 
   /// @brief Construct from an underlying `argon::Vector`.
   ace Argon(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
-  /// @brief Construct from a four-element array (loaded as a 128-bit vector).
-  ace Argon(std::array<ScalarType, 4> value_list) : T{T::Load(value_list.data())} {};
+  /// @brief Construct from four values: lane i takes `value_list[i]`.
+  /// @details With 32-bit lanes the four values are the whole vector. With 8- and 16-bit lanes they fill lanes 0-3
+  /// and the other lanes are zero. With 64-bit lanes the vector holds the first two values.
+  ace Argon(std::array<ScalarType, 4> value_list) : T{FromFour(value_list)} {};
   /// @brief Construct by combining a low and high 64-bit half-vector.
   /// @details A template, so that brace-initialising from two scalars (`Argon<int64_t>{a, b}`) doesn't need
   /// ArgonHalf<ScalarType>, which can't exist for 64-bit lanes on AArch32.
@@ -1404,6 +1406,17 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #endif
   }
 
+  /// The vector Argon(std::array<ScalarType, 4>) holds. With more lanes than values, the values go into a zeroed
+  /// array of a whole vector's lanes, so the load reads only what the array holds.
+  ace static vector_type FromFour(std::array<ScalarType, 4> values) {
+    if constexpr (lanes <= 4) {
+      return T::Load(values.data());
+    } else {
+      std::array<ScalarType, lanes> padded{};
+      std::copy(values.begin(), values.end(), padded.begin());
+      return T::Load(padded.data());
+    }
+  }
 };
 
 template <typename... arg_types>
