@@ -36,7 +36,7 @@ class Step {
     if constexpr (full) {
       return lanes;
     } else {
-      return std::min(remaining_, lanes);
+      return remaining_ < lanes ? remaining_ : lanes;
     }
   }
 
@@ -171,7 +171,7 @@ class InterleavedStep {
     if constexpr (full) {
       return lanes;
     } else {
-      return std::min(remaining_, lanes);
+      return remaining_ < lanes ? remaining_ : lanes;
     }
   }
 
