@@ -8,13 +8,15 @@
 namespace argon {
 namespace detail {
 template <class T, std::size_t N, std::size_t... I>
-constexpr std::array<helpers::ArgonFor_t<T>, N> to_array_impl(T (&a)[N], std::index_sequence<I...>) {
+[[gnu::always_inline]] constexpr std::array<helpers::ArgonFor_t<T>, N> to_array_impl(T (&a)[N],
+                                                                                     std::index_sequence<I...>) {
   using argon_type = helpers::ArgonFor_t<T>;
   return {{argon_type{a[I]}...}};
 }
 
 template <class T, std::size_t N, std::size_t... I>
-constexpr std::array<helpers::ArgonFor_t<T>, N> to_array_impl(T (&&a)[N], std::index_sequence<I...>) {
+[[gnu::always_inline]] constexpr std::array<helpers::ArgonFor_t<T>, N> to_array_impl(T (&&a)[N],
+                                                                                     std::index_sequence<I...>) {
   using argon_type = helpers::ArgonFor_t<T>;
   return {{argon_type{std::move(a[I])}...}};
 }
@@ -26,7 +28,7 @@ constexpr std::array<helpers::ArgonFor_t<T>, N> to_array_impl(T (&&a)[N], std::i
 /// @param a  The C-style array to convert.
 /// @return A std::array of Argon types.
 template <class T, std::size_t N>
-constexpr std::array<helpers::ArgonFor_t<T>, N> to_array(T (&a)[N]) {
+[[gnu::always_inline]] constexpr std::array<helpers::ArgonFor_t<T>, N> to_array(T (&a)[N]) {
   return detail::to_array_impl(a, std::make_index_sequence<N>{});
 }
 
@@ -37,7 +39,7 @@ constexpr std::array<helpers::ArgonFor_t<T>, N> to_array(T (&a)[N]) {
 /// @return A std::array of Argon types.
 /// @details This overload is for rvalue references to arrays.
 template <class T, std::size_t N>
-constexpr std::array<helpers::ArgonFor_t<T>, N> to_array(T (&&a)[N]) {
+[[gnu::always_inline]] constexpr std::array<helpers::ArgonFor_t<T>, N> to_array(T (&&a)[N]) {
   return detail::to_array_impl(std::move(a), std::make_index_sequence<N>{});
 }
 
