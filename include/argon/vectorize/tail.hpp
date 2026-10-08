@@ -7,6 +7,7 @@
 #include <type_traits>
 #include "argon/argon_full.hpp"
 #include "argon/store.hpp"
+#include "argon/vectorize/first_n.hpp"
 
 /// @file tail.hpp
 /// @brief Vectorized views that also visit the final, partial vector of a range (see `with_tail()` on the views).
@@ -75,21 +76,25 @@ typename Argon<ScalarType>::offset_type frame_offsets() {
 }
 
 /// Load the first `count` lanes at `ptr` (all lanes when count >= lanes); the rest are zero and not read.
+/// @details On NEON a partial vector branches on `count` itself (see first_n.hpp), never on the lanes of a predicate.
 template <size_t Stride, typename ScalarType>
 typename Partial<ScalarType, Stride>::vector_type load_partial(const ScalarType* ptr, size_t count) {
   using argon_type = Argon<ScalarType>;
+#ifdef ARGON_PLATFORM_MVE
   using predicate_type = typename argon_type::argon_bool_type;
+#endif
   if constexpr (Stride == 1) {
 #ifdef ARGON_PLATFORM_MVE
     // Always predicate: a vctp-predicated loop is what the compiler turns into dlstp/letp.
     return argon_type::Load(ptr, predicate_type::FirstN(count));
 #else
-    return count >= argon_type::lanes ? argon_type::Load(ptr) : argon_type::Load(ptr, predicate_type::FirstN(count));
+    return count >= argon_type::lanes ? argon_type::Load(ptr) : load_first_n(ptr, count);
 #endif
   } else {
     if (count >= argon_type::lanes) {
       return argon_type::template LoadInterleaved<Stride>(ptr);
     }
+#ifdef ARGON_PLATFORM_MVE
     // De-interleaving loads (vld2/vld4) can't be predicated, even on MVE: gather each channel instead.
     const auto offsets = frame_offsets<ScalarType, Stride>();
     const auto active = predicate_type::FirstN(count);
@@ -98,14 +103,20 @@ typename Partial<ScalarType, Stride>::vector_type load_partial(const ScalarType*
       out[channel] = argon_type::LoadGatherOffsetIndex(ptr + channel, offsets, active);
     }
     return out;
+#else
+    return load_first_n_interleaved<Stride>(ptr, count);
+#endif
   }
 }
 
 /// Store the first `count` lanes of `value` to `ptr` (all lanes when count >= lanes).
+/// @details On NEON a partial vector branches on `count` itself (see first_n.hpp), never on the lanes of a predicate.
 template <size_t Stride, typename ScalarType>
 void store_partial(ScalarType* ptr, const typename Partial<ScalarType, Stride>::vector_type& value, size_t count) {
   using argon_type = Argon<ScalarType>;
+#ifdef ARGON_PLATFORM_MVE
   using predicate_type = typename argon_type::argon_bool_type;
+#endif
   if constexpr (Stride == 1) {
 #ifdef ARGON_PLATFORM_MVE
     value.StoreTo(ptr, predicate_type::FirstN(count));
@@ -113,7 +124,7 @@ void store_partial(ScalarType* ptr, const typename Partial<ScalarType, Stride>::
     if (count >= argon_type::lanes) {
       value.StoreTo(ptr);
     } else {
-      value.StoreTo(ptr, predicate_type::FirstN(count));
+      store_first_n(ptr, value, count);
     }
 #endif
   } else {
@@ -121,12 +132,16 @@ void store_partial(ScalarType* ptr, const typename Partial<ScalarType, Stride>::
       argon::store_interleaved(ptr, value);
       return;
     }
+#ifdef ARGON_PLATFORM_MVE
     // Interleaving stores (vst2/vst4) can't be predicated, even on MVE: scatter each channel instead.
     const auto offsets = frame_offsets<ScalarType, Stride>();
     const auto active = predicate_type::FirstN(count);
     for (size_t channel = 0; channel < Stride; ++channel) {
       value[channel].StoreScatterOffsetIndex(ptr + channel, offsets, active);
     }
+#else
+    store_first_n_interleaved<Stride>(ptr, value, count);
+#endif
   }
 }
 

@@ -134,11 +134,17 @@ void gain(int16_t* samples, std::ptrdiff_t n) {
 ```
 
 Write the body as a generic lambda (`auto step`): on NEON it runs with plain whole-vector steps and then once with a
-partial step, so the main loop has no predication at all. On Helium every step is predicated, and the loop is
-written in the shape GCC and clang turn into a low-overhead tail-predicated loop (`dlstp`/`letp`): the hardware
-counts the remaining elements and predicates the last vector, with no compare-and-branch and no scalar epilogue. A CTest codegen check (`tail_loops_use_dlstp`) keeps it
-that way. GCC tail-predicates float loops only with `-fno-trapping-math` (or `-ffast-math`), because the inactive
-lanes compute too; without it the loop is still predicated, just with an explicit loop counter.
+partial step, so the main loop has no predication at all. The partial step's loads and stores branch on its lane
+count, a scalar, rather than on the lanes of a predicate: reading a predicate's lanes back into core registers
+(`vmov.32 r, d[k]`) stalls an in-order core such as the Cortex-A9. `step.active()` still builds the predicate when
+the body asks for it. A CTest codegen check (`tail_loops_stay_on_neon`, on A9 and A7) keeps the tail free of those
+transfers.
+
+On Helium every step is predicated, and the loop is written in the shape GCC and clang turn into a low-overhead
+tail-predicated loop (`dlstp`/`letp`): the hardware counts the remaining elements and predicates the last vector,
+with no compare-and-branch and no scalar epilogue. A CTest codegen check (`tail_loops_use_dlstp`) keeps it that way.
+GCC tail-predicates float loops only with `-fno-trapping-math` (or `-ffast-math`), because the inactive lanes compute
+too; without it the loop is still predicated, just with an explicit loop counter.
 
 ### Interleaved data (`vectorize::for_each_interleaved`)
 
@@ -154,8 +160,9 @@ argon::vectorize::for_each_interleaved<int16_t, 2>(frames, [&](auto step) {
 });
 ```
 
-Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; the last, partial group gathers and scatters each
-channel under a predicate. On Helium the structured loads can't be predicated, so strides 2 and 4 make a `dls`/`le`
+Whole groups use `vld2`/`vld3`/`vld4` and the matching stores. The structured loads can't be predicated: on NEON the
+last, partial group uses them on just its in-range frames (the low doubleword's worth at once, then one frame to a
+lane), and on Helium it gathers and scatters each channel under a predicate, so strides 2 and 4 make a `dls`/`le`
 loop rather than `dlstp`/`letp`. Stride 3 has no `vld3` on MVE, so there every group is gathered under a predicate,
 which can tail-predicate: float frames do with both compilers, 8-bit ones with clang only.
 
@@ -200,12 +207,13 @@ void scale(std::span<float> data) {
 
 On Helium (MVE) every vector is loaded and stored under a `vctp` predicate, so there is no scalar epilogue; whether
 the loop also becomes `dlstp`/`letp` depends on the compiler (see above). On NEON the whole vectors use plain loads
-and stores; only the final partial vector is loaded and stored lane by lane.
+and stores; only the final partial vector is loaded and stored in pieces, branching on `p.count()` (a doubleword at
+once, then lane by lane), and `p.active()` is built only when you call it.
 
 `load_interleaved`, `store_interleaved` and `interleaved` have `with_tail()` too. Their lanes are frames of `Stride`
 elements, each element is a `Partial` whose value is one vector per channel, and elements that don't complete a frame
-are not visited. Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; since those can't be predicated, even
-on Helium, the final partial group is gathered and scattered per channel.
+are not visited. Whole groups use `vld2`/`vld3`/`vld4` and the matching stores; since those can't be predicated, the
+final partial group uses them frame by frame on NEON, and is gathered and scattered per channel on Helium.
 
 ## Notes
 

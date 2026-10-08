@@ -1,10 +1,11 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <type_traits>
-#include <array>
 #include "argon/argon_full.hpp"
 #include "argon/store.hpp"
+#include "argon/vectorize/first_n.hpp"
 
 /// @file for_each.hpp
 /// @brief A loop over `n` elements a vector at a time, final partial vector included, shaped so that Helium
@@ -15,8 +16,9 @@ namespace argon::vectorize {
 /// @brief One step of vectorize::for_each: the elements [index(), index() + count()) of the range.
 /// @tparam ScalarType The lane type the loop is written in.
 /// @tparam full Whether every lane is in range. On NEON the loop body is instantiated with full steps for the
-/// whole vectors (plain loads and stores) and once more with a partial step for the tail; on MVE every step is
-/// predicated, which is what lets the compiler drop the predication into the loop instructions (dlstp/letp).
+/// whole vectors (plain loads and stores) and once more with a partial step for the tail, whose accesses branch on
+/// its scalar count rather than a predicate (see first_n.hpp); on MVE every step is predicated, which is what lets
+/// the compiler drop the predication into the loop instructions (dlstp/letp).
 template <typename ScalarType, bool full>
 class Step {
  public:
@@ -53,7 +55,11 @@ class Step {
     if constexpr (full) {
       return argon_type::Load(base + index_);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       return argon_type::Load(base + index_, active());
+#else
+      return detail::load_first_n(base + index_, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -62,7 +68,11 @@ class Step {
     if constexpr (full) {
       value.StoreTo(base + index_);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       value.StoreTo(base + index_, active());
+#else
+      detail::store_first_n(base + index_, value, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -73,7 +83,11 @@ class Step {
     if constexpr (full) {
       return argon_type::LoadWiden(base + index_);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       return argon_type::LoadWiden(base + index_, active());
+#else
+      return detail::load_first_n_widen<N, ScalarType>(base + index_, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -84,7 +98,11 @@ class Step {
     if constexpr (full) {
       value.StoreNarrow(base + index_);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       value.StoreNarrow(base + index_, active());
+#else
+      detail::store_first_n_narrow<N, ScalarType>(base + index_, value, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -102,7 +120,8 @@ class Step {
 /// @details On Helium, GCC and clang compile this into a low-overhead tail-predicated loop (dlstp/letp), with no
 /// scalar epilogue: the loop is a signed counter, a vctp of the remaining count, and predicated accesses, the shape
 /// they recognise. (GCC does so for float loops only with -fno-trapping-math, since the inactive lanes compute too.)
-/// On NEON the whole vectors use plain loads and stores and only the last step is predicated.
+/// On NEON the whole vectors use plain loads and stores, and the last step loads and stores only its in-range lanes,
+/// branching on their count: active() is built only if the body asks for it.
 ///
 /// @code
 /// argon::vectorize::for_each<float>(n, [&](auto step) {
@@ -130,7 +149,9 @@ template <typename ScalarType, typename Body>
 /// @brief One step of vectorize::for_each_interleaved: the frames [index(), index() + count()), each of `Stride`
 /// interleaved elements (a stereo pair, an RGB pixel), loaded as one vector per channel.
 /// @tparam full Whether every lane (frame) is in range: full steps use the structured loads and stores (vld2-vld4,
-/// vst2-vst4); partial ones gather and scatter each channel under a predicate, since those can't be predicated.
+/// vst2-vst4), which can't be predicated. On NEON partial ones use them on the frames inside the range, a doubleword
+/// or one frame at a time, branching on the scalar count; on MVE they gather and scatter each channel under a
+/// predicate.
 template <typename ScalarType, size_t Stride, bool full>
 class InterleavedStep {
  public:
@@ -170,6 +191,7 @@ class InterleavedStep {
     if constexpr (full) {
       return argon_type::template LoadInterleaved<Stride>(ptr);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       const auto offsets = Offsets();
       const auto mask = active();
       frame_type out;
@@ -177,6 +199,9 @@ class InterleavedStep {
         out[channel] = argon_type::LoadGatherOffsetIndex(ptr + channel, offsets, mask);
       }
       return out;
+#else
+      return detail::load_first_n_interleaved<Stride>(ptr, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -187,11 +212,15 @@ class InterleavedStep {
     if constexpr (full) {
       argon::store_interleaved(ptr, channels);
     } else {
+#ifdef ARGON_PLATFORM_MVE
       const auto offsets = Offsets();
       const auto mask = active();
       for (size_t channel = 0; channel < Stride; ++channel) {
         channels[channel].StoreScatterOffsetIndex(ptr + channel, offsets, mask);
       }
+#else
+      detail::store_first_n_interleaved<Stride>(ptr, channels, static_cast<size_t>(remaining_));
+#endif
     }
   }
 
@@ -210,11 +239,11 @@ class InterleavedStep {
 /// interleaved elements, the final partial group included.
 /// @tparam ScalarType The element type. @tparam Stride 2, 3 or 4 elements per frame.
 /// @param body A callable taking an InterleavedStep by value, generic in it (`[&](auto step) { ... }`).
-/// @details Whole groups use vld2-vld4 / vst2-vst4 in a low-overhead loop, and the last, partial group gathers and
-/// scatters each channel under a predicate (the structured loads can't be predicated, so this is a dls/le loop
-/// rather than dlstp/letp). On MVE, which has no vld3, stride 3 gathers every group under a predicate instead, which
-/// can become a tail-predicated dlstp/letp loop. If every channel gets the same treatment, `for_each` over the
-/// interleaved data as flat elements is simpler and faster.
+/// @details Whole groups use vld2-vld4 / vst2-vst4 in a low-overhead loop. The structured loads can't be predicated,
+/// so on NEON the last, partial group moves only its in-range frames with them, and on MVE it gathers and scatters
+/// each channel under a predicate (a dls/le loop rather than dlstp/letp). On MVE, which has no vld3, stride 3 gathers
+/// every group under a predicate instead, which can become a tail-predicated dlstp/letp loop. If every channel gets the
+/// same treatment, `for_each` over the interleaved data as flat elements is simpler and faster.
 ///
 /// @code
 /// // swap the channels of interleaved stereo

@@ -91,6 +91,14 @@ if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
   find_program(ARGON_ARM_OBJDUMP NAMES arm-linux-gnueabihf-objdump llvm-objdump REQUIRED)
   add_test(NAME float_ops_use_neon
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_float.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_float_codegen>)
+
+  # The partial step of for_each, for_each_interleaved and the with_tail() views must branch on its scalar lane count:
+  # no NEON-to-core lane transfers (vmov r, d[k]), which stall the A9 and A7 pipelines.
+  add_library(argon_neon_tail_codegen OBJECT codegen/neon_tail_loops.cpp)
+  target_link_libraries(argon_neon_tail_codegen PRIVATE argon)
+  target_compile_options(argon_neon_tail_codegen PRIVATE -O2)
+  add_test(NAME tail_loops_stay_on_neon
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_tail.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_neon_tail_codegen>)
 endif()
 
 # Helium: with_tail() views and FirstN loops must compile to low-overhead tail-predicated loops (dlstp/letp).
