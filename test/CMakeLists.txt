@@ -120,7 +120,7 @@ endif()
 
 # Firmware builds compile with -fno-inline-functions, under which clang emits out of line, and calls, every function
 # not marked [[gnu::always_inline]]. Argon's constructors and operations must still inline into a loop: no call to,
-# and no out-of-line copy of, any Argon function.
+# and no out-of-line copy of, any Argon function, and no call to a standard library function on the way.
 if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
   set(ARGON_INLINE_OBJDUMP ${ARGON_ARM_OBJDUMP})
 elseif(ARGON_TEST_CPU STREQUAL "M55")

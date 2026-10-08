@@ -1,6 +1,7 @@
 // Every Argon operation and constructor here must inline when the translation unit is compiled with
-// -fno-inline-functions (checked by check_inline.sh): no call may target an Argon symbol. Firmware builds use that
-// flag, under which a function without [[gnu::always_inline]] is emitted out of line and called from the loop.
+// -fno-inline-functions (checked by check_inline.sh): no call may target an Argon symbol, or a standard library
+// function Argon calls on the way. Firmware builds use that flag, under which a function without
+// [[gnu::always_inline]] is emitted out of line and called from the loop.
 // The loops are the shapes of an audio engine's inner loops: Q31 fixed-point gain, mixing, oscillators.
 #include <cstddef>
 #include <cstdint>
@@ -106,6 +107,43 @@ void inline_for_each_gain(int32_t* buffer, int32_t gain, ptrdiff_t n) {
 void inline_for_each_mix(int32_t* dest, const int32_t* source, int32_t gain, ptrdiff_t n) {
   argon::vectorize::for_each<int32_t>(
       n, [&](auto s) { s.Store(dest, s.Load(dest).AddSaturate(s.Load(source).MultiplyFixedQMax(gain))); });
+}
+
+// A ramp that advances by the step's in-range lanes, so the partial step asks for count().
+void inline_for_each_count(int32_t* out, int32_t start, ptrdiff_t n) {
+  I32 ramp = I32::Iota(start);
+  argon::vectorize::for_each<int32_t>(n, [&](auto s) {
+    s.Store(out, ramp);
+    ramp = ramp + I32{static_cast<int32_t>(s.count())};
+  });
+}
+
+// 8-bit samples widened to 32-bit lanes and narrowed back, the partial step element by element.
+void inline_for_each_widen_int8(int8_t* out, const int8_t* in, ptrdiff_t n) {
+  argon::vectorize::for_each<int32_t>(n, [&](auto s) { s.StoreNarrow(out, s.LoadWiden(in) * 3); });
+}
+
+// ── vectorize::for_each_interleaved ──
+// The channels are read through data() rather than a structured binding: libstdc++'s std::get on a std::array isn't
+// always-inline, and that call would be the probe's own, not Argon's.
+
+// Stereo: swap the channels and halve one, advancing a frame counter by the in-range frames.
+void inline_for_each_interleaved_stereo(int32_t* stereo, int32_t* frames_seen, ptrdiff_t frames) {
+  int32_t seen = 0;
+  argon::vectorize::for_each_interleaved<int32_t, 2>(frames, [&](auto s) {
+    auto channels = s.Load(stereo);
+    s.Store(stereo, {channels.data()[1], channels.data()[0] >> 1});
+    seen += static_cast<int32_t>(s.count());
+  });
+  *frames_seen = seen;
+}
+
+// Three interleaved 16-bit channels, rotated.
+void inline_for_each_interleaved_rgb(int16_t* rgb, ptrdiff_t pixels) {
+  argon::vectorize::for_each_interleaved<int16_t, 3>(pixels, [&](auto s) {
+    auto channels = s.Load(rgb);
+    s.Store(rgb, {channels.data()[2], channels.data()[0], channels.data()[1]});
+  });
 }
 
 }  // extern "C"
