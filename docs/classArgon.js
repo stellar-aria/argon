@@ -2,6 +2,11 @@ var classArgon =
 [
     [ "dot_long_type", "classArgon.html#a81b0f61be11e80d4fe8af51f0021f4cb", null ],
     [ "dot_type", "classArgon.html#a8879207fc9d57ee943e3d52e0e20500e", null ],
+    [ "Argon", "classArgon.html#a5b18ac2c5306ff0bfbbe4bd10516fde8", null ],
+    [ "Argon", "classArgon.html#a349e336b1b91780a8cfb2369c7101da3", null ],
+    [ "Argon", "classArgon.html#ab92a1e8e5d7b9760db39819d12264c3b", null ],
+    [ "Argon", "classArgon.html#a6123043b9748a477837e307251e7d3fd", null ],
+    [ "Argon", "classArgon.html#a13fbe549c4ec1f94a9a685e1aeb05496", null ],
     [ "Argon", "classArgon.html#a3e5c23d7aea979de351692e296e3cfef", null ],
     [ "Argon", "classArgon.html#ac83bbc6cab61445bf8128256db242d8e", null ],
     [ "Argon", "classArgon.html#aceeb710f4ab892f9d3bdd45a90951e1e", null ],

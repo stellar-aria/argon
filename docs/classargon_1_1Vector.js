@@ -12,7 +12,7 @@ var classargon_1_1Vector =
     [ "Vector", "classargon_1_1Vector.html#af15940b6d4dd426c701699690ad1e0d6", null ],
     [ "Vector", "classargon_1_1Vector.html#a105e245c0a5438757ef17600891ebc66", null ],
     [ "Vector", "classargon_1_1Vector.html#a04b817b2f0d97814f2cf418b2a2ceba0", null ],
-    [ "Vector", "classargon_1_1Vector.html#a6c822d6e8b568d4c6f6131fbbfd10982", null ],
+    [ "Vector", "classargon_1_1Vector.html#a440831834281e72595e8107097663eae", null ],
     [ "Vector", "classargon_1_1Vector.html#af4503c9cb6430a57c62888056ae5779c", null ],
     [ "Vector", "classargon_1_1Vector.html#ad0bd8c46fcb61704f5c532bae17bf837", null ],
     [ "Vector", "classargon_1_1Vector.html#aba4ee4352a5f6c85d7325994e02d0098", null ],

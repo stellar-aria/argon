@@ -153,12 +153,28 @@ using&#160;</td><td class="memItemRight"><b>offset_type</b></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5b18ac2c5306ff0bfbbe4bd10516fde8" id="r_a5b18ac2c5306ff0bfbbe4bd10516fde8"><td class="memItemLeft"><a id="a5b18ac2c5306ff0bfbbe4bd10516fde8" name="a5b18ac2c5306ff0bfbbe4bd10516fde8"></a>
+constexpr&#160;</td><td class="memItemRight"><b>Argon</b> ()=default</td></tr>
+<tr class="memdesc:a5b18ac2c5306ff0bfbbe4bd10516fde8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Leave the lanes uninitialised; value-initialisation (<span class="tt"><a class="el" href="classArgon.html">Argon</a>&lt;T&gt;{}</span>) zeroes them. <br /></td></tr>
+<tr class="memitem:a349e336b1b91780a8cfb2369c7101da3" id="r_a349e336b1b91780a8cfb2369c7101da3"><td class="memItemLeft"><a id="a349e336b1b91780a8cfb2369c7101da3" name="a349e336b1b91780a8cfb2369c7101da3"></a>
+constexpr&#160;</td><td class="memItemRight"><b>Argon</b> (vector_type vector)</td></tr>
+<tr class="memdesc:a349e336b1b91780a8cfb2369c7101da3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from the underlying intrinsic vector. <br /></td></tr>
+<tr class="memitem:ab92a1e8e5d7b9760db39819d12264c3b" id="r_ab92a1e8e5d7b9760db39819d12264c3b"><td class="memItemLeft"><a id="ab92a1e8e5d7b9760db39819d12264c3b" name="ab92a1e8e5d7b9760db39819d12264c3b"></a>
+constexpr&#160;</td><td class="memItemRight"><b>Argon</b> (typename <a class="el" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">T::scalar_type</a> scalar)</td></tr>
+<tr class="memdesc:ab92a1e8e5d7b9760db39819d12264c3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duplicate a scalar across every lane. <br /></td></tr>
+<tr class="memitem:a6123043b9748a477837e307251e7d3fd" id="r_a6123043b9748a477837e307251e7d3fd"><td class="memTemplParams" colspan="2"><a id="a6123043b9748a477837e307251e7d3fd" name="a6123043b9748a477837e307251e7d3fd"></a>
+template&lt;size_t LaneIndex&gt; </td></tr>
+<tr class="memitem:a6123043b9748a477837e307251e7d3fd template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><b>Argon</b> (<a class="el" href="classargon_1_1ConstLane.html">argon::ConstLane</a>&lt; LaneIndex, vector_type &gt; lane)</td></tr>
+<tr class="memdesc:a6123043b9748a477837e307251e7d3fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duplicate lane <span class="tt">LaneIndex</span> of <span class="tt">lane</span>'s vector across every lane. <br /></td></tr>
+<tr class="memitem:a13fbe549c4ec1f94a9a685e1aeb05496" id="r_a13fbe549c4ec1f94a9a685e1aeb05496"><td class="memTemplParams" colspan="2"><a id="a13fbe549c4ec1f94a9a685e1aeb05496" name="a13fbe549c4ec1f94a9a685e1aeb05496"></a>
+template&lt;typename... ArgTypes&gt; </td></tr>
+<tr class="memitem:a13fbe549c4ec1f94a9a685e1aeb05496 template"><td class="memItemLeft">constexpr&#160;</td><td class="memItemRight"><b>Argon</b> (ArgTypes... args)</td></tr>
+<tr class="memdesc:a13fbe549c4ec1f94a9a685e1aeb05496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from one value per lane, each converted to the lane type. <br /></td></tr>
 <tr class="memitem:a3e5c23d7aea979de351692e296e3cfef" id="r_a3e5c23d7aea979de351692e296e3cfef"><td class="memItemLeft"><a id="a3e5c23d7aea979de351692e296e3cfef" name="a3e5c23d7aea979de351692e296e3cfef"></a>
 ace&#160;</td><td class="memItemRight"><b>Argon</b> (<a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; vector_type &gt; <a class="el" href="classargon_1_1Vector.html#a1a31c64f4d5a2c75097ea19bf381f8ea">vec</a>)</td></tr>
 <tr class="memdesc:a3e5c23d7aea979de351692e296e3cfef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from an underlying <span class="tt"><a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">argon::Vector</a></span>. <br /></td></tr>
-<tr class="memitem:ac83bbc6cab61445bf8128256db242d8e" id="r_ac83bbc6cab61445bf8128256db242d8e"><td class="memItemLeft"><a id="ac83bbc6cab61445bf8128256db242d8e" name="ac83bbc6cab61445bf8128256db242d8e"></a>
-ace&#160;</td><td class="memItemRight"><b>Argon</b> (std::array&lt; ScalarType, 4 &gt; value_list)</td></tr>
-<tr class="memdesc:ac83bbc6cab61445bf8128256db242d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from a four-element array (loaded as a 128-bit vector). <br /></td></tr>
+<tr class="memitem:ac83bbc6cab61445bf8128256db242d8e" id="r_ac83bbc6cab61445bf8128256db242d8e"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#ac83bbc6cab61445bf8128256db242d8e">Argon</a> (std::array&lt; ScalarType, 4 &gt; value_list)</td></tr>
+<tr class="memdesc:ac83bbc6cab61445bf8128256db242d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from four values: lane i takes <span class="tt">value_list[i]</span>.  <br /></td></tr>
 <tr class="memitem:aceeb710f4ab892f9d3bdd45a90951e1e" id="r_aceeb710f4ab892f9d3bdd45a90951e1e"><td class="memTemplParams" colspan="2">template&lt;typename S = ScalarType&gt; </td></tr>
 <tr class="memitem:aceeb710f4ab892f9d3bdd45a90951e1e template"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#aceeb710f4ab892f9d3bdd45a90951e1e">Argon</a> (<a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; S &gt; low, <a class="el" href="classArgonHalf.html">ArgonHalf</a>&lt; S &gt; high)</td></tr>
 <tr class="memdesc:aceeb710f4ab892f9d3bdd45a90951e1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct by combining a low and high 64-bit half-vector.  <br /></td></tr>
@@ -418,8 +434,8 @@ constexpr <a class="el" href="classargon_1_1Vector.html#ae1550d3609d2ebcb11e688f
 <tr class="memdesc:ae38fb1aad4f7ce19d608d5d24101d06f inherit pub_methods_classargon_1_1Vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator for the <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> class. <br /></td></tr>
 <tr class="memitem:a04b817b2f0d97814f2cf418b2a2ceba0 inherit pub_methods_classargon_1_1Vector" id="r_a04b817b2f0d97814f2cf418b2a2ceba0"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="classargon_1_1Vector.html#a04b817b2f0d97814f2cf418b2a2ceba0">Vector</a> (simd::Vec128_t&lt; ScalarType &gt; vector)</td></tr>
 <tr class="memdesc:a04b817b2f0d97814f2cf418b2a2ceba0 inherit pub_methods_classargon_1_1Vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a SIMD vector type.  <br /></td></tr>
-<tr class="memitem:a6c822d6e8b568d4c6f6131fbbfd10982 inherit pub_methods_classargon_1_1Vector" id="r_a6c822d6e8b568d4c6f6131fbbfd10982"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="classargon_1_1Vector.html#a6c822d6e8b568d4c6f6131fbbfd10982">Vector</a> (<a class="el" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> scalar)</td></tr>
-<tr class="memdesc:a6c822d6e8b568d4c6f6131fbbfd10982 inherit pub_methods_classargon_1_1Vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a scalar value.  <br /></td></tr>
+<tr class="memitem:a440831834281e72595e8107097663eae inherit pub_methods_classargon_1_1Vector" id="r_a440831834281e72595e8107097663eae"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="classargon_1_1Vector.html#a440831834281e72595e8107097663eae">Vector</a> (<a class="el" href="classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> scalar)</td></tr>
+<tr class="memdesc:a440831834281e72595e8107097663eae inherit pub_methods_classargon_1_1Vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a scalar value.  <br /></td></tr>
 <tr class="memitem:af4503c9cb6430a57c62888056ae5779c inherit pub_methods_classargon_1_1Vector" id="r_af4503c9cb6430a57c62888056ae5779c"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="classargon_1_1Vector.html#af4503c9cb6430a57c62888056ae5779c">Vector</a> (<a class="el" href="classargon_1_1Lane.html">argon::Lane</a>&lt; simd::Vec128_t&lt; ScalarType &gt; &gt; lane)</td></tr>
 <tr class="memdesc:af4503c9cb6430a57c62888056ae5779c inherit pub_methods_classargon_1_1Vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a <a class="el" href="classargon_1_1Lane.html" title="Represents a single lane of a SIMD vector with a runtime-determined index.">Lane</a> object.  <br /></td></tr>
 <tr class="memitem:ad0bd8c46fcb61704f5c532bae17bf837 inherit pub_methods_classargon_1_1Vector" id="r_ad0bd8c46fcb61704f5c532bae17bf837"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="classargon_1_1Vector.html#ad0bd8c46fcb61704f5c532bae17bf837">Vector</a> (<a class="el" href="classargon_1_1ConstLane.html">argon::ConstLane</a>&lt; LaneIndex, simd::Vec128_t&lt; ScalarType &gt; &gt; lane)</td></tr>
@@ -934,8 +950,38 @@ static ace <a class="el" href="classargon_1_1Vector.html#a9a415e7e729cc854cae346
 simd::Vec128_t&lt; ScalarType &gt;&#160;</td><td class="memItemRight"><b>vec_</b></td></tr>
 </table>
 <a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ac83bbc6cab61445bf8128256db242d8e" name="ac83bbc6cab61445bf8128256db242d8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac83bbc6cab61445bf8128256db242d8e">&#9670;&#160;</a></span>Argon() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ScalarType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="classArgon.html">Argon</a>&lt; ScalarType &gt;::Argon </td>
+          <td>(</td>
+          <td class="paramtype">std::array&lt; ScalarType, 4 &gt;</td>          <td class="paramname"><span class="paramname"><em>value_list</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct from four values: lane i takes <span class="tt">value_list[i]</span>. </p>
+<p>With 32-bit lanes the four values are the whole vector. With 8- and 16-bit lanes they fill lanes 0-3 and the other lanes are zero. With 64-bit lanes the vector holds the first two values. </p>
+
+</div>
+</div>
 <a id="aceeb710f4ab892f9d3bdd45a90951e1e" name="aceeb710f4ab892f9d3bdd45a90951e1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aceeb710f4ab892f9d3bdd45a90951e1e">&#9670;&#160;</a></span>Argon()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aceeb710f4ab892f9d3bdd45a90951e1e">&#9670;&#160;</a></span>Argon() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -966,7 +1012,7 @@ template&lt;typename S = ScalarType&gt; </div>
 </div><div class="memdoc">
 
 <p>Construct by combining a low and high 64-bit half-vector. </p>
-<p>A template, so that brace-initialising from two scalars (<span class="tt"><a class="el" href="classArgon.html">Argon</a>&lt;int64_t&gt;{a, b}</span>) doesn't need <a class="el" href="classArgonHalf_3_01ScalarType_01_4.html" title="A 64-bit SIMD half-vector for types that cannot be widened (double, uint64_t, int64_t).">ArgonHalf&lt;ScalarType&gt;</a>, which can't exist for 64-bit lanes on AArch32. </p>
+<p>A template, so that brace-initialising from two scalars (<span class="tt"><a class="el" href="classArgon.html">Argon</a>&lt;int64_t&gt;{a, b}</span>) doesn't instantiate <a class="el" href="classArgonHalf_3_01ScalarType_01_4.html" title="A 64-bit SIMD half-vector for types that cannot be widened (double, uint64_t, int64_t).">ArgonHalf&lt;ScalarType&gt;</a> to try converting them. </p>
 
 </div>
 </div>

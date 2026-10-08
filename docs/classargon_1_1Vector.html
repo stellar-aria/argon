@@ -157,8 +157,8 @@ constexpr <a class="el" href="#ae1550d3609d2ebcb11e688f2ed6ba78a">Vector</a> &am
 <tr class="memdesc:ae38fb1aad4f7ce19d608d5d24101d06f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator for the <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> class. <br /></td></tr>
 <tr class="memitem:a04b817b2f0d97814f2cf418b2a2ceba0" id="r_a04b817b2f0d97814f2cf418b2a2ceba0"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#a04b817b2f0d97814f2cf418b2a2ceba0">Vector</a> (VectorType vector)</td></tr>
 <tr class="memdesc:a04b817b2f0d97814f2cf418b2a2ceba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a SIMD vector type.  <br /></td></tr>
-<tr class="memitem:a6c822d6e8b568d4c6f6131fbbfd10982" id="r_a6c822d6e8b568d4c6f6131fbbfd10982"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#a6c822d6e8b568d4c6f6131fbbfd10982">Vector</a> (<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> scalar)</td></tr>
-<tr class="memdesc:a6c822d6e8b568d4c6f6131fbbfd10982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a scalar value.  <br /></td></tr>
+<tr class="memitem:a440831834281e72595e8107097663eae" id="r_a440831834281e72595e8107097663eae"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#a440831834281e72595e8107097663eae">Vector</a> (<a class="el" href="#ac5bd00a35d6eaa0cca199800e44157d9">scalar_type</a> scalar)</td></tr>
+<tr class="memdesc:a440831834281e72595e8107097663eae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a scalar value.  <br /></td></tr>
 <tr class="memitem:af4503c9cb6430a57c62888056ae5779c" id="r_af4503c9cb6430a57c62888056ae5779c"><td class="memItemLeft">ace&#160;</td><td class="memItemRight"><a class="el" href="#af4503c9cb6430a57c62888056ae5779c">Vector</a> (<a class="el" href="classargon_1_1Lane.html">argon::Lane</a>&lt; VectorType &gt; lane)</td></tr>
 <tr class="memdesc:af4503c9cb6430a57c62888056ae5779c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classargon_1_1Vector.html" title="Represents a SIMD vector with various operations.">Vector</a> from a <a class="el" href="classargon_1_1Lane.html" title="Represents a single lane of a SIMD vector with a runtime-determined index.">Lane</a> object.  <br /></td></tr>
 <tr class="memitem:ad0bd8c46fcb61704f5c532bae17bf837" id="r_ad0bd8c46fcb61704f5c532bae17bf837"><td class="memTemplParams" colspan="2">template&lt;size_t LaneIndex&gt; </td></tr>
@@ -713,8 +713,8 @@ template&lt;typename VectorType&gt; </div>
 
 </div>
 </div>
-<a id="a6c822d6e8b568d4c6f6131fbbfd10982" name="a6c822d6e8b568d4c6f6131fbbfd10982"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c822d6e8b568d4c6f6131fbbfd10982">&#9670;&#160;</a></span>Vector() <span class="overload">[2/5]</span></h2>
+<a id="a440831834281e72595e8107097663eae" name="a440831834281e72595e8107097663eae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a440831834281e72595e8107097663eae">&#9670;&#160;</a></span>Vector() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -745,7 +745,7 @@ template&lt;typename VectorType&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This constructor duplicates the scalar value across all lanes of the SIMD vector. </p>
+<p>This constructor duplicates the scalar value across all lanes of the SIMD vector. Where the vector type is the scalar type (GCC's AArch32 int64x1_t and uint64x1_t are plain 64-bit integers), <a class="el" href="#a04b817b2f0d97814f2cf418b2a2ceba0" title="Constructs a Vector from a SIMD vector type.">Vector(VectorType)</a> is the same constructor, and this one is left out. </p>
 
 </div>
 </div>
