@@ -100,8 +100,12 @@ class Vector {
 
   /// @brief Constructs a Vector from a scalar value.
   /// @param scalar The scalar value to construct from.
-  /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector.
-  ace Vector(scalar_type scalar) : vec_(FromScalar(scalar)) {};
+  /// @details This constructor duplicates the scalar value across all lanes of the SIMD vector. Where the vector
+  /// type is the scalar type (GCC's AArch32 int64x1_t and uint64x1_t are plain 64-bit integers), Vector(VectorType)
+  /// is the same constructor, and this one is left out.
+  ace Vector(scalar_type scalar)
+    requires(!std::is_same_v<scalar_type, VectorType>)
+      : vec_(FromScalar(scalar)) {};
 
   /// @brief Constructs a Vector from a Lane object.
   /// @param lane The Lane object to construct from.

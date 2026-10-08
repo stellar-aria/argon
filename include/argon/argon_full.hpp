@@ -78,8 +78,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// and the other lanes are zero. With 64-bit lanes the vector holds the first two values.
   ace Argon(std::array<ScalarType, 4> value_list) : T{FromFour(value_list)} {};
   /// @brief Construct by combining a low and high 64-bit half-vector.
-  /// @details A template, so that brace-initialising from two scalars (`Argon<int64_t>{a, b}`) doesn't need
-  /// ArgonHalf<ScalarType>, which can't exist for 64-bit lanes on AArch32.
+  /// @details A template, so that brace-initialising from two scalars (`Argon<int64_t>{a, b}`) doesn't instantiate
+  /// ArgonHalf<ScalarType> to try converting them.
   template <typename S = ScalarType>
     requires std::is_same_v<S, ScalarType>
   ace Argon(ArgonHalf<S> low, ArgonHalf<S> high) : T{Combine(low, high)} {};
@@ -1186,8 +1186,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     uint64x2_t dwords = simd::reinterpret<uint64x2_t>(this->vec_);
     return simd::reinterpret<vector_type>(uint64x2_t{dwords[1], dwords[0]});
 #else
-    // vext by half the lanes: no detour through ArgonHalf, which can't exist for 64-bit lanes on A32 (where
-    // int64x1_t is a plain integer).
+    // vext by half the lanes swaps the doublewords in one instruction.
     return this->template Extract<lanes / 2>(*this);
 #endif
   }

@@ -75,4 +75,59 @@ auto describe_from_four = describe("Argon(std::array<S, 4>)", ${
   });
 });
 
-CPPSPEC_MAIN(describe_from_four);
+// ── 64-bit lanes ───────────────────────────────────────────────────────────
+// A lane of a 64-bit-lane quadword lives in a one-lane ArgonHalf. On GCC AArch32, whose int64x1_t is a plain
+// long long, that class failed to compile, and with it every lane broadcast and half of a 64-bit-lane vector.
+#ifndef ARGON_PLATFORM_MVE  // MVE has no 64-bit vectors
+auto describe_wide_lanes = describe("64-bit lanes", ${
+  it("broadcasts compile-time lane 1 of an int64 vector", _{
+    Argon<int64_t> v{int64_t{5}, int64_t{-7}};
+    expect(Argon<int64_t>{v.template GetLane<1>()}.to_array()).to_equal(std::array<int64_t, 2>{-7, -7});
+  });
+
+  it("broadcasts compile-time lane 0 of a uint64 vector", _{
+    Argon<uint64_t> v{uint64_t{11}, uint64_t{13}};
+    expect(Argon<uint64_t>{v.template GetLane<0>()}.to_array()).to_equal(std::array<uint64_t, 2>{11, 11});
+  });
+
+  it("splits an int64 vector into its halves", _{
+    Argon<int64_t> v{int64_t{5}, int64_t{-7}};
+    expect(v.GetLow().to_array()).to_equal(std::array<int64_t, 1>{5});
+    expect(v.GetHigh().to_array()).to_equal(std::array<int64_t, 1>{-7});
+  });
+
+  it("builds a uint64 half-vector from a scalar", _{
+    ArgonHalf<uint64_t> h{uint64_t{0x123456789abcdef0}};
+    expect(h.to_array()).to_equal(std::array<uint64_t, 1>{0x123456789abcdef0});
+  });
+});
+#endif
+
+// AArch64 declares two duplicate_lane<0>(uint64x1_t), returning the vector and the scalar, so this form is
+// ambiguous there.
+#if !defined(ARGON_PLATFORM_MVE) && !defined(__aarch64__)
+auto describe_one_lane_broadcast = describe("64-bit half-vector lanes", ${
+  it("builds a uint64 half-vector from its own lane", _{
+    ArgonHalf<uint64_t> h{uint64_t{0x123456789abcdef0}};
+    expect(ArgonHalf<uint64_t>{h.template GetLane<0>()}.to_array()).to_equal(std::array<uint64_t, 1>{0x123456789abcdef0});
+  });
+});
+#endif
+
+// Preprocessor directives inside a macro invocation are UB, so splice the NEON-only specs in via a macro.
+#ifndef ARGON_PLATFORM_MVE
+#define NEON_ONLY_SPECS , describe_wide_lanes
+#else
+#define NEON_ONLY_SPECS
+#endif
+#if !defined(ARGON_PLATFORM_MVE) && !defined(__aarch64__)
+#define AARCH32_SPECS , describe_one_lane_broadcast
+#else
+#define AARCH32_SPECS
+#endif
+
+CPPSPEC_MAIN(
+  describe_from_four
+  NEON_ONLY_SPECS
+  AARCH32_SPECS
+);

@@ -37,7 +37,11 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   /// @brief Construct from the underlying intrinsic vector.
   ace ArgonHalf(vector_type vector) : T{vector} {}
   /// @brief Duplicate a scalar across every lane.
-  ace ArgonHalf(typename T::scalar_type scalar) : T{scalar} {}
+  /// @details Left out where the vector type is the scalar type (GCC's AArch32 int64x1_t and uint64x1_t), as
+  /// ArgonHalf(vector_type) is then the same constructor.
+  ace ArgonHalf(typename T::scalar_type scalar)
+    requires(!std::is_same_v<typename T::scalar_type, vector_type>)
+      : T{scalar} {}
   /// @brief Duplicate the lane `lane` refers to across every lane.
   ace ArgonHalf(argon::Lane<vector_type> lane) : T{lane} {}
   /// @brief Duplicate lane `LaneIndex` of `lane`'s vector across every lane.
