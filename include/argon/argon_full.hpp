@@ -53,7 +53,24 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   static constexpr size_t bytes = 16;
   static constexpr size_t lanes = bytes / sizeof(ScalarType);
 
-  using argon::Vector<vector_type>::Vector;
+  // The constructors argon::Vector declares, forwarded rather than inherited: an inherited constructor doesn't carry
+  // the base's [[gnu::always_inline]], so under -fno-inline-functions it compiles to an out-of-line call. Not `ace`,
+  // whose [[nodiscard]] argon::Vector's constructors don't have.
+
+  /// @brief Leave the lanes uninitialised; value-initialisation (`Argon<T>{}`) zeroes them.
+  constexpr Argon() = default;
+  /// @brief Construct from the underlying intrinsic vector.
+  [[gnu::always_inline]] constexpr Argon(vector_type vector) : T{vector} {}
+  /// @brief Duplicate a scalar across every lane.
+  [[gnu::always_inline]] constexpr Argon(typename T::scalar_type scalar) : T{scalar} {}
+  /// @brief Duplicate lane `LaneIndex` of `lane`'s vector across every lane.
+  template <size_t LaneIndex>
+  [[gnu::always_inline]] constexpr Argon(argon::ConstLane<LaneIndex, vector_type> lane) : T{lane} {}
+  /// @brief Construct from one value per lane, each converted to the lane type.
+  template <typename... ArgTypes>
+    requires(sizeof...(ArgTypes) > 1)
+  [[gnu::always_inline]] constexpr Argon(ArgTypes... args) : T{args...} {}
+
   /// @brief Construct from an underlying `argon::Vector`.
   ace Argon(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
   /// @brief Construct from a four-element array (loaded as a 128-bit vector).

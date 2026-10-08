@@ -29,7 +29,25 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(ScalarType);
 
-  using T::T;
+  // The constructors argon::Vector declares, forwarded rather than inherited: an inherited constructor doesn't carry
+  // the base's [[gnu::always_inline]], so under -fno-inline-functions it compiles to an out-of-line call.
+
+  /// @brief Leave the lanes uninitialised; value-initialisation (`ArgonHalf<T>{}`) zeroes them.
+  constexpr ArgonHalf() = default;
+  /// @brief Construct from the underlying intrinsic vector.
+  ace ArgonHalf(vector_type vector) : T{vector} {}
+  /// @brief Duplicate a scalar across every lane.
+  ace ArgonHalf(typename T::scalar_type scalar) : T{scalar} {}
+  /// @brief Duplicate the lane `lane` refers to across every lane.
+  ace ArgonHalf(argon::Lane<vector_type> lane) : T{lane} {}
+  /// @brief Duplicate lane `LaneIndex` of `lane`'s vector across every lane.
+  template <size_t LaneIndex>
+  ace ArgonHalf(argon::ConstLane<LaneIndex, vector_type> lane) : T{lane} {}
+  /// @brief Construct from one value per lane, each converted to the lane type.
+  template <typename... ArgTypes>
+    requires(sizeof...(ArgTypes) > 1)
+  ace ArgonHalf(ArgTypes... args) : T{args...} {}
+
   ace ArgonHalf(argon::Vector<vector_type> vec) : T{std::move(vec)} {};
   ace ArgonHalf(const ArgonHalf&) = default;
   ace ArgonHalf(ArgonHalf&&) = default;
@@ -142,7 +160,24 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
   static constexpr size_t bytes = 8;
   static constexpr size_t lanes = bytes / sizeof(ScalarType);
 
-  using T::T;
+  // The constructors argon::Vector declares, forwarded rather than inherited: an inherited constructor doesn't carry
+  // the base's [[gnu::always_inline]], so under -fno-inline-functions it compiles to an out-of-line call.
+
+  /// @brief Leave the lanes uninitialised; value-initialisation (`ArgonHalf<T>{}`) zeroes them.
+  constexpr ArgonHalf() = default;
+  /// @brief Construct from the underlying intrinsic vector.
+  ace ArgonHalf(vector_type vector) : T{vector} {}
+  /// @brief Duplicate a scalar across every lane.
+  ace ArgonHalf(typename T::scalar_type scalar) : T{scalar} {}
+  /// @brief Duplicate the lane `lane` refers to across every lane.
+  ace ArgonHalf(argon::Lane<vector_type> lane) : T{lane} {}
+  /// @brief Duplicate lane `LaneIndex` of `lane`'s vector across every lane.
+  template <size_t LaneIndex>
+  ace ArgonHalf(argon::ConstLane<LaneIndex, vector_type> lane) : T{lane} {}
+  /// @brief Construct from one value per lane, each converted to the lane type.
+  template <typename... ArgTypes>
+    requires(sizeof...(ArgTypes) > 1)
+  ace ArgonHalf(ArgTypes... args) : T{args...} {}
 
   /// @brief Create a new ArgonHalf from a raw 64-bit value
   /// @param a The raw 64-bit value to create the ArgonHalf from

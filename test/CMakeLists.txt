@@ -117,3 +117,26 @@ if(ARGON_TEST_CPU STREQUAL "M55")
   add_test(NAME float_ops_use_mve
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_mve_float.sh ${ARGON_ARM_NONE_OBJDUMP} $<TARGET_OBJECTS:argon_mve_float_codegen>)
 endif()
+
+# Firmware builds compile with -fno-inline-functions, under which clang emits out of line, and calls, every function
+# not marked [[gnu::always_inline]]. Argon's constructors and operations must still inline into a loop: no call to,
+# and no out-of-line copy of, any Argon function.
+if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
+  set(ARGON_INLINE_OBJDUMP ${ARGON_ARM_OBJDUMP})
+elseif(ARGON_TEST_CPU STREQUAL "M55")
+  set(ARGON_INLINE_OBJDUMP ${ARGON_ARM_NONE_OBJDUMP})
+elseif(ARGON_TEST_CPU STREQUAL "A55")
+  find_program(ARGON_AARCH64_OBJDUMP NAMES aarch64-linux-gnu-objdump llvm-objdump REQUIRED)
+  set(ARGON_INLINE_OBJDUMP ${ARGON_AARCH64_OBJDUMP})
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # the check reads ELF relocations
+  find_program(ARGON_HOST_OBJDUMP NAMES objdump llvm-objdump)
+  set(ARGON_INLINE_OBJDUMP ${ARGON_HOST_OBJDUMP})
+endif()
+if(ARGON_INLINE_OBJDUMP)
+  add_library(argon_inline_codegen OBJECT codegen/inline_loops.cpp)
+  target_link_libraries(argon_inline_codegen PRIVATE argon simde)
+  target_compile_options(argon_inline_codegen PRIVATE -O2 -fno-inline-functions)
+  add_test(NAME loops_inline_argon_without_inline_functions
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_inline.sh ${ARGON_INLINE_OBJDUMP} $<TARGET_OBJECTS:argon_inline_codegen>)
+endif()
