@@ -18,6 +18,8 @@
 ///
 /// Every helper takes `0 < count < lanes`: a full vector uses the whole-vector accesses. The lane walks recurse
 /// through always-inline templates rather than a lambda, which the compiler may outline once there are many lanes.
+/// A std::array's elements are reached through its non-const data(), which libstdc++ marks always-inline; its
+/// operator[] and const data() are not, so under -fno-inline-functions they would be calls.
 /// MVE needs none of this, since its predicate is native and tail-predicated loops are built from vctp, so these are
 /// not defined there.
 
@@ -103,9 +105,9 @@ template <size_t Lane, size_t Stride, typename ScalarType>
   using half_type = ArgonHalf<ScalarType>;
   if constexpr (Lane + 1 < half_type::lanes) {
     if (first + Lane < count) {
-      const auto loaded = half_type::template LoadToLaneInterleaved<Lane, Stride>(multi, ptr + Lane * Stride);
+      auto loaded = half_type::template LoadToLaneInterleaved<Lane, Stride>(multi, ptr + Lane * Stride);
       for (size_t channel = 0; channel < Stride; ++channel)
-        multi.val[channel] = loaded[channel].vec();
+        multi.val[channel] = loaded.data()[channel].vec();
       return load_frames<Lane + 1, Stride>(multi, ptr, first, count);
     }
   }
@@ -142,16 +144,16 @@ template <size_t Stride, typename ScalarType>
   half_multi_type<Stride, ScalarType> low = zero;
   half_multi_type<Stride, ScalarType> high = zero;
   if (count >= half) {
-    const auto whole = half_type::template LoadInterleaved<Stride>(ptr);
+    auto whole = half_type::template LoadInterleaved<Stride>(ptr);
     for (size_t channel = 0; channel < Stride; ++channel)
-      low.val[channel] = whole[channel].vec();
+      low.val[channel] = whole.data()[channel].vec();
     high = load_frames<0, Stride>(zero, ptr + half * Stride, half, count);
   } else {
     low = load_frames<0, Stride>(zero, ptr, 0, count);
   }
   std::array<Argon<ScalarType>, Stride> out;
   for (size_t channel = 0; channel < Stride; ++channel) {
-    out[channel] = Argon<ScalarType>{half_type{low.val[channel]}, half_type{high.val[channel]}};
+    out.data()[channel] = Argon<ScalarType>{half_type{low.val[channel]}, half_type{high.val[channel]}};
   }
   return out;
 }
@@ -160,15 +162,15 @@ template <size_t Stride, typename ScalarType>
 /// frames past `count` are not written.
 template <size_t Stride, typename ScalarType>
 [[gnu::always_inline]] inline void store_first_n_interleaved(ScalarType* ptr,
-                                                             const std::array<Argon<ScalarType>, Stride>& value,
+                                                             std::array<Argon<ScalarType>, Stride> value,
                                                              size_t count) {
   using half_type = ArgonHalf<ScalarType>;
   constexpr size_t half = half_type::lanes;
   half_multi_type<Stride, ScalarType> low;
   half_multi_type<Stride, ScalarType> high;
   for (size_t channel = 0; channel < Stride; ++channel) {
-    low.val[channel] = value[channel].GetLow().vec();
-    high.val[channel] = value[channel].GetHigh().vec();
+    low.val[channel] = value.data()[channel].GetLow().vec();
+    high.val[channel] = value.data()[channel].GetHigh().vec();
   }
   if (count >= half) {
     argon::store_interleaved<Stride, ScalarType, typename half_type::vector_type>(ptr, low);
@@ -193,7 +195,7 @@ template <typename N, typename S>
     std::array<S, lanes> out{};
     for (size_t i = 0; i < lanes; ++i) {
       if (i < count)
-        out[i] = static_cast<S>(ptr[i]);
+        out.data()[i] = static_cast<S>(ptr[i]);
     }
     return Argon<S>::Load(out.data());
   }
@@ -209,10 +211,10 @@ template <typename N, typename S>
     using SameSign = std::conditional_t<std::is_signed_v<N>, std::make_signed_t<S>, std::make_unsigned_t<S>>;
     store_lanes<0>(ArgonHalf<N>{neon::move_narrow(value.template As<SameSign>().vec())}, ptr, 0, count);
   } else {
-    const auto values = value.to_array();
+    auto values = value.to_array();
     for (size_t i = 0; i < lanes; ++i) {
       if (i < count)
-        ptr[i] = static_cast<N>(values[i]);
+        ptr[i] = static_cast<N>(values.data()[i]);
     }
   }
 }

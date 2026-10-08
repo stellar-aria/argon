@@ -627,7 +627,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   // Narrow data in memory, wide lanes in registers: int16 samples straight into int32 lanes and back, with the
   // conversion folded into the memory access. Loads extend by the source type's signedness (so uint8 data loads
   // into int32 lanes as 0..255); stores keep the low bits of each lane. MVE: one vldrb/vldrh / vstrb/vstrh (also as
-  // gathers and scatters); NEON: vld1 + vmovl / vmovn + vst1 for a 2x ratio, lane by lane otherwise.
+  // gathers and scatters); NEON: vld1 + vmovl / vmovn + vst1 for a 2x ratio, lane by lane otherwise. The lane walks
+  // index std::array through its non-const data(), which libstdc++ marks always-inline (operator[] it doesn't).
 
   /// @brief Load `lanes` elements of the narrower integer type N and extend each to a lane. MVE: vldrb / vldrh.
   template <typename N, typename S = ScalarType>
@@ -643,7 +644,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
           .template As<S>();
     } else {
       std::array<S, lanes> out{};
-      for (size_t i = 0; i < lanes; ++i) out[i] = static_cast<S>(ptr[i]);
+      for (size_t i = 0; i < lanes; ++i) out.data()[i] = static_cast<S>(ptr[i]);
       return Argon<S>::Load(out.data());
     }
 #endif
@@ -659,7 +660,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #else
     std::array<S, lanes> out{};
     for (size_t i = 0; i < lanes; ++i) {
-      if (active.Active(i)) out[i] = static_cast<S>(ptr[i]);
+      if (active.Active(i)) out.data()[i] = static_cast<S>(ptr[i]);
     }
     return Argon<S>::Load(out.data());
 #endif
@@ -677,8 +678,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       using SameSign = std::conditional_t<std::is_signed_v<N>, std::make_signed_t<S>, std::make_unsigned_t<S>>;
       neon::store1(ptr, neon::move_narrow(this->template As<SameSign>().vec()));
     } else {
-      const auto values = this->to_array();
-      for (size_t i = 0; i < lanes; ++i) ptr[i] = static_cast<N>(values[i]);
+      auto values = this->to_array();
+      for (size_t i = 0; i < lanes; ++i) ptr[i] = static_cast<N>(values.data()[i]);
     }
 #endif
   }
@@ -690,9 +691,9 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #ifdef ARGON_PLATFORM_MVE
     NarrowMve<N>(ptr, active.native());
 #else
-    const auto values = this->to_array();
+    auto values = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
-      if (active.Active(i)) ptr[i] = static_cast<N>(values[i]);
+      if (active.Active(i)) ptr[i] = static_cast<N>(values.data()[i]);
     }
 #endif
   }

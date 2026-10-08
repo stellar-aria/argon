@@ -196,7 +196,7 @@ class InterleavedStep {
       const auto mask = active();
       frame_type out;
       for (size_t channel = 0; channel < Stride; ++channel) {
-        out[channel] = argon_type::LoadGatherOffsetIndex(ptr + channel, offsets, mask);
+        out.data()[channel] = argon_type::LoadGatherOffsetIndex(ptr + channel, offsets, mask);
       }
       return out;
 #else
@@ -215,8 +215,9 @@ class InterleavedStep {
 #ifdef ARGON_PLATFORM_MVE
       const auto offsets = Offsets();
       const auto mask = active();
+      frame_type vectors = channels;  // the const data() isn't always-inline
       for (size_t channel = 0; channel < Stride; ++channel) {
-        channels[channel].StoreScatterOffsetIndex(ptr + channel, offsets, mask);
+        vectors.data()[channel].StoreScatterOffsetIndex(ptr + channel, offsets, mask);
       }
 #else
       detail::store_first_n_interleaved<Stride>(ptr, channels, static_cast<size_t>(remaining_));

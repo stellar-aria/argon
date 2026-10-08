@@ -56,7 +56,7 @@ ace void store_interleaved(scalar_type* ptr, std::array<argon_type, stride> mult
     using offset_type = typename argon_type::offset_type;
     const auto offsets = offset_type::Iota(0) * static_cast<typename offset_type::scalar_type>(3);
     for (size_t channel = 0; channel < 3; ++channel) {
-      multi_vec[channel].StoreScatterOffsetIndex(ptr + channel, offsets);
+      multi_vec.data()[channel].StoreScatterOffsetIndex(ptr + channel, offsets);
     }
     return;
   } else
