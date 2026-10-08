@@ -145,7 +145,7 @@ $(function(){initNavTree('argon_2store_8hpp_source.html','',''); });
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">using </span>offset_type = <span class="keyword">typename</span> argon_type::offset_type;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">const</span> <span class="keyword">auto</span> offsets = offset_type::Iota(0) * <span class="keyword">static_cast&lt;</span>typename offset_type::scalar_type<span class="keyword">&gt;</span>(3);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> channel = 0; channel &lt; 3; ++channel) {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      multi_vec[channel].StoreScatterOffsetIndex(ptr + channel, offsets);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      multi_vec.data()[channel].StoreScatterOffsetIndex(ptr + channel, offsets);</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  } <span class="keywordflow">else</span></div>
