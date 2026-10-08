@@ -1,41 +1,46 @@
 <map id="include/argon/helpers/to_array.hpp" name="include/argon/helpers/to_array.hpp">
-<area shape="rect" id="Node000001" title="Helper functions to convert C&#45;style arrays to std::array of Argon types, mimicking std::to_array." alt="" coords="282,5,445,45"/>
-<area shape="rect" id="Node000002" href="$argon_2vector_8hpp_source.html" title=" " alt="" coords="272,93,455,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="366,59,366,93,361,93,361,59"/>
-<area shape="rect" id="Node000003" href="$argon_8hpp_source.html" title=" " alt="" coords="181,262,319,287"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="364,133,356,170,339,208,307,241,274,264,271,260,304,237,334,205,351,168,359,132"/>
-<area shape="rect" id="Node000008" href="$argon__full_8hpp_source.html" title=" " alt="" coords="695,167,845,207"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="436,119,695,168,694,173,435,124"/>
-<area shape="rect" id="Node000015" href="$argon__half_8hpp_source.html" title=" " alt="" coords="175,167,325,207"/>
-<area shape="poly" id="edge23_Node000002_Node000015" title=" " alt="" coords="337,129,279,169,276,164,334,124"/>
-<area shape="rect" id="Node000004" href="$interleaved_8hpp_source.html" title=" " alt="" coords="403,343,577,383"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="296,290,438,340,436,345,294,295"/>
-<area shape="rect" id="Node000005" href="$argon_2vectorize_2store_8hpp_source.html" title=" " alt="" coords="204,343,379,383"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="264,298,284,341,280,343,259,301"/>
-<area shape="rect" id="Node000007" href="$store__interleaved_8hpp_source.html" title=" " alt="" coords="5,343,180,383"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="218,296,129,345,126,340,216,292"/>
-<area shape="rect" id="Node000006" href="$ptr_8hpp_source.html" title=" " alt="" coords="664,431,839,471"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="393,381,664,431,663,436,392,386"/>
-<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="681,203,521,227,338,257,302,265,301,259,338,252,521,221,680,198"/>
-<area shape="poly" id="edge15_Node000008_Node000005" title=" " alt="" coords="681,199,514,221,437,238,383,257,358,276,336,299,304,344,300,341,331,296,354,272,381,252,435,232,513,216,681,194"/>
-<area shape="poly" id="edge14_Node000008_Node000006" title=" " alt="" coords="860,195,988,216,1055,232,1117,252,1167,276,1186,291,1200,307,1208,324,1209,343,1203,363,1188,385,1165,402,1130,417,1087,428,1039,436,935,447,839,451,839,446,935,442,1038,431,1086,423,1128,412,1162,398,1184,381,1198,361,1204,342,1203,325,1195,309,1182,295,1164,281,1115,257,1054,237,987,221,859,200"/>
-<area shape="rect" id="Node000009" href="$pointer__vector_8hpp.html" title="A vector of pointers, one per lane, for gathering from and scattering to several buffers in lockstep." alt="" coords="594,255,754,295"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="740,218,697,256,693,252,737,214"/>
-<area shape="rect" id="Node000010" href="$for__each_8hpp.html" title="A loop over n elements a vector at a time, final partial vector included, shaped so that Helium compi..." alt="" coords="779,255,953,295"/>
-<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="803,214,847,252,843,256,800,218"/>
-<area shape="rect" id="Node000011" href="$argon_2vectorize_2load_8hpp_source.html" title=" " alt="" coords="601,343,776,383"/>
-<area shape="poly" id="edge11_Node000008_Node000011" title=" " alt="" coords="860,201,910,216,952,236,967,248,975,263,976,279,966,297,945,306,898,318,777,346,775,340,897,313,943,301,963,293,971,278,970,264,963,252,949,240,908,221,858,206"/>
-<area shape="rect" id="Node000012" href="$load__interleaved_8hpp_source.html" title=" " alt="" coords="800,343,975,383"/>
-<area shape="poly" id="edge12_Node000008_Node000012" title=" " alt="" coords="860,188,896,196,931,208,964,227,991,253,998,274,991,296,967,325,936,345,933,340,963,321,986,293,993,274,986,256,961,231,929,213,894,201,859,194"/>
-<area shape="rect" id="Node000013" href="$load__store_8hpp_source.html" title=" " alt="" coords="999,343,1173,383"/>
-<area shape="poly" id="edge13_Node000008_Node000013" title=" " alt="" coords="860,195,938,215,977,231,1013,253,1036,273,1055,297,1080,341,1076,344,1050,300,1032,276,1010,257,974,236,936,220,859,200"/>
-<area shape="rect" id="Node000014" href="$tail_8hpp.html" title="Vectorized views that also visit the final, partial vector of a range (see with_tail() on the views)." alt="" coords="395,255,569,295"/>
-<area shape="poly" id="edge16_Node000008_Node000014" title=" " alt="" coords="694,213,546,257,544,252,693,208"/>
-<area shape="poly" id="edge17_Node000014_Node000004" title=" " alt="" coords="488,308,491,342,486,343,482,308"/>
-<area shape="poly" id="edge21_Node000014_Node000005" title=" " alt="" coords="429,303,334,345,332,340,427,298"/>
-<area shape="poly" id="edge22_Node000014_Node000007" title=" " alt="" coords="384,300,178,345,177,340,383,295"/>
-<area shape="poly" id="edge18_Node000014_Node000011" title=" " alt="" coords="541,297,644,340,642,345,539,302"/>
-<area shape="poly" id="edge19_Node000014_Node000012" title=" " alt="" coords="583,295,800,340,799,345,582,300"/>
-<area shape="poly" id="edge20_Node000014_Node000013" title=" " alt="" coords="583,292,698,307,787,316,875,325,986,340,999,342,998,347,986,345,874,330,786,321,697,312,583,297"/>
-<area shape="poly" id="edge24_Node000015_Node000003" title=" " alt="" coords="253,221,253,262,247,262,247,221"/>
+<area shape="rect" id="Node000001" title="Helper functions to convert C&#45;style arrays to std::array of Argon types, mimicking std::to_array." alt="" coords="322,5,485,45"/>
+<area shape="rect" id="Node000002" href="$argon_2vector_8hpp_source.html" title=" " alt="" coords="312,93,495,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="406,59,406,93,401,93,401,59"/>
+<area shape="rect" id="Node000003" href="$argon_8hpp_source.html" title=" " alt="" coords="210,350,349,375"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="366,128,340,145,317,168,304,191,294,216,283,269,280,316,281,350,276,350,275,316,278,268,289,215,299,189,313,165,336,141,363,123"/>
+<area shape="rect" id="Node000008" href="$argon__full_8hpp_source.html" title=" " alt="" coords="636,167,787,207"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="462,119,638,164,637,169,461,125"/>
+<area shape="rect" id="Node000016" href="$argon__half_8hpp_source.html" title=" " alt="" coords="328,167,479,207"/>
+<area shape="poly" id="edge26_Node000002_Node000016" title=" " alt="" coords="406,132,406,167,401,167,401,132"/>
+<area shape="rect" id="Node000004" href="$interleaved_8hpp_source.html" title=" " alt="" coords="5,431,180,471"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="243,384,135,433,133,428,241,379"/>
+<area shape="rect" id="Node000005" href="$argon_2vectorize_2store_8hpp_source.html" title=" " alt="" coords="403,431,577,471"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="321,378,445,428,443,433,319,383"/>
+<area shape="rect" id="Node000007" href="$store__interleaved_8hpp_source.html" title=" " alt="" coords="204,431,379,471"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="285,388,291,430,286,431,280,389"/>
+<area shape="rect" id="Node000006" href="$ptr_8hpp_source.html" title=" " alt="" coords="763,519,937,559"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="583,471,772,516,771,521,581,476"/>
+<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="623,200,475,223,408,239,362,257,336,278,314,304,287,351,282,348,310,301,332,275,359,252,406,234,474,218,622,195"/>
+<area shape="poly" id="edge24_Node000008_Node000005" title=" " alt="" coords="692,220,635,296,561,384,513,432,510,428,557,381,631,293,688,216"/>
+<area shape="poly" id="edge23_Node000008_Node000006" title=" " alt="" coords="801,201,898,227,952,247,1007,271,1060,301,1110,337,1153,380,1188,429,1196,451,1194,462,1188,472,1172,486,1148,498,1084,515,1010,528,938,535,937,530,1009,522,1083,510,1146,493,1169,482,1184,469,1189,460,1191,452,1184,432,1149,383,1106,341,1057,306,1005,276,950,252,896,232,799,206"/>
+<area shape="rect" id="Node000009" href="$pointer__vector_8hpp.html" title="A vector of pointers, one per lane, for gathering from and scattering to several buffers in lockstep." alt="" coords="1249,255,1409,295"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="801,195,998,219,1230,252,1249,255,1248,260,1230,257,997,224,800,200"/>
+<area shape="rect" id="Node000010" href="$first__n_8hpp.html" title="NEON loads and stores of a loop&#39;s final, partial vector, branching on its scalar lane count." alt="" coords="373,255,548,295"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="645,214,516,257,515,252,643,209"/>
+<area shape="rect" id="Node000011" href="$for__each_8hpp.html" title="A loop over n elements a vector at a time, final partial vector included, shaped so that Helium compi..." alt="" coords="373,343,548,383"/>
+<area shape="poly" id="edge19_Node000008_Node000011" title=" " alt="" coords="675,217,561,297,490,345,487,340,558,292,672,213"/>
+<area shape="rect" id="Node000012" href="$tail_8hpp.html" title="Vectorized views that also visit the final, partial vector of a range (see with_tail() on the views)." alt="" coords="624,343,799,383"/>
+<area shape="poly" id="edge25_Node000008_Node000012" title=" " alt="" coords="714,220,714,342,709,342,709,220"/>
+<area shape="rect" id="Node000013" href="$argon_2vectorize_2load_8hpp_source.html" title=" " alt="" coords="601,431,776,471"/>
+<area shape="poly" id="edge20_Node000008_Node000013" title=" " alt="" coords="746,214,778,249,807,291,817,314,822,338,821,361,812,384,800,400,785,413,752,433,749,428,782,409,796,396,808,381,816,360,817,338,812,316,803,294,774,252,742,218"/>
+<area shape="rect" id="Node000014" href="$load__interleaved_8hpp_source.html" title=" " alt="" coords="800,431,975,471"/>
+<area shape="poly" id="edge21_Node000008_Node000014" title=" " alt="" coords="765,211,791,230,815,253,844,299,865,348,887,430,881,431,860,350,839,301,811,256,788,234,762,216"/>
+<area shape="rect" id="Node000015" href="$load__store_8hpp_source.html" title=" " alt="" coords="999,431,1173,471"/>
+<area shape="poly" id="edge22_Node000008_Node000015" title=" " alt="" coords="768,210,846,252,912,299,975,348,1068,429,1064,433,971,352,909,303,843,257,766,215"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="463,309,463,342,458,342,458,309"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="529,297,657,340,656,345,527,302"/>
+<area shape="poly" id="edge13_Node000012_Node000004" title=" " alt="" coords="610,379,192,433,181,435,180,430,191,428,610,374"/>
+<area shape="poly" id="edge17_Node000012_Node000005" title=" " alt="" coords="651,390,539,433,537,428,649,385"/>
+<area shape="poly" id="edge18_Node000012_Node000007" title=" " alt="" coords="611,387,379,434,378,429,610,382"/>
+<area shape="poly" id="edge14_Node000012_Node000013" title=" " alt="" coords="705,397,696,431,691,430,700,395"/>
+<area shape="poly" id="edge15_Node000012_Node000014" title=" " alt="" coords="763,386,850,428,848,433,761,391"/>
+<area shape="poly" id="edge16_Node000012_Node000015" title=" " alt="" coords="807,383,1005,428,1003,433,806,388"/>
+<area shape="poly" id="edge27_Node000016_Node000003" title=" " alt="" coords="361,217,338,235,319,256,305,281,295,307,284,350,279,349,290,305,300,278,315,253,335,231,357,212"/>
+<area shape="poly" id="edge28_Node000016_Node000010" title=" " alt="" coords="426,217,450,253,446,256,422,220"/>
 </map>

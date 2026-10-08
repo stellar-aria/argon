@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['mask_5fscalar_0',['mask_scalar',['../classargon_1_1Predicate.html#a558da079aa93fbbd07d01fb3a569f4e1',1,'argon::Predicate']]],
-  ['mask_5ftype_1',['mask_type',['../classargon_1_1Predicate.html#a7f7c1c6df4adb06b2598c51de7e1f261',1,'argon::Predicate::mask_type'],['../classargon_1_1Vector.html#a0c772416891b4c927045fd691ea74570',1,'argon::Vector::mask_type']]]
+  ['lane_5ftype_0',['lane_type',['../classargon_1_1Vector.html#a03dd715936783524ec28dc59365db01f',1,'argon::Vector']]],
+  ['lanefor_5ft_1',['LaneFor_t',['../namespaceargon_1_1helpers.html#af9af993ac460373109df9336d6806685',1,'argon::helpers']]]
 ];

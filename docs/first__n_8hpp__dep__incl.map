@@ -1,0 +1,21 @@
+<map id="include/argon/vectorize/first_n.hpp" name="include/argon/vectorize/first_n.hpp">
+<area shape="rect" id="Node000001" title="NEON loads and stores of a loop&#39;s final, partial vector, branching on its scalar lane count." alt="" coords="401,5,576,45"/>
+<area shape="rect" id="Node000002" href="$for__each_8hpp.html" title="A loop over n elements a vector at a time, final partial vector included, shaped so that Helium compi..." alt="" coords="303,93,477,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="458,56,414,95,410,91,455,52"/>
+<area shape="rect" id="Node000003" href="$tail_8hpp.html" title="Vectorized views that also visit the final, partial vector of a range (see with_tail() on the views)." alt="" coords="501,93,676,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="523,52,568,91,565,95,519,56"/>
+<area shape="rect" id="Node000004" href="$interleaved_8hpp_source.html" title=" " alt="" coords="5,181,180,221"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="488,136,193,184,181,186,180,181,192,179,487,131"/>
+<area shape="rect" id="Node000005" href="$argon_2vectorize_2load_8hpp_source.html" title=" " alt="" coords="204,181,379,221"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="511,140,357,184,356,179,510,135"/>
+<area shape="rect" id="Node000006" href="$load__interleaved_8hpp_source.html" title=" " alt="" coords="403,181,577,221"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="558,144,514,183,510,179,555,140"/>
+<area shape="rect" id="Node000007" href="$load__store_8hpp_source.html" title=" " alt="" coords="601,181,776,221"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="623,140,668,179,665,183,619,144"/>
+<area shape="rect" id="Node000008" href="$argon_2vectorize_2store_8hpp_source.html" title=" " alt="" coords="800,181,975,221"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="668,135,823,179,821,184,667,140"/>
+<area shape="rect" id="Node000010" href="$store__interleaved_8hpp_source.html" title=" " alt="" coords="999,181,1173,221"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="690,128,988,179,999,181,998,186,987,184,689,134"/>
+<area shape="rect" id="Node000009" href="$ptr_8hpp_source.html" title=" " alt="" coords="800,269,975,309"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="890,235,890,269,885,269,885,235"/>
+</map>

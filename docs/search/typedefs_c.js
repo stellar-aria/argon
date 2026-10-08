@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['value_5ftype_0',['value_type',['../structargon_1_1vectorize_1_1load_1_1LoadIterator.html#ab60d797c3bc758277f1f3029839dc293',1,'argon::vectorize::load::LoadIterator::value_type'],['../structargon_1_1vectorize_1_1load__store_1_1Iterator.html#a14731459167438b56205e9644ecc92ab',1,'argon::vectorize::load_store::Iterator::value_type'],['../structargon_1_1vectorize_1_1load__store_1_1ConstIterator.html#ac741217b7d202ce2b6da9155fc15dce7',1,'argon::vectorize::load_store::ConstIterator::value_type'],['../structargon_1_1vectorize_1_1load__tail_1_1Iterator.html#abea3f3c51e8ea59660400ad38d481ee3',1,'argon::vectorize::load_tail::Iterator::value_type'],['../structargon_1_1vectorize_1_1store__tail_1_1Iterator.html#a7e0f65fec705df38c1b4235797968fb7',1,'argon::vectorize::store_tail::Iterator::value_type'],['../structargon_1_1vectorize_1_1load__store__tail_1_1Iterator.html#a534bc90b915c8ea33236b145f5c0c882',1,'argon::vectorize::load_store_tail::Iterator::value_type']]],
-  ['vector_5ftype_1',['vector_type',['../classargon_1_1Predicate.html#af2cde96d3ba85f0d389ea2e96b58eaed',1,'argon::Predicate::vector_type'],['../classargon_1_1Vector.html#a076579834e2a423dbbf5ebfa42348752',1,'argon::Vector::vector_type'],['../classargon_1_1vectorize_1_1Partial.html#a0043969c23e7e615b96f34b34bfe826b',1,'argon::vectorize::Partial::vector_type']]],
-  ['vectorfor_5ft_2',['VectorFor_t',['../namespaceargon.html#a70e4da7cedf4f134dcae4564d0caea2d',1,'argon']]]
+  ['scalar_5ftype_0',['scalar_type',['../classargon_1_1Vector.html#ac5bd00a35d6eaa0cca199800e44157d9',1,'argon::Vector']]],
+  ['sentinel_1',['sentinel',['../structargon_1_1vectorize_1_1load.html#a7612e00731ee6b9db324f2c74a5683a4',1,'argon::vectorize::load']]],
+  ['storage_5ftype_2',['storage_type',['../classargon_1_1Predicate.html#af4d5452bd9b9709351431c43a0455558',1,'argon::Predicate']]]
 ];

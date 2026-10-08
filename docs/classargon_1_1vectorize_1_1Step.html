@@ -146,7 +146,7 @@ class argon::vectorize::Step&lt; ScalarType, full &gt;</div><p>One step of <a cl
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">ScalarType</td><td>The lane type the loop is written in. </td></tr>
-    <tr><td class="paramname">full</td><td>Whether every lane is in range. On NEON the loop body is instantiated with full steps for the whole vectors (plain loads and stores) and once more with a partial step for the tail; on MVE every step is predicated, which is what lets the compiler drop the predication into the loop instructions (dlstp/letp). </td></tr>
+    <tr><td class="paramname">full</td><td>Whether every lane is in range. On NEON the loop body is instantiated with full steps for the whole vectors (plain loads and stores) and once more with a partial step for the tail, whose accesses branch on its scalar count rather than a predicate (see <a class="el" href="first__n_8hpp.html" title="NEON loads and stores of a loop&#39;s final, partial vector, branching on its scalar lane count.">first_n.hpp</a>); on MVE every step is predicated, which is what lets the compiler drop the predication into the loop instructions (dlstp/letp). </td></tr>
   </table>
   </dd>
 </dl>
