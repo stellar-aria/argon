@@ -1117,7 +1117,12 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Return the maximum value across all lanes.
   ScalarType ReduceMax() const {
 #ifdef __aarch64__
-    return simd::reduce_max(this->vec_);
+    if constexpr (requires { simd::reduce_max(this->vec_); }) {
+      return simd::reduce_max(this->vec_);
+    } else {  // A64 has no 64-bit integer across-vector max
+      auto arr = this->to_array();
+      return std::reduce(arr.begin(), arr.end(), arr[0], [](auto a, auto b) { return std::max(a, b); });
+    }
 #else
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
@@ -1145,7 +1150,12 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Return the minimum value across all lanes.
   ScalarType ReduceMin() const {
 #ifdef __aarch64__
-    return simd::reduce_min(this->vec_);
+    if constexpr (requires { simd::reduce_min(this->vec_); }) {
+      return simd::reduce_min(this->vec_);
+    } else {  // A64 has no 64-bit integer across-vector min
+      auto arr = this->to_array();
+      return std::reduce(arr.begin(), arr.end(), arr[0], [](auto a, auto b) { return std::min(a, b); });
+    }
 #else
 #ifdef ARGON_PLATFORM_MVE
     if constexpr (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) {
