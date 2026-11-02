@@ -57,7 +57,7 @@ jobs:
 
   test-build-qemu:
     name: Run tests (QEMU)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # 26.04 has no qemu-user-static
     strategy:
       fail-fast: false
       matrix:
