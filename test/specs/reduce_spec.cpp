@@ -94,6 +94,31 @@ auto describe_reduce_add_wide = describe("ReduceAdd wide lanes", ${
   });
 });
 
+auto describe_reduce_add_wrap = describe("ReduceAdd wrapping", ${
+  it("wraps an int32 sum past INT32_MAX, as the lanes' sum modulo 2^32", _{
+    const auto v = Argon<int32_t>{INT32_MAX, INT32_MAX, 1, 0};
+    expect(v.ReduceAdd()).to_equal(-1);
+  });
+
+  it("wraps an int16 sum of 8 lanes", _{
+    const auto v = Argon<int16_t>{INT16_MAX, 1, 0, 0, 0, 0, 0, 0};
+    expect(v.ReduceAdd()).to_equal(int16_t{INT16_MIN});
+  });
+
+  it("sums both lanes of an int64 vector", _{
+    const auto v = Argon<int64_t>{int64_t{1} << 40, -3};
+    expect(v.ReduceAdd()).to_equal((int64_t{1} << 40) - 3);
+  });
+
+  it("finds every lane of an 8-lane int16 vector", _{
+    for (size_t at = 0; at < 8; ++at) {
+      std::array<int16_t, 8> data{};
+      data[at] = int16_t(1000 + at);
+      expect(Argon<int16_t>::Load(data.data()).ReduceAdd()).to_equal(int16_t(1000 + at));
+    }
+  });
+});
+
 auto describe_reduce_max_wide = describe("ReduceMax wide lanes", ${
   it("returns the max of all 8 lanes of an int16 vector", _{
     std::array<int16_t, 8> data = {3, 7, 1, 5, 2, 8, 4, 6};
@@ -118,6 +143,38 @@ auto describe_reduce_min_int32 = describe("ReduceMin int32", ${
   });
 });
 
+auto describe_reduce_min_wide = describe("ReduceMin wide lanes", ${
+  it("returns the min of all 8 lanes of an int16 vector, wherever it sits", _{
+    for (size_t at = 0; at < 8; ++at) {
+      std::array<int16_t, 8> data = {3, 7, 1, 5, 2, 8, 4, 6};
+      data[at] = -9;
+      expect(Argon<int16_t>::Load(data.data()).ReduceMin()).to_equal(int16_t{-9});
+    }
+  });
+
+  it("returns the min of all 16 lanes of a uint8 vector, wherever it sits", _{
+    for (size_t at = 0; at < 16; ++at) {
+      std::array<uint8_t, 16> data;
+      std::iota(data.begin(), data.end(), uint8_t{10});
+      data[at] = 2;
+      expect((int)Argon<uint8_t>::Load(data.data()).ReduceMin()).to_equal(2);
+    }
+  });
+
+  it("returns the max of all 16 lanes of an int8 vector, wherever it sits", _{
+    for (size_t at = 0; at < 16; ++at) {
+      std::array<int8_t, 16> data{};
+      data[at] = 100;
+      expect((int)Argon<int8_t>::Load(data.data()).ReduceMax()).to_equal(100);
+    }
+  });
+
+  it("returns the min of an int64 vector", _{
+    const auto v = Argon<int64_t>{int64_t{1} << 40, -(int64_t{1} << 40)};
+    expect(v.ReduceMin()).to_equal(-(int64_t{1} << 40));
+  });
+});
+
 auto describe_reduce_min_float = describe("ReduceMin float", ${
   it("returns the minimum lane of a float vector", _{
     std::array<float, 4> data = {3.0f, 7.0f, 1.0f, 5.0f};
@@ -130,9 +187,11 @@ CPPSPEC_MAIN(
   describe_reduce_add_int32,
   describe_reduce_add_float,
   describe_reduce_add_wide,
+  describe_reduce_add_wrap,
   describe_reduce_max_int32,
   describe_reduce_max_float,
   describe_reduce_max_wide,
   describe_reduce_min_int32,
+  describe_reduce_min_wide,
   describe_reduce_min_float
 );

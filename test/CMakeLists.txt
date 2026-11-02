@@ -99,6 +99,13 @@ if(ARGON_TEST_CPU STREQUAL "A9" OR ARGON_TEST_CPU STREQUAL "A7")
   target_compile_options(argon_neon_tail_codegen PRIVATE -O2)
   add_test(NAME tail_loops_stay_on_neon
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_tail.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_neon_tail_codegen>)
+
+  # Across-lane reductions fold on d registers: the halves combined, then pairwise (vpadd, vpmax, vpmin).
+  add_library(argon_neon_reduce_codegen OBJECT codegen/neon_reduce.cpp)
+  target_link_libraries(argon_neon_reduce_codegen PRIVATE argon)
+  target_compile_options(argon_neon_reduce_codegen PRIVATE -O2)
+  add_test(NAME reductions_fold_on_d_registers
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/codegen/check_neon_reduce.sh ${ARGON_ARM_OBJDUMP} $<TARGET_OBJECTS:argon_neon_reduce_codegen>)
 endif()
 
 # Helium: with_tail() views and FirstN loops must compile to low-overhead tail-predicated loops (dlstp/letp).

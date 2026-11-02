@@ -1033,6 +1033,33 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   }
 #endif
 
+#ifdef ARGON_PLATFORM_NEON
+  /// Whether A32's pairwise instructions (vpadd, vpmax, vpmin) take these lanes: integers up to 32 bits, and float.
+  static constexpr bool neon_pairwise_lanes =
+      (std::is_integral_v<ScalarType> && sizeof(ScalarType) <= 4) || std::is_same_v<ScalarType, float>;
+
+  /// @brief Fold all lanes on d registers, for A32, which has no across-vector add, max or min: `op` combines the two
+  /// doublewords, then `pairwise` folds the doubleword onto itself until one lane is left. The grouping is Reduce's
+  /// (the halves first, then neighbours), so a float sum is the same, in half the instructions on half the width.
+  /// @param op A callable `(ArgonHalf, ArgonHalf) -> ArgonHalf`, e.g. vadd.
+  /// @param pairwise A callable `(ArgonHalf) -> ArgonHalf` folding neighbouring lanes, e.g. vpadd of the doubleword
+  /// with itself.
+  template <typename HalfOp, typename PairwiseOp>
+  ace ScalarType FoldHalves(HalfOp op, PairwiseOp pairwise) const {
+    auto half = op(this->GetLow(), this->GetHigh());
+    if constexpr (lanes >= 4) {
+      half = pairwise(half);
+    }
+    if constexpr (lanes >= 8) {
+      half = pairwise(half);
+    }
+    if constexpr (lanes >= 16) {
+      half = pairwise(half);
+    }
+    return half[0];
+  }
+#endif
+
   /// @brief Fold all lanes into a single scalar using a commutative binary operation.
   /// @tparam CommutableOpType A callable `(Argon, Argon) -> Argon` (e.g., addition, max).
   /// @param op The commutative binary operation.
@@ -1065,6 +1092,10 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     } else if constexpr (argon::lane_floating_point<ScalarType>) {
       // MVE has no float vaddv: ((0 + 1) + (2 + 3)), as AArch64's faddp does.
       return FoldFloatPairs([](auto a, auto b) { return a + b; });
+    }
+#elifdef ARGON_PLATFORM_NEON
+    if constexpr (neon_pairwise_lanes) {
+      return FoldHalves([](auto a, auto b) { return a.Add(b); }, [](auto h) { return h.PairwiseAdd(h); });
     }
 #endif
     return this->Reduce([](auto a, auto b) { return a + b; });
@@ -1102,6 +1133,11 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       });
     }
 #endif
+#ifdef ARGON_PLATFORM_NEON
+    if constexpr (neon_pairwise_lanes) {
+      return FoldHalves([](auto a, auto b) { return a.Max(b); }, [](auto h) { return h.PairwiseMax(h); });
+    }
+#endif
     return this->Reduce([](auto a, auto b) { return a.Max(b); });
 #endif
   }
@@ -1123,6 +1159,11 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
           return a < b ? a : b;
         }
       });
+    }
+#endif
+#ifdef ARGON_PLATFORM_NEON
+    if constexpr (neon_pairwise_lanes) {
+      return FoldHalves([](auto a, auto b) { return a.Min(b); }, [](auto h) { return h.PairwiseMin(h); });
     }
 #endif
     auto arr = this->to_array();
