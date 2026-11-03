@@ -113,6 +113,12 @@ std::array<float, 4> at_runtime(const std::array<float, 4>& v) {
 template <typename T> std::array<T, 4> convert_lanes(const std::array<float, 4>& in) {
   return Argon<float>::Load(in.data()).template ConvertTo<T>().to_array();
 }
+template <typename T, int fracbits> std::array<T, 4> convert_n_lanes(const std::array<float, 4>& in) {
+  return Argon<float>::Load(in.data()).template ConvertTo<T, fracbits>().to_array();
+}
+// Each lane reaches 2^31 (int32) or 2^32 (uint32) exactly once scaled by 2^fracbits, or lies just under it.
+constexpr std::array<float, 4> fixed_edges_a{128.0f, -128.0f, nan_f, 127.99999f};
+constexpr std::array<float, 4> fixed_edges_b{256.0f, -1.0f, nan_f, 255.99998f};
 }  // namespace
 
 auto describe_convert_saturation = describe("ConvertTo float32→int saturation", ${
@@ -128,6 +134,14 @@ auto describe_convert_saturation = describe("ConvertTo float32→int saturation"
     expect(convert_lanes<uint32_t>(special_a)).to_equal(std::array<uint32_t, 4>{0u, UINT32_MAX, 0u, 2147483648u});
     expect(convert_lanes<uint32_t>(special_b)).to_equal(std::array<uint32_t, 4>{UINT32_MAX, 0u, 0u, 0u});
     expect(convert_lanes<uint32_t>(special_c)).to_equal(std::array<uint32_t, 4>{3000000000u, 2147483904u, 4294967040u, 1u});
+  });
+  it("saturates fixed-point int32 conversions at 2^31 and maps NaN to 0", _{
+    expect(convert_n_lanes<int32_t, 24>(fixed_edges_a)).to_equal(std::array<int32_t, 4>{INT32_MAX, INT32_MIN, 0, 2147483520});
+    expect(convert_n_lanes<int32_t, 24>(at_runtime(fixed_edges_a))).to_equal(std::array<int32_t, 4>{INT32_MAX, INT32_MIN, 0, 2147483520});
+  });
+  it("saturates fixed-point uint32 conversions at 2^32 and maps NaN and negatives to 0", _{
+    expect(convert_n_lanes<uint32_t, 24>(fixed_edges_b)).to_equal(std::array<uint32_t, 4>{UINT32_MAX, 0u, 0u, 4294967040u});
+    expect(convert_n_lanes<uint32_t, 24>(at_runtime(fixed_edges_b))).to_equal(std::array<uint32_t, 4>{UINT32_MAX, 0u, 0u, 4294967040u});
   });
   it("saturates uint32 conversions of run-time inputs the same way", _{
     expect(convert_lanes<uint32_t>(at_runtime(special_a))).to_equal(std::array<uint32_t, 4>{0u, UINT32_MAX, 0u, 2147483648u});

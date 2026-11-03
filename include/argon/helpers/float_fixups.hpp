@@ -30,8 +30,10 @@ namespace argon::helpers {
 #endif
 
 [[gnu::always_inline]] inline uint32_t saturate_to_uint32(float x) {
-  if (!(x > 0.0f)) return 0;  // also NaN
-  if (x >= 4294967296.0f) return UINT32_MAX;
+  if (!(x > 0.0f))
+    return 0;  // also NaN
+  if (x >= 4294967296.0f)
+    return UINT32_MAX;
   return static_cast<uint32_t>(x);
 }
 
@@ -83,6 +85,46 @@ namespace argon::helpers {
   return vld1_u32(out.data());
 #else
   return vcvt_u32_f32(a);
+#endif
+}
+
+// SIMDe's fixed-point converts saturate only above 2^31 (2^32 unsigned) and cast a lane of exactly that out of range.
+// Scaling by 2^fracbits is exact in float (an overflow goes to ±inf, which saturates the same), so on SIMDe the plain
+// converts above give vcvt #fracbits's result: truncate, saturate, NaN -> 0.
+
+template <int fracbits>
+[[gnu::always_inline]] inline int32x4_t convert_n_to_int32(float32x4_t a) {
+#if ARGON_PLATFORM_SIMDE
+  return convert_to_int32(vmulq_n_f32(a, static_cast<float>(1ULL << fracbits)));
+#else
+  return vcvtq_n_s32_f32(a, fracbits);
+#endif
+}
+
+template <int fracbits>
+[[gnu::always_inline]] inline int32x2_t convert_n_to_int32(float32x2_t a) {
+#if ARGON_PLATFORM_SIMDE
+  return convert_to_int32(vmul_n_f32(a, static_cast<float>(1ULL << fracbits)));
+#else
+  return vcvt_n_s32_f32(a, fracbits);
+#endif
+}
+
+template <int fracbits>
+[[gnu::always_inline]] inline uint32x4_t convert_n_to_uint32(float32x4_t a) {
+#if ARGON_PLATFORM_SIMDE
+  return convert_to_uint32(vmulq_n_f32(a, static_cast<float>(1ULL << fracbits)));
+#else
+  return vcvtq_n_u32_f32(a, fracbits);
+#endif
+}
+
+template <int fracbits>
+[[gnu::always_inline]] inline uint32x2_t convert_n_to_uint32(float32x2_t a) {
+#if ARGON_PLATFORM_SIMDE
+  return convert_to_uint32(vmul_n_f32(a, static_cast<float>(1ULL << fracbits)));
+#else
+  return vcvt_n_u32_f32(a, fracbits);
 #endif
 }
 

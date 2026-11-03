@@ -130,9 +130,9 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
     if constexpr (std::is_same_v<U, float>) {
       return neon::convert_n<fracbits>(this->vec_);
     } else if constexpr (std::is_unsigned_v<U>) {
-      return neon::convert_n_unsigned<fracbits>(this->vec_);
+      return argon::helpers::convert_n_to_uint32<fracbits>(this->vec_);
     } else if constexpr (std::is_signed_v<U>) {
-      return neon::convert_n_signed<fracbits>(this->vec_);
+      return argon::helpers::convert_n_to_int32<fracbits>(this->vec_);
     }
   }
 
@@ -359,9 +359,9 @@ class ArgonHalf<ScalarType> : public argon::Vector<neon::Vec64_t<ScalarType>> {
     if constexpr (std::is_same_v<U, float>) {
       return neon::convert_n<fracbits>(this->vec_);
     } else if constexpr (std::is_unsigned_v<U>) {
-      return neon::convert_n_unsigned<fracbits>(this->vec_);
+      return argon::helpers::convert_n_to_uint32<fracbits>(this->vec_);
     } else if constexpr (std::is_signed_v<U>) {
-      return neon::convert_n_signed<fracbits>(this->vec_);
+      return argon::helpers::convert_n_to_int32<fracbits>(this->vec_);
     }
   }
 

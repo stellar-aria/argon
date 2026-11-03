@@ -371,8 +371,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Narrow each lane with saturation into the even (bottom) lanes of `dest`. MVE: vqmovnb.
   template <typename S = ScalarType>
     requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4))
-  ace Argon<argon::helpers::NextSmaller_t<S>> SaturateNarrowBottom(
-      Argon<argon::helpers::NextSmaller_t<S>> dest) const {
+  ace Argon<argon::helpers::NextSmaller_t<S>> SaturateNarrowBottom(Argon<argon::helpers::NextSmaller_t<S>> dest) const {
 #ifdef ARGON_PLATFORM_MVE
     return mve::move_narrow_saturate_bottom(dest.vec(), this->vec_);
 #else
@@ -397,38 +396,48 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #define ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value) return Insert(dest, neon_value);
 #endif
   // Shift right by n, optionally rounding and/or saturating, then narrow into the bottom or top lanes of dest.
-#define ARGON_SHIFT_NARROW(Name, mve_name, Insert, neon_value)                                                  \
-  template <int n, typename S = ScalarType>                                                                     \
+#define ARGON_SHIFT_NARROW(Name, mve_name, Insert, neon_value)                                                 \
+  template <int n, typename S = ScalarType>                                                                    \
     requires(std::is_integral_v<S> && (sizeof(S) == 2 || sizeof(S) == 4) && n >= 1 && n <= 4 * int{sizeof(S)}) \
-  ace Argon<argon::helpers::NextSmaller_t<S>> Name(Argon<argon::helpers::NextSmaller_t<S>> dest) const {         \
-    ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value)                                                       \
-  }
+  ace Argon<argon::helpers::NextSmaller_t<S>> Name(Argon<argon::helpers::NextSmaller_t<S>> dest)               \
+      const {ARGON_SHIFT_NARROW_BODY(mve_name, Insert, neon_value)}
 
   /// @brief Shift each lane right by `n` and narrow it into the even (bottom) lanes of `dest`. MVE: vshrnb.
-  ARGON_SHIFT_NARROW(ShiftRightNarrowBottom, shift_right_narrow_bottom, InsertBottom,
-                     this->template ShiftRight<n>())
+  ARGON_SHIFT_NARROW(ShiftRightNarrowBottom, shift_right_narrow_bottom, InsertBottom, this->template ShiftRight<n>())
   /// @brief Shift each lane right by `n` and narrow it into the odd (top) lanes of `dest`. MVE: vshrnt.
   ARGON_SHIFT_NARROW(ShiftRightNarrowTop, shift_right_narrow_top, InsertTop, this->template ShiftRight<n>())
   /// @brief Shift each lane right by `n` with rounding and narrow it into the bottom lanes of `dest`. MVE: vrshrnb.
-  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowBottom, shift_right_narrow_round_bottom, InsertBottom,
+  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowBottom,
+                     shift_right_narrow_round_bottom,
+                     InsertBottom,
                      this->template ShiftRightRound<n>())
   /// @brief Shift each lane right by `n` with rounding and narrow it into the top lanes of `dest`. MVE: vrshrnt.
-  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowTop, shift_right_narrow_round_top, InsertTop,
+  ARGON_SHIFT_NARROW(ShiftRightRoundNarrowTop,
+                     shift_right_narrow_round_top,
+                     InsertTop,
                      this->template ShiftRightRound<n>())
   /// @brief Shift each lane right by `n` and narrow it with saturation into the bottom lanes of `dest`.
   /// MVE: vqshrnb.
-  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowBottom, shift_right_narrow_saturate_bottom, InsertBottom,
+  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowBottom,
+                     shift_right_narrow_saturate_bottom,
+                     InsertBottom,
                      SaturateToNarrow(this->template ShiftRight<n>()))
   /// @brief Shift each lane right by `n` and narrow it with saturation into the top lanes of `dest`. MVE: vqshrnt.
-  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowTop, shift_right_narrow_saturate_top, InsertTop,
+  ARGON_SHIFT_NARROW(ShiftRightSaturateNarrowTop,
+                     shift_right_narrow_saturate_top,
+                     InsertTop,
                      SaturateToNarrow(this->template ShiftRight<n>()))
   /// @brief Shift each lane right by `n` with rounding and narrow it with saturation into the bottom lanes of
   /// `dest`. MVE: vqrshrnb.
-  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowBottom, shift_right_narrow_round_saturate_bottom, InsertBottom,
+  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowBottom,
+                     shift_right_narrow_round_saturate_bottom,
+                     InsertBottom,
                      SaturateToNarrow(this->template ShiftRightRound<n>()))
   /// @brief Shift each lane right by `n` with rounding and narrow it with saturation into the top lanes of `dest`.
   /// MVE: vqrshrnt.
-  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowTop, shift_right_narrow_round_saturate_top, InsertTop,
+  ARGON_SHIFT_NARROW(ShiftRightRoundSaturateNarrowTop,
+                     shift_right_narrow_round_saturate_top,
+                     InsertTop,
                      SaturateToNarrow(this->template ShiftRightRound<n>()))
 #undef ARGON_SHIFT_NARROW
 #undef ARGON_SHIFT_NARROW_BODY
@@ -469,9 +478,9 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       dot_type lanes_sum;
       if constexpr (sizeof(S) == 1) {
         auto low = this->GetLow().MultiplyLong(b.GetLow()), high = this->GetHigh().MultiplyLong(b.GetHigh());
-        lanes_sum = (Argon<dot_type>{neon::pairwise_add_long(low.vec())} +
-                     Argon<dot_type>{neon::pairwise_add_long(high.vec())})
-                        .ReduceAdd();
+        lanes_sum =
+            (Argon<dot_type>{neon::pairwise_add_long(low.vec())} + Argon<dot_type>{neon::pairwise_add_long(high.vec())})
+                .ReduceAdd();
       } else if constexpr (sizeof(S) == 2) {
         lanes_sum = (this->GetLow().MultiplyLong(b.GetLow()) + this->GetHigh().MultiplyLong(b.GetHigh())).ReduceAdd();
       } else {
@@ -480,7 +489,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       return static_cast<dot_type>(static_cast<U>(acc) + static_cast<U>(lanes_sum));
     } else {
       U sum = static_cast<U>(acc);
-      for (auto p : DotProducts<form>(b)) sum += static_cast<U>(p);
+      for (auto p : DotProducts<form>(b))
+        sum += static_cast<U>(p);
       return static_cast<dot_type>(sum);
     }
 #endif
@@ -512,7 +522,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       return static_cast<dot_long_type>(static_cast<uint64_t>(acc) + static_cast<uint64_t>(lanes_sum));
     } else {
       uint64_t sum = static_cast<uint64_t>(acc);
-      for (auto p : DotProducts<form>(b)) sum += static_cast<uint64_t>(static_cast<dot_long_type>(p));
+      for (auto p : DotProducts<form>(b))
+        sum += static_cast<uint64_t>(static_cast<dot_long_type>(p));
       return static_cast<dot_long_type>(sum);
     }
 #endif
@@ -533,8 +544,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     } else if constexpr (form == DotForm::Subtract) {
       return mve::multiply_subtract_long_round_dual_reduce_add_high_accumulate(acc, this->vec_, b.vec());
     } else {
-      return mve::multiply_subtract_long_round_dual_reduce_add_high_accumulate_exchange_pairs(acc, this->vec_,
-                                                                                            b.vec());
+      return mve::multiply_subtract_long_round_dual_reduce_add_high_accumulate_exchange_pairs(acc, this->vec_, b.vec());
     }
 #else
     uint64_t sum = static_cast<uint64_t>(acc);
@@ -586,7 +596,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     for (auto& lane : out) {
       lane = static_cast<S>(offset);
       offset += step;
-      if (offset == size) offset = 0;
+      if (offset == size)
+        offset = 0;
     }
     return Argon<S>::Load(out.data());
 #endif
@@ -616,7 +627,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     std::array<S, lanes> out{};
     for (auto& lane : out) {
       lane = static_cast<S>(offset);
-      if (offset == 0) offset = size;
+      if (offset == 0)
+        offset = size;
       offset -= step;
     }
     return Argon<S>::Load(out.data());
@@ -644,7 +656,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
           .template As<S>();
     } else {
       std::array<S, lanes> out{};
-      for (size_t i = 0; i < lanes; ++i) out.data()[i] = static_cast<S>(ptr[i]);
+      for (size_t i = 0; i < lanes; ++i)
+        out.data()[i] = static_cast<S>(ptr[i]);
       return Argon<S>::Load(out.data());
     }
 #endif
@@ -660,7 +673,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #else
     std::array<S, lanes> out{};
     for (size_t i = 0; i < lanes; ++i) {
-      if (active.Active(i)) out.data()[i] = static_cast<S>(ptr[i]);
+      if (active.Active(i))
+        out.data()[i] = static_cast<S>(ptr[i]);
     }
     return Argon<S>::Load(out.data());
 #endif
@@ -679,7 +693,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       neon::store1(ptr, neon::move_narrow(this->template As<SameSign>().vec()));
     } else {
       auto values = this->to_array();
-      for (size_t i = 0; i < lanes; ++i) ptr[i] = static_cast<N>(values.data()[i]);
+      for (size_t i = 0; i < lanes; ++i)
+        ptr[i] = static_cast<N>(values.data()[i]);
     }
 #endif
   }
@@ -693,7 +708,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #else
     auto values = this->to_array();
     for (size_t i = 0; i < lanes; ++i) {
-      if (active.Active(i)) ptr[i] = static_cast<N>(values.data()[i]);
+      if (active.Active(i))
+        ptr[i] = static_cast<N>(values.data()[i]);
     }
 #endif
   }
@@ -701,7 +717,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Gather `base[offsets[i]]` of the narrower type N, extending each to a lane. MVE: vldrb / vldrh gather.
   template <typename N, typename S = ScalarType, typename... PredicateType>
     requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
-  ace static Argon<S> LoadGatherOffsetIndexWiden(const N* base, typename Argon<S>::offset_type offsets,
+  ace static Argon<S> LoadGatherOffsetIndexWiden(const N* base,
+                                                 typename Argon<S>::offset_type offsets,
                                                  PredicateType... active) {
     return GatherWiden<false, N, S>(base, offsets, active...);
   }
@@ -709,7 +726,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Gather N from `base` plus a byte offset per lane, extending each to a lane.
   template <typename N, typename S = ScalarType, typename... PredicateType>
     requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
-  ace static Argon<S> LoadGatherOffsetBytesWiden(const N* base, typename Argon<S>::offset_type offsets,
+  ace static Argon<S> LoadGatherOffsetBytesWiden(const N* base,
+                                                 typename Argon<S>::offset_type offsets,
                                                  PredicateType... active) {
     return GatherWiden<true, N, S>(base, offsets, active...);
   }
@@ -717,16 +735,18 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   /// @brief Scatter the low bits of each lane as N to `base[offsets[i]]`. MVE: vstrb / vstrh scatter.
   template <typename N, typename S = ScalarType, typename... PredicateType>
     requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
-  [[gnu::always_inline]] inline void StoreScatterOffsetIndexNarrow(N* base, typename Argon<S>::offset_type offsets,
-                                         PredicateType... active) const {
+  [[gnu::always_inline]] inline void StoreScatterOffsetIndexNarrow(N* base,
+                                                                   typename Argon<S>::offset_type offsets,
+                                                                   PredicateType... active) const {
     ScatterNarrow<false>(base, offsets, active...);
   }
 
   /// @brief Scatter the low bits of each lane as N to `base` plus a byte offset per lane.
   template <typename N, typename S = ScalarType, typename... PredicateType>
     requires(argon::widenable_from<N, S> && sizeof...(PredicateType) <= 1)
-  [[gnu::always_inline]] inline void StoreScatterOffsetBytesNarrow(N* base, typename Argon<S>::offset_type offsets,
-                                         PredicateType... active) const {
+  [[gnu::always_inline]] inline void StoreScatterOffsetBytesNarrow(N* base,
+                                                                   typename Argon<S>::offset_type offsets,
+                                                                   PredicateType... active) const {
     ScatterNarrow<true>(base, offsets, active...);
   }
 
@@ -751,7 +771,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     }
 #else
 #ifdef __ARM_FEATURE_COMPLEX
-    if constexpr (argon::lane_floating_point<S>) return neon::complex_add_rotate_90(this->vec_, b.vec());
+    if constexpr (argon::lane_floating_point<S>)
+      return neon::complex_add_rotate_90(this->vec_, b.vec());
 #endif
     const auto swapped = SwapPairs(b);
     return EvenLanes().Select(*this - swapped, *this + swapped);
@@ -774,7 +795,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     }
 #else
 #ifdef __ARM_FEATURE_COMPLEX
-    if constexpr (argon::lane_floating_point<S>) return neon::complex_add_rotate_270(this->vec_, b.vec());
+    if constexpr (argon::lane_floating_point<S>)
+      return neon::complex_add_rotate_270(this->vec_, b.vec());
 #endif
     const auto swapped = SwapPairs(b);
     return EvenLanes().Select(*this + swapped, *this - swapped);
@@ -830,7 +852,7 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       return rotation == 0 ? this->MultiplyAdd(real, c) : this->MultiplySubtract(real, c);
     } else {
       const auto imag = even.Select(SwapPairs(b), b);  // (b.im, b.im)
-      const auto swapped = SwapPairs(c);                // (c.im, c.re)
+      const auto swapped = SwapPairs(c);               // (c.im, c.re)
       const auto minus = this->MultiplySubtract(imag, swapped), plus = this->MultiplyAdd(imag, swapped);
       return rotation == 90 ? even.Select(minus, plus) : even.Select(plus, minus);
     }
@@ -866,7 +888,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
 #else
     using U = std::make_unsigned_t<S>;
     constexpr int width = 8 * sizeof(S);
-    if (bits <= 0) return Argon<S>{S(0)};
+    if (bits <= 0)
+      return Argon<S>{S(0)};
     // Reverse the bits of each byte, then the bytes of each lane.
     Argon<uint8_t> bytes = this->template As<uint8_t>();
 #ifdef __aarch64__
@@ -999,9 +1022,17 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     if constexpr (std::is_same_v<U, float>) {
       return simd::convert_n<fracbits>(this->vec_);
     } else if constexpr (std::is_unsigned_v<U>) {
+#ifndef __ARM_FEATURE_MVE
+      return argon::helpers::convert_n_to_uint32<fracbits>(this->vec_);
+#else
       return simd::convert_n_unsigned<fracbits>(this->vec_);
+#endif
     } else if constexpr (std::is_signed_v<U>) {
+#ifndef __ARM_FEATURE_MVE
+      return argon::helpers::convert_n_to_int32<fracbits>(this->vec_);
+#else
       return simd::convert_n_signed<fracbits>(this->vec_);
+#endif
     }
   }
 
@@ -1357,7 +1388,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
       T p = static_cast<T>(x[i]) * static_cast<T>(y[j]);
       // Subtract negates the odd lanes' products; SubtractExchange the even lanes' (a[2i+1]·b[2i] − a[2i]·b[2i+1]).
       const bool negate = form == DotForm::Subtract ? (i & 1) : (form == DotForm::SubtractExchange && !(i & 1));
-      if (negate) p = static_cast<T>(T{0} - p);
+      if (negate)
+        p = static_cast<T>(T{0} - p);
       out[i] = p;
     }
     return out;
@@ -1375,7 +1407,6 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     }
   }
 #endif
-
 
  private:
   // ── Helpers for the widening loads and narrowing stores ──
@@ -1425,8 +1456,8 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
     std::array<S, lanes> out{};
     for (size_t i = 0; i < lanes; ++i) {
       if ((active.Active(i) && ...)) {
-        const N* p = byte_offsets ? reinterpret_cast<const N*>(reinterpret_cast<const char*>(base) + off[i])
-                                  : base + off[i];
+        const N* p =
+            byte_offsets ? reinterpret_cast<const N*>(reinterpret_cast<const char*>(base) + off[i]) : base + off[i];
         out[i] = static_cast<S>(*p);
       }
     }
@@ -1435,7 +1466,9 @@ class Argon : public argon::Vector<simd::Vec128_t<ScalarType>> {
   }
 
   template <bool byte_offsets, typename N, typename... PredicateType>
-  [[gnu::always_inline]] inline void ScatterNarrow(N* base, typename Argon<ScalarType>::offset_type offsets, PredicateType... active) const {
+  [[gnu::always_inline]] inline void ScatterNarrow(N* base,
+                                                   typename Argon<ScalarType>::offset_type offsets,
+                                                   PredicateType... active) const {
 #ifdef ARGON_PLATFORM_MVE
     const auto v = this->template As<ExtendedFrom<N, ScalarType>>().vec();
     if constexpr (sizeof(N) == 1) {
