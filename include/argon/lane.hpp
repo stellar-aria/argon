@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <type_traits>
 #include "arm_simd.hpp"
 #include "arm_simd/helpers/scalar.hpp"
 #include "arm_simd/helpers/vec64.hpp"
@@ -32,9 +33,10 @@ class Vector;
 /// that contains the lane, and `lane()` returns the local index within that half.
 template <size_t LaneIndex, typename VectorType>
 class ConstLane {
-  using scalar_type = simd::Scalar_t<VectorType>;
+  using vector_type = std::remove_const_t<VectorType>;  // a const vector's lanes are read-only
+  using scalar_type = simd::Scalar_t<vector_type>;
   using type = ConstLane<LaneIndex, VectorType>;
-  using argon_type = helpers::ArgonFor_t<VectorType>;
+  using argon_type = helpers::ArgonFor_t<vector_type>;
 
  public:
   /// @brief Construct a lane accessor bound to `vec`.
@@ -49,7 +51,7 @@ class ConstLane {
 #ifdef ARGON_PLATFORM_MVE
     return vec_ = Set(*ptr);
 #else
-    if constexpr (simd::is_quadword_v<VectorType>) {
+    if constexpr (simd::is_quadword_v<vector_type>) {
       return vec_ = argon_type{simd::load1_lane_quad<LaneIndex>(ptr, vec_)};
     } else {
       return vec_ = argon_type{simd::load1_lane<LaneIndex>(ptr, vec_)};
@@ -63,15 +65,15 @@ class ConstLane {
 
 #if __ARM_ARCH >= 8
   /// @brief Return the full vector held by this lane accessor.
-  ace VectorType vec() { return vec_; }
+  ace vector_type vec() { return vec_; }
   /// @brief Return the lane index.
   ace const int lane() { return LaneIndex; }
 #else
   /// @brief On ARM32, return the 64-bit half-register that contains this lane.
   ace neon::Vec64_t<scalar_type> vec() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
       return vec_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
       if constexpr (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
         return simd::get_high(vec_);
       } else {
@@ -81,9 +83,9 @@ class ConstLane {
   }
   /// @brief On ARM32, return the local lane index within the 64-bit half-register returned by `vec()`.
   ace int lane() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
       return LaneIndex;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
       if (LaneIndex >= ArgonHalf<scalar_type>::lanes) {
         return (LaneIndex - ArgonHalf<scalar_type>::lanes);
       } else {
@@ -103,9 +105,10 @@ class ConstLane {
 /// the 64-bit half-register containing the lane, and `lane()` returns the local index within that half.
 template <typename VectorType>
 class Lane {
-  using scalar_type = simd::Scalar_t<VectorType>;
+  using vector_type = std::remove_const_t<VectorType>;  // a const vector's lanes are read-only
+  using scalar_type = simd::Scalar_t<vector_type>;
   using type = Lane<VectorType>;
-  using argon_type = helpers::ArgonFor_t<VectorType>;
+  using argon_type = helpers::ArgonFor_t<vector_type>;
 
  public:
   /// @brief Construct a lane accessor bound to `vec` at runtime index `lane`.
@@ -130,15 +133,15 @@ class Lane {
 
 #if __ARM_ARCH >= 8
   /// @brief Return the full vector held by this lane accessor.
-  ace VectorType vec() { return vec_; }
+  ace vector_type vec() { return vec_; }
   /// @brief Return the runtime lane index.
   ace const int lane() { return lane_; }
 #else
   /// @brief On ARM32, return the 64-bit half-register that contains this lane.
   ace neon::Vec64_t<scalar_type> vec() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
       return vec_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return simd::get_high(vec_);
       } else {
@@ -148,9 +151,9 @@ class Lane {
   }
   /// @brief On ARM32, return the local lane index within the 64-bit half-register returned by `vec()`.
   ace int lane() {
-    if constexpr (simd::is_doubleword_v<VectorType>) {
+    if constexpr (simd::is_doubleword_v<vector_type>) {
       return lane_;
-    } else if constexpr (simd::is_quadword_v<VectorType>) {
+    } else if constexpr (simd::is_quadword_v<vector_type>) {
       if (lane_ >= ArgonHalf<scalar_type>::lanes) {
         return (lane_ - ArgonHalf<scalar_type>::lanes);
       } else {

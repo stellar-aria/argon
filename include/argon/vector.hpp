@@ -53,9 +53,9 @@ template <typename VectorType>
 class Vector {
  public:
   template <size_t LaneIndex>
-  using const_lane_type = ConstLane<LaneIndex, VectorType>;     ///< The type of a single lane of the SIMD vector.
-  using lane_type = Lane<VectorType>;                           ///< The type of a single lane of the SIMD vector.
-  using scalar_type = simd::Scalar_t<VectorType>;               ///< The scalar type of the SIMD vector.
+  using const_lane_type = ConstLane<LaneIndex, VectorType>;  ///< The type of a single lane of the SIMD vector.
+  using lane_type = Lane<VectorType>;                        ///< The type of a single lane of the SIMD vector.
+  using scalar_type = simd::Scalar_t<VectorType>;            ///< The scalar type of the SIMD vector.
 
   /// Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool extension_arithmetic =
@@ -75,13 +75,16 @@ class Vector {
                                        (mve_platform || !is_half_float_v<scalar_type> || ARGON_NEON_FP16_VECTOR);
   /// Whether float comparisons need the inline vcgt/vcge (see ARGON_GCC_AARCH32_FLOAT).
   static constexpr bool fixup_float_compare = ARGON_GCC_AARCH32_FLOAT && std::is_same_v<scalar_type, float>;
-  using vector_type = VectorType;                               ///< The SIMD vector type.
-  using argon_type = helpers::ArgonFor_t<VectorType>;           ///< The Argon type for the SIMD vector.
-  using mask_type = Bool_t<VectorType>;  ///< The mask vector type (all ones / all zeros per lane), see Predicate::ToMask.
-  using predicate_type [[deprecated("predicate_type is the mask vector type; use mask_type, or argon_bool_type for "
-                                    "the Predicate comparisons return")]] = mask_type;
-  using argon_bool_type = Predicate<VectorType>;                ///< The type comparisons return.
-  using offset_type = helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;  ///< Per-lane gather/scatter offsets.
+  using vector_type = VectorType;                      ///< The SIMD vector type.
+  using argon_type = helpers::ArgonFor_t<VectorType>;  ///< The Argon type for the SIMD vector.
+  using mask_type =
+      Bool_t<VectorType>;  ///< The mask vector type (all ones / all zeros per lane), see Predicate::ToMask.
+  using predicate_type
+      [[deprecated("predicate_type is the mask vector type; use mask_type, or argon_bool_type for "
+                   "the Predicate comparisons return")]] = mask_type;
+  using argon_bool_type = Predicate<VectorType>;  ///< The type comparisons return.
+  using offset_type =
+      helpers::ArgonFor_t<simd::make_unsigned_t<Bool_t<VectorType>>>;  ///< Per-lane gather/scatter offsets.
 
   /// @brief The number of lanes in the SIMD vector.
   static constexpr size_t lanes = (simd::is_quadword_v<VectorType> ? 16 : 8) / sizeof(scalar_type);
@@ -323,29 +326,21 @@ class Vector {
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   /// @note If you know the index of the lane at compile time, you should use GetLane<LaneIndex>() instead.
-  ace const lane_type GetLane(const size_t i) const {
-    return {vec_, static_cast<int>(i)};
-  }
-  ace lane_type GetLane(const size_t i) {
-    return {vec_, static_cast<int>(i)};
-  }
+  ace Lane<const VectorType> GetLane(const size_t i) const { return {vec_, static_cast<int>(i)}; }
+  ace lane_type GetLane(const size_t i) { return {vec_, static_cast<int>(i)}; }
 
   /// @brief Get a single lane of the vector by index.
   /// @param i The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
-  ace const lane_type GetLane(const int i) const {
-    return {vec_, i};
-  }
+  ace Lane<const VectorType> GetLane(const int i) const { return {vec_, i}; }
 
-  ace lane_type GetLane(const int i) {
-    return {vec_, i};
-  }
+  ace lane_type GetLane(const int i) { return {vec_, i}; }
 
   /// @brief Get a single lane of the vector by index.
   /// @tparam LaneIndex The index of the lane to get.
   /// @return The value of the specified lane in the SIMD vector.
   template <size_t LaneIndex>
-  ace const const_lane_type<LaneIndex> GetLane() const {
+  ace ConstLane<LaneIndex, const VectorType> GetLane() const {
     return vec_;
   }
 
@@ -448,7 +443,8 @@ class Vector {
       // NEON has no 64-bit lane multiply: lane by lane.
       auto x = argon_type{vec_}.to_array();
       const auto y = b.to_array();
-      for (size_t i = 0; i < x.size(); ++i) x[i] *= y[i];
+      for (size_t i = 0; i < x.size(); ++i)
+        x[i] *= y[i];
       return argon_type::Load(x.data());
     } else {
       return simd::multiply(vec_, b);
@@ -484,7 +480,7 @@ class Vector {
       return simd::multiply_add_fused(vec_, b.vec_, c.vec_);
     } else
 #endif
-    if constexpr (extension_arithmetic) {
+        if constexpr (extension_arithmetic) {
       return vec_ + b.vec_ * c.vec_;
     } else {
       return simd::multiply_add(vec_, b, c);
@@ -499,7 +495,7 @@ class Vector {
       return simd::multiply_add_fused(vec_, b.vec_, c);
     } else
 #endif
-    if constexpr (extension_arithmetic) {
+        if constexpr (extension_arithmetic) {
       if constexpr (is_half_float_v<scalar_type>) {
         return vec_ + b.vec_ * argon_type{c}.vec_;  // a half scalar promotes to float against the vector
       } else {
@@ -788,7 +784,7 @@ class Vector {
                                     helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_));
     } else
 #endif
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+        if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ > b.vec_ ? vec_ : b.vec_;
     } else if constexpr (lane_floating_point<scalar_type>) {
       // vmax/vmin return NaN for a NaN in either lane; keep a > b ? a : b.
@@ -808,7 +804,7 @@ class Vector {
                                     helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_));
     } else
 #endif
-    if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
+        if constexpr (ARGON_USE_COMPILER_EXTENSIONS) {
       return vec_ < b.vec_ ? vec_ : b.vec_;
     } else if constexpr (lane_floating_point<scalar_type>) {
       // vmax/vmin return NaN for a NaN in either lane; keep a < b ? a : b.
@@ -885,7 +881,8 @@ class Vector {
     return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(vec_, b.vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(vec_, b.vec_)};
+    if constexpr (fixup_float_compare)
+      return argon_bool_type{helpers::greater_than_or_equal(vec_, b.vec_)};
 #endif
     return argon_bool_type{simd::greater_than_or_equal(vec_, b.vec_)};
 #endif
@@ -897,7 +894,8 @@ class Vector {
     return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThanOrEqual>(b.vec_, vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than_or_equal(b.vec_, vec_)};
+    if constexpr (fixup_float_compare)
+      return argon_bool_type{helpers::greater_than_or_equal(b.vec_, vec_)};
 #endif
     return argon_bool_type{simd::less_than_or_equal(vec_, b.vec_)};
 #endif
@@ -909,7 +907,8 @@ class Vector {
     return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(vec_, b.vec_)};
+    if constexpr (fixup_float_compare)
+      return argon_bool_type{helpers::greater_than(vec_, b.vec_)};
 #endif
     return argon_bool_type{simd::greater_than(vec_, b.vec_)};
 #endif
@@ -921,7 +920,8 @@ class Vector {
     return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(b.vec_, vec_)};
 #else
 #if ARGON_GCC_AARCH32_FLOAT
-    if constexpr (fixup_float_compare) return argon_bool_type{helpers::greater_than(b.vec_, vec_)};
+    if constexpr (fixup_float_compare)
+      return argon_bool_type{helpers::greater_than(b.vec_, vec_)};
 #endif
     return argon_bool_type{simd::less_than(vec_, b.vec_)};
 #endif
@@ -1499,44 +1499,44 @@ class Vector {
   // on MVE with GCC, which doesn't fold Select(op, ...) into a predicated instruction the way clang does.
 
 #ifdef ARGON_PLATFORM_MVE
-#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
-  ace argon_type Name(argon_type b, argon_bool_type active) const {                                      \
-    if constexpr (mve_has_it) {                                                                               \
-      return mve::mve_name(vec_, b.vec_, active.native());                                                \
-    } else {                                                                                              \
-      return Name(b);                                                                                     \
-    }                                                                                                     \
-  }                                                                                                       \
-  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
-    if constexpr (mve_has_it) {                                                                               \
-      return mve::mve_name(inactive.vec_, vec_, b.vec_, active.native());                                 \
-    } else {                                                                                              \
-      return active.Select(Name(b), inactive);                                                            \
-    }                                                                                                     \
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                              \
+  ace argon_type Name(argon_type b, argon_bool_type active) const {                      \
+    if constexpr (mve_has_it) {                                                          \
+      return mve::mve_name(vec_, b.vec_, active.native());                               \
+    } else {                                                                             \
+      return Name(b);                                                                    \
+    }                                                                                    \
+  }                                                                                      \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const { \
+    if constexpr (mve_has_it) {                                                          \
+      return mve::mve_name(inactive.vec_, vec_, b.vec_, active.native());                \
+    } else {                                                                             \
+      return active.Select(Name(b), inactive);                                           \
+    }                                                                                    \
   }
-#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
-  ace argon_type Name(argon_bool_type active) const {                                                    \
-    if constexpr (mve_has_it) {                                                                               \
-      return mve::mve_name(vec_, active.native());                                                        \
-    } else {                                                                                              \
-      return Name();                                                                                      \
-    }                                                                                                     \
-  }                                                                                                       \
-  ace argon_type Name(argon_bool_type active, argon_type inactive) const {                               \
-    if constexpr (mve_has_it) {                                                                               \
-      return mve::mve_name(inactive.vec_, vec_, active.native());                                         \
-    } else {                                                                                              \
-      return active.Select(Name(), inactive);                                                             \
-    }                                                                                                     \
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                 \
+  ace argon_type Name(argon_bool_type active) const {                      \
+    if constexpr (mve_has_it) {                                            \
+      return mve::mve_name(vec_, active.native());                         \
+    } else {                                                               \
+      return Name();                                                       \
+    }                                                                      \
+  }                                                                        \
+  ace argon_type Name(argon_bool_type active, argon_type inactive) const { \
+    if constexpr (mve_has_it) {                                            \
+      return mve::mve_name(inactive.vec_, vec_, active.native());          \
+    } else {                                                               \
+      return active.Select(Name(), inactive);                              \
+    }                                                                      \
   }
 #else
-#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                                                  \
-  ace argon_type Name(argon_type b, argon_bool_type /*active*/) const { return Name(b); }                 \
-  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {                 \
-    return active.Select(Name(b), inactive);                                                              \
+#define ARGON_PREDICATED_BINARY(Name, mve_name, mve_has_it)                               \
+  ace argon_type Name(argon_type b, argon_bool_type /*active*/) const { return Name(b); } \
+  ace argon_type Name(argon_type b, argon_bool_type active, argon_type inactive) const {  \
+    return active.Select(Name(b), inactive);                                              \
   }
-#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                                                   \
-  ace argon_type Name(argon_bool_type /*active*/) const { return Name(); }                               \
+#define ARGON_PREDICATED_UNARY(Name, mve_name, mve_has_it)                 \
+  ace argon_type Name(argon_bool_type /*active*/) const { return Name(); } \
   ace argon_type Name(argon_bool_type active, argon_type inactive) const { return active.Select(Name(), inactive); }
 #endif
 
@@ -1600,8 +1600,7 @@ class Vector {
   /// @details MVE: one predicated compare (vcmpq_m), rather than a compare and a predicate AND through core registers.
   ace argon_bool_type Equal(argon_type b, argon_bool_type active) const {
 #ifdef ARGON_PLATFORM_MVE
-    return argon_bool_type{
-        helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_, active.native())};
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::Equal>(vec_, b.vec_, active.native())};
 #else
     return active & Equal(b);
 #endif
@@ -1611,8 +1610,7 @@ class Vector {
   /// @copydetails Equal(argon_type, argon_bool_type) const
   ace argon_bool_type GreaterThan(argon_type b, argon_bool_type active) const {
 #ifdef ARGON_PLATFORM_MVE
-    return argon_bool_type{
-        helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_, active.native())};
+    return argon_bool_type{helpers::mve_compare<helpers::MveComparison::GreaterThan>(vec_, b.vec_, active.native())};
 #else
     return active & GreaterThan(b);
 #endif
@@ -1845,7 +1843,8 @@ class Vector {
   }
 
  protected:
-  /// @brief The address of one gathered / scattered lane: base plus a byte offset, or base indexed by an element offset.
+  /// @brief The address of one gathered / scattered lane: base plus a byte offset, or base indexed by an element
+  /// offset.
   template <bool byte_offsets, typename PointerType, typename OffsetType>
   ace static PointerType* LaneAddress(PointerType* base, OffsetType offset) {
     if constexpr (byte_offsets) {
@@ -1884,7 +1883,7 @@ class Vector {
       }
     }
 #else
-    argon_type destination{scalar_type{0}};  // inactive lanes stay zero
+    argon_type destination{scalar_type{0}};             // inactive lanes stay zero
     utility::constexpr_for<0, lanes, 1>([&]<int i>() {  //<
       if ((active.Active(i) && ...)) {
         const auto offset = simd::get_lane<i>(offsets.vec());

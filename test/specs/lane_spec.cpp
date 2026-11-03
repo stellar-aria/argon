@@ -23,6 +23,15 @@ auto describe_get_lane = describe("GetLane", ${
     for (int i = 0; i < 16; ++i)
       expect((int)(uint8_t)v.GetLane(i)).to_equal(i);
   });
+
+  it("reads each lane of a const vector by runtime and by compile-time index", _{
+    std::array<float, 4> data = {1.5f, -2.0f, 3.25f, 4.0f};
+    const auto v = Argon<float>::Load(data.data());
+    for (size_t i = 0; i < 4; ++i)
+      expect((float)v[i]).to_equal(data[i]);
+    expect((float)v.GetLane(2)).to_equal(3.25f);
+    expect((float)v.template GetLane<1>()).to_equal(-2.0f);
+  });
 });
 
 auto describe_set_lane = describe("SetLane", ${
