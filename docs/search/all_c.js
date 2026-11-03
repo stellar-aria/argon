@@ -3,7 +3,7 @@ var searchData=
   ['make_5fsigned_0',['make_signed',['../structsimd_1_1make__signed.html',1,'simd']]],
   ['make_5funsigned_1',['make_unsigned',['../structsimd_1_1make__unsigned.html',1,'simd']]],
   ['mask_5fscalar_2',['mask_scalar',['../classargon_1_1Predicate.html#a558da079aa93fbbd07d01fb3a569f4e1',1,'argon::Predicate']]],
-  ['mask_5ftype_3',['mask_type',['../classargon_1_1Predicate.html#a7f7c1c6df4adb06b2598c51de7e1f261',1,'argon::Predicate::mask_type'],['../classargon_1_1Vector.html#a0c772416891b4c927045fd691ea74570',1,'argon::Vector::mask_type']]],
+  ['mask_5ftype_3',['mask_type',['../classargon_1_1Predicate.html#a7f7c1c6df4adb06b2598c51de7e1f261',1,'argon::Predicate::mask_type'],['../classargon_1_1Vector.html#aa1ef713ef42fbd5d4e28813ccc8cc0ab',1,'argon::Vector::mask_type']]],
   ['max_4',['Max',['../classargon_1_1Vector.html#a51663230ed752a2cff604c1d380a547f',1,'argon::Vector']]],
   ['maxabs_5',['MaxAbs',['../classArgon.html#afc1d329762ee8453c48ebebddee12835',1,'Argon']]],
   ['maxnumber_6',['MaxNumber',['../classargon_1_1Vector.html#a0f156f70c680bc1132c4f3ed82248d36',1,'argon::Vector']]],

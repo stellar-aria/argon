@@ -1,7 +1,7 @@
 var searchData=
 [
   ['object_20oriented_20argon_20interface_0',['Object-oriented Argon interface',['../index.html#autotoc_md6',1,'']]],
-  ['offset_5ftype_1',['offset_type',['../classargon_1_1Vector.html#acdc98514cc8bf0faad104533313d333b',1,'argon::Vector']]],
+  ['offset_5ftype_1',['offset_type',['../classargon_1_1Vector.html#a7d17ea854aa6f448895e75add88a82dc',1,'argon::Vector']]],
   ['opaque_5faddress_2',['opaque_address',['../first__n_8hpp.html#a854779f4a0682df82b46e8dc8bc28808',1,'argon::vectorize::detail']]],
   ['operator_20argon_5fmask_5ftype_3',['operator argon_mask_type',['../classargon_1_1Predicate.html#a6c6096ae4eedcb0a32bf2fb487ec2cb6',1,'argon::Predicate']]],
   ['operator_20scalar_5ftype_4',['operator scalar_type',['../classargon_1_1ConstLane.html#add4f336d56adae2c23df68d1bd0e7042',1,'argon::ConstLane::operator scalar_type()'],['../classargon_1_1Lane.html#a936dc968af53a4fb5e5c688592cef66a',1,'argon::Lane::operator scalar_type()']]],

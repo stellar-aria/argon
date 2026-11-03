@@ -39,7 +39,7 @@ var searchData=
   ['argon_5fhas_5fmaxnm_36',['ARGON_HAS_MAXNM',['../features_8h.html#af7c57a2810b61fe7154fc25d7c49f652',1,'features.h']]],
   ['argon_5fmask_5ftype_37',['argon_mask_type',['../classargon_1_1Predicate.html#a1beac817e94ff416522d5eeb493d2b8d',1,'argon::Predicate']]],
   ['argon_5fneon_5ffp16_5fvector_38',['ARGON_NEON_FP16_VECTOR',['../features_8h.html#a73ee56945b3d05c38ace2f386e007373',1,'features.h']]],
-  ['argon_5fshift_5fnarrow_39',['ARGON_SHIFT_NARROW',['../classArgon.html#a70ed5c9d3c19309c5564a37a50e9a5ec',1,'Argon']]],
+  ['argon_5fshift_5fnarrow_39',['ARGON_SHIFT_NARROW',['../classArgon.html#a2a59abdf519ca4126cf615e73bf493bb',1,'Argon']]],
   ['argon_5ftype_40',['argon_type',['../classargon_1_1PointerVector.html#a0749754c999b30cfe9f1f73366b5c6de',1,'argon::PointerVector::argon_type'],['../classargon_1_1Vector.html#a9a415e7e729cc854cae3463e41cc3705',1,'argon::Vector::argon_type'],['../classargon_1_1vectorize_1_1Step.html#a7b305d2a282c0c9f02509ecdc860946f',1,'argon::vectorize::Step::argon_type'],['../classargon_1_1vectorize_1_1InterleavedStep.html#aa867cb6967ea955e2bdf630f59940d6e',1,'argon::vectorize::InterleavedStep::argon_type'],['../classargon_1_1vectorize_1_1Partial.html#a2499fa204d7637d5df8c6996e8a548e5',1,'argon::vectorize::Partial::argon_type']]],
   ['argonfor_41',['ArgonFor',['../structargon_1_1helpers_1_1ArgonFor.html',1,'argon::helpers']]],
   ['argonfor_5ft_42',['ArgonFor_t',['../namespaceargon_1_1helpers.html#a78d315330017f0fe0a14cccd2d5b318a',1,'argon::helpers']]],
