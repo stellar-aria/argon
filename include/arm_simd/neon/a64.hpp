@@ -846,7 +846,7 @@ template <int lane>[[gnu::always_inline]] nce float64x1_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x1_t divide(float64x1_t a, float64x1_t b) { return vdiv_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t subtract(float64x1_t a, float64x1_t b) { return vsub_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t subtract_absolute(float64x1_t a, float64x1_t b) { return vabd_f64(a, b); }
-[[gnu::always_inline]] nce float64x1_t absolute(float64x1_t a) { return vabs_f64(a); }
+[[gnu::always_inline]] nce float64x1_t abs(float64x1_t a) { return vabs_f64(a); }
 [[gnu::always_inline]] nce float64x1_t max(float64x1_t a, float64x1_t b) { return vmax_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t min(float64x1_t a, float64x1_t b) { return vmin_f64(a, b); }
 [[gnu::always_inline]] nce float64x1_t max_strict(float64x1_t a, float64x1_t b) { return vmaxnm_f64(a, b); }
@@ -937,7 +937,7 @@ template <int lane>[[gnu::always_inline]] nce float64x2_t multiply_subtract_fuse
 [[gnu::always_inline]] nce float64x2_t divide(float64x2_t a, float64x2_t b) { return vdivq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t subtract(float64x2_t a, float64x2_t b) { return vsubq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t subtract_absolute(float64x2_t a, float64x2_t b) { return vabdq_f64(a, b); }
-[[gnu::always_inline]] nce float64x2_t absolute(float64x2_t a) { return vabsq_f64(a); }
+[[gnu::always_inline]] nce float64x2_t abs(float64x2_t a) { return vabsq_f64(a); }
 [[gnu::always_inline]] nce float64x2_t max(float64x2_t a, float64x2_t b) { return vmaxq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t min(float64x2_t a, float64x2_t b) { return vminq_f64(a, b); }
 [[gnu::always_inline]] nce float64x2_t max_strict(float64x2_t a, float64x2_t b) { return vmaxnmq_f64(a, b); }
@@ -1158,9 +1158,9 @@ template <int lane>[[gnu::always_inline]] nce int32_t multiply_double_round_satu
 [[gnu::always_inline]] nce float32_t absolute_difference(float32_t a, float32_t b) { return vabds_f32(a, b); }
 [[gnu::always_inline]] nce float64_t absolute_difference(float64_t a, float64_t b) { return vabdd_f64(a, b); }
 [[gnu::always_inline]] nce int64x2_t subtract_absolute_add_high(int64x2_t a, int32x4_t b, int32x4_t c) { return vabal_high_s32(a, b, c); }
-[[gnu::always_inline]] nce int64x1_t absolute(int64x1_t a) { return vabs_s64(a); }
-[[gnu::always_inline]] nce int64_t absolute(int64_t a) { return vabsd_s64(a); }
-[[gnu::always_inline]] nce int64x2_t absolute(int64x2_t a) { return vabsq_s64(a); }
+[[gnu::always_inline]] nce int64x1_t abs(int64x1_t a) { return vabs_s64(a); }
+[[gnu::always_inline]] nce int64_t abs(int64_t a) { return vabsd_s64(a); }
+[[gnu::always_inline]] nce int64x2_t abs(int64x2_t a) { return vabsq_s64(a); }
 [[gnu::always_inline]] nce int64x1_t absolute_saturate(int64x1_t a) { return vqabs_s64(a); }
 [[gnu::always_inline]] nce int64x2_t absolute_saturate(int64x2_t a) { return vqabsq_s64(a); }
 [[gnu::always_inline]] nce int8_t absolute_saturate(int8_t a) { return vqabsb_s8(a); }

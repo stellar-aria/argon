@@ -386,7 +386,7 @@ template <int n>[[gnu::always_inline]] nce uint8x16_t extract(uint8x16_t a, uint
 [[gnu::always_inline]] nce int8x8_t subtract_absolute(int8x8_t a, int8x8_t b) { return vabd_s8(a, b); }
 [[gnu::always_inline]] nce int16x8_t subtract_absolute_long(int8x8_t a, int8x8_t b) { return vabdl_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t subtract_absolute_add(int8x8_t a, int8x8_t b, int8x8_t c) { return vaba_s8(a, b, c); }
-[[gnu::always_inline]] nce int8x8_t absolute(int8x8_t a) { return vabs_s8(a); }
+[[gnu::always_inline]] nce int8x8_t abs(int8x8_t a) { return vabs_s8(a); }
 [[gnu::always_inline]] nce int8x8_t absolute_saturate(int8x8_t a) { return vqabs_s8(a); }
 [[gnu::always_inline]] nce int8x8_t max(int8x8_t a, int8x8_t b) { return vmax_s8(a, b); }
 [[gnu::always_inline]] nce int8x8_t min(int8x8_t a, int8x8_t b) { return vmin_s8(a, b); }
@@ -633,7 +633,7 @@ template <int lane> [[gnu::always_inline]] nce int16x4_t multiply_double_round_s
 [[gnu::always_inline]] nce int32x4_t multiply_double_saturate_long(int16x4_t a, int16_t b) { return vqdmull_n_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t multiply_double_saturate_high(int16x4_t a, int16_t b) { return vqdmulh_n_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t multiply_double_round_saturate_high(int16x4_t a, int16_t b) { return vqrdmulh_n_s16(a, b); }
-[[gnu::always_inline]] nce int16x4_t absolute(int16x4_t a) { return vabs_s16(a); }
+[[gnu::always_inline]] nce int16x4_t abs(int16x4_t a) { return vabs_s16(a); }
 [[gnu::always_inline]] nce int16x4_t absolute_saturate(int16x4_t a) { return vqabs_s16(a); }
 [[gnu::always_inline]] nce int16x4_t max(int16x4_t a, int16x4_t b) { return vmax_s16(a, b); }
 [[gnu::always_inline]] nce int16x4_t min(int16x4_t a, int16x4_t b) { return vmin_s16(a, b); }
@@ -773,7 +773,7 @@ template <int lane> [[gnu::always_inline]] nce int32x2_t multiply_double_round_s
 [[gnu::always_inline]] nce int64x2_t multiply_double_saturate_long(int32x2_t a, int32_t b) { return vqdmull_n_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t multiply_double_saturate_high(int32x2_t a, int32_t b) { return vqdmulh_n_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t multiply_double_round_saturate_high(int32x2_t a, int32_t b) { return vqrdmulh_n_s32(a, b); }
-[[gnu::always_inline]] nce int32x2_t absolute(int32x2_t a) { return vabs_s32(a); }
+[[gnu::always_inline]] nce int32x2_t abs(int32x2_t a) { return vabs_s32(a); }
 [[gnu::always_inline]] nce int32x2_t absolute_saturate(int32x2_t a) { return vqabs_s32(a); }
 [[gnu::always_inline]] nce int32x2_t max(int32x2_t a, int32x2_t b) { return vmax_s32(a, b); }
 [[gnu::always_inline]] nce int32x2_t min(int32x2_t a, int32x2_t b) { return vmin_s32(a, b); }
@@ -1136,7 +1136,7 @@ template <int n>[[gnu::always_inline]] nce uint32x4_t extract(uint32x4_t a, uint
 [[gnu::always_inline]] nce float32x2_t multiply_subtract(float32x2_t a, float32x2_t b, float32x2_t c) { return vmls_f32(a, b, c); }
 [[gnu::always_inline]] nce float32x2_t subtract(float32x2_t a, float32x2_t b) { return vsub_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t subtract_absolute(float32x2_t a, float32x2_t b) { return vabd_f32(a, b); }
-[[gnu::always_inline]] nce float32x2_t absolute(float32x2_t a) { return vabs_f32(a); }
+[[gnu::always_inline]] nce float32x2_t abs(float32x2_t a) { return vabs_f32(a); }
 [[gnu::always_inline]] nce float32x2_t max(float32x2_t a, float32x2_t b) { return vmax_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t min(float32x2_t a, float32x2_t b) { return vmin_f32(a, b); }
 [[gnu::always_inline]] nce float32x2_t reciprocal_estimate(float32x2_t a) { return vrecpe_f32(a); }

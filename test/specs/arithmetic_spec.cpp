@@ -236,6 +236,49 @@ auto describe_absolute = describe("Absolute", ${
     auto arr = result.to_array();
     expect(arr).to_equal(std::array<float, 4>{3.0f, 1.0f, 2.0f, 4.0f});
   });
+
+  it("absolute value of a float vector clears the sign of negative zero", _{
+    std::array<float, 4> data = {-0.0f, 0.0f, -1.5f, 1.5f};
+    auto arr = Argon<float>::Load(data.data()).Absolute().to_array();
+    expect(arr).to_equal(std::array<float, 4>{0.0f, 0.0f, 1.5f, 1.5f});
+    expect(std::signbit(arr[0])).to_be_false();
+    expect(std::signbit(arr[1])).to_be_false();
+  });
+
+  it("absolute value of a half float vector", _{
+    std::array<float, 2> data = {-3.0f, 2.5f};
+    auto arr = ArgonHalf<float>::Load(data.data()).Absolute().to_array();
+    expect(arr).to_equal(std::array<float, 2>{3.0f, 2.5f});
+    std::array<float, 2> zeros = {-0.0f, -2.0f};
+    arr = ArgonHalf<float>::Load(zeros.data()).Absolute().to_array();
+    // Equal to +0 either way: SIMDe's 64-bit vabs_f32 leaves -0's sign bit set, hardware clears it.
+    expect(arr).to_equal(std::array<float, 2>{0.0f, 2.0f});
+  });
+
+  it("absolute value of half int8, int16 and int32 vectors", _{
+    std::array<int8_t, 8> d8 = {-3, 3, 0, -127, 127, -1, 1, -2};
+    expect(ArgonHalf<int8_t>::Load(d8.data()).Absolute().to_array())
+        .to_equal(std::array<int8_t, 8>{3, 3, 0, 127, 127, 1, 1, 2});
+    std::array<int16_t, 4> d16 = {-300, 300, 0, -1};
+    expect(ArgonHalf<int16_t>::Load(d16.data()).Absolute().to_array())
+        .to_equal(std::array<int16_t, 4>{300, 300, 0, 1});
+    std::array<int32_t, 2> d32 = {-70000, 5};
+    expect(ArgonHalf<int32_t>::Load(d32.data()).Absolute().to_array())
+        .to_equal(std::array<int32_t, 2>{70000, 5});
+  });
+
+  it("absolute value of full int8 and int16 vectors", _{
+    std::array<int8_t, 16> d8;
+    std::array<int8_t, 16> e8;
+    for (size_t i = 0; i < 16; ++i) {
+      d8[i] = (i & 1) ? int8_t(-int(i) - 1) : int8_t(i);
+      e8[i] = int8_t((i & 1) ? i + 1 : i);
+    }
+    expect(Argon<int8_t>::Load(d8.data()).Absolute().to_array()).to_equal(e8);
+    std::array<int16_t, 8> d16 = {-300, 300, 0, -1, 1, -32767, 32767, -2};
+    expect(Argon<int16_t>::Load(d16.data()).Absolute().to_array())
+        .to_equal(std::array<int16_t, 8>{300, 300, 0, 1, 1, 32767, 32767, 2});
+  });
 });
 
 // ── Saturating ops ─────────────────────────────────────────────────────────

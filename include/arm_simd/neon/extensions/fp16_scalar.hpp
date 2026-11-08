@@ -1,7 +1,7 @@
 #ifdef __ARM_FEATURE_FP16_SCALAR_ARITHMETIC
 #include <arm_fp16.h>
 
-[[gnu::always_inline]] nce float16_t absolute(float16_t a) { return vabsh_f16(a); }
+[[gnu::always_inline]] nce float16_t abs(float16_t a) { return vabsh_f16(a); }
 [[gnu::always_inline]] nce float16_t round(float16_t a) { return vrndh_f16(a); }
 [[gnu::always_inline]] nce float16_t round_to_nearest_with_ties_away_from_zero(float16_t a) { return vrndah_f16(a); }
 [[gnu::always_inline]] nce float16_t round_using_current_mode(float16_t a) { return vrndih_f16(a); }
