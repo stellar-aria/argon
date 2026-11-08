@@ -581,7 +581,7 @@ class Vector {
 
 #if ARGON_HAS_FUSED_MULTIPLY_ADD
   /// Multiply two float vectors and add a third vector, fused
-  /// @details Equivalent to a + (b * c) with one rounding. Declared only where f32 lanes have a fused
+  /// @details Equivalent to a + (b * c) with one rounding. Declared only where float lanes have a fused
   /// multiply-add (VFPv4, Armv8, Helium, SIMDe with FMA), not on the Cortex-A9. MultiplyAdd keeps its meaning:
   /// fused on Helium only.
   ace argon_type MultiplyAddFused(argon_type b, argon_type c) const

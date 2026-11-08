@@ -38,13 +38,13 @@ template <typename V>
 [[gnu::always_inline]] inline float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return detail::fused_lanes(a, b, c, 1.0f); }
 /// @brief Fused a - (b * c), one rounding.
 [[gnu::always_inline]] inline float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32x4_t c) { return detail::fused_lanes(a, b, c, -1.0f); }
-/// @brief Fused a + (b * c), by a scalar one rounding.
+/// @brief a + b * c with one rounding, c broadcast to every lane.
 [[gnu::always_inline]] inline float32x2_t multiply_add_fused(float32x2_t a, float32x2_t b, float32_t c) { return multiply_add_fused(a, b, vdup_n_f32(c)); }
-/// @brief Fused a - (b * c), by a scalar one rounding.
+/// @brief a - b * c with one rounding, c broadcast to every lane.
 [[gnu::always_inline]] inline float32x2_t multiply_subtract_fused(float32x2_t a, float32x2_t b, float32_t c) { return multiply_subtract_fused(a, b, vdup_n_f32(c)); }
-/// @brief Fused a + (b * c), by a scalar one rounding.
+/// @brief a + b * c with one rounding, c broadcast to every lane.
 [[gnu::always_inline]] inline float32x4_t multiply_add_fused(float32x4_t a, float32x4_t b, float32_t c) { return multiply_add_fused(a, b, vdupq_n_f32(c)); }
-/// @brief Fused a - (b * c), by a scalar one rounding.
+/// @brief a - b * c with one rounding, c broadcast to every lane.
 [[gnu::always_inline]] inline float32x4_t multiply_subtract_fused(float32x4_t a, float32x4_t b, float32_t c) { return multiply_subtract_fused(a, b, vdupq_n_f32(c)); }
 // clang-format on
 }  // namespace neon
