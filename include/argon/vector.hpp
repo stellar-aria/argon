@@ -664,6 +664,8 @@ class Vector {
 #endif
 
   /// Get the absolute value of the vector.
+  /// @details Integer lanes wrap at the minimum (the most negative value stays itself); the saturating form is
+  /// `simd::absolute_saturate`. On hardware -0.0f becomes +0.0f; SIMDe's doubleword (ArgonHalf) path keeps the sign bit.
   ace argon_type Absolute() const { return simd::abs(vec_); }
 
   /// @brief 1 / value, using an estimate for speed

@@ -249,8 +249,8 @@ auto describe_absolute = describe("Absolute", ${
     std::array<float, 2> data = {-3.0f, 2.5f};
     auto arr = ArgonHalf<float>::Load(data.data()).Absolute().to_array();
     expect(arr).to_equal(std::array<float, 2>{3.0f, 2.5f});
-    std::array<float, 2> zeros = {-0.0f, -2.0f};
-    arr = ArgonHalf<float>::Load(zeros.data()).Absolute().to_array();
+    std::array<float, 2> signed_zero_and_negative = {-0.0f, -2.0f};
+    arr = ArgonHalf<float>::Load(signed_zero_and_negative.data()).Absolute().to_array();
     // Equal to +0 either way: SIMDe's 64-bit vabs_f32 leaves -0's sign bit set, hardware clears it.
     expect(arr).to_equal(std::array<float, 2>{0.0f, 2.0f});
   });
@@ -265,6 +265,21 @@ auto describe_absolute = describe("Absolute", ${
     std::array<int32_t, 2> d32 = {-70000, 5};
     expect(ArgonHalf<int32_t>::Load(d32.data()).Absolute().to_array())
         .to_equal(std::array<int32_t, 2>{70000, 5});
+  });
+
+  it("absolute value wraps at the minimum of int8 and int16 lanes", _{
+    std::array<int8_t, 16> d8{};
+    d8[0] = -128;
+    d8[1] = -127;
+    auto r8 = Argon<int8_t>::Load(d8.data()).Absolute().to_array();
+    expect(r8[0]).to_equal(int8_t(-128));
+    expect(r8[1]).to_equal(int8_t(127));
+    std::array<int16_t, 8> d16{};
+    d16[0] = -32768;
+    d16[1] = -32767;
+    auto r16 = Argon<int16_t>::Load(d16.data()).Absolute().to_array();
+    expect(r16[0]).to_equal(int16_t(-32768));
+    expect(r16[1]).to_equal(int16_t(32767));
   });
 
   it("absolute value of full int8 and int16 vectors", _{
