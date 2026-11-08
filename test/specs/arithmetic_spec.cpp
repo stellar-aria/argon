@@ -173,7 +173,9 @@ auto describe_multiply_add = describe("MultiplyAdd", ${
     const float c = 1.0f + 0x1p-23f;
     const float a = -(1.0f + 0x1p-22f);
     const float fused = std::fma(b, c, a);  // 2^-46
-    expect(fused).not_().to_equal(a + b * c);
+    volatile float product = b * c;  // volatile: the compiler may not contract a + b * c into an fma
+    const float unfused = a + product;
+    expect(fused).not_().to_equal(unfused);
     const Argon<float> r = Argon<float>{a}.MultiplyAddFused(Argon<float>{b}, Argon<float>{c});
     for (size_t i = 0; i < Argon<float>::lanes; ++i) expect(r.to_array()[i]).to_equal(fused);
     const Argon<float> rs = Argon<float>{a}.MultiplyAddFused(Argon<float>{b}, c);
