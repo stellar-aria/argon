@@ -331,9 +331,8 @@ template&lt;size_t LaneIndex&gt; </td></tr>
 <tr class="memdesc:a7aed2b2c3956f14639d7a7480b77cc17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a fixed-point vector by a scalar value, returning a fixed-point product.  <br /></td></tr>
 <tr class="memitem:a42d01f2983831207314b212328a0dc7f" id="r_a42d01f2983831207314b212328a0dc7f"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#a42d01f2983831207314b212328a0dc7f">MultiplyRoundFixedQMax</a> (<a class="el" href="#a03dd715936783524ec28dc59365db01f">lane_type</a> l) const</td></tr>
 <tr class="memdesc:a42d01f2983831207314b212328a0dc7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a fixed-point vector by a lane value, returning a fixed-point product.  <br /></td></tr>
-<tr class="memitem:ad91da6dc5608aae40cc630ac5b4fb731" id="r_ad91da6dc5608aae40cc630ac5b4fb731"><td class="memItemLeft"><a id="ad91da6dc5608aae40cc630ac5b4fb731" name="ad91da6dc5608aae40cc630ac5b4fb731"></a>
-ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><b>Absolute</b> () const</td></tr>
-<tr class="memdesc:ad91da6dc5608aae40cc630ac5b4fb731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the absolute value of the vector. <br /></td></tr>
+<tr class="memitem:ad91da6dc5608aae40cc630ac5b4fb731" id="r_ad91da6dc5608aae40cc630ac5b4fb731"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#ad91da6dc5608aae40cc630ac5b4fb731">Absolute</a> () const</td></tr>
+<tr class="memdesc:ad91da6dc5608aae40cc630ac5b4fb731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the absolute value of the vector.  <br /></td></tr>
 <tr class="memitem:af09f6525bd19ba6fcd2d4fc50ef2d62a" id="r_af09f6525bd19ba6fcd2d4fc50ef2d62a"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#af09f6525bd19ba6fcd2d4fc50ef2d62a">ReciprocalEstimate</a> () const</td></tr>
 <tr class="memdesc:af09f6525bd19ba6fcd2d4fc50ef2d62a"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 / value, using an estimate for speed  <br /></td></tr>
 <tr class="memitem:ac0b51f4affe7c7f391a086f7227f21b0" id="r_ac0b51f4affe7c7f391a086f7227f21b0"><td class="memItemLeft">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a>&#160;</td><td class="memItemRight"><a class="el" href="#ac0b51f4affe7c7f391a086f7227f21b0">ReciprocalSqrtEstimate</a> () const</td></tr>
@@ -902,6 +901,36 @@ template&lt;typename... ArgTypes&gt; </div>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="ad91da6dc5608aae40cc630ac5b4fb731" name="ad91da6dc5608aae40cc630ac5b4fb731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad91da6dc5608aae40cc630ac5b4fb731">&#9670;&#160;</a></span>Absolute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ace <a class="el" href="#a9a415e7e729cc854cae3463e41cc3705">argon_type</a> <a class="el" href="classargon_1_1Vector.html">argon::Vector</a>&lt; VectorType &gt;::Absolute </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the absolute value of the vector. </p>
+<p>Integer lanes wrap at the minimum (the most negative value stays itself); the saturating form is <span class="tt">simd::absolute_saturate</span>. On hardware -0.0f becomes +0.0f; SIMDe's doubleword (<a class="el" href="classArgonHalf.html">ArgonHalf</a>) path keeps the sign bit. </p>
+
+</div>
+</div>
 <a id="a7cebac6fe57dcbc72385ffa4f27c76c1" name="a7cebac6fe57dcbc72385ffa4f27c76c1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7cebac6fe57dcbc72385ffa4f27c76c1">&#9670;&#160;</a></span>AddHalve()</h2>
 
@@ -4405,7 +4434,7 @@ template&lt;typename VectorType&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">                                       =</div>
 <div class="line">ARGON_USE_COMPILER_EXTENSIONS &amp;&amp; !(<a class="code hl_define" href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a> &amp;&amp; std::is_floating_point_v&lt;scalar_type&gt;)</div>
-<div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:102</div></div>
+<div class="ttc" id="afeatures_8h_html_afcd6a7fb7ee51b796ad46864696fee08"><div class="ttname"><a href="features_8h.html#afcd6a7fb7ee51b796ad46864696fee08">ARGON_GCC_AARCH32_FLOAT</a></div><div class="ttdeci">#define ARGON_GCC_AARCH32_FLOAT</div><div class="ttdoc">True where GCC compiles AArch32 NEON code without -ffast-math: it then scalarises generic vector-exte...</div><div class="ttdef"><b>Definition</b> features.h:111</div></div>
 </div><!-- fragment -->
 <p>Whether arithmetic may use the compiler's generic vector extensions (see ARGON_GCC_AARCH32_FLOAT). </p>
 
@@ -4436,7 +4465,7 @@ template&lt;typename VectorType&gt; </div>
 <div class="line">  (<a class="code hl_variable" href="#a7134d278ac589dc2cb1576cf017cf2f2">mve_platform</a> || !<a class="code hl_variable" href="namespaceargon.html#a9f3ead4a577c34ccc68a6317d77c6cc0">is_half_float_v&lt;scalar_type&gt;</a> || <a class="code hl_define" href="features_8h.html#a73ee56945b3d05c38ace2f386e007373">ARGON_NEON_FP16_VECTOR</a>)</div>
 <div class="ttc" id="aclassargon_1_1Vector_html_a7134d278ac589dc2cb1576cf017cf2f2"><div class="ttname"><a href="#a7134d278ac589dc2cb1576cf017cf2f2">argon::Vector::mve_platform</a></div><div class="ttdeci">static constexpr bool mve_platform</div><div class="ttdoc">Whether this is the MVE (Helium) platform.</div><div class="ttdef"><b>Definition</b> vector.hpp:66</div></div>
 <div class="ttc" id="aconceptargon_1_1lane__floating__point_html"><div class="ttname"><a href="conceptargon_1_1lane__floating__point.html">argon::lane_floating_point</a></div><div class="ttdoc">A floating-point lane type: float, double, or float16_t where half-float vectors exist.</div><div class="ttdef"><b>Definition</b> lane_scalar.hpp:35</div></div>
-<div class="ttc" id="afeatures_8h_html_a73ee56945b3d05c38ace2f386e007373"><div class="ttname"><a href="features_8h.html#a73ee56945b3d05c38ace2f386e007373">ARGON_NEON_FP16_VECTOR</a></div><div class="ttdeci">#define ARGON_NEON_FP16_VECTOR</div><div class="ttdoc">True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm e...</div><div class="ttdef"><b>Definition</b> features.h:84</div></div>
+<div class="ttc" id="afeatures_8h_html_a73ee56945b3d05c38ace2f386e007373"><div class="ttname"><a href="features_8h.html#a73ee56945b3d05c38ace2f386e007373">ARGON_NEON_FP16_VECTOR</a></div><div class="ttdeci">#define ARGON_NEON_FP16_VECTOR</div><div class="ttdoc">True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm e...</div><div class="ttdef"><b>Definition</b> features.h:93</div></div>
 <div class="ttc" id="afeatures_8h_html_af7c57a2810b61fe7154fc25d7c49f652"><div class="ttname"><a href="features_8h.html#af7c57a2810b61fe7154fc25d7c49f652">ARGON_HAS_MAXNM</a></div><div class="ttdeci">#define ARGON_HAS_MAXNM</div><div class="ttdoc">True where vmaxnm/vminnm exist (simd::max_strict / min_strict): Helium with floating point,...</div><div class="ttdef"><b>Definition</b> features.h:77</div></div>
 <div class="ttc" id="anamespaceargon_html_a9f3ead4a577c34ccc68a6317d77c6cc0"><div class="ttname"><a href="namespaceargon.html#a9f3ead4a577c34ccc68a6317d77c6cc0">argon::is_half_float_v</a></div><div class="ttdeci">constexpr bool is_half_float_v</div><div class="ttdoc">Whether T is the half-precision lane type, float16_t (__fp16), on a platform with half-float vectors.</div><div class="ttdef"><b>Definition</b> lane_scalar.hpp:22</div></div>
 </div><!-- fragment -->

@@ -296,6 +296,8 @@ Macros</h2></td></tr>
 <tr class="memitem:af7c57a2810b61fe7154fc25d7c49f652" id="r_af7c57a2810b61fe7154fc25d7c49f652"><td class="memItemLeft"><a id="af7c57a2810b61fe7154fc25d7c49f652" name="af7c57a2810b61fe7154fc25d7c49f652"></a>
 #define&#160;</td><td class="memItemRight"><b>ARGON_HAS_MAXNM</b>&#160;&#160;&#160;false</td></tr>
 <tr class="memdesc:af7c57a2810b61fe7154fc25d7c49f652"><td class="mdescLeft">&#160;</td><td class="mdescRight">True where vmaxnm/vminnm exist (simd::max_strict / min_strict): Helium with floating point, and Armv8 NEON. <br /></td></tr>
+<tr class="memitem:a8833fb7da7dfbc24d7560a4bebeaeaf4" id="r_a8833fb7da7dfbc24d7560a4bebeaeaf4"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a8833fb7da7dfbc24d7560a4bebeaeaf4">ARGON_HAS_FUSED_MULTIPLY_ADD</a>&#160;&#160;&#160;false</td></tr>
+<tr class="memdesc:a8833fb7da7dfbc24d7560a4bebeaeaf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">True where float lanes have a fused multiply-add (one rounding): VFPv4 and Armv8 NEON, Helium with floating point, and SIMDe on a host with FMA.  <br /></td></tr>
 <tr class="memitem:a73ee56945b3d05c38ace2f386e007373" id="r_a73ee56945b3d05c38ace2f386e007373"><td class="memItemLeft"><a id="a73ee56945b3d05c38ace2f386e007373" name="a73ee56945b3d05c38ace2f386e007373"></a>
 #define&#160;</td><td class="memItemRight"><b>ARGON_NEON_FP16_VECTOR</b>&#160;&#160;&#160;false</td></tr>
 <tr class="memdesc:a73ee56945b3d05c38ace2f386e007373"><td class="mdescLeft">&#160;</td><td class="mdescRight">True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm exist. <br /></td></tr>
@@ -352,6 +354,23 @@ constexpr Platform&#160;</td><td class="memItemRight"><b>argon::platform</b> = P
 
 <p>Set to 1 when the AES and PMULL crypto intrinsics are available. </p>
 <p>Requires __ARM_FEATURE_CRYPTO (ARMv8 Cryptographic Extension). </p>
+
+</div>
+</div>
+<a id="a8833fb7da7dfbc24d7560a4bebeaeaf4" name="a8833fb7da7dfbc24d7560a4bebeaeaf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8833fb7da7dfbc24d7560a4bebeaeaf4">&#9670;&#160;</a></span>ARGON_HAS_FUSED_MULTIPLY_ADD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ARGON_HAS_FUSED_MULTIPLY_ADD&#160;&#160;&#160;false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True where float lanes have a fused multiply-add (one rounding): VFPv4 and Armv8 NEON, Helium with floating point, and SIMDe on a host with FMA. </p>
+<p>Armv7 VFPv3 (Cortex-A9) has none. Argon::MultiplyAddFused exists exactly here. </p>
 
 </div>
 </div>

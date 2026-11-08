@@ -1,0 +1,13 @@
+<map id="include/arm_simd/helpers/simde_fused.hpp" name="include/arm_simd/helpers/simde_fused.hpp">
+<area shape="rect" id="Node000001" title="The single&#45;precision fused multiply&#45;add of the VFPv4 layer, for SIMDe on a host with FMA." alt="" coords="192,5,382,50"/>
+<area shape="rect" id="Node000002" href="$simde__neon_8hpp.html" title="SIMDe&#39;s NEON implementation (x86 and other non&#45;Arm hosts) under the NEON intrinsic names." alt="" coords="5,98,188,143"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="239,52,157,94,154,89,244,49"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="212,106,274,134"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="279,49,258,94,254,90,275,52"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="298,106,367,134"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="299,48,322,93,316,92,297,53"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="392,106,457,134"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="321,48,395,98,389,98,320,53"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="49,191,144,218"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,141,99,176,94,174,95,145"/>
+</map>
