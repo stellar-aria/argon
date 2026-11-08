@@ -29,4 +29,7 @@
 
 #else
 #include "arm_simd/neon/vfpv3.hpp"
+#ifdef __FMA__  // SIMDe on an x86 host with FMA
+#include "arm_simd/helpers/simde_fused.hpp"
+#endif
 #endif

@@ -77,6 +77,15 @@ constexpr Platform platform = Platform::SIMDe;
 #define ARGON_HAS_MAXNM false
 #endif
 
+/// True where float lanes have a fused multiply-add (one rounding): VFPv4 and Armv8 NEON, Helium with floating point,
+/// and SIMDe on a host with FMA. Armv7 VFPv3 (Cortex-A9) has none. Argon::MultiplyAddFused exists exactly here.
+#if (defined(__ARM_NEON) && defined(__ARM_FEATURE_FMA)) || (defined(__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE & 2)) || \
+    (defined(ARGON_PLATFORM_SIMDE) && defined(__FMA__))
+#define ARGON_HAS_FUSED_MULTIPLY_ADD true
+#else
+#define ARGON_HAS_FUSED_MULTIPLY_ADD false
+#endif
+
 /// True where NEON has half-precision vector arithmetic (FEAT_FP16), so the f16 forms of vmaxnm/vminnm exist.
 #if defined(__ARM_NEON) && defined(__ARM_FEATURE_FP16_VECTOR_ARITHMETIC)
 #define ARGON_NEON_FP16_VECTOR true

@@ -579,6 +579,46 @@ class Vector {
   /// @details Equivalent to a - (b * c).
   ace argon_type MultiplySubtract(scalar_type b, argon_type c) const { return MultiplySubtract(c, b); }
 
+#if ARGON_HAS_FUSED_MULTIPLY_ADD
+  /// Multiply two vectors and add a third vector, fused
+  /// @details Equivalent to a + (b * c) with one rounding. Declared only where float lanes have a fused
+  /// multiply-add (VFPv4, Armv8, Helium, SIMDe with FMA), not on the Cortex-A9. MultiplyAdd keeps its meaning:
+  /// fused on Helium only.
+  ace argon_type MultiplyAddFused(argon_type b, argon_type c) const
+    requires lane_floating_point<scalar_type>
+  {
+    return simd::multiply_add_fused(vec_, b.vec_, c.vec_);
+  }
+
+  /// Multiply a vector by a scalar value and add a third vector, fused
+  /// @details Equivalent to a + (b * c) with one rounding.
+  ace argon_type MultiplyAddFused(argon_type b, scalar_type c) const
+    requires lane_floating_point<scalar_type>
+  {
+    return simd::multiply_add_fused(vec_, b.vec_, c);
+  }
+
+  /// Multiply two vectors and subtract from a third vector, fused
+  /// @details Equivalent to a - (b * c) with one rounding.
+  ace argon_type MultiplySubtractFused(argon_type b, argon_type c) const
+    requires lane_floating_point<scalar_type>
+  {
+    return simd::multiply_subtract_fused(vec_, b.vec_, c.vec_);
+  }
+
+  /// Multiply a vector by a scalar value and subtract from a third vector, fused
+  /// @details Equivalent to a - (b * c) with one rounding.
+  ace argon_type MultiplySubtractFused(argon_type b, scalar_type c) const
+    requires lane_floating_point<scalar_type>
+  {
+#ifdef ARGON_PLATFORM_MVE
+    return simd::multiply_subtract_fused(vec_, b.vec_, simd::duplicate(c));  // MVE has no vfms by a scalar
+#else
+    return simd::multiply_subtract_fused(vec_, b.vec_, c);
+#endif
+  }
+#endif
+
 #ifndef ARGON_PLATFORM_MVE
   /// Multiply a vector by a lane value and subtract from a third vector
   /// @details Equivalent to a - (b * c).

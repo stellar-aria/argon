@@ -1,6 +1,7 @@
 #include "argon.hpp"
 #include "cppspec.hpp"
 #include "helpers/type_matrix.hpp"
+#include <cmath>
 #include <numeric>
 #include <limits>
 
@@ -162,6 +163,35 @@ auto describe_multiply_add = describe("MultiplyAdd", ${
     const float b = 1.0f + 0x1p-12f, a = 1.0f + 0x1p-11f;
     expect(Argon<float>{a}.MultiplySubtract(Argon<float>{b}, Argon<float>{b}).to_array()[0]).to_equal(-0x1p-24f);
     expect(Argon<float>{a}.MultiplySubtract(Argon<float>{b}, b).to_array()[3]).to_equal(-0x1p-24f);
+  });
+#endif
+
+#if ARGON_HAS_FUSED_MULTIPLY_ADD
+  it("fused methods round once: a + (b * c) and a - (b * c)", _{
+    // b * c = 1 + 2^-22 + 2^-46 needs more than 24 bits; a separate multiply rounds its 2^-46 away.
+    const float b = 1.0f + 0x1p-23f;
+    const float c = 1.0f + 0x1p-23f;
+    const float a = -(1.0f + 0x1p-22f);
+    const float fused = std::fma(b, c, a);  // 2^-46
+    expect(fused).not_().to_equal(a + b * c);
+    const Argon<float> r = Argon<float>{a}.MultiplyAddFused(Argon<float>{b}, Argon<float>{c});
+    for (size_t i = 0; i < Argon<float>::lanes; ++i) expect(r.to_array()[i]).to_equal(fused);
+    const Argon<float> rs = Argon<float>{a}.MultiplyAddFused(Argon<float>{b}, c);
+    expect(rs.GetLane<1>()).to_equal(fused);
+    const Argon<float> s = Argon<float>{a}.MultiplySubtractFused(Argon<float>{b}, Argon<float>{-c});
+    expect(s.GetLane<3>()).to_equal(fused);
+    const Argon<float> ss = Argon<float>{a}.MultiplySubtractFused(Argon<float>{b}, -c);
+    expect(ss.GetLane<2>()).to_equal(fused);
+  });
+
+  it("fused methods exist on the doubleword float vector", _{
+    const float b = 1.0f + 0x1p-23f;
+    const float a = -(1.0f + 0x1p-22f);
+    const float fused = std::fma(b, b, a);
+    const ArgonHalf<float> r = ArgonHalf<float>{a}.MultiplyAddFused(ArgonHalf<float>{b}, ArgonHalf<float>{b});
+    expect(r.GetLane<1>()).to_equal(fused);
+    const ArgonHalf<float> s = ArgonHalf<float>{a}.MultiplySubtractFused(ArgonHalf<float>{b}, -b);
+    expect(s.GetLane<0>()).to_equal(fused);
   });
 #endif
 });
