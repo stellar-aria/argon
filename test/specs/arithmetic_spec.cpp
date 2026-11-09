@@ -186,6 +186,7 @@ auto describe_multiply_add = describe("MultiplyAdd", ${
     expect(ss.GetLane<2>()).to_equal(fused);
   });
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no 64-bit vectors
   it("fused methods exist on the doubleword float vector", _{
     const float b = 1.0f + 0x1p-23f;
     const float a = -(1.0f + 0x1p-22f);
@@ -195,6 +196,7 @@ auto describe_multiply_add = describe("MultiplyAdd", ${
     const ArgonHalf<float> s = ArgonHalf<float>{a}.MultiplySubtractFused(ArgonHalf<float>{b}, -b);
     expect(s.GetLane<0>()).to_equal(fused);
   });
+#endif
 #endif
 });
 
@@ -245,6 +247,7 @@ auto describe_absolute = describe("Absolute", ${
     expect(std::signbit(arr[1])).to_be_false();
   });
 
+#ifndef ARGON_PLATFORM_MVE  // MVE has no 64-bit vectors
   it("absolute value of a half float vector", _{
     std::array<float, 2> data = {-3.0f, 2.5f};
     auto arr = ArgonHalf<float>::Load(data.data()).Absolute().to_array();
@@ -266,6 +269,7 @@ auto describe_absolute = describe("Absolute", ${
     expect(ArgonHalf<int32_t>::Load(d32.data()).Absolute().to_array())
         .to_equal(std::array<int32_t, 2>{70000, 5});
   });
+#endif
 
   it("absolute value wraps at the minimum of int8 and int16 lanes", _{
     std::array<int8_t, 16> d8{};
